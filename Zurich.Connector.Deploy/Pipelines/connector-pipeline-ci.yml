@@ -1,0 +1,121 @@
+# ASP.NET Core (.NET Framework)
+
+# Build and test ASP.NET Core projects targeting the full .NET Framework.
+# Add steps that publish symbols, save build artifacts, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
+
+trigger:
+  none
+  # - master
+
+pool:
+  vmImage: 'windows-latest'
+
+resources:
+  repositories:
+    - repository: ZurichDeploy
+      type: git
+      name: Zurich.Deploy
+
+variables:
+- name: solution
+  value: '**/*.sln'
+- name: buildPlatform
+  value: 'Any CPU'
+- name: buildConfiguration
+  value: 'Release'
+- template: Variables\ZurichDeploy-variables-Shared.yml@ZurichDeploy
+- template: Variables\ZurichDeploy-variables-CI.yml@ZurichDeploy
+  template: ../Variables/connector-veriables-Shared.yml
+- template: ../Variables/connector-veriables-CI.yml
+
+stages:
+- stage: Build
+  jobs:
+    - job: 'Build'
+      displayName: 'Connector Build'
+      steps:
+        - template: ../Templates/connector-build.yml
+          parameters:
+            projectName: 'Zurich.Connector'
+# - stage: CI
+#   # pool: DCO-HighQ-Platform-N
+#   # dependsOn:
+#   #   - Build
+#   jobs:
+#     - deployment: Prereqs
+#       environment: CI
+#       strategy:
+#         runOnce:
+#           deploy:
+#             steps:
+#               - checkout: self
+#               - checkout: ZurichDeploy
+#               - template: ../Templates/search-prereqs.yml
+#                 parameters:
+#                   appInsightsName: ${{ variables.appInsightsName }}
+#                   availabilityAlertGroups: ${{ variables.availabilityAlertGroups }}
+#                   developerActionGroupName: ${{ variables.developerActionGroupName }}
+#                   developerEmailAddress: ${{ variables.developerEmailAddress }}
+#                   developerEmailName: ${{ variables.developerEmailName }}
+#                   environmentName: ${{ variables.environmentName }}
+#                   environmentType: ${{ variables.environmentType }}
+#                   flowWebhook: ${{ variables.flowWebhook }}
+#                   flowWebhookName: ${{ variables.flowWebhookName }}
+#                   notificationEmailGroup: ${{ variables.notificationEmailGroup }}
+#                   resourceGroup: ${{ variables.resourceGroup }}
+#                   resourceLocation: ${{ variables.resourceLocation }}
+#                   resourceOwner: ${{ variables.resourceOwner }}
+#                   smartDetectionRuleNames: ${{ variables.smartDetectionRuleNames }}
+#                   subscriptionId: ${{ variables.subscriptionId }}
+#                   subscriptionName: ${{ variables.subscriptionName }}
+#                   tagNames: ${{ variables.tagNames }}
+
+#     - deployment: GPS
+#       environment: CI
+#       dependsOn: Prereqs
+#       strategy:
+#         runOnce:
+#           deploy:
+#             steps:
+#               - checkout: self
+#               - checkout: ZurichDeploy
+#               - template: ../Templates/gps-deploy.yml
+#                 parameters:
+#                   environmentName: ${{ variables.environmentName }}
+#                   graphProxyServerName: ${{ variables.graphProxyServerName }}
+#                   keyVault: '${{ variables.keyVault }}'
+#                   resourceGroup: ${{ variables.resourceGroup }}
+#                   slotName: ${{ variables.slotName}}
+#                   subscriptionName: ${{ variables.subscriptionName }}
+# - stage: Swap_Slots
+#   dependsOn: CI
+#   condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'master'))
+#   jobs:
+#     - template: ../Templates/gps-swap-slots.yml
+#       parameters:
+#         appConfigurationLabel: ${{ variables.appConfigurationLabel }}
+#         appConfigurationName: ${{ variables.appConfigurationName }}
+#         appConfigurationPath: ${{ variables.appConfigurationPath }}
+#         environmentName: ${{ variables.environmentName }}
+#         graphProxyServerName: ${{ variables.graphProxyServerName }}
+#         resourceGroup: ${{ variables.resourceGroup }}
+#         slotName: ${{ variables.slotName }}
+#         subscriptionName: ${{ variables.subscriptionName }}
+# - stage: Update_APIM_Product
+#   dependsOn: Swap_Slots
+#   jobs:
+#     - template: ../Templates/gps-post-swap-slots.yml
+#       parameters:
+#         apiId: ${{ variables.apiId }}
+#         apimName: ${{ variables.apimName }}
+#         apimResourceGroup: ${{ variables.apimResourceGroup }}
+#         apiVersion: ${{ variables.apiVersion }}
+#         environmentName: ${{ variables.environmentName }}
+#         graphProxyServerName: ${{ variables.graphProxyServerName }}
+#         groups: ${{ variables.groups }}
+#         productDescription: ${{ variables.productDescription }}
+#         productName: ${{ variables.productName }}
+#         resourceGroup: ${{ variables.resourceGroup }}
+#         subscriptionName: ${{ variables.subscriptionName }}
+#         swaggerEndpoint: ${{ variables.swaggerEndpoint }}

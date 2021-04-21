@@ -1,0 +1,37 @@
+parameters:
+- name: projectName
+  type: string
+
+steps:
+  - task: NuGetToolInstaller@1
+  - task: NuGetCommand@2
+    inputs:
+      command: 'restore'
+      restoreSolution: '$(solution)'
+      feedsToUse: 'select'
+      vstsFeed: '0308fe1f-6035-44ba-8617-dddaffafe6f1/f075474a-6981-4903-aa5d-73b49bd90029'
+  - task: VSBuild@1
+    inputs:
+      solution: '$(solution)'
+      msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:DesktopBuildPackageLocation="$(build.artifactStagingDirectory)\${{ parameters.projectName }}.zip" /p:DeployIisAppPath="Default Web Site"'
+      platform: '$(buildPlatform)'
+      configuration: '$(buildConfiguration)'
+  - task: VSTest@2
+    inputs:
+      platform: '$(buildPlatform)'
+      configuration: '$(buildConfiguration)'
+  - task: CopyFiles@2
+    inputs:
+      SourceFolder: '$(Build.ArtifactStagingDirectory)'
+      Contents: '**\*.json'
+      TargetFolder: '$(Build.ArtifactStagingDirectory)\ArmTemplates'
+      flattenFolders: true
+  - task: DotNetCoreCLI@2
+    displayName: 'Publish app'
+    inputs:
+      command: 'publish'
+      publishWebProjects: true
+      projects: '${{ parameters.projectName }}.sln'
+      arguments: '--configuration $(buildConfiguration) -o $(Build.ArtifactStagingDirectory)\ --no-build --no-restore'
+  - publish: '$(Build.ArtifactStagingDirectory)'
+    artifact: '${{ parameters.projectName }}'
