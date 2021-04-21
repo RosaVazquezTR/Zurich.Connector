@@ -1,0 +1,77 @@
+parameters:
+  - name: appInsightsName
+    type: string
+  - name: availabilityAlertGroups
+    type: string
+  - name: developerActionGroupName
+    type: string
+  - name: developerEmailAddress
+    type: string
+  - name: developerEmailName
+    type: string
+  - name: environmentName
+    type: string
+  - name: environmentType
+    type: string
+  - name: flowWebhook
+    type: string
+  - name: flowWebhookName
+    type: string
+  - name: notificationEmailGroup
+    type: string
+  - name: resourceGroup
+    type: string
+  - name: resourceLocation
+    type: string
+  - name: resourceOwner
+    type: string
+  - name: smartDetectionRuleNames
+    type: string
+  - name: subscriptionId
+    type: string
+  - name: subscriptionName
+    type: string
+  - name: tagNames
+    type: string
+
+steps:
+  - task: AzurePowerShell@5
+    inputs:
+      azureSubscription: 'DCO-HighQ-Platform-N'
+      ScriptType: 'InlineScript'
+      Inline: |
+        dir env:
+      azurePowerShellVersion: 'LatestVersion'
+  - template: Templates\ZurichDeploy-SetupResourceGroup.yml@ZurichDeploy
+    parameters:
+      environmentName: '${{ parameters.environmentName }}'
+      environmentType: '${{ parameters.environmentType }}'
+      resourceGroup: '${{ parameters.resourceGroup }}'
+      resourceLocation: '${{ parameters.resourceLocation }}'
+      resourceOwner: '${{ parameters.resourceOwner }}'
+      subscriptionId: '${{ parameters.subscriptionId }}'
+      subscriptionName: '${{ parameters.subscriptionName }}'
+      tagNames: '${{ parameters.tagNames }}'
+
+  - template: Templates\ZurichDeploy-SetupAppInsights.yml@ZurichDeploy
+    parameters:
+      appInsightsName: ${{ parameters.appInsightsName }}
+      availabilityAlertGroups: ${{ parameters.availabilityAlertGroups }}
+      developerActionGroupName: ${{ parameters.developerActionGroupName }}
+      developerEmailAddress: ${{ parameters.developerEmailAddress }}
+      developerEmailName: ${{ parameters.developerEmailName }}
+      environmentName: ${{ parameters.environmentName }}
+      flowWebhook: ${{ parameters.flowWebhook }}
+      flowWebhookName: ${{ parameters.flowWebhookName }}
+      ltioL1ActionGroupName: ''
+      ltioL1EmailAddress: ''
+      ltioL1EmailName: ''
+      ltioL2ActionGroupName: ''
+      ltioL2EmailAddress: ''
+      ltioL2EmailName: ''
+      notificationEmailGroup: ${{ parameters.notificationEmailGroup }}
+      resourceGroup: ${{ parameters.resourceGroup }}
+      resourceLocation: ${{ parameters.resourceLocation }}
+      smartDetectionRuleNames: ${{ parameters.smartDetectionRuleNames }}
+      subscriptionId: ${{ parameters.subscriptionId }}
+      subscriptionName: ${{ parameters.subscriptionName }}
