@@ -27,7 +27,7 @@ variables:
 - template: Variables\ZurichDeploy-variables-Shared.yml@ZurichDeploy
 - template: Variables\ZurichDeploy-variables-CI.yml@ZurichDeploy
   # template: ../Variables/connector-veriables-Shared.yml
-- template: ../Variables/connector-veriables-CI.yml
+# - template: ../Variables/connector-veriables-CI.yml
 
 stages:
 - stage: Build
