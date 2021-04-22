@@ -1,4 +1,0 @@
-variables:
-  - name: resourceGroup
-    value: 'centralus-connectors-ci'
-    
