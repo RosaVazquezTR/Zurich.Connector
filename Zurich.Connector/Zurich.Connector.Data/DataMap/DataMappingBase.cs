@@ -27,7 +27,7 @@ namespace Zurich.Connector.Data.DataMap
 		{
 			T results = default(T);
 
-			DataMappingClass dataTypeInformation = await this.RetrieveProductInformationMap(appCode, dataType);
+			DataMappingClass dataTypeInformation = await this.RetrieveProductInformationMap(appCode, dataType); //move up a service
 			if (dataTypeInformation == null)
 			{
 				return results;
