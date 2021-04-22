@@ -30,18 +30,18 @@ variables:
 - template: ../Variables/connector-veriables-CI.yml
 
 stages:
-- stage: Build
-  jobs:
-    - job: 'Build'
-      displayName: 'Connector Build'
-      steps:
-        - template: ../Templates/connector-build.yml
-          parameters:
-            projectName: 'Zurich.Connector'
+# - stage: Build
+#   jobs:
+#     - job: 'Build'
+#       displayName: 'Connector Build'
+#       steps:
+#         - template: ../Templates/connector-build.yml
+#           parameters:
+#             projectName: 'Zurich.Connector'
 - stage: CI
-  pool: DCO-HighQ-Platform-N
-  dependsOn:
-    - Build
+   pool: DCO-HighQ-Platform-N
+  # dependsOn:
+  #   - Build
   jobs:
     - deployment: Prereqs
       environment: CI
