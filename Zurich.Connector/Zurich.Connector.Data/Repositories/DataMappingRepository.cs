@@ -61,8 +61,9 @@ namespace Zurich.Connector.Data.Repositories
             return new DataMappingClass()
             {
                 AppCode = appCode,
+                AuthType = appMapping.Auth.Type,
                 DataType = (DataType)Enum.Parse(typeof(DataType), dataTypeMap.Name, true),
-                Api = new DataMappingApiRequest() { Url = dataTypeMap.Api.Endpoint, MethodType = dataTypeMap.Api.MethodType, AuthHeader = appMapping.OAuth.AuthHeader },
+                Api = new DataMappingApiRequest() { Url = dataTypeMap.Api.Endpoint, MethodType = dataTypeMap.Api.MethodType, AuthHeader = appMapping.Auth.OAuth.AuthHeader },
                 Mapping = dataTypeMap.Mapping,
                 ResultLocation = dataTypeMap.ResultLocation
             };
@@ -87,7 +88,8 @@ namespace Zurich.Connector.Data.Repositories
             DataMappingFile file = null;
             // D:\\home\\site\\wwwroot\\DataMapping\\DataMapping.json
             //var filePath = _configuration.GetValue<string>(AppConfigKeys.DataMappingFilePath);
-            var filePath = "./DataMapping.json";
+            var path = Directory.GetCurrentDirectory();
+            var filePath = @"C:\Users\C263596\source\repos\Zurich.Connector\Zurich.Connector\Zurich.Connector.Data\DataMap\DataMapping.json";
 
             if (File.Exists(filePath))
             {

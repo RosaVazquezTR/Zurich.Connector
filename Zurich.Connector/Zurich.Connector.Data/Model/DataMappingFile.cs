@@ -24,9 +24,9 @@ namespace Zurich.Connector.Data.Model
         /// </summary>
         public string AppCode { get; set; }
         /// <summary>
-        /// The OAuth information that will be used for the app
+        /// The Auth information that will be used for the app
         /// </summary>
-        public DataMappingOAuth OAuth { get; set; }
+        public DataMappingAuth Auth { get; set; }
         /// <summary>
         /// Types of data the apps support and the corresponding mapping
         /// </summary>
@@ -34,7 +34,23 @@ namespace Zurich.Connector.Data.Model
     }
 
     /// <summary>
-    /// OAuth information that will be used to get information in the app.
+    /// Auth information that will be used to get information in the app.
+    /// </summary>
+    public class DataMappingAuth
+    {
+        /// <summary>
+        /// Type of authorization the endpoint should use
+        /// </summary>
+        public string Type { get; set; }
+        /// <summary>
+        /// Auth url that will be used during the OAuth process
+        /// </summary>
+        public DataMappingOAuth OAuth { get; set; }
+
+    }
+
+    /// <summary>
+    /// Information needed to use the OAuth type
     /// </summary>
     public class DataMappingOAuth
     {
@@ -53,6 +69,7 @@ namespace Zurich.Connector.Data.Model
         /// </summary>
         public string AuthHeader { get; set; }
     }
+
 
     /// <summary>
     /// Holds information about app apis and property mappings

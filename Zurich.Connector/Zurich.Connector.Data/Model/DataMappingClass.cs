@@ -17,6 +17,11 @@ namespace Zurich.Connector.Data.Model
         public string AppCode { get; set; }
 
         /// <summary>
+		/// The type of authorization used in this endpoint
+		/// </summary>
+        public string AuthType { get; set; }
+
+        /// <summary>
         /// The DataType of a given request
         /// </summary>
         public DataType DataType { get; set; }

@@ -27,8 +27,9 @@ namespace Zurich.Connector.Data.DataMap
 		{
 			T results = default(T);
 
-			DataMappingClass dataTypeInformation = await this.RetrieveProductInformationMap(appCode, dataType); //move up a service
-			if (dataTypeInformation == null)
+            DataMappingClass dataTypeInformation = await this.RetrieveProductInformationMap(appCode, dataType); //move up a service
+
+            if (dataTypeInformation == null)
 			{
 				return results;
 			}
@@ -64,6 +65,7 @@ namespace Zurich.Connector.Data.DataMap
 		public async virtual Task<string> UpdateUrl(string appCode, string urlPath)
 		{
 			string newUrlPath = urlPath;
+			// Find all areas that have { } in url. ie. /work/api/v2/customers/{UserInfo.customer_id}/documents
 			var regexMatch = Regex.Match(urlPath, @"{([^}]*)}");
 			foreach (var capture in regexMatch.Captures)
 			{
@@ -75,11 +77,14 @@ namespace Zurich.Connector.Data.DataMap
 
 				if (enumType != DataType.None)
 				{
+					// Make api call to get the information for the url variable inside { }
 					JToken result = await this.Get<JToken>(appCode, enumType);
 					for (int i = 1; i < splitString.Count(); i++)
 					{
 						result = result[splitString[i]];
 					}
+
+					// Replace the url variable inside { }
 					string value = result.Value<string>();
 
 					newUrlPath = Regex.Replace(newUrlPath, stringFormat, value);
@@ -103,6 +108,7 @@ namespace Zurich.Connector.Data.DataMap
 						jToken = jToken[location];
 					}
 				}
+				// Needed so we can prefetch api results that are needed in the original api call
 				if (isJToken)
 				{
 					// I can't just return a jToken... so bamboozle it with a dynamic
@@ -114,10 +120,24 @@ namespace Zurich.Connector.Data.DataMap
 			var jsonSettings = new JsonSerializerSettings();
 			jsonSettings.ContractResolver = new CDMContractResolver(propertyMap);
 
+			dynamic response;
 			try
 			{
-				dynamic response = JsonConvert.DeserializeObject<T>(stringResponse, jsonSettings);
-				return response;
+				/// what to do here if this is an object rather than an array
+				List<dynamic> results = new List<dynamic>();
+				response = JsonConvert.DeserializeObject<JToken>(stringResponse);
+				foreach(var result in response)
+                {
+					dynamic stuff = new JObject();
+					propertyMap.ForEach(property =>
+					{
+						stuff[property.CDMProperty] = result[property.APIProperty];
+					});
+					results.Add(stuff);
+
+				}
+
+				return (dynamic)results;
 			}
 			catch (Exception e)
 			{
@@ -125,7 +145,16 @@ namespace Zurich.Connector.Data.DataMap
 				//Should we throw the exception here?
 			}
 
-			return default(T);
+			
+
+			propertyMap.ForEach(property =>
+			{
+				
+			});
+
+
+
+            return default(T);
 		}
 
 	}

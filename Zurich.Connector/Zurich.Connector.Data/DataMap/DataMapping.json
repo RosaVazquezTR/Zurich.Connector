@@ -138,13 +138,8 @@
     {
       "Id": 1,
       "AppCode": "PLCUS",
-      "OAuth": {
-        "AuthUrl": "/auth/oauth2/authorize",
-        "TokenUrl": "/auth/oauth2/token",
-        "AuthHeader": "X-Auth-Token"
-      },
       "Auth": {
-        "type": "transferToken"
+        "Type": "transferToken",
       },
       "DataTypes": [
         {
