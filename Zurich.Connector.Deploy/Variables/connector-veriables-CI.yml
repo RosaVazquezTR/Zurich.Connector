@@ -6,6 +6,6 @@ variables:
   - name: resourceGroup
     value: 'centralus-connectors-ci'
   - name: subnetConnectorBackend
-    value: "@{SubNetName = 'WebApi'; SubNetCidr = '65.225.9.61/27'; SubNetType = 'backend'; subNetServiceEndpoints = @('Microsoft.KeyVault', 'Microsoft.Sql')}"
+    value: "@{SubNetName = 'WebApi'; SubNetCidr = '165.225.9.61/27'; SubNetType = 'backend'; subNetServiceEndpoints = @('Microsoft.KeyVault', 'Microsoft.Sql')}"
   - name: subnetPreFix
     value: 'Connector'
