@@ -136,7 +136,7 @@ steps:
     inputs:
       azureSubscription: ${{ parameters.subscriptionName }}
       ScriptPath: '$(Build.SourcesDirectory)/Zurich.Deploy/Scripts/GrantAppAccessToKeyVault.ps1'
-      ScriptArguments: '-resourceGroupName "${{ parameters.resourceGroup }}" -keyVaultName "${{ parameters.keyVault }}" -environmentName "${{ parameters.environmentName }}" -appName "${{ parameters.searchServiceName }}"'
+      ScriptArguments: '-resourceGroupName "${{ parameters.resourceGroup }}" -keyVaultName "${{ parameters.keyVault }}" -environmentName "${{ parameters.environmentName }}" -appName "${{ parameters.connectorServiceName }}"'
       azurePowerShellVersion: LatestVersion
 
   - task: AzurePowerShell@4
