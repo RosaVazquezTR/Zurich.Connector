@@ -37,7 +37,7 @@ stages:
       steps:
         - template: ../Templates/connector-build.yml
           parameters:
-            projectName: 'Zurich.Connector'
+           projectName: '${{ variables.projectName }}'
 - stage: CI
   pool: DCO-HighQ-Platform-N
   dependsOn:
