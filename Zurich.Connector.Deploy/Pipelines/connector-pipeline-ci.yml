@@ -74,7 +74,7 @@ stages:
                   connectorServiceName: ${{ variables.connectorServiceName }}
                   smartDetectionRuleNames: ${{ variables.smartDetectionRuleNames }}
                   subnetPreFix: ${{ variables.subnetPreFix }}
-                  subnetSearchBackend: ${{ variables.subnetSearchBackend }}
+                  subnetConnectorBackend: ${{ variables.subnetConnectorBackend }}
                   subscriptionId: ${{ variables.subscriptionId }}
                   subscriptionName: ${{ variables.subscriptionName }}
                   tagNames: ${{ variables.tagNames }}
