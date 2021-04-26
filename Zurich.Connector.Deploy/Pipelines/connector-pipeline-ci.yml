@@ -26,7 +26,7 @@ variables:
   value: 'Release'
 - template: Variables\ZurichDeploy-variables-Shared.yml@ZurichDeploy
 - template: Variables\ZurichDeploy-variables-CI.yml@ZurichDeploy
-- template: ../Variables/connector-veriables-Shared.yml   
+ template: ../Variables/connector-veriables-Shared.yml   
 - template: ../Variables/connector-veriables-CI.yml
 
 stages:
@@ -40,8 +40,8 @@ stages:
             projectName: 'Zurich.Connector'
 - stage: CI
   pool: DCO-HighQ-Platform-N
-   dependsOn:
-    - Build
+   dependsOn: Build
+   # - Build
   jobs:
     # - deployment: Prereqs
     #   environment: CI
