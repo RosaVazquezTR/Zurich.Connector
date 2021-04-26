@@ -26,65 +26,65 @@ variables:
   value: 'Release'
 - template: Variables\ZurichDeploy-variables-Shared.yml@ZurichDeploy
 - template: Variables\ZurichDeploy-variables-CI.yml@ZurichDeploy
-  #template: ../Variables/connector-veriables-Shared.yml   
+  template: ../Variables/connector-veriables-Shared.yml   
 - template: ../Variables/connector-veriables-CI.yml
 
 stages:
-# - stage: Build
-#   jobs:
-#     - job: 'Build'
-#       displayName: 'Connector Build'
-#       steps:
-#         - template: ../Templates/connector-build.yml
-#           parameters:
-#             projectName: 'Zurich.Connector'
+- stage: Build
+  jobs:
+    - job: 'Build'
+      displayName: 'Connector Build'
+      steps:
+        - template: ../Templates/connector-build.yml
+          parameters:
+            projectName: 'Zurich.Connector'
 - stage: CI
   pool: DCO-HighQ-Platform-N
-  # dependsOn:
-  #   - Build
+   dependsOn:
+    - Build
   jobs:
-    - deployment: Prereqs
-      environment: CI
-      strategy:
-        runOnce:
-          deploy:
-            steps:
-              - checkout: self
-              - checkout: ZurichDeploy
-              - template: ../Templates/connector-prereqs.yml
-                parameters:
-                  appInsightsName: ${{ variables.appInsightsName }}
-                  availabilityAlertGroups: ${{ variables.availabilityAlertGroups }}
-                  azureAdClientId: ${{ variables.azureAdClientId }}
-                  azureAdClientSecret: $(azureAdClientSecret)
-                  developerActionGroupName: ${{ variables.developerActionGroupName }}
-                  developerEmailAddress: ${{ variables.developerEmailAddress }}
-                  developerEmailName: ${{ variables.developerEmailName }}
-                  environmentName: ${{ variables.environmentName }}
-                  environmentType: ${{ variables.environmentType }}
-                  flowWebhook: ${{ variables.flowWebhook }}
-                  flowWebhookName: ${{ variables.flowWebhookName }}
-                  keyVault: ${{ variables.keyVault }}
-                  keyVaultSubnets: ${{ variables.keyVaultSubnets }}
-                  notificationEmailGroup: ${{ variables.notificationEmailGroup }}
-                  resourceGroup: ${{ variables.resourceGroup }}
-                  resourceLocation: ${{ variables.resourceLocation }}
-                  resourceOwner: ${{ variables.resourceOwner }}
-                  routeTableName: ${{ variables.routeTableName }}
-                  connectorServiceName: ${{ variables.connectorServiceName }}
-                  smartDetectionRuleNames: ${{ variables.smartDetectionRuleNames }}
-                  subnetPreFix: ${{ variables.subnetPreFix }}
-                  subnetSearchBackend: ${{ variables.subnetSearchBackend }}
-                  subscriptionId: ${{ variables.subscriptionId }}
-                  subscriptionName: ${{ variables.subscriptionName }}
-                  tagNames: ${{ variables.tagNames }}
-                  vnetName: ${{ variables.vnetName }}
-                  vnetResourceGroup: ${{ variables.vnetResourceGroup }}
-                  webDnsServer: ${{ variables.webDnsServer }}
+    # - deployment: Prereqs
+    #   environment: CI
+    #   strategy:
+    #     runOnce:
+    #       deploy:
+    #         steps:
+    #           - checkout: self
+    #           - checkout: ZurichDeploy
+    #           - template: ../Templates/connector-prereqs.yml
+    #             parameters:
+    #               appInsightsName: ${{ variables.appInsightsName }}
+    #               availabilityAlertGroups: ${{ variables.availabilityAlertGroups }}
+    #               azureAdClientId: ${{ variables.azureAdClientId }}
+    #               azureAdClientSecret: $(azureAdClientSecret)
+    #               developerActionGroupName: ${{ variables.developerActionGroupName }}
+    #               developerEmailAddress: ${{ variables.developerEmailAddress }}
+    #               developerEmailName: ${{ variables.developerEmailName }}
+    #               environmentName: ${{ variables.environmentName }}
+    #               environmentType: ${{ variables.environmentType }}
+    #               flowWebhook: ${{ variables.flowWebhook }}
+    #               flowWebhookName: ${{ variables.flowWebhookName }}
+    #               keyVault: ${{ variables.keyVault }}
+    #               keyVaultSubnets: ${{ variables.keyVaultSubnets }}
+    #               notificationEmailGroup: ${{ variables.notificationEmailGroup }}
+    #               resourceGroup: ${{ variables.resourceGroup }}
+    #               resourceLocation: ${{ variables.resourceLocation }}
+    #               resourceOwner: ${{ variables.resourceOwner }}
+    #               routeTableName: ${{ variables.routeTableName }}
+    #               connectorServiceName: ${{ variables.connectorServiceName }}
+    #               smartDetectionRuleNames: ${{ variables.smartDetectionRuleNames }}
+    #               subnetPreFix: ${{ variables.subnetPreFix }}
+    #               subnetSearchBackend: ${{ variables.subnetSearchBackend }}
+    #               subscriptionId: ${{ variables.subscriptionId }}
+    #               subscriptionName: ${{ variables.subscriptionName }}
+    #               tagNames: ${{ variables.tagNames }}
+    #               vnetName: ${{ variables.vnetName }}
+    #               vnetResourceGroup: ${{ variables.vnetResourceGroup }}
+    #               webDnsServer: ${{ variables.webDnsServer }}
 
     - deployment: Connector
       environment: CI
-      dependsOn: Prereqs
+     # dependsOn: Prereqs
       strategy:
         runOnce:
           deploy:
