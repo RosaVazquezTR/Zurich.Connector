@@ -39,11 +39,11 @@ steps:
     targetType: 'inline'
     script: |
       Write-Host  "##vso[task.setvariable variable=KeyVault.Endpoint;isSecret=false] https://${{ parameters.keyVault }}${{ parameters.environmentName }}.vault.azure.net/"
-# - task: FileTransform@1
-#   inputs:
-#     folderPath: '$(Pipeline.Workspace)/${{ parameters.projectName }}/${{ parameters.projectName }}.zip'
-#     fileType: 'json'
-#     targetFiles: 'appsettings.${{ parameters.environmentName }}.json'
+- task: FileTransform@1
+  inputs:
+    folderPath: '$(Pipeline.Workspace)/${{ parameters.projectName }}/${{ parameters.projectName }}.zip'
+    fileType: 'json'
+    targetFiles: 'appsettings.${{ parameters.environmentName }}.json'
 - task: AzureRmWebAppDeployment@4
   displayName: 'Deploy App'
   inputs:
