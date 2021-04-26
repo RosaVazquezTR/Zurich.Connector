@@ -40,8 +40,8 @@ stages:
             projectName: 'Zurich.Connector'
 - stage: CI
   pool: DCO-HighQ-Platform-N
-   dependsOn: Build
-   # - Build
+  dependsOn:
+     - Build
   jobs:
     # - deployment: Prereqs
     #   environment: CI
