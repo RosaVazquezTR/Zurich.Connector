@@ -1,0 +1,9 @@
+variables:
+  - name: appInsightsName
+    value: 'ConnectorAppInsights'
+  - name: keyVault
+    value: 'connectorKeyVault'
+  - name: projectName
+    value: 'Zurich.connector'
+  - name: connectorServiceName
+    value: 'connectorWebApi'

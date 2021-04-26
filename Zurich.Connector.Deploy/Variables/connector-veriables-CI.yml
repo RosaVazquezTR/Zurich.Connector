@@ -1,4 +1,11 @@
 variables:
+  - name: azureAdClientId
+    value: 'b4a0d298-06dd-4738-83be-9b57653980b1'
+  - name: keyVaultSubnets
+    value: "@('connector-WebApi-CI-backend','hqh-VM-RelMgmt-backend')"
   - name: resourceGroup
     value: 'centralus-connectors-ci'
-    
+     - name: subnetConnectorBackend
+    value: "@{SubNetName = 'WebApi'; SubNetCidr = '165.225.9.72/27'; SubNetType = 'backend'; subNetServiceEndpoints = @('Microsoft.KeyVault', 'Microsoft.Sql')}"
+  - name: subnetPreFix
+    value: 'Connector'
