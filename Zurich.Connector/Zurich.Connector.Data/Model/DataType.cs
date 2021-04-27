@@ -15,6 +15,7 @@ namespace Zurich.Connector.Data.Model
         Document,
         Matters,
         Search,
-        UserInfo
+        UserInfo,
+        History
     }
 }

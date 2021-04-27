@@ -58,12 +58,22 @@ namespace Zurich.Connector.Data.Repositories
                 return null;
             }
 
+            //return new DataMappingClass()
+            //{
+            //    AppCode = appCode,
+            //    AuthType = appMapping.Auth.Type,
+            //    DataType = (DataType)Enum.Parse(typeof(DataType), dataTypeMap.Name, true),
+            //    Api = new DataMappingApiRequest() { Url = dataTypeMap.Api.Endpoint, MethodType = dataTypeMap.Api.MethodType, AuthHeader = appMapping.Auth.OAuth.AuthHeader },
+            //    Mapping = dataTypeMap.Mapping,
+            //    ResultLocation = dataTypeMap.ResultLocation
+            //};
+
             return new DataMappingClass()
             {
                 AppCode = appCode,
                 AuthType = appMapping.Auth.Type,
                 DataType = (DataType)Enum.Parse(typeof(DataType), dataTypeMap.Name, true),
-                Api = new DataMappingApiRequest() { Url = dataTypeMap.Api.Endpoint, MethodType = dataTypeMap.Api.MethodType, AuthHeader = appMapping.Auth.OAuth.AuthHeader },
+                Api = new DataMappingApiRequest() { Url = dataTypeMap.Api.Endpoint, MethodType = dataTypeMap.Api.MethodType, AuthHeader = "stuff" },
                 Mapping = dataTypeMap.Mapping,
                 ResultLocation = dataTypeMap.ResultLocation
             };

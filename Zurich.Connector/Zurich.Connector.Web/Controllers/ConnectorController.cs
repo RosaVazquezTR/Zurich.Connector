@@ -25,30 +25,6 @@ namespace Zurich.Connector.Web.Controllers
             _dataMapping = dataMapping;
         }
 
-        //[HttpGet]
-        //public async Task<ActionResult<dynamic>> ConnectorData([FromQuery] int connectorId, [FromQuery] string transferToken, [FromQuery] string hostname)
-        //{
-        //    var query = Request.Query;
-        //    //var connectorId = query["id"];
-        //    //var transferToken = query["transferToken"];
-        //    //var hostname = query["hostname"];
-
-        //    var response = await _dataMapping.Get<dynamic>("PLCUS", DataType.History, transferToken);
-        //    //foreach (var matter in response)
-        //    //{
-        //    //    // Hardcoding in domain for now. Will have to handle dynamic domain soon.
-        //    //    matter.WebLink = $"https://cloudimanage.com/work/link/w/{matter.Id}";
-        //    //}
-        //    var jsonResults = JsonConvert.SerializeObject(response);
-        //    //return Ok(jsonResults);
-        //    return new ContentResult
-        //    {
-        //        Content = jsonResults,
-        //        ContentType = System.Net.Mime.MediaTypeNames.Application.Json,
-        //        StatusCode = StatusCodes.Status200OK
-        //    };
-        //}
-
         [HttpGet]
         public async Task<ActionResult<dynamic>> ConnectorData([FromQuery] int connectorId, [FromQuery] string transferToken, [FromQuery] string hostname)
         {
@@ -57,7 +33,7 @@ namespace Zurich.Connector.Web.Controllers
             //var transferToken = query["transferToken"];
             //var hostname = query["hostname"];
 
-            var response = await _dataMapping.Get<dynamic>("iManage", DataType.Matters, "dsdfsd");
+            var response = await _dataMapping.Get<dynamic>("PLCUS", DataType.History, transferToken);
             //foreach (var matter in response)
             //{
             //    // Hardcoding in domain for now. Will have to handle dynamic domain soon.
@@ -72,6 +48,30 @@ namespace Zurich.Connector.Web.Controllers
                 StatusCode = StatusCodes.Status200OK
             };
         }
+
+        //[HttpGet]
+        //public async Task<ActionResult<dynamic>> ConnectorData([FromQuery] int connectorId, [FromQuery] string transferToken, [FromQuery] string hostname)
+        //{
+        //    var query = Request.Query;
+        //    //var connectorId = query["id"];
+        //    //var transferToken = query["transferToken"];
+        //    //var hostname = query["hostname"];
+
+        //    var response = await _dataMapping.Get<dynamic>("iManage", DataType.Matters, "dsdfsd");
+        //    //foreach (var matter in response)
+        //    //{
+        //    //    // Hardcoding in domain for now. Will have to handle dynamic domain soon.
+        //    //    matter.WebLink = $"https://cloudimanage.com/work/link/w/{matter.Id}";
+        //    //}
+        //    var jsonResults = JsonConvert.SerializeObject(response);
+        //    //return Ok(jsonResults);
+        //    return new ContentResult
+        //    {
+        //        Content = jsonResults,
+        //        ContentType = System.Net.Mime.MediaTypeNames.Application.Json,
+        //        StatusCode = StatusCodes.Status200OK
+        //    };
+        //}
 
         //[HttpGet]
         //public async Task<HttpResponseMessage> ConnectorData([FromQuery] int connectorId, [FromQuery] string transferToken, [FromQuery] string hostname)

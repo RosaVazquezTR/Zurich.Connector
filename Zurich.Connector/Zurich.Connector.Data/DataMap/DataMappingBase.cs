@@ -23,7 +23,7 @@ namespace Zurich.Connector.Data.DataMap
 		protected IOAuthService _oAuthService;
 		protected ILogger<DataMappingBase> _logger;
 
-		public async virtual Task<T> Get<T>(string appCode, DataType dataType)
+		public async virtual Task<T> Get<T>(string appCode, DataType dataType, string transferToken)
 		{
 			T results = default(T);
 
@@ -33,21 +33,22 @@ namespace Zurich.Connector.Data.DataMap
 			{
 				return results;
 			}
-			AppToken token = await this.RetrieveToken(appCode);
-			if (!string.IsNullOrEmpty(token?.access_token))
-			{
-				// TODO: Grab the domains after Anu's change
-				ApiInformation apiInfo = new ApiInformation() { AppCode = dataTypeInformation.AppCode, HostName = "cloudiManage.com", UrlPath = dataTypeInformation.Api.Url, AuthHeader = dataTypeInformation.Api.AuthHeader, Token = token };
-				apiInfo.UrlPath = await this.UpdateUrl(appCode, apiInfo.UrlPath);
+            //AppToken token = await this.RetrieveToken(appCode);
+            //if (!string.IsNullOrEmpty(token?.access_token))
+            //{
+                // TODO: Grab the domains after Anu's change
+                ApiInformation apiInfo = new ApiInformation() { AppCode = dataTypeInformation.AppCode, HostName = "us.practicallaw.qed.thomsonreuters.com", UrlPath = dataTypeInformation.Api.Url, AuthHeader = dataTypeInformation.Api.AuthHeader, Token = null };
+                //ApiInformation apiInfo = new ApiInformation() { AppCode = dataTypeInformation.AppCode, HostName = "cloudiManage.com", UrlPath = dataTypeInformation.Api.Url, AuthHeader = dataTypeInformation.Api.AuthHeader, Token = token };
+				apiInfo.UrlPath = await this.UpdateUrl(appCode, apiInfo.UrlPath, transferToken);
 
-				var response = await _repository.Get(apiInfo);
+				var response = await _repository.Get(apiInfo, transferToken);
 
 				if (!string.IsNullOrWhiteSpace(response))
 				{
 					results = await MapToCDM<T>(response, dataTypeInformation.ResultLocation, dataTypeInformation.Mapping);
 				}
-			}
-			return results;
+            //}
+            return results;
 		}
 
 		public async virtual Task<AppToken> RetrieveToken(string appCode)
@@ -62,7 +63,7 @@ namespace Zurich.Connector.Data.DataMap
 			return dataTypeInformation;
 		}
 
-		public async virtual Task<string> UpdateUrl(string appCode, string urlPath)
+		public async virtual Task<string> UpdateUrl(string appCode, string urlPath, string transferToken)
 		{
 			string newUrlPath = urlPath;
 			// Find all areas that have { } in url. ie. /work/api/v2/customers/{UserInfo.customer_id}/documents
@@ -78,7 +79,7 @@ namespace Zurich.Connector.Data.DataMap
 				if (enumType != DataType.None)
 				{
 					// Make api call to get the information for the url variable inside { }
-					JToken result = await this.Get<JToken>(appCode, enumType);
+					JToken result = await this.Get<JToken>(appCode, enumType, transferToken);
 					for (int i = 1; i < splitString.Count(); i++)
 					{
 						result = result[splitString[i]];
@@ -123,16 +124,24 @@ namespace Zurich.Connector.Data.DataMap
 			dynamic response;
 			try
 			{
-				/// what to do here if this is an object rather than an array
+				// what to do here if this is an object rather than an array
 				List<dynamic> results = new List<dynamic>();
 				response = JsonConvert.DeserializeObject<JToken>(stringResponse);
 				foreach(var result in response)
                 {
 					dynamic stuff = new JObject();
-					propertyMap.ForEach(property =>
+					foreach (var property in propertyMap)
 					{
-						stuff[property.CDMProperty] = result[property.APIProperty];
-					});
+						// Get the correct json property when not on the same level
+						string[] resultsLocation = property.APIProperty.Split('.');
+						var tempResult = result;
+						foreach (string location in resultsLocation)
+						{
+							tempResult = tempResult[location];
+						}
+
+						stuff[property.CDMProperty] = tempResult;
+					}
 					results.Add(stuff);
 
 				}

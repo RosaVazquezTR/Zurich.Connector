@@ -139,13 +139,13 @@
       "Id": 1,
       "AppCode": "PLCUS",
       "Auth": {
-        "Type": "transferToken",
+        "Type": "transferToken"
       },
       "DataTypes": [
         {
           "Name": "History",
           "Api": {
-            "Endpoint": "/Micro/V4/RecentHistory?pageSize=25&transfertoken=",
+            "Endpoint": "/Micro/V4/RecentHistory?pageSize=25&",
             "MethodType": "GET"
           },
           "ResultLocation": "historyResult.results",
@@ -194,10 +194,10 @@
               "CDMProperty": "SearchCount",
               "APIProperty": "item.searchCount"
             },
-            {
-              "CDMProperty": "SearchType",
-              "APIProperty": "item.searchDescription[0].description"
-            },
+            //{
+            //  "CDMProperty": "SearchType",
+            //  "APIProperty": "item.searchDescription[0].description"
+            //},
             {
               "CDMProperty": "WebLink",
               "APIProperty": "item.searchLink"
