@@ -1,0 +1,37 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace Zurich.Connector.Web.Configuration
+{
+    /// <summary>
+    /// Represents a container class for configuration keys
+    /// </summary>
+    public static class Constants
+    {
+        public const string PublicBasePath = "PublicBasePath";
+    }
+
+    /// <summary>
+    /// Represents the supported token types for the extension grant flow
+    /// </summary>
+    public static class SupportedTokenTypes
+    {
+        public const string AccessTokenJwt = "at+jwt";
+    }
+
+    public static class CORSPolicies
+    {
+        public const string DefaultPolicy = "MainCORS";
+    }
+
+    /// <summary>
+    /// Represents the supported scopes by the Connector API
+    /// </summary>
+    public static class SupportedScopes
+    {
+        // TODO: Add Connector specific scopes to Identity Server. Shouldn't use the legalhome ones
+        public const string Full = "legalhome.full";
+    }
+}
