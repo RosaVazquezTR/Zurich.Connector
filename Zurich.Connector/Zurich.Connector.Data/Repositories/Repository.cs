@@ -67,20 +67,32 @@ namespace Zurich.Connector.Data.Repositories
 			var index = apiInformation.UrlPath.IndexOf("?");
 			string relativePath = index > 0 ? apiInformation.UrlPath.Substring(0, index) : apiInformation.UrlPath;
 			string query = index > 0 ? apiInformation.UrlPath.Substring(index) : string.Empty;
-            query = $"{query}&transferToken={transferToken}";
+			if (transferToken != null)
+            {
+				if (!string.IsNullOrEmpty(query))
+                {
+					query = $"{query}&transferToken={transferToken}";
+                } else
+                {
+					query = $"?transferToken={transferToken}";
+				}
+            }
 
             UriBuilder builder = new UriBuilder("https", apiInformation.HostName, -1, relativePath, query);
 			using (var requestMessage = new HttpRequestMessage(HttpMethod.Get, builder.ToString()))
 			{
-				//if (string.IsNullOrEmpty(apiInformation.AuthHeader))
-				//{
-				//	requestMessage.Headers.Authorization = new AuthenticationHeaderValue(apiInformation.Token.token_type, apiInformation.Token.access_token);
-				//}
-				//else
-				//{
-				//	requestMessage.Headers.Add(apiInformation.AuthHeader, apiInformation.Token.access_token);
-				//}
-				requestMessage.Headers.Add("accept", "application/json");
+				if (!string.IsNullOrWhiteSpace(apiInformation.Token?.access_token))
+				{
+					if (string.IsNullOrEmpty(apiInformation.AuthHeader))
+					{
+						requestMessage.Headers.Authorization = new AuthenticationHeaderValue(apiInformation.Token.token_type, apiInformation.Token.access_token);
+					}
+					else
+					{
+						requestMessage.Headers.Add(apiInformation.AuthHeader, apiInformation.Token.access_token);
+					}
+				}
+                requestMessage.Headers.Add("accept", "application/json");
 
 				var result = await _httpClient.SendAsync(requestMessage);
 

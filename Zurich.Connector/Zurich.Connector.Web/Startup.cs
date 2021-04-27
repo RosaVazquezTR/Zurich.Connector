@@ -24,6 +24,7 @@ using Microsoft.IdentityModel.Clients.ActiveDirectory;
 using Zurich.Common.Models;
 using Microsoft.Data.SqlClient;
 using Microsoft.Data.SqlClient.AlwaysEncrypted.AzureKeyVaultProvider;
+using Zurich.Connector.Data.Services;
 
 namespace Zurich.Connector.Web
 {
@@ -77,7 +78,10 @@ namespace Zurich.Connector.Web
             .AddTransientHttpErrorPolicy(policy => policy.WaitAndRetryAsync(new[] { TimeSpan.FromSeconds(1) }));
 
             services.AddControllers();
+            services.AddScoped<DataMappingFactory>();
             services.AddScoped<IDataMapping, DataMapping>();
+            services.AddScoped<DataMappingOAuth>();
+            services.AddScoped<DataMappingTransfer>();
             services.AddScoped<IDataMappingRepository, DataMappingRepository>();
             services.AddScoped<IRepository, Repository>();
             services.AddSwaggerGen(c =>

@@ -12,6 +12,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Zurich.Connector.Data.DataMap;
 using Zurich.Connector.Data.Model;
+using Zurich.Connector.Data.Services;
 
 namespace Zurich.Connector.Web.Controllers
 {
@@ -20,20 +21,23 @@ namespace Zurich.Connector.Web.Controllers
     public class ConnectorController : ControllerBase
     {
         private IDataMapping _dataMapping;
-        public ConnectorController(IDataMapping dataMapping)
+        private DataMappingFactory _dataMappingFactory;
+        public ConnectorController(IDataMapping dataMapping, DataMappingFactory dataMappingFactory)
         {
             _dataMapping = dataMapping;
+            _dataMappingFactory = dataMappingFactory;
         }
 
         [HttpGet]
-        public async Task<ActionResult<dynamic>> ConnectorData([FromQuery] int connectorId, [FromQuery] string transferToken, [FromQuery] string hostname)
+        public async Task<ActionResult<dynamic>> ConnectorData([FromQuery] string appCode, [FromQuery] DataType data, [FromQuery] string transferToken, [FromQuery] string hostname)
         {
             var query = Request.Query;
             //var connectorId = query["id"];
             //var transferToken = query["transferToken"];
             //var hostname = query["hostname"];
 
-            var response = await _dataMapping.Get<dynamic>("PLCUS", DataType.History, transferToken);
+            //var response = await _dataMappingFactory.GetResults("PLCUS", DataType.History, transferToken);
+            var response = await _dataMappingFactory.GetResults(appCode, data, transferToken);
             //foreach (var matter in response)
             //{
             //    // Hardcoding in domain for now. Will have to handle dynamic domain soon.

@@ -23,11 +23,11 @@ namespace Zurich.Connector.Data.DataMap
 		protected IOAuthService _oAuthService;
 		protected ILogger<DataMappingBase> _logger;
 
-		public async virtual Task<T> Get<T>(string appCode, DataType dataType, string transferToken)
+		public async virtual Task<T> Get<T>(string appCode, DataType dataType, DataMappingClass dataTypeInformation, string transferToken)
 		{
 			T results = default(T);
 
-            DataMappingClass dataTypeInformation = await this.RetrieveProductInformationMap(appCode, dataType); //move up a service
+            //DataMappingClass dataTypeInformation = await this.RetrieveProductInformationMap(appCode, dataType); //move up a service
 
             if (dataTypeInformation == null)
 			{
@@ -39,7 +39,7 @@ namespace Zurich.Connector.Data.DataMap
                 // TODO: Grab the domains after Anu's change
                 ApiInformation apiInfo = new ApiInformation() { AppCode = dataTypeInformation.AppCode, HostName = "us.practicallaw.qed.thomsonreuters.com", UrlPath = dataTypeInformation.Api.Url, AuthHeader = dataTypeInformation.Api.AuthHeader, Token = null };
                 //ApiInformation apiInfo = new ApiInformation() { AppCode = dataTypeInformation.AppCode, HostName = "cloudiManage.com", UrlPath = dataTypeInformation.Api.Url, AuthHeader = dataTypeInformation.Api.AuthHeader, Token = token };
-				apiInfo.UrlPath = await this.UpdateUrl(appCode, apiInfo.UrlPath, transferToken);
+				apiInfo.UrlPath = await this.UpdateUrl(appCode, apiInfo.UrlPath, dataTypeInformation, transferToken);
 
 				var response = await _repository.Get(apiInfo, transferToken);
 
@@ -63,7 +63,7 @@ namespace Zurich.Connector.Data.DataMap
 			return dataTypeInformation;
 		}
 
-		public async virtual Task<string> UpdateUrl(string appCode, string urlPath, string transferToken)
+		public async virtual Task<string> UpdateUrl(string appCode, string urlPath, DataMappingClass dataTypeInformation, string transferToken)
 		{
 			string newUrlPath = urlPath;
 			// Find all areas that have { } in url. ie. /work/api/v2/customers/{UserInfo.customer_id}/documents
@@ -78,8 +78,9 @@ namespace Zurich.Connector.Data.DataMap
 
 				if (enumType != DataType.None)
 				{
+					dataTypeInformation = await this.RetrieveProductInformationMap(appCode, enumType);
 					// Make api call to get the information for the url variable inside { }
-					JToken result = await this.Get<JToken>(appCode, enumType, transferToken);
+					JToken result = await this.Get<JToken>(appCode, enumType, dataTypeInformation, transferToken);
 					for (int i = 1; i < splitString.Count(); i++)
 					{
 						result = result[splitString[i]];
@@ -125,28 +126,37 @@ namespace Zurich.Connector.Data.DataMap
 			try
 			{
 				// what to do here if this is an object rather than an array
-				List<dynamic> results = new List<dynamic>();
 				response = JsonConvert.DeserializeObject<JToken>(stringResponse);
-				foreach(var result in response)
-                {
-					dynamic stuff = new JObject();
-					foreach (var property in propertyMap)
+				if (response is JArray)
+				{
+					List<dynamic> results = new List<dynamic>();
+					foreach (var result in response)
 					{
-						// Get the correct json property when not on the same level
-						string[] resultsLocation = property.APIProperty.Split('.');
-						var tempResult = result;
-						foreach (string location in resultsLocation)
-						{
-							tempResult = tempResult[location];
-						}
+						//dynamic stuff = new JObject();
+						//foreach (var property in propertyMap)
+						//{
+						//	// Get the correct json property when not on the same level
+						//	string[] resultsLocation = property.APIProperty.Split('.');
+						//	var tempResult = result;
+						//	foreach (string location in resultsLocation)
+						//	{
+						//		tempResult = tempResult[location];
+						//	}
 
-						stuff[property.CDMProperty] = tempResult;
+						//	stuff[property.CDMProperty] = tempResult;
+						//}
+						results.Add(MapResult(propertyMap, result));
+
 					}
-					results.Add(stuff);
+					return (dynamic)results;
+				} else if (response is JObject)
+                {
+					return MapResult(propertyMap, resultLocation);
+                } else
+                {
+					throw new Exception("JSON response from API not recognized.");
+                }
 
-				}
-
-				return (dynamic)results;
 			}
 			catch (Exception e)
 			{
@@ -154,16 +164,25 @@ namespace Zurich.Connector.Data.DataMap
 				//Should we throw the exception here?
 			}
 
-			
-
-			propertyMap.ForEach(property =>
-			{
-				
-			});
-
-
-
             return default(T);
+		}
+
+		private dynamic MapResult(List<DataMappingProperty> properties, dynamic apiResult)
+        {
+			dynamic cdmResult = new JObject();
+			foreach (var property in properties)
+			{
+				// Get the correct json property when not on the same level
+				string[] resultsLocation = property.APIProperty.Split('.');
+				var tempResult = apiResult;
+				foreach (string location in resultsLocation)
+				{
+					tempResult = tempResult[location];
+				}
+
+				cdmResult[property.CDMProperty] = tempResult;
+			}
+			return cdmResult;
 		}
 
 	}

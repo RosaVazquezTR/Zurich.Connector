@@ -43,16 +43,16 @@ namespace Zurich.Connector.Data.Model
         /// </summary>
         public string Type { get; set; }
         /// <summary>
-        /// Auth url that will be used during the OAuth process
+        /// OAuth information that will be used during the OAuth process
         /// </summary>
-        public DataMappingOAuth OAuth { get; set; }
+        public DataMappingOAuthType OAuth { get; set; }
 
     }
 
     /// <summary>
     /// Information needed to use the OAuth type
     /// </summary>
-    public class DataMappingOAuth
+    public class DataMappingOAuthType
     {
         /// <summary>
         /// Auth url that will be used during the OAuth process
