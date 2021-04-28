@@ -14,5 +14,5 @@ variables:
   - name: subnetPreFix
     value: 'connector'
   - name: swaggerEndpoint
-    value: 'https://connectorsswebapici.azurewebsites.net/swagger/v1/swagger.json'
+    value: 'https://connectorswebapici.azurewebsites.net/swagger/v1/swagger.json'
     
