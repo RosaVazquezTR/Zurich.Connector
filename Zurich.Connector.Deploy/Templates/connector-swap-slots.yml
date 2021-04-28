@@ -1,0 +1,28 @@
+parameters:
+  - name: environmentName
+    type: string
+  - name: resourceGroup
+    type: string
+  - name: connectorServiceName
+    type: string
+  - name: slotName
+    type: string
+  - name: subscriptionName
+    type: string
+
+jobs:
+  - deployment: ConnectorSlot
+    environment: ${{ parameters.environmentName }}
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+            - checkout: self
+            - checkout: ZurichDeploy
+            - task: AzureAppServiceManage@0
+              displayName: 'Swap Slots: ${{ parameters.connectorServiceName }}${{ parameters.environmentName }} ${{ parameters.slotName }} Slot into Main'
+              inputs:
+                azureSubscription: ${{ parameters.subscriptionName }}
+                WebAppName: '${{ parameters.connectorServiceName }}${{ parameters.environmentName }}'
+                ResourceGroupName: '${{ parameters.resourceGroup }}'
+                SourceSlot: '${{ parameters.slotName }}'

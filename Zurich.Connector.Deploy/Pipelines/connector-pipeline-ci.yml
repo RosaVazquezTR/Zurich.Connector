@@ -82,38 +82,35 @@ stages:
                   vnetResourceGroup: ${{ variables.vnetResourceGroup }}
                   webDnsServer: ${{ variables.webDnsServer }}
 
-    - deployment: Connector
-      environment: CI
-      dependsOn: Prereqs
-      strategy:
-        runOnce:
-          deploy:
-            steps:
-              - checkout: self
-              - checkout: ZurichDeploy
-              - template: ../Templates/connector-deploy.yml
-                parameters:
-                  environmentName: ${{ variables.environmentName }}
-                  keyVault: '${{ variables.keyVault }}'
-                  projectName: '${{ variables.projectName }}'
-                  resourceGroup: ${{ variables.resourceGroup }}
-                  connectorServiceName: ${{ variables.connectorServiceName }}
-                  slotName: ${{ variables.slotName}}
-                  subscriptionName: ${{ variables.subscriptionName }}
-# - stage: Swap_Slots
-#   dependsOn: CI
-#   condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'master'))
-#   jobs:
-#     - template: ../Templates/gps-swap-slots.yml
-#       parameters:
-#         appConfigurationLabel: ${{ variables.appConfigurationLabel }}
-#         appConfigurationName: ${{ variables.appConfigurationName }}
-#         appConfigurationPath: ${{ variables.appConfigurationPath }}
-#         environmentName: ${{ variables.environmentName }}
-#         graphProxyServerName: ${{ variables.graphProxyServerName }}
-#         resourceGroup: ${{ variables.resourceGroup }}
-#         slotName: ${{ variables.slotName }}
-#         subscriptionName: ${{ variables.subscriptionName }}
+    # - deployment: Connector
+    #   environment: CI
+    #   dependsOn: Prereqs
+    #   strategy:
+    #     runOnce:
+    #       deploy:
+    #         steps:
+    #           - checkout: self
+    #           - checkout: ZurichDeploy
+    #           - template: ../Templates/connector-deploy.yml
+    #             parameters:
+    #               environmentName: ${{ variables.environmentName }}
+    #               keyVault: '${{ variables.keyVault }}'
+    #               projectName: '${{ variables.projectName }}'
+    #               resourceGroup: ${{ variables.resourceGroup }}
+    #               connectorServiceName: ${{ variables.connectorServiceName }}
+    #               slotName: ${{ variables.slotName}}
+    #               subscriptionName: ${{ variables.subscriptionName }}
+- stage: Swap_Slots
+  # dependsOn: CI
+  # condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'master'))
+  jobs:
+    - template: ../Templates/connector-swap-slots.yml
+      parameters:
+        environmentName: ${{ variables.environmentName }}
+        resourceGroup: ${{ variables.resourceGroup }}
+        connectorServiceName: ${{ variables.connectorServiceName }}
+        slotName: ${{ variables.slotName }}
+        subscriptionName: ${{ variables.subscriptionName }}
 # - stage: Update_APIM_Product
 #   dependsOn: Swap_Slots
 #   jobs:
