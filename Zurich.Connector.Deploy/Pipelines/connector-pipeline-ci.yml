@@ -100,31 +100,31 @@ stages:
     #               connectorServiceName: ${{ variables.connectorServiceName }}
     #               slotName: ${{ variables.slotName}}
     #               subscriptionName: ${{ variables.subscriptionName }}
-- stage: Swap_Slots
-  # dependsOn: CI
-  # condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'master'))
+# - stage: Swap_Slots
+#   dependsOn: CI
+#   condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'master'))
+#   jobs:
+#     - template: ../Templates/connector-swap-slots.yml
+#       parameters:
+#         environmentName: ${{ variables.environmentName }}
+#         resourceGroup: ${{ variables.resourceGroup }}
+#         connectorServiceName: ${{ variables.connectorServiceName }}
+#         slotName: ${{ variables.slotName }}
+#         subscriptionName: ${{ variables.subscriptionName }}
+- stage: Update_APIM_Product
+ # dependsOn: Swap_Slots
   jobs:
-    - template: ../Templates/connector-swap-slots.yml
+    - template: ../Templates/connector-post-swap-slots.yml
       parameters:
+        apiId: ${{ variables.apiId }}
+        apimName: ${{ variables.apimName }}
+        apimResourceGroup: ${{ variables.apimResourceGroup }}
+        apiVersion: ${{ variables.apiVersion }}
         environmentName: ${{ variables.environmentName }}
+        groups: ${{ variables.groups }}
+        productDescription: ${{ variables.productDescription }}
+        productName: ${{ variables.productName }}
         resourceGroup: ${{ variables.resourceGroup }}
         connectorServiceName: ${{ variables.connectorServiceName }}
-        slotName: ${{ variables.slotName }}
         subscriptionName: ${{ variables.subscriptionName }}
-# - stage: Update_APIM_Product
-#   dependsOn: Swap_Slots
-#   jobs:
-#     - template: ../Templates/gps-post-swap-slots.yml
-#       parameters:
-#         apiId: ${{ variables.apiId }}
-#         apimName: ${{ variables.apimName }}
-#         apimResourceGroup: ${{ variables.apimResourceGroup }}
-#         apiVersion: ${{ variables.apiVersion }}
-#         environmentName: ${{ variables.environmentName }}
-#         graphProxyServerName: ${{ variables.graphProxyServerName }}
-#         groups: ${{ variables.groups }}
-#         productDescription: ${{ variables.productDescription }}
-#         productName: ${{ variables.productName }}
-#         resourceGroup: ${{ variables.resourceGroup }}
-#         subscriptionName: ${{ variables.subscriptionName }}
-#         swaggerEndpoint: ${{ variables.swaggerEndpoint }}
+        swaggerEndpoint: ${{ variables.swaggerEndpoint }}

@@ -1,6 +1,10 @@
 variables:
+  - name: apiVersion 
+    value: "v1" 
   - name: azureAdClientId
     value: 'b4a0d298-06dd-4738-83be-9b57653980b1'
+  - name: groups
+    value: "@('Administrators','Developers')"
   - name: keyVaultSubnets
     value: "@('connector-webApi-CI-Backend','hqh-VM-RelMgmt-backend')"
   - name: resourceGroup
@@ -9,5 +13,6 @@ variables:
     value: "@{SubNetName = 'WebApi'; SubNetCidr = '10.175.64.128/27'; SubNetType = 'backend'; subNetServiceEndpoints = @('Microsoft.KeyVault', 'Microsoft.Sql')}"
   - name: subnetPreFix
     value: 'connector'
-    
+  - name: swaggerEndpoint
+    value: 'https://connectorswebapici.azurewebsites.net/swagger/v1/swagger.json'
     

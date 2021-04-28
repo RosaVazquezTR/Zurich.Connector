@@ -1,8 +1,12 @@
 variables:
+  - name: apiId 
+    value: "connector"
   - name: appInsightsName
     value: 'ConnectorAppInsights'
   - name: keyVault
     value: 'connectorsKeyVault'
+  - name: productDescription 
+    value: "A connector service used to connect various sources"
   - name: projectName
     value: 'Zurich.connector'
   - name: connectorServiceName
