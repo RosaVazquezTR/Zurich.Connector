@@ -100,17 +100,17 @@ stages:
                   connectorServiceName: ${{ variables.connectorServiceName }}
                   slotName: ${{ variables.slotName}}
                   subscriptionName: ${{ variables.subscriptionName }}
-- stage: Swap_Slots
-  dependsOn: CI
-  condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'master'))
-  jobs:
-    - template: ../Templates/connector-swap-slots.yml
-      parameters:
-        environmentName: ${{ variables.environmentName }}
-        resourceGroup: ${{ variables.resourceGroup }}
-        connectorServiceName: ${{ variables.connectorServiceName }}
-        slotName: ${{ variables.slotName }}
-        subscriptionName: ${{ variables.subscriptionName }}
+# - stage: Swap_Slots
+#   dependsOn: CI
+#   condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'master'))
+#   jobs:
+#     - template: ../Templates/connector-swap-slots.yml
+#       parameters:
+#         environmentName: ${{ variables.environmentName }}
+#         resourceGroup: ${{ variables.resourceGroup }}
+#         connectorServiceName: ${{ variables.connectorServiceName }}
+#         slotName: ${{ variables.slotName }}
+#         subscriptionName: ${{ variables.subscriptionName }}
 - stage: Update_APIM_Product
   dependsOn: Swap_Slots
   jobs:
