@@ -1,6 +1,6 @@
 variables:
   - name: apiId 
-    value: "connector"
+    value: "connectors"
   - name: appInsightsName
     value: 'ConnectorAppInsights'
   - name: keyVault
@@ -10,6 +10,6 @@ variables:
   - name: productName 
     value: "legalApis"
   - name: projectName
-    value: 'Zurich.connector'
+    value: 'Zurich.Connector'
   - name: connectorServiceName
     value: 'connectorsWebApi'
