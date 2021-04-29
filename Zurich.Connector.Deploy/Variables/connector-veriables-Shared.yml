@@ -1,8 +1,8 @@
 variables:
   - name: apiId 
-    value: "connectors"
+    value: "connector"
   - name: appInsightsName
-    value: 'ConnectorsAppInsights'
+    value: 'ConnectorAppInsights'
   - name: keyVault
     value: 'connectorsKeyVault'
   - name: productDescription 
@@ -12,4 +12,4 @@ variables:
   - name: projectName
     value: 'Zurich.Connector'
   - name: connectorServiceName
-    value: 'connectorsWebApi'
+    value: 'connectorWebApi'
