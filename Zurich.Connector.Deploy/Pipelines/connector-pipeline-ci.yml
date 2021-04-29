@@ -112,7 +112,7 @@ stages:
 #         slotName: ${{ variables.slotName }}
 #         subscriptionName: ${{ variables.subscriptionName }}
 - stage: Update_APIM_Product
-  dependsOn: Swap_Slots
+  #dependsOn: Swap_Slots
   jobs:
     - template: ../Templates/connector-post-swap-slots.yml
       parameters:
