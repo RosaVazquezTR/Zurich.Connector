@@ -52,4 +52,5 @@ steps:
     deployToSlotOrASE: true
     ResourceGroupName: '${{parameters.resourceGroup}}'
     SlotName: '${{ parameters.slotName }}'
-    packageForLinux: '$(Pipeline.Workspace)/${{ parameters.projectName }}/${{ parameters.projectName }}.zip'
+    #TODO For some reason we get a Zurich.Connector.zip and a Zurich.Connectors.Web.zip we shoudl figure that out.
+    packageForLinux: '$(Pipeline.Workspace)/${{ parameters.projectName }}/${{ parameters.projectName }}.Web.zip'

@@ -33,11 +33,13 @@ stages:
 - stage: Build
   jobs:
     - job: 'Build'
-      displayName: 'Connector Build'
+      displayName: 'Connectors Build'
       steps:
-        - template: ../Templates/connector-build.yml
+        - checkout: self
+        - checkout: ZurichDeploy
+        - template: Templates\ZurichDeploy-BuildWebAPI.yml@ZurichDeploy
           parameters:
-           projectName: '${{ variables.projectName }}'
+            projectName: ${{ variables.projectName }}
 - stage: CI
   pool: DCO-HighQ-Platform-N
   dependsOn:
