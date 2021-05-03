@@ -1,0 +1,305 @@
+﻿{
+  "Connections": [
+    {
+      "Id": 1,
+      "AppCode": "iManage",
+      "Auth": {
+        "type": "OAuth",
+        "OAuth": {
+          "AuthUrl": "/auth/oauth2/authorize",
+          "TokenUrl": "/auth/oauth2/token",
+          "AuthHeader": "X-Auth-Token"
+        }
+      },
+      "Endpoint": {
+        "Name": "UserInfo",
+        "Api": {
+          "Path": "/api",
+          "MethodType": "GET"
+        },
+        "ResultLocation": "data.user",
+        "Mapping": [
+          {
+            "CDMProperty": "Name",
+            "APIProperty": "name"
+          },
+          {
+            "CDMProperty": "Id",
+            "APIProperty": "customer_id"
+          }
+        ]
+      }
+    },
+    {
+      "Id": 2,
+      "AppCode": "iManage",
+      "Auth": {
+        "type": "OAuth",
+        "OAuth": {
+          "AuthUrl": "/auth/oauth2/authorize",
+          "TokenUrl": "/auth/oauth2/token",
+          "AuthHeader": "X-Auth-Token"
+        }
+      },
+      "Endpoint": {
+        "Name": "Document",
+        "Api": {
+          "Path": "/work/api/v2/customers/{1.customer_id}/documents",
+          "MethodType": "GET"
+        },
+        "ResultLocation": "data.results",
+        "Mapping": [
+          {
+            "CDMProperty": "Name",
+            "APIProperty": "name"
+          },
+          {
+            "CDMProperty": "Id",
+            "APIProperty": "id"
+          },
+          {
+            "CDMProperty": "WebLink",
+            "APIProperty": ""
+          },
+          {
+            "CDMProperty": "LastOpened",
+            "APIProperty": ""
+          },
+          {
+            "CDMProperty": "LastUpdated",
+            "APIProperty": "file_edit_date"
+          },
+          {
+            "CDMProperty": "LastModifiedUser",
+            "APIProperty": "last_user_description"
+          },
+          {
+            "CDMProperty": "CreatedDate",
+            "APIProperty": "file_create_date"
+          },
+          {
+            "CDMProperty": "CreatedByUser",
+            "APIProperty": "author_description"
+          },
+          {
+            "CDMProperty": "FileType",
+            "APIProperty": "type"
+          },
+          {
+            "CDMProperty": "FileTypeExtended",
+            "APIProperty": "type_description"
+          }
+        ]
+      },
+    },
+    {
+      "Id": 3,
+      "AppCode": "iManage",
+      "Auth": {
+        "type": "OAuth",
+        "OAuth": {
+          "AuthUrl": "/auth/oauth2/authorize",
+          "TokenUrl": "/auth/oauth2/token",
+          "AuthHeader": "X-Auth-Token"
+        }
+      },
+      "Endpoint": {
+        "Name": "Matters",
+        "Api": {
+          "Path": "/work/api/v2/customers/{1.customer_id}/recent-workspaces?limit=5", // matters endpoint
+          "MethodType": "GET"
+        },
+        "ResultLocation": "data.results",
+        "Mapping": [
+          {
+            "CDMProperty": "Name",
+            "APIProperty": "name"
+          },
+          {
+            "CDMProperty": "Id",
+            "APIProperty": "id"
+          },
+          {
+            "CDMProperty": "Client",
+            "APIProperty": "custom1"
+          },
+          {
+            "CDMProperty": "ClientDescription",
+            "APIProperty": "custom1_description"
+          },
+          {
+            "CDMProperty": "WebLink",
+            "APIProperty": "iwl"
+          },
+          {
+            "CDMProperty": "Library",
+            "APIProperty": "database"
+          },
+          {
+            "CDMProperty": "Description",
+            "APIProperty": "description"
+          },
+          {
+            "CDMProperty": "Owner",
+            "APIProperty": "owner_description"
+          },
+          {
+            "CDMProperty": "LastUpdated",
+            "APIProperty": "edit_date"
+          },
+          {
+            "CDMProperty": "LastModifiedUser",
+            "APIProperty": "last_user_description"
+          },
+          {
+            "CDMProperty": "CreatedDate",
+            "APIProperty": "create_date"
+          }
+        ]
+      }
+    },
+    {
+      "Id": 4,
+      "AppCode": "PLCUS",
+      "Auth": {
+        "Type": "TransferToken"
+      },
+      "Endpoint": {
+        "Name": "History",
+        "Api": {
+          "Path": "/Micro/V4/RecentHistory?pageSize=25",
+          "MethodType": "GET"
+        },
+        "ResultLocation": "historyResult.results",
+        "Mapping": [
+          {
+            "CDMProperty": "EventType",
+            "APIProperty": "event"
+          },
+          {
+            "CDMProperty": "EventDate",
+            "APIProperty": "eventDate"
+          },
+          {
+            "CDMProperty": "EventDateUTC",
+            "APIProperty": "eventDateUtc"
+          },
+          {
+            "CDMProperty": "ClientId",
+            "APIProperty": "clientId"
+          },
+          {
+            "CDMProperty": "EventId",
+            "APIProperty": "eventId"
+          },
+          {
+            "CDMProperty": "ContentType",
+            "APIProperty": "item.contentType"
+          },
+          {
+            "CDMProperty": "ContentTypeDisplay",
+            "APIProperty": "item.contentTypeDisplay"
+          },
+          {
+            "CDMProperty": "DomainType",
+            "APIProperty": "item.domainType"
+          },
+          {
+            "CDMProperty": "Jurisdiction",
+            "APIProperty": "item.jurisdiction"
+          },
+          {
+            "CDMProperty": "SearchQuery",
+            "APIProperty": "item.queryString"
+          },
+          {
+            "CDMProperty": "SearchCount",
+            "APIProperty": "item.searchCount"
+          },
+          {
+            "CDMProperty": "SearchType",
+            "APIProperty": "item.searchDescription.[0].description"
+          },
+          {
+            "CDMProperty": "WebLink",
+            "APIProperty": "item.searchLink"
+          },
+          {
+            "CDMProperty": "Citation",
+            "APIProperty": "item.citation"
+          },
+          {
+            "CDMProperty": "Metadata",
+            "APIProperty": "item.metadata"
+          },
+          {
+            "CDMProperty": "TruncatedTitle",
+            "APIProperty": "item.truncatedTitle"
+          },
+          {
+            "CDMProperty": "WebLink",
+            "APIProperty": "item.docLink"
+          }
+        ]
+      }
+    },
+    {
+      "Id": 5,
+      "AppCode": "HighQDoesntWorkATM",
+      "OAuth": {
+        "AuthUrl": "/oauth2/token",
+        "TokenUrl": "/oauth2/token"
+      },
+      "Endpoint": {
+        "Name": "Document",
+        "Api": {
+          "Path": "https://collabdemo2.hqdev.highq.com/collabdemo2/api/1/files",
+          "MethodType": "GET"
+        },
+        "ResultLocation": "data.results",
+        "Mapping": [
+          {
+            "CDMProperty": "Name",
+            "APIProperty": "documentname"
+          },
+          {
+            "CDMProperty": "Id",
+            "APIProperty": "documentID"
+          },
+          {
+            "CDMProperty": "WebLink",
+            "APIProperty": ""
+          },
+          {
+            "CDMProperty": "LastOpened",
+            "APIProperty": ""
+          },
+          {
+            "CDMProperty": "LastUpdated",
+            "APIProperty": "{modifiedby.firstName} {modifiedby.lastName}"
+          },
+          {
+            "CDMProperty": "LastModifiedUser",
+            "APIProperty": "last_user_description"
+          },
+          {
+            "CDMProperty": "CreatedDate",
+            "APIProperty": "createddate"
+          },
+          {
+            "CDMProperty": "CreatedByUser",
+            "APIProperty": "{createdby.firstName} {createdby.LastName}"
+          },
+          {
+            "CDMProperty": "FileType",
+            "APIProperty": ""
+          },
+          {
+            "CDMProperty": "FileTypeExtended",
+            "APIProperty": ""
+          }
+        ]
+      }
+    }
+  ]
+}

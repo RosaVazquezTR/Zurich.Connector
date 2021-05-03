@@ -20,23 +20,43 @@ namespace Zurich.Connector.Data.Model
     public class DataMappingConnection
     {
         /// <summary>
+        /// The connection id for the endpoint
+        /// </summary>
+        public string Id { get; set; }
+        /// <summary>
         /// The app code that should be used for the product
         /// </summary>
         public string AppCode { get; set; }
         /// <summary>
-        /// The OAuth information that will be used for the app
+        /// The Auth information that will be used for the app
         /// </summary>
-        public DataMappingOAuth OAuth { get; set; }
+        public DataMappingAuth Auth { get; set; }
         /// <summary>
         /// Types of data the apps support and the corresponding mapping
         /// </summary>
-        public List<DataMappingDataType> DataTypes { get; set; }
+        public DataMappingEndpoint Endpoint { get; set; }
     }
 
     /// <summary>
-    /// OAuth information that will be used to get information in the app.
+    /// Auth information that will be used to get information in the app.
     /// </summary>
-    public class DataMappingOAuth
+    public class DataMappingAuth
+    {
+        /// <summary>
+        /// Type of authorization the endpoint should use
+        /// </summary>
+        public AuthType Type { get; set; }
+        /// <summary>
+        /// OAuth information that will be used during the OAuth process
+        /// </summary>
+        public DataMappingOAuthType OAuth { get; set; }
+
+    }
+
+    /// <summary>
+    /// Information needed to use the OAuth type
+    /// </summary>
+    public class DataMappingOAuthType
     {
         /// <summary>
         /// Auth url that will be used during the OAuth process
@@ -54,10 +74,11 @@ namespace Zurich.Connector.Data.Model
         public string AuthHeader { get; set; }
     }
 
+
     /// <summary>
     /// Holds information about app apis and property mappings
     /// </summary>
-    public class DataMappingDataType
+    public class DataMappingEndpoint
     {
         /// <summary>
         /// The DataType of the api
@@ -101,7 +122,7 @@ namespace Zurich.Connector.Data.Model
         /// <summary>
         /// The endpoint path, can include some other information like calls elsewhere ie)/work/api/v2/customers/{UserInfo.customer_id}/documents"
         /// </summary>
-        public string Endpoint { get; set; }
+        public string Path { get; set; }
         /// <summary>
         /// API request type
         /// </summary>

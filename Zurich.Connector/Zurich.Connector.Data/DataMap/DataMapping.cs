@@ -23,7 +23,7 @@ namespace Zurich.Connector.Data.DataMap
         /// <param name="appCode">Application code to get the data from</param>
         /// <param name="dataType">Data type to retrieve</param>
         /// <returns>The T model based on the request or default(T)</returns>
-        Task<T> Get<T>(string appCode, DataType dataType);
+        Task<T> Get<T>(DataMappingClass dataTypeInformation, string transferToken = null);
 
         /// <summary>
         /// Passed in the appcode will pull the token
@@ -36,9 +36,9 @@ namespace Zurich.Connector.Data.DataMap
         /// Retreives the Map to be used for this product call
         /// </summary>
         /// <param name="appCode">Application code to get the data from</param>
-        /// <param name="dataType">Data type to retrieve</param>
+        /// <param name="hostname">The domain of the api being called</param>
         /// <returns>Class that can be used to map the data</returns>
-        Task<DataMappingClass> RetrieveProductInformationMap(string appCode, DataType dataType);
+        Task<DataMappingClass> RetrieveProductInformationMap(string connectionId, string hostname);
 
         /// <summary>
         /// This will update the url to have correct values replaced if dataMap is setup correctly
@@ -47,7 +47,7 @@ namespace Zurich.Connector.Data.DataMap
         /// <param name="appCode">Application code to get the data from</param>
         /// <param name="urlPath">Current url path to be used</param>
         /// <returns>The urlPath without formating</returns>
-        Task<string> UpdateUrl(string appCode, string urlPath);
+        Task<string> UpdateUrl(string urlPath, DataMappingClass dataTypeInformation, string transferToken = null);
 
         /// <summary>
         /// Method will map a string json object to the CDM object passed in

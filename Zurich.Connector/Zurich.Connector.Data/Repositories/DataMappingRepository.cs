@@ -23,7 +23,7 @@ namespace Zurich.Connector.Data.Repositories
         /// <param name="appCode">The current code to use to get the app</param>
         /// <param name="dataType">Type of data we want to retrieve</param>
         /// <returns>Mapping information for the call</returns>
-        Task<DataMappingClass> GetMap(string appCode, DataType dataType);
+        Task<DataMappingClass> GetMap(string connectionId);
     }
 
     public class DataMappingRepository : IDataMappingRepository
@@ -37,7 +37,7 @@ namespace Zurich.Connector.Data.Repositories
             _configuration = configuration;
         }
 
-        public async Task<DataMappingClass> GetMap(string appCode, DataType dataType)
+        public async Task<DataMappingClass> GetMap(string connectionId)
         {
             DataMappingFile file = await ReadFile();
             if (file == null)
@@ -45,38 +45,41 @@ namespace Zurich.Connector.Data.Repositories
                 return null;
             }
 
-            DataMappingConnection appMapping = GetDataMap(file, appCode, dataType);
+            DataMappingConnection appMapping = GetDataMap(file, connectionId);
             if (appMapping == null)
             {
                 return null;
             }
 
-            DataMappingDataType dataTypeMap = appMapping.DataTypes.FirstOrDefault();
+            DataMappingEndpoint endpointMap = appMapping.Endpoint;
 
-            if (dataTypeMap == null)
+            if (endpointMap == null)
             {
                 return null;
             }
 
             return new DataMappingClass()
             {
-                AppCode = appCode,
-                DataType = (DataType)Enum.Parse(typeof(DataType), dataTypeMap.Name, true),
-                Api = new DataMappingApiRequest() { Url = dataTypeMap.Api.Endpoint, MethodType = dataTypeMap.Api.MethodType, AuthHeader = appMapping.OAuth.AuthHeader },
-                Mapping = dataTypeMap.Mapping,
-                ResultLocation = dataTypeMap.ResultLocation
+                Id = appMapping.Id,
+                AppCode = appMapping.AppCode,
+                AuthType = appMapping.Auth.Type,
+                DataType = (DataType)Enum.Parse(typeof(DataType), endpointMap.Name, true),
+                Api = new DataMappingApiRequest() { Url = endpointMap.Api.Path, MethodType = endpointMap.Api.MethodType, AuthHeader = appMapping.Auth.OAuth?.AuthHeader },
+                Mapping = endpointMap.Mapping,
+                ResultLocation = endpointMap.ResultLocation
             };
+
         }
 
-        internal DataMappingConnection GetDataMap(DataMappingFile file, string appCode, DataType dataType)
+        internal DataMappingConnection GetDataMap(DataMappingFile file, string connectionId)
         {
             DataMappingConnection currentAppType = null;
             if (file != null)
             {
-                currentAppType = file.Connections.FirstOrDefault(x => x.AppCode.Equals(appCode, StringComparison.OrdinalIgnoreCase));
+                currentAppType = file.Connections.FirstOrDefault(x => x.Id.Equals(connectionId, StringComparison.OrdinalIgnoreCase));
                 if (currentAppType != null)
                 {
-                    currentAppType.DataTypes = currentAppType.DataTypes.Where(x => x.Name.Equals(dataType.ToString(), StringComparison.OrdinalIgnoreCase)).ToList();
+                    currentAppType.Endpoint = currentAppType.Endpoint;
                 }
             }
             return currentAppType;
@@ -85,7 +88,9 @@ namespace Zurich.Connector.Data.Repositories
         internal async Task<DataMappingFile> ReadFile()
         {
             DataMappingFile file = null;
-            var filePath = _configuration.GetValue<string>(AppConfigKeys.DataMappingFilePath);
+            // TODO: Add to app settings 
+            // D:\\home\\site\\wwwroot\\DataMapping\\DataMapping.json
+            var filePath = @"DataMapping.json";
 
             if (File.Exists(filePath))
             {

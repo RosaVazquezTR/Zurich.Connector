@@ -22,6 +22,11 @@ namespace Zurich.Connector.Data.Model
         public string Url { get; set; }
 
         /// <summary>
+        /// Domain of the host
+        /// </summary>
+        public string Hostname { get; set; }
+
+        /// <summary>
         /// Header that should be used for a request
         /// </summary>
         public string AuthHeader { get; set; }

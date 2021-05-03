@@ -15,6 +15,14 @@ namespace Zurich.Connector.Data.Model
         Document,
         Matters,
         Search,
-        UserInfo
+        UserInfo,
+        History
+    }
+
+    public enum AuthType
+    {
+        None,
+        TransferToken,
+        OAuth
     }
 }

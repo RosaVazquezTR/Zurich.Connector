@@ -7,6 +7,8 @@ using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Zurich.Connector.Data.Model;
+using System.Collections.Specialized;
+using System.Web;
 
 namespace Zurich.Connector.Data.Repositories
 {
@@ -20,7 +22,7 @@ namespace Zurich.Connector.Data.Repositories
 		/// </summary>
 		/// <param name="apiInformation">Holds information around how to make the api call</param>
 		/// <returns>a string</returns>
-		Task<string> Get(ApiInformation apiInformation);
+		Task<string> Get(ApiInformation apiInformation, NameValueCollection query = null);
 
 		/// <summary>
 		/// Makes a POST call
@@ -55,31 +57,35 @@ namespace Zurich.Connector.Data.Repositories
 			_logger = logger;
 		}
 
-		public async Task<string> Get(ApiInformation apiInformation)
+		public async Task<string> Get(ApiInformation apiInformation, NameValueCollection parameters)
 		{
-			if (string.IsNullOrWhiteSpace(apiInformation.Token?.access_token))
-			{
-				return string.Empty;
-			}
 
 			// TODO: We need this to parse a query string from the relative url. 
 			// Eventually the query params should be passed in and this could be removed.
 			var index = apiInformation.UrlPath.IndexOf("?");
 			string relativePath = index > 0 ? apiInformation.UrlPath.Substring(0, index) : apiInformation.UrlPath;
 			string query = index > 0 ? apiInformation.UrlPath.Substring(index) : string.Empty;
+			NameValueCollection paramCollection = HttpUtility.ParseQueryString(query);
+			if (parameters != null)
+				paramCollection.Add(parameters);
 
-			UriBuilder builder = new UriBuilder("https", apiInformation.HostName, -1, relativePath, query);
+            UriBuilder builder = new UriBuilder("https", apiInformation.HostName, -1, relativePath);
+			builder.Query = paramCollection.ToString();
+
 			using (var requestMessage = new HttpRequestMessage(HttpMethod.Get, builder.ToString()))
 			{
-				if (string.IsNullOrEmpty(apiInformation.AuthHeader))
+				if (!string.IsNullOrWhiteSpace(apiInformation.Token?.access_token))
 				{
-					requestMessage.Headers.Authorization = new AuthenticationHeaderValue(apiInformation.Token.token_type, apiInformation.Token.access_token);
+					if (string.IsNullOrEmpty(apiInformation.AuthHeader))
+					{
+						requestMessage.Headers.Authorization = new AuthenticationHeaderValue(apiInformation.Token.token_type, apiInformation.Token.access_token);
+					}
+					else
+					{
+						requestMessage.Headers.Add(apiInformation.AuthHeader, apiInformation.Token.access_token);
+					}
 				}
-				else
-				{
-					requestMessage.Headers.Add(apiInformation.AuthHeader, apiInformation.Token.access_token);
-				}
-				requestMessage.Headers.Add("accept", "application/json");
+                requestMessage.Headers.Add("accept", "application/json");
 
 				var result = await _httpClient.SendAsync(requestMessage);
 

@@ -12,9 +12,19 @@ namespace Zurich.Connector.Data.Model
     public class DataMappingClass
     {
         /// <summary>
+        /// The connection id that should be used for the endpoint
+        /// </summary>
+        public string Id { get; set; }
+
+        /// <summary>
 		/// The code used for the application we are calling
 		/// </summary>
         public string AppCode { get; set; }
+
+        /// <summary>
+		/// The type of authorization used in this endpoint
+		/// </summary>
+        public AuthType AuthType { get; set; }
 
         /// <summary>
         /// The DataType of a given request
