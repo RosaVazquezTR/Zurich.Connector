@@ -19,10 +19,24 @@ namespace Zurich.Connector.Data.Model
         History
     }
 
+    /// <summary>
+    /// Used to describe the available Authorization Types from the DataMapping Repo
+    /// </summary>
     public enum AuthType
     {
         None,
         TransferToken,
         OAuth
+    }
+
+    /// <summary>
+    /// Used to describe the available Entity Types from the DataMapping Repo
+    /// </summary>
+    public enum EntityType
+    {
+        Document,
+        History,
+        Matters,
+        UserProfile
     }
 }

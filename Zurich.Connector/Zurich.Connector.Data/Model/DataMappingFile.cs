@@ -24,6 +24,10 @@ namespace Zurich.Connector.Data.Model
         /// </summary>
         public string Id { get; set; }
         /// <summary>
+        /// The type of connector
+        /// </summary>
+        public EntityType EntityType { get; set; }
+        /// <summary>
         /// The app code that should be used for the product
         /// </summary>
         public string AppCode { get; set; }

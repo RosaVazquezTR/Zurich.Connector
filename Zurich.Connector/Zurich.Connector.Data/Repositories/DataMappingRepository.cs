@@ -24,6 +24,14 @@ namespace Zurich.Connector.Data.Repositories
         /// <param name="dataType">Type of data we want to retrieve</param>
         /// <returns>Mapping information for the call</returns>
         Task<DataMappingClass> GetMap(string connectionId);
+
+        /// <summary>
+        /// Gets all connections from the data mapping file
+        /// </summary>
+        /// <param name="appCode">The current code to use to get the app</param>
+        /// <param name="dataType">Type of data we want to retrieve</param>
+        /// <returns>List of Data Mapping Connections</returns>
+        Task<List<DataMappingConnection>> GetConnectors();
     }
 
     public class DataMappingRepository : IDataMappingRepository
@@ -69,6 +77,17 @@ namespace Zurich.Connector.Data.Repositories
                 ResultLocation = endpointMap.ResultLocation
             };
 
+        }
+
+        public async Task<List<DataMappingConnection>> GetConnectors()
+        {
+            DataMappingFile file = await ReadFile();
+            if (file == null)
+            {
+                return null;
+            }
+
+            return file.Connections;
         }
 
         internal DataMappingConnection GetDataMap(DataMappingFile file, string connectionId)

@@ -2,9 +2,10 @@
   "Connections": [
     {
       "Id": 1,
+      "EntityType": "UserProfile",
       "AppCode": "iManage",
       "Auth": {
-        "type": "OAuth",
+        "Type": "OAuth",
         "OAuth": {
           "AuthUrl": "/auth/oauth2/authorize",
           "TokenUrl": "/auth/oauth2/token",
@@ -32,9 +33,10 @@
     },
     {
       "Id": 2,
+      "EntityType": "Document",
       "AppCode": "iManage",
       "Auth": {
-        "type": "OAuth",
+        "Type": "OAuth",
         "OAuth": {
           "AuthUrl": "/auth/oauth2/authorize",
           "TokenUrl": "/auth/oauth2/token",
@@ -90,13 +92,14 @@
             "APIProperty": "type_description"
           }
         ]
-      },
+      }
     },
     {
       "Id": 3,
       "AppCode": "iManage",
+      "EntityType": "Matters",
       "Auth": {
-        "type": "OAuth",
+        "Type": "OAuth",
         "OAuth": {
           "AuthUrl": "/auth/oauth2/authorize",
           "TokenUrl": "/auth/oauth2/token",
@@ -160,6 +163,7 @@
     },
     {
       "Id": 4,
+      "EntityType": "History",
       "AppCode": "PLCUS",
       "Auth": {
         "Type": "TransferToken"
@@ -245,10 +249,15 @@
     },
     {
       "Id": 5,
+      "EntityType": "Document",
       "AppCode": "HighQDoesntWorkATM",
-      "OAuth": {
-        "AuthUrl": "/oauth2/token",
-        "TokenUrl": "/oauth2/token"
+      "Auth": {
+        "Type": "OAuth",
+        "OAuth": {
+          "AuthUrl": "/auth/oauth2/authorize",
+          "TokenUrl": "/auth/oauth2/token",
+          "AuthHeader": "X-Auth-Token"
+        }
       },
       "Endpoint": {
         "Name": "Document",
