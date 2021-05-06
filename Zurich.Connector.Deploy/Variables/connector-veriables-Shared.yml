@@ -2,7 +2,7 @@ variables:
   - name: apiId 
     value: "connector"
   - name: appInsightsName
-    value: 'ConnectorAppInsights'
+    value: 'ConnectorsAppInsights'
   - name: keyVault
     value: 'connectorsKeyVault'
   - name: productDescription 
