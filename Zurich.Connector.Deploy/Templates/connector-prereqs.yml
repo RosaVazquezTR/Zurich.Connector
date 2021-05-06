@@ -57,13 +57,7 @@ parameters:
     type: string
 
 steps:
-  # - task: AzurePowerShell@5
-  #   inputs:
-  #     azureSubscription: 'DCO-HighQ-Platform-N'
-  #     ScriptType: 'InlineScript'
-  #     Inline: |
-  #       dir env:
-  #     azurePowerShellVersion: 'LatestVersion'
+ 
   - template: Templates\ZurichDeploy-SetupResourceGroup.yml@ZurichDeploy
     parameters:
       environmentName: '${{ parameters.environmentName }}'
