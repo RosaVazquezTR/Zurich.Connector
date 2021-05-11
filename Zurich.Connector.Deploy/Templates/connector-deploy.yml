@@ -1,0 +1,56 @@
+parameters:
+- name: environmentName
+  type: string
+- name: keyVault
+  type: string
+- name: projectName
+  type: string
+- name: resourceGroup
+  type: string
+- name: connectorServiceName
+  type: string
+- name: slotName
+  type: string
+- name: subscriptionName
+  type: string
+
+steps:
+- task: AzurePowerShell@5
+  inputs:
+    azureSubscription: 'DCO-HighQ-Platform-N'
+    ScriptType: 'InlineScript'
+    Inline: |
+      dir env:
+    azurePowerShellVersion: 'LatestVersion'
+- task: AzurePowerShell@5
+  inputs:
+    azureSubscription: 'DCO-HighQ-Platform-N'
+    ScriptType: 'InlineScript'
+    Inline: |
+      Get-ChildItem -Recurse
+    azurePowerShellVersion: 'LatestVersion'
+- task: CmdLine@2
+  inputs:
+    script: |
+      echo 'Write your commands here.' 
+      tree $(Pipeline.Workspace) /f
+- task: PowerShell@2
+  inputs:
+    targetType: 'inline'
+    script: |
+      Write-Host  "##vso[task.setvariable variable=KeyVault.Endpoint;isSecret=false] https://${{ parameters.keyVault }}${{ parameters.environmentName }}.vault.azure.net/"
+# - task: FileTransform@1
+#   inputs:
+#     folderPath: '$(Pipeline.Workspace)/${{ parameters.projectName }}/${{ parameters.projectName }}.zip'
+#     fileType: 'json'
+#     targetFiles: 'appsettings.${{ parameters.environmentName }}.json'
+- task: AzureRmWebAppDeployment@4
+  displayName: 'Deploy App'
+  inputs:
+    azureSubscription: ${{parameters.subscriptionName}}
+    WebAppName: '${{parameters.connectorServiceName}}${{parameters.environmentName}}'
+    deployToSlotOrASE: true
+    ResourceGroupName: '${{parameters.resourceGroup}}'
+    SlotName: '${{ parameters.slotName }}'
+    #TODO For some reason we get a Zurich.Connector.zip and a Zurich.Connectors.Web.zip we shoudl figure that out.
+    packageForLinux: '$(Pipeline.Workspace)/${{ parameters.projectName }}/${{ parameters.projectName }}.Web.zip'

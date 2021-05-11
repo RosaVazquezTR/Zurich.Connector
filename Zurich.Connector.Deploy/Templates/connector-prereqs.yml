@@ -1,0 +1,142 @@
+parameters:
+  - name: appInsightsName
+    type: string
+  - name: availabilityAlertGroups
+    type: string
+  - name: azureAdClientId
+    type: string
+  - name: azureAdClientSecret
+    type: string
+  - name: developerActionGroupName
+    type: string
+  - name: developerEmailAddress
+    type: string
+  - name: developerEmailName
+    type: string
+  - name: environmentName
+    type: string
+  - name: environmentType
+    type: string
+  - name: flowWebhook
+    type: string
+  - name: flowWebhookName
+    type: string
+  - name: keyVault
+    type: string
+  - name: keyVaultSubnets
+    type: string
+  - name: notificationEmailGroup
+    type: string
+  - name: resourceGroup
+    type: string
+  - name: resourceLocation
+    type: string
+  - name: resourceOwner
+    type: string
+  - name: routeTableName
+    type: string
+  - name: connectorServiceName
+    type: string
+  - name: smartDetectionRuleNames
+    type: string
+  - name: subnetPreFix
+    type: string
+  - name: subnetConnectorBackend
+    type: string
+  - name: subscriptionId
+    type: string
+  - name: subscriptionName
+    type: string
+  - name: tagNames
+    type: string
+  - name: vnetName
+    type: string
+  - name: vnetResourceGroup
+    type: string
+  - name: webDnsServer
+    type: string
+
+steps:
+ 
+  - template: Templates\ZurichDeploy-SetupResourceGroup.yml@ZurichDeploy
+    parameters:
+      environmentName: '${{ parameters.environmentName }}'
+      environmentType: '${{ parameters.environmentType }}'
+      resourceGroup: '${{ parameters.resourceGroup }}'
+      resourceLocation: '${{ parameters.resourceLocation }}'
+      resourceOwner: '${{ parameters.resourceOwner }}'
+      subscriptionId: '${{ parameters.subscriptionId }}'
+      subscriptionName: '${{ parameters.subscriptionName }}'
+      tagNames: '${{ parameters.tagNames }}'
+
+  - template: Templates\ZurichDeploy-SetupAppInsights.yml@ZurichDeploy
+    parameters:
+      appInsightsName: ${{ parameters.appInsightsName }}
+      availabilityAlertGroups: ${{ parameters.availabilityAlertGroups }}
+      developerActionGroupName: ${{ parameters.developerActionGroupName }}
+      developerEmailAddress: ${{ parameters.developerEmailAddress }}
+      developerEmailName: ${{ parameters.developerEmailName }}
+      environmentName: ${{ parameters.environmentName }}
+      flowWebhook: ${{ parameters.flowWebhook }}
+      flowWebhookName: ${{ parameters.flowWebhookName }}
+      ltioL1ActionGroupName: ''
+      ltioL1EmailAddress: ''
+      ltioL1EmailName: ''
+      ltioL2ActionGroupName: ''
+      ltioL2EmailAddress: ''
+      ltioL2EmailName: ''
+      notificationEmailGroup: ${{ parameters.notificationEmailGroup }}
+      resourceGroup: ${{ parameters.resourceGroup }}
+      resourceLocation: ${{ parameters.resourceLocation }}
+      smartDetectionRuleNames: ${{ parameters.smartDetectionRuleNames }}
+      subscriptionId: ${{ parameters.subscriptionId }}
+      subscriptionName: ${{ parameters.subscriptionName }}
+  - task: AzureCLI@2
+    displayName: 'Create SubNet and NSG'
+    inputs:
+      azureSubscription: '${{ parameters.subscriptionName }}'
+      scriptType: ps
+      scriptLocation: inlineScript
+      inlineScript: |
+        Import-Module  -Name "$(Build.SourcesDirectory)/Zurich.Deploy/Scripts/AddSubnetandNSG.psm1"
+
+        $subnets = @(${{ parameters.subnetConnectorBackend }})
+
+        Add-SubNets -ResourceGroup "${{ parameters.vnetResourceGroup }}" -subnetPreFix "${{ parameters.subnetPreFix }}" -env "${{ parameters.environmentName }}" -Location "${{ parameters.resourceLocation }}" -RouteTableName "${{ parameters.routeTableName }}" -VirtualNetworkName "${{ parameters.vnetName }}" -subNets $subNets -armTemplateFolderLocation "$(Build.SourcesDirectory)/Zurich.Deploy/ArmTemplates"
+  - template: Templates\ZurichDeploy-AzureAppService.yml@ZurichDeploy
+    parameters:
+      appInsightsName: ${{ parameters.appInsightsName }}
+      appGatewayIp: '52.141.220.108'  #TODO: this should not be needed.
+      environmentName: ${{ parameters.environmentName }}
+      appServiceName: ${{ parameters.connectorServiceName }}
+      appServiceSubnet: ${{ parameters.subnetConnectorBackend}}
+      resourceGroup: ${{ parameters.resourceGroup }}
+      resourceLocation: '${{ parameters.resourceLocation }}'
+      subnetPreFix: ${{ parameters.subnetPrefix }}
+      subscriptionName: ${{ parameters.subscriptionName }}
+      vnetName: ${{ parameters.vnetName }}
+      webDnsServer: ${{ parameters.webDnsServer}}
+
+  - task: AzurePowerShell@4
+    displayName: 'Create Key Vault'
+    inputs:
+      azureSubscription: ${{ parameters.subscriptionName }}
+      ScriptPath: '$(Build.SourcesDirectory)/Zurich.Deploy/Scripts/SetupKeyVault.ps1'
+      ScriptArguments: '-resourceGroupName "${{ parameters.resourceGroup }}" -envName "${{ parameters.environmentName }}" -appId "${{ parameters.azureAdClientId }}" -vaultName "${{ parameters.keyVault }}" -vnetName "${{ parameters.vnetName }}" -vnetResourceGroupName "${{ parameters.vnetResourceGroup }}" -subNets ${{ parameters.keyVaultSubnets }} -verbose '
+      azurePowerShellVersion: LatestVersion
+
+  - task: AzurePowerShell@4
+    displayName: 'Grant KeyVault Access for App'
+    inputs:
+      azureSubscription: ${{ parameters.subscriptionName }}
+      ScriptPath: '$(Build.SourcesDirectory)/Zurich.Deploy/Scripts/GrantAppAccessToKeyVault.ps1'
+      ScriptArguments: '-resourceGroupName "${{ parameters.resourceGroup }}" -keyVaultName "${{ parameters.keyVault }}" -environmentName "${{ parameters.environmentName }}" -appName "${{ parameters.connectorServiceName }}"'
+      azurePowerShellVersion: LatestVersion
+
+  - task: AzurePowerShell@4
+    displayName: 'Populate Key Vault'
+    inputs:
+      azureSubscription: ${{ parameters.subscriptionName }}
+      ScriptPath: '$(Build.SourcesDirectory)/Zurich.Deploy/Scripts/PopulateKeyVault.ps1'
+      ScriptArguments: '-vaultName "${{ parameters.keyVault }}${{ parameters.environmentName }}" -nameValuePairsJson ''{"AzureAd--ClientId": "${{ parameters.azureAdClientId }}", "AzureAd--ClientSecret": "${{ parameters.azureAdClientSecret }}"}'' -verbose'
+      azurePowerShellVersion: LatestVersion
