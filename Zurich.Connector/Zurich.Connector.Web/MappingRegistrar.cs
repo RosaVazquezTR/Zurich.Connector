@@ -4,7 +4,7 @@ using AutoMapper;
 using Zurich.Connector.Data.Model;
 using Zurich.Connector.Web.Models;
 
-namespace LegalHome.Web
+namespace Zurich.Connector.Web
 {
 	public class MappingRegistrar : Profile
 	{

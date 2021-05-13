@@ -30,10 +30,18 @@ namespace Zurich.Connector.Web.Controllers
         [HttpGet("{id}/data")]
         public async Task<ActionResult<dynamic>> ConnectorData(string id, [FromQuery] string hostname, [FromQuery] string transferToken)
         {
-            var results = await _connectorService.GetConnectorData(id, hostname, transferToken);
-            if (results == null)
+            dynamic results;
+            try
             {
-                return NotFound("Connector or data not found");
+                results = await _connectorService.GetConnectorData(id, hostname, transferToken);
+                if (results == null)
+                {
+                    return NotFound("Connector or data not found");
+                }
+            } 
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
             }
 
             var jsonResults = JsonConvert.SerializeObject(results);
