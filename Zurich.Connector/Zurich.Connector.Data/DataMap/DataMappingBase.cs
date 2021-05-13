@@ -87,7 +87,6 @@ namespace Zurich.Connector.Data.DataMap
 
 					// Replace the url variable inside { }
 					string value = result.Value<string>();
-
 					newUrlPath = Regex.Replace(newUrlPath, stringFormat, value);
 				}
 			}
@@ -158,12 +157,15 @@ namespace Zurich.Connector.Data.DataMap
 			dynamic cdmResult = new JObject();
 			foreach (var property in properties)
 			{
+				if (cdmResult[property.CDMProperty] != null)
+					continue;
+
 				// Get the correct json property when not on the same level
 				string[] resultsLocation = property.APIProperty.Split('.');
 				var tempResult = apiResult;
 				foreach (string location in resultsLocation)
 				{
-					// check if result is part of an array
+					// Check if result is part of an array
 					if (location.Contains('['))
 					{
 						var match = Regex.Match(location, @"\[(.*?)\]");
@@ -177,7 +179,6 @@ namespace Zurich.Connector.Data.DataMap
 					if (tempResult == null)
 						break;
 				}
-
 				cdmResult[property.CDMProperty] = tempResult;
 			}
 			return cdmResult;
