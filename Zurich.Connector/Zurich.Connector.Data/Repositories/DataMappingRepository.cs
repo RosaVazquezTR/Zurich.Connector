@@ -107,9 +107,8 @@ namespace Zurich.Connector.Data.Repositories
         internal async Task<DataMappingFile> ReadFile()
         {
             DataMappingFile file = null;
-            // TODO: Add to app settings 
-            // D:\\home\\site\\wwwroot\\DataMapping\\DataMapping.json
-            var filePath = @"DataMapping.json";
+
+            var filePath = _configuration.GetValue<string>(AppConfigKeys.DataMappingFilePath);
 
             if (File.Exists(filePath))
             {

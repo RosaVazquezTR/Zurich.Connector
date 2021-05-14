@@ -5,14 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Remove="DataMapping.json" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="DataMapping.json" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="AutoMapper" Version="9.0.0" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="7.0.0" />
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.17.0" />
@@ -28,6 +20,12 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Zurich.Connector.App\Zurich.Connector.App.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="DataMapping.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
 </Project>
