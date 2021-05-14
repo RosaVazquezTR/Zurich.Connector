@@ -49,21 +49,21 @@ namespace Zurich.Connector.Web
                     builtConfig = configBuilder.Build();
 
                     // TODO: May not be using an app config in this RG. Update appsettings files 
-                    var connection = builtConfig.GetValue<string>("AppConfig:ConnectionString");
-                    if (!string.IsNullOrEmpty(connection))
-                    {
-                        configBuilder.AddAzureAppConfiguration(options =>
-                        {
-                            options.Connect(connection)
-                                .Select(KeyFilter.Any, "Beta")
-                                .UseFeatureFlags(featureOptions => {
-                                    featureOptions.CacheExpirationTime = TimeSpan.FromMinutes(5);
-                                    featureOptions.Label = "Beta";
-                                });
+                    //var connection = builtConfig.GetValue<string>("AppConfig:ConnectionString");
+                    //if (!string.IsNullOrEmpty(connection))
+                    //{
+                    //    configBuilder.AddAzureAppConfiguration(options =>
+                    //    {
+                    //        options.Connect(connection)
+                    //            .Select(KeyFilter.Any, "Beta")
+                    //            .UseFeatureFlags(featureOptions => {
+                    //                featureOptions.CacheExpirationTime = TimeSpan.FromMinutes(5);
+                    //                featureOptions.Label = "Beta";
+                    //            });
 
-                            configurationRefresher = options.GetRefresher();
-                        });
-                    }
+                    //        configurationRefresher = options.GetRefresher();
+                    //    });
+                    //}
                 })
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
