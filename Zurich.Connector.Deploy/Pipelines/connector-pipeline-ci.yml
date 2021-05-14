@@ -5,8 +5,7 @@
 # https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
 
 trigger:
-  none
-  # - master
+    - master
 
 pool:
   vmImage: 'windows-latest'
