@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using LegalHome.Web;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -8,6 +7,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Zurich.Connector.Data.Model;
 using Zurich.Connector.Data.Services;
+using Zurich.Connector.Web;
 using Zurich.Connector.Web.Controllers;
 
 namespace Zurich.Connector.Tests.ControllerTests
