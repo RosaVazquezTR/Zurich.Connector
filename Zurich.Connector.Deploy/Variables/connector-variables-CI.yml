@@ -3,6 +3,8 @@ variables:
     value: "v1" 
   - name: azureAdClientId
     value: 'b4a0d298-06dd-4738-83be-9b57653980b1'
+  - name: connectorServiceFQND
+    value: "connectorswebapici.azurewebsites.net"
   - name: groups
     value: "@('Administrators','Developers')"
   - name: keyVaultSubnets

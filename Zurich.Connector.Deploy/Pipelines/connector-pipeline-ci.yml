@@ -25,8 +25,8 @@ variables:
   value: 'Release'
 - template: Variables\ZurichDeploy-variables-Shared.yml@ZurichDeploy
 - template: Variables\ZurichDeploy-variables-CI.yml@ZurichDeploy
-- template: ../Variables/connector-veriables-Shared.yml   
-- template: ../Variables/connector-veriables-CI.yml
+- template: ../Variables/connector-variables-Shared.yml   
+- template: ../Variables/connector-variables-CI.yml
 
 stages:
 - stage: Build
@@ -114,18 +114,28 @@ stages:
         subscriptionName: ${{ variables.subscriptionName }}
 - stage: Update_APIM_Product
   dependsOn: Swap_Slots
+  condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'master'))
   jobs:
-    - template: ../Templates/connector-post-swap-slots.yml
-      parameters:
-        apiId: ${{ variables.apiId }}
-        apimName: ${{ variables.apimName }}
-        apimResourceGroup: ${{ variables.apimResourceGroup }}
-        apiVersion: ${{ variables.apiVersion }}
-        environmentName: ${{ variables.environmentName }}
-        groups: ${{ variables.groups }}
-        productDescription: ${{ variables.productDescription }}
-        productName: ${{ variables.productName }}
-        resourceGroup: ${{ variables.resourceGroup }}
-        connectorServiceName: ${{ variables.connectorServiceName }}
-        subscriptionName: ${{ variables.subscriptionName }}
-        swaggerEndpoint: ${{ variables.swaggerEndpoint }}
+  - job: 'UpdateApim'
+    displayName: 'Update Apim Connector Service'
+    steps:
+      - checkout: self
+      - checkout: ZurichDeploy
+      - template: Templates\ZurichDeploy-SetupApimProduct.yml@ZurichDeploy
+        parameters:
+          apiId: ${{ variables.apiId }}
+          apimName: ${{ variables.apimName }}
+          apimProductPolicyFilePath: $(Build.SourcesDirectory)/Zurich.Connector.Deploy/Config/${{parameters.environmentName}}/ConnectorAPIMPolicy.xml
+          apimResourceGroup: ${{ variables.apimResourceGroup }}
+          apiVersion: ${{ variables.apiVersion }}
+          appGatewayName: ${{ variables.appGatewayName }}
+          appGatewayResourceGroup: ${{ variables.coreResourceGroup }}
+          environmentName: ${{ variables.environmentName }}
+          fullyQualifiedDomainName: ${{ variables.connectorServiceFQND }}
+          groups: ${{ variables.groups }}
+          productDescription: ${{ variables.productDescription }}
+          productName: ${{ variables.productName }}
+          resourceGroup: ${{ variables.resourceGroup }}
+          serviceName: ${{ variables.connectorServiceName }}
+          subscriptionName: ${{ variables.subscriptionName }}
+          swaggerEndpoint: ${{ variables.swaggerEndpoint }}
