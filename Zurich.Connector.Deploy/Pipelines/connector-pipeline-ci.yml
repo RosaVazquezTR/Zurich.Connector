@@ -125,7 +125,7 @@ stages:
         parameters:
           apiId: ${{ variables.apiId }}
           apimName: ${{ variables.apimName }}
-          apimProductPolicyFilePath: $(Build.SourcesDirectory)/Zurich.Connector.Deploy/Config/${{parameters.environmentName}}/ConnectorAPIMPolicy.xml
+          apimProductPolicyFilePath: $(Build.SourcesDirectory)/Zurich.Connector.Deploy/Config/${{variables.environmentName}}/ConnectorAPIMPolicy.xml
           apimResourceGroup: ${{ variables.apimResourceGroup }}
           apiVersion: ${{ variables.apiVersion }}
           appGatewayName: ${{ variables.appGatewayName }}
