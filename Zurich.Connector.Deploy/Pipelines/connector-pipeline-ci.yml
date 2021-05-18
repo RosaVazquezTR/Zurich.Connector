@@ -15,7 +15,7 @@ resources:
     - repository: ZurichDeploy
       type: git
       name: Zurich.Deploy
-
+      
 variables:
 - name: solution
   value: '**/*.sln'
@@ -25,8 +25,8 @@ variables:
   value: 'Release'
 - template: Variables\ZurichDeploy-variables-Shared.yml@ZurichDeploy
 - template: Variables\ZurichDeploy-variables-CI.yml@ZurichDeploy
-- template: ../Variables/connector-veriables-Shared.yml   
-- template: ../Variables/connector-veriables-CI.yml
+- template: ../Variables/connector-variables-Shared.yml   
+- template: ../Variables/connector-variables-CI.yml
 
 stages:
 - stage: Build
@@ -42,7 +42,7 @@ stages:
 - stage: CI
   pool: DCO-HighQ-Platform-N
   dependsOn:
-     - Build
+    - Build
   jobs:
     - deployment: Prereqs
       environment: CI
@@ -94,13 +94,35 @@ stages:
               - checkout: ZurichDeploy
               - template: ../Templates/connector-deploy.yml
                 parameters:
+                  connectorCosmosContainerNames: ${{ variables.connectorCosmosContainerNames }}
+                  connectorCosmosThroughput: ${{ variables.connectorCosmosThroughput }}
+                  connectorCosmosMaxThroughput: ${{ variables.connectorCosmosMaxThroughput }}
+                  connectorCosmosDatabaseName: ${{ variables.connectorCosmosDatabaseName }}
+                  connectorCosmosName: ${{ variables.connectorCosmosName }}
+                  connectorCosmosPartitionPath: ${{ variables.connectorCosmosPartitionPath }}
+                  connectorCosmosShouldAutoScale: ${{ variables.connectorCosmosShouldAutoScale }}
+                  connectorCosmoskeyVaultPrefix: ${{ variables.connectorCosmoskeyVaultPrefix }}
+                  connectorServiceName: ${{ variables.connectorServiceName }}
+                  deployArmTemplates: ${{ variables.deployArmTemplates }}
+                  deployScriptFolder: ${{ variables.deployScriptFolder }}
                   environmentName: ${{ variables.environmentName }}
                   keyVault: '${{ variables.keyVault }}'
+                  moduleFolder: ${{ variables.moduleFolder }}
                   projectName: '${{ variables.projectName }}'
                   resourceGroup: ${{ variables.resourceGroup }}
-                  connectorServiceName: ${{ variables.connectorServiceName }}
-                  slotName: ${{ variables.slotName}}
+                  resourceLocation: ${{ variables.resourceLocation }}
+                  retentionDays: ${{ variables.retentionDays }}
+                  connectorSubnets: ${{ variables.connectorSubnets }}
+                  serviceConnectionName: ${{ variables.serviceConnectionName }}
+                  slotName: ${{ variables.slotName }}
+                  storageResourceGroup: ${{ variables.monitoringResourceGroup }}
                   subscriptionName: ${{ variables.subscriptionName }}
+                  storageLoggingName: ${{ variables.storageLoggingName }}
+                  subscriptionId: ${{ variables.subscriptionId }}
+                  subnetPrefix: ${{ variables.subnetPrefix }}
+                  tlsVersion: ${{ variables.tlsVersion }}
+                  vnetName: ${{ variables.vnetName }}
+                  vnetResourceGroup: ${{ variables.vnetResourceGroup }}
 - stage: Swap_Slots
   dependsOn: CI
   condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'master'))
