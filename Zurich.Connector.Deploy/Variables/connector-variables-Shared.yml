@@ -6,7 +6,7 @@ variables:
   - name: connectorServiceName
     value: 'connectorsWebApi'
   - name: connectorCosmosContainerNames
-    value: '["connector", "documentSource"]'
+    value: '["connector", "datasource"]'
   - name: connectorCosmosDatabaseName
     value: "connectordb"
   - name: connectorCosmosName
