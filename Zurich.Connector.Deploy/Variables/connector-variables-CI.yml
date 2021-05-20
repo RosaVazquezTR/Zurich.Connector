@@ -3,6 +3,14 @@ variables:
     value: "v1" 
   - name: azureAdClientId
     value: 'b4a0d298-06dd-4738-83be-9b57653980b1'
+  - name: connectorCosmosMaxThroughput
+    value: "400"
+  - name: connectorCosmosThroughput
+    value: "400"
+  - name: connectorCosmosShouldAutoScale
+    value: "false"
+  - name: connectorSubnets
+    value: '["connector-webApi-CI-Backend", "hqh-VM-RelMgmt-backend"]'
   - name: connectorServiceFQND
     value: "connectorswebapici.azurewebsites.net"
   - name: groups
@@ -12,7 +20,7 @@ variables:
   - name: resourceGroup
     value: 'centralus-connectors-ci'
   - name: subnetConnectorBackend
-    value: "@{SubNetName = 'WebApi'; SubNetCidr = '10.175.64.128/27'; SubNetType = 'backend'; subNetServiceEndpoints = @('Microsoft.KeyVault', 'Microsoft.Sql')}"
+    value: "@{SubNetName = 'WebApi'; SubNetCidr = '10.175.64.128/27'; SubNetType = 'backend'; subNetServiceEndpoints = @('Microsoft.AzureCosmosDB', 'Microsoft.KeyVault', 'Microsoft.Sql')}"
   - name: subnetPreFix
     value: 'connector'
   - name: swaggerEndpoint

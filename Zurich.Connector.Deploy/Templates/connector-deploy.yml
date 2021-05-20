@@ -1,39 +1,92 @@
 parameters:
+- name: connectorServiceName
+  type: string
+- name: connectorSubnets
+  type: string
+- name: connectorCosmosContainerNames
+  type: string
+- name: connectorCosmosThroughput
+  type: string
+- name: connectorCosmosMaxThroughput
+  type: string
+- name: connectorCosmosDatabaseName
+  type: string
+- name: connectorCosmosName
+  type: string
+- name: connectorCosmosPartitionPath
+  type: string
+- name: connectorCosmosShouldAutoScale
+  type: string
+- name: connectorCosmoskeyVaultPrefix
+  type: string
+- name: deployArmTemplates
+  type: string
+- name: deployScriptFolder
+  type: string
 - name: environmentName
   type: string
 - name: keyVault
+  type: string
+- name: moduleFolder
   type: string
 - name: projectName
   type: string
 - name: resourceGroup
   type: string
-- name: connectorServiceName
+- name: resourceLocation
+  type: string
+- name: retentionDays
+  type: string
+- name: storageResourceGroup
+  type: string
+- name: serviceConnectionName
   type: string
 - name: slotName
   type: string
 - name: subscriptionName
   type: string
-
+- name: storageLoggingName
+  type: string
+- name: subscriptionId
+  type: string
+- name: subnetPrefix
+  type: string
+- name: tlsVersion
+  type: string
+- name: vnetName
+  type: string
+- name: vnetResourceGroup
+  type: string
 steps:
-- task: AzurePowerShell@5
-  inputs:
-    azureSubscription: 'DCO-HighQ-Platform-N'
-    ScriptType: 'InlineScript'
-    Inline: |
-      dir env:
-    azurePowerShellVersion: 'LatestVersion'
-- task: AzurePowerShell@5
-  inputs:
-    azureSubscription: 'DCO-HighQ-Platform-N'
-    ScriptType: 'InlineScript'
-    Inline: |
-      Get-ChildItem -Recurse
-    azurePowerShellVersion: 'LatestVersion'
-- task: CmdLine@2
-  inputs:
-    script: |
-      echo 'Write your commands here.' 
-      tree $(Pipeline.Workspace) /f
+- template: Templates\ZurichDeploy-CosmosDeploy.yml@ZurichDeploy
+  parameters: 
+    containerNames: ${{ parameters.connectorCosmosContainerNames }}
+    cosmosMaxThroughput: ${{ parameters.connectorCosmosMaxThroughput }}
+    cosmosName: ${{ parameters.connectorCosmosName }}
+    cosmosPartitionPath: ${{ parameters.connectorCosmosPartitionPath }}
+    cosmosShouldAutoScale: ${{ parameters.connectorCosmosShouldAutoScale }}
+    cosmosSubnets: ${{ parameters.connectorSubnets }}
+    cosmosThroughput: ${{ parameters.connectorCosmosThroughput }}
+    deployArmTemplates: ${{ parameters.deployArmTemplates }}
+    deployScriptFolder: ${{ parameters.deployScriptFolder }}
+    databaseName: ${{ parameters.connectorCosmosDatabaseName }}
+    environmentName: ${{ parameters.environmentName }}
+    keyVault: ${{ parameters.keyVault }}
+    keyVaultPrefix: ${{ parameters.connectorCosmoskeyVaultPrefix }}
+    moduleFolder: ${{ parameters.moduleFolder }}
+    retentionDays: ${{ parameters.retentionDays }}
+    resourceGroup: ${{ parameters.resourceGroup }}
+    resourceLocation: ${{ parameters.resourceLocation }}
+    serviceConnectionName: ${{ parameters.serviceConnectionName }}
+    storageResourceGroup: ${{ parameters.storageResourceGroup }}
+    storageLoggingName: ${{ parameters.storageLoggingName }}
+    subscriptionId: ${{ parameters.subscriptionId }}
+    subscriptionName: ${{ parameters.subscriptionName }}
+    subnetPrefix: ${{ parameters.subnetPrefix }}
+    tlsVersion: ${{ parameters.tlsVersion }}
+    vnetName: ${{ parameters.vnetName }}
+    vnetResourceGroup: ${{ parameters.vnetResourceGroup }}
+    isDRDeploy: "false"
 - task: PowerShell@2
   inputs:
     targetType: 'inline'

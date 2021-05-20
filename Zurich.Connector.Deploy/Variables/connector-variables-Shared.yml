@@ -3,8 +3,26 @@ variables:
     value: "connector"
   - name: appInsightsName
     value: 'ConnectorsAppInsights'
+  - name: connectorServiceName
+    value: 'connectorsWebApi'
+  - name: connectorCosmosContainerNames
+    value: '["connector", "datasource"]'
+  - name: connectorCosmosDatabaseName
+    value: "connectordb"
+  - name: connectorCosmosName
+    value: "connectorcosmos"
+  - name: connectorCosmoskeyVaultPrefix
+    value: "CosmosDb"
+  - name: connectorCosmosPartitionPath
+    value: "/partitionkey"
+  - name: deployArmTemplates
+    value: "Zurich.Deploy/ArmTemplates"
+  - name: deployScriptFolder
+    value: "Zurich.Deploy/Scripts"
   - name: keyVault
     value: 'connectorsKeyVault'
+  - name: moduleFolder
+    value: "Deploy/Zurich.Deploy/Modules"
   - name: productDescription 
     value: "A connector service used to connect various sources"
   - name: productName 
