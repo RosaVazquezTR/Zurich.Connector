@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using LegalHome.Web;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -8,6 +7,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Zurich.Connector.Data.Model;
 using Zurich.Connector.Data.Services;
+using Zurich.Connector.Web;
 using Zurich.Connector.Web.Controllers;
 
 namespace Zurich.Connector.Tests.ControllerTests
@@ -17,6 +17,7 @@ namespace Zurich.Connector.Tests.ControllerTests
 	{
 		private Mock<IConnectorService> _mockConnectorservice;
 		private IMapper _mapper;
+		private Mock<IMapper> _mockmapper;
 
 		[TestInitialize]
 		public void TestInitialize()
@@ -28,6 +29,7 @@ namespace Zurich.Connector.Tests.ControllerTests
 				cfg.AddProfile(new MappingRegistrar());
 			});
 			_mapper = mapConfig.CreateMapper();
+			_mockmapper = new Mock<IMapper>();
 		}
 
 		#region json Strings
@@ -44,6 +46,23 @@ namespace Zurich.Connector.Tests.ControllerTests
 			}
 		]";
 
+		//Intialization of test response data //
+		string connectorid = "101";
+
+		ConnectorsConfigResponseEntity Connector_Configuration = new ConnectorsConfigResponseEntity
+		{
+			Id = "101",
+			AppCode = "Office",
+
+			Api = new DataMappingApiRequest
+			{
+				AuthHeader = "id",
+				MethodType = "Get",
+				Hostname = "",
+				Url = "https://graph.microsoft.com/v1.0/me"
+			}
+
+		};
 
         #endregion
 
@@ -87,7 +106,7 @@ namespace Zurich.Connector.Tests.ControllerTests
 			// ARRANGE
 			_mockConnectorservice.Setup(x => x.GetConnectorData(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())).Returns(Task.FromResult<dynamic>(TwoDocumentsListJson));
 
-			ConnectorsController connector = new ConnectorsController(_mockConnectorservice.Object, _mapper, null);
+			ConnectorsController connector = new ConnectorsController(_mockConnectorservice.Object, null, _mapper);
 			
 			// ACT
 			var response = await connector.ConnectorData("fakeId", "fakeHost", null);
@@ -104,7 +123,7 @@ namespace Zurich.Connector.Tests.ControllerTests
 			// ARRANGE
 			_mockConnectorservice.Setup(x => x.GetConnectorData(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())).Returns(Task.FromResult<dynamic>(null));
 
-			ConnectorsController connector = new ConnectorsController(_mockConnectorservice.Object, _mapper, null);
+			ConnectorsController connector = new ConnectorsController(_mockConnectorservice.Object, null, _mapper);
 
 			// ACT
 			var response = await connector.ConnectorData("fakeId", "fakeHost", null);
@@ -123,7 +142,7 @@ namespace Zurich.Connector.Tests.ControllerTests
 			ConnectorFilterModel filters = new ConnectorFilterModel();
 			_mockConnectorservice.Setup(x => x.GetConnectors(It.IsAny<ConnectorFilterModel>())).Returns(Task.FromResult(connections));
 
-			ConnectorsController connector = new ConnectorsController(_mockConnectorservice.Object, _mapper, null);
+			ConnectorsController connector = new ConnectorsController(_mockConnectorservice.Object, null, _mapper);
 
 			// ACT
 			var response = await connector.Connectors(filters);
@@ -134,5 +153,38 @@ namespace Zurich.Connector.Tests.ControllerTests
 			Assert.AreEqual(StatusCodes.Status200OK, result.StatusCode);
 		}
 
+		[TestMethod]
+		public async Task CallSearchConnectorData()
+		{
+			// ARRANGE
+			_mockConnectorservice.Setup(x => x.GetConnectorConfiguration(It.IsAny<string>())).Returns(Task.FromResult(Connector_Configuration));
+
+			ConnectorsController connector = new ConnectorsController(_mockConnectorservice.Object, null,_mockmapper.Object);
+
+			// ACT
+			var response = await connector.ConnectorconfigData("fakeId");
+
+			// ASSERT
+			_mockConnectorservice.Verify(x => x.GetConnectorConfiguration(It.IsAny<string>()), Times.Exactly(1));
+			var result = response.Result;
+		    Assert.AreEqual(StatusCodes.Status200OK, ((Microsoft.AspNetCore.Mvc.ObjectResult)result).StatusCode);
+		}
+
+		[TestMethod]
+		public async Task Call_Connector_Data_And_Get_Null_Response()
+		{
+			// ARRANGE
+			_mockConnectorservice.Setup(x => x.GetConnectorConfiguration(It.IsAny<string>()));
+
+			ConnectorsController connector = new ConnectorsController(_mockConnectorservice.Object, null,_mockmapper.Object);
+
+			// ACT
+			var response = await connector.ConnectorconfigData("fakeId");
+
+			// ASSERT
+			_mockConnectorservice.Verify(x => x.GetConnectorConfiguration(It.IsAny<string>()), Times.Exactly(1));
+			var result = (NotFoundObjectResult)response.Result;
+			Assert.AreEqual(StatusCodes.Status404NotFound, result.StatusCode);
+		}
 	}
 }

@@ -29,3 +29,5 @@ variables:
     value: "legalApis"
   - name: projectName
     value: 'Zurich.Connector'
+  - name: connectorServiceName
+    value: 'connectorsWebApi'

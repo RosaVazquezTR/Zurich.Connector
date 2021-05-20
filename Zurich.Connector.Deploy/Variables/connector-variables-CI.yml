@@ -11,6 +11,8 @@ variables:
     value: "false"
   - name: connectorSubnets
     value: '["connector-webApi-CI-Backend", "hqh-VM-RelMgmt-backend"]'
+  - name: connectorServiceFQND
+    value: "connectorswebapici.azurewebsites.net"
   - name: groups
     value: "@('Administrators','Developers')"
   - name: keyVaultSubnets

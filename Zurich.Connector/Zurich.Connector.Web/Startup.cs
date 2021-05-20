@@ -93,6 +93,7 @@ namespace Zurich.Connector.Web
             services.AddAuthenticationServices(Configuration.GetValue<string>("Audience"), authority);
             services.AddPartnerAppAuth(tenantConnectionString, productsConnectionString, _oAuthOptions, _microServOptions);
             services.AddAutoMapper(typeof(Startup), typeof(CommonMappingsProfile));
+           
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

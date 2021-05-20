@@ -287,4 +287,4 @@ __pycache__/
 *.odx.cs
 *.xsd.cs
 
-S./Zurich.Connector/Zurich.Connector.Web/appsettings.Development.json
+/Zurich.Connector/Zurich.Connector.Web/appsettings.Development.json
