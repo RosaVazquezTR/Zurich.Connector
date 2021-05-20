@@ -20,11 +20,12 @@ namespace Zurich.Connector.Web.Controllers
         private readonly IMapper _mapper;
         private readonly ILogger<ConnectorsController> _logger;
 
-        public ConnectorsController(IConnectorService connectorService, IMapper mapper, ILogger<ConnectorsController> logger)
+        public ConnectorsController(IConnectorService connectorService, ILogger<ConnectorsController> logger , IMapper mapper)
         {
             _connectorService = connectorService;
             _mapper = mapper;
             _logger = logger;
+            _mapper = mapper;
         }
 
         [HttpGet("{id}/data")]
@@ -71,5 +72,17 @@ namespace Zurich.Connector.Web.Controllers
                 StatusCode = StatusCodes.Status200OK
             };
         }
+        [HttpGet("{id}")]
+        public async Task<ActionResult<ConnectorConfigViewModel>> ConnectorconfigData([FromQuery] string Connectorid)
+        {
+            var results = await _connectorService.GetConnectorConfiguration(Connectorid);
+            if (results == null)
+            {
+                return NotFound("Connector or data not found");
+            }
+            var responsedata = _mapper.Map<ConnectorConfigViewModel>(results);
+            return Ok(responsedata);
+        }
+
     }
 }

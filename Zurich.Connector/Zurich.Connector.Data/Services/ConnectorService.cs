@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using AutoMapper;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -31,6 +32,7 @@ namespace Zurich.Connector.Data.Services
         /// <param name="filters">Filters to get different connections</param>
         /// <returns>List of Data Mapping Connections <see cref="DataMappingConnection"/></returns>
         Task<List<DataMappingConnection>> GetConnectors(ConnectorFilterModel filters);
+        Task<ConnectorsConfigResponseEntity> GetConnectorConfiguration(string connectorId);
     }
 
     public class ConnectorService : IConnectorService
@@ -39,13 +41,15 @@ namespace Zurich.Connector.Data.Services
         private readonly IDataMappingFactory _dataMappingFactory;
         private readonly IDataMappingRepository _dataMappingRepo;
         private readonly ILogger<ConnectorService> _logger;
+        private readonly IMapper _mapper;
 
-        public ConnectorService(IDataMapping dataMapping, IDataMappingFactory dataMappingFactory, IDataMappingRepository dataMappingRepo, ILogger<ConnectorService> logger)
+        public ConnectorService(IDataMapping dataMapping, IDataMappingFactory dataMappingFactory, IDataMappingRepository dataMappingRepo, ILogger<ConnectorService> logger, IMapper mapper)
         {
             _dataMapping = dataMapping;
             _dataMappingFactory = dataMappingFactory;
             _dataMappingRepo = dataMappingRepo;
             _logger = logger;
+            _mapper = mapper;
         }
 
         public async Task<dynamic> GetConnectorData(string connectionId, string hostname, string transferToken)
@@ -82,6 +86,12 @@ namespace Zurich.Connector.Data.Services
             }
 
             return connectors.ToList();
+        }
+
+        public async Task<ConnectorsConfigResponseEntity> GetConnectorConfiguration(string ConnectorId)
+        {
+            var connectorconfiguration = await this._dataMappingRepo.GetConnectorConfiguration(ConnectorId);
+            return this._mapper.Map<ConnectorsConfigResponseEntity>(connectorconfiguration);
         }
     }
 }

@@ -32,6 +32,13 @@ namespace Zurich.Connector.Data.Repositories
         /// <param name="dataType">Type of data we want to retrieve</param>
         /// <returns>List of Data Mapping Connections</returns>
         Task<List<DataMappingConnection>> GetConnectors();
+
+        /// <summary>
+        /// Makes a Get call to fetch the configuration of connector
+        /// </summary>
+        /// <param name="connectorid">Holds id of connector</param>
+        /// <returns>a string</returns>
+        Task<ConnectorsConfigResponseEntity> GetConnectorConfiguration(string ConnectorId);
     }
 
     public class DataMappingRepository : IDataMappingRepository
@@ -124,6 +131,76 @@ namespace Zurich.Connector.Data.Repositories
             }
 
             return file;
+        }
+
+        public async Task<ConnectorsConfigResponseEntity> GetConnectorConfiguration(string connectorId)
+        {
+            ConnectorsConfigEntity connectorconfigType = null;
+            //below are Temporary third party api response object for connector
+            var listofConnectors = new ConnectorsEntity
+            {
+                connectors = new List<ConnectorsConfigEntity>
+                  {
+                     new ConnectorsConfigEntity
+                     {
+                         Id="101",
+                         AppCode="Office",
+                         Auth= new DataMappingAuth
+                         {
+                             Type= AuthType.OAuth,
+
+                             OAuth= new DataMappingOAuthType
+                             {
+                                 AuthUrl="https://ci.login.legalplatform.thomsonreuters.com/is/connect/authorize",
+                                 TokenUrl="https://ci.login.legalplatform.thomsonreuters.com/is/connect/token",
+                                 AuthHeader="id"
+                             }
+                         },
+                         Endpoint= new DataMappingEndpoint
+                         {
+                             Name="GetConfiguration",
+                             Api = new DataMappingApi
+                             {
+                                 Path="https://graph.microsoft.com/v1.0/me",
+                                 MethodType="Get"
+                             },
+                             Mapping = new List<DataMappingProperty>
+                             {
+                                 new DataMappingProperty
+                                 {
+                                     CDMProperty="",
+                                     APIProperty=""
+                                 }
+                             },
+                             ResultLocation="",
+                         },
+                         redirectionURL="",
+                         filters = new string[]{"sort:true"}
+
+                     }
+                  }
+
+            };
+            if (listofConnectors.connectors != null)
+            {
+                connectorconfigType = listofConnectors.connectors.FirstOrDefault(x => x.Id.Equals(connectorId, StringComparison.OrdinalIgnoreCase));
+            }
+            return new ConnectorsConfigResponseEntity
+            {
+                Id = connectorconfigType.Id,
+                Api = new DataMappingApiRequest
+                {
+                    MethodType = connectorconfigType.Endpoint.Api.MethodType,
+                    Url = connectorconfigType.redirectionURL,
+                    Hostname = connectorconfigType.AppCode,
+                    AuthHeader = connectorconfigType.Endpoint.Api.Path
+                },
+                AppCode = connectorconfigType.AppCode,
+                AuthType = connectorconfigType.Auth,
+                CDMData = connectorconfigType.Endpoint.Mapping,
+                filters = connectorconfigType.filters
+
+            };
         }
     }
 }

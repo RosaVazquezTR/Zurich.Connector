@@ -67,7 +67,7 @@ namespace Zurich.Connector.Tests.ServiceTests
 			ConnectorFilterModel filters = new ConnectorFilterModel();
 			_mockDataMappingRepo.Setup(x => x.GetConnectors()).Returns(Task.FromResult(testConnections));
 			
-			ConnectorService service = new ConnectorService(_mockDataMapping.Object, _mockDataMappingFactory.Object, _mockDataMappingRepo.Object, null);
+			ConnectorService service = new ConnectorService(_mockDataMapping.Object, _mockDataMappingFactory.Object, _mockDataMappingRepo.Object, null,null);
 
 			// ACT
 			var connectors = await service.GetConnectors(filters);
@@ -92,7 +92,7 @@ namespace Zurich.Connector.Tests.ServiceTests
 			};
 			_mockDataMappingRepo.Setup(x => x.GetConnectors()).Returns(Task.FromResult(testConnections));
 
-			ConnectorService service = new ConnectorService(_mockDataMapping.Object, _mockDataMappingFactory.Object, _mockDataMappingRepo.Object, null);
+			ConnectorService service = new ConnectorService(_mockDataMapping.Object, _mockDataMappingFactory.Object, _mockDataMappingRepo.Object, null,null);
 
 			// ACT
 			var connectors = await service.GetConnectors(filters);
@@ -116,7 +116,7 @@ namespace Zurich.Connector.Tests.ServiceTests
 			};
 			_mockDataMappingRepo.Setup(x => x.GetConnectors()).Returns(Task.FromResult(testConnections));
 
-			ConnectorService service = new ConnectorService(_mockDataMapping.Object, _mockDataMappingFactory.Object, _mockDataMappingRepo.Object, null);
+			ConnectorService service = new ConnectorService(_mockDataMapping.Object, _mockDataMappingFactory.Object, _mockDataMappingRepo.Object, null,null);
 
 			// ACT
 			var connectors = await service.GetConnectors(filters);
