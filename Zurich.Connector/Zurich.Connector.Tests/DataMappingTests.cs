@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System.Collections.Generic;
@@ -17,6 +18,8 @@ namespace Zurich.Connector.Tests
 		private Mock<IRepository> _mockRepository;
 		private Mock<IDataMappingRepository> _mockDataMappingRepository;
 		private Mock<IOAuthService> _mockOAuthService;
+		private Mock<ILogger<DataMappingOAuth>> _mockLoggerOAuth;
+		private Mock<ILogger<DataMappingTransfer>> _mockLoggerTransfer;
 
 		[TestInitialize]
 		public void TestInitialize()
@@ -24,6 +27,8 @@ namespace Zurich.Connector.Tests
 			_mockRepository = new Mock<IRepository>();
 			_mockDataMappingRepository = new Mock<IDataMappingRepository>();
 			_mockOAuthService = new Mock<IOAuthService>();
+			_mockLoggerOAuth = new Mock<ILogger<DataMappingOAuth>>();
+			_mockLoggerTransfer = new Mock<ILogger<DataMappingTransfer>>();
 
 			// feels like this won't change
 			AppToken token = new AppToken() { access_token = "fakeToken" };
@@ -259,10 +264,10 @@ namespace Zurich.Connector.Tests
 			};
 			_mockDataMappingRepository.Setup(x => x.GetMap(It.IsAny<string>())).Returns(Task.FromResult(dataMap));
 
-			DataMappingOAuth documentMap = new DataMappingOAuth(_mockRepository.Object, _mockDataMappingRepository.Object, _mockOAuthService.Object, null);
+			DataMappingOAuth documentMap = new DataMappingOAuth(_mockRepository.Object, _mockDataMappingRepository.Object, _mockOAuthService.Object, _mockLoggerOAuth.Object);
 			
 			// ACT
-			List<dynamic> documents = await documentMap.Get<List<dynamic>>(dataMap, null);
+			dynamic documents = await documentMap.Get<dynamic>(dataMap, null);
 			
 			// ASSERT
 			Assert.IsNotNull(documents);
@@ -295,10 +300,10 @@ namespace Zurich.Connector.Tests
 			};
 			_mockDataMappingRepository.Setup(x => x.GetMap(It.IsAny<string>())).Returns(Task.FromResult(dataMap));
 
-			DataMappingOAuth documentMap = new DataMappingOAuth(_mockRepository.Object, _mockDataMappingRepository.Object, _mockOAuthService.Object, null);
-			
+			DataMappingOAuth documentMap = new DataMappingOAuth(_mockRepository.Object, _mockDataMappingRepository.Object, _mockOAuthService.Object, _mockLoggerOAuth.Object);
+
 			// ACT
-			List<dynamic> documents = await documentMap.Get<List<dynamic>>(dataMap);
+			dynamic documents = await documentMap.Get<dynamic>(dataMap);
 			
 			// ASSERT
 			Assert.IsNotNull(documents);
@@ -328,18 +333,72 @@ namespace Zurich.Connector.Tests
 			};
 			_mockDataMappingRepository.Setup(x => x.GetMap(It.IsAny<string>())).Returns(Task.FromResult(dataMap));
 
-			DataMappingTransfer documentMap = new DataMappingTransfer(_mockRepository.Object, _mockDataMappingRepository.Object, _mockOAuthService.Object, null);
-			
+			DataMappingTransfer documentMap = new DataMappingTransfer(_mockRepository.Object, _mockDataMappingRepository.Object, _mockOAuthService.Object, _mockLoggerTransfer.Object);
+
 			// ACT
-			List<dynamic> documents = await documentMap.Get<List<dynamic>>(dataMap, "fakeTransferToken");
+			dynamic documents = await documentMap.Get<dynamic>(dataMap, "fakeTransferToken");
 			
 			// ASSERT
 			Assert.IsNotNull(documents);
 			Assert.AreEqual(2, documents.Count);
-			Assert.AreEqual(documents[0].ComplexObjectFieldOne.ToString(), "fakeDescription1");
-			Assert.AreEqual(documents[0].ComplexObjectLevelTwo.ToString(), "level 2 variable");
-			Assert.AreEqual(documents[0].ArrayValue.ToString(), "fakeDesc2");
+			Assert.AreEqual("fakeDescription1", documents[0].ComplexObjectFieldOne.ToString());
+			Assert.AreEqual("level 2 variable", documents[0].ComplexObjectLevelTwo.ToString());
+			Assert.AreEqual("fakeDesc2", documents[0].ArrayValue.ToString());
 		}
+
+		[TestMethod]
+		public async Task TestMappingWithNestedArray()
+		{
+			// ARRANGE
+			string appCode = "TestApp";
+
+			_mockRepository.Setup(x => x.Get(It.IsAny<ApiInformation>(), It.IsAny<NameValueCollection>())).Returns(Task.FromResult(TwoDocumentsJson));
+			DataMappingClass dataMap = new DataMappingClass()
+			{
+				Id = "1",
+				Api = new DataMappingApiRequest() { Url = "https://fakeaddress.thomsonreuters.com", AuthHeader = "differentAuthHeader" },
+				AppCode = appCode,
+				ResultLocation = "data.results",
+				Mapping = new List<DataMappingProperty>() {
+					new DataMappingProperty(){CDMProperty = "Name", APIProperty =  "name"},
+					new DataMappingProperty(){CDMProperty = "Id", APIProperty =  "id"},
+					new DataMappingProperty(){CDMProperty = "WebLink", APIProperty =  ""},
+					new DataMappingProperty(){CDMProperty = "ObjectArray", APIProperty =  "{2}"},
+				}
+			};
+
+			// This contains the mapping for the nested array "testArray"
+			DataMappingClass dataMap2 = new DataMappingClass()
+			{
+				Id = "2",
+				Api = new DataMappingApiRequest() { Url = "https://fakeaddress.thomsonreuters.com", AuthHeader = "differentAuthHeader" },
+				AppCode = appCode,
+				ResultLocation = "testArray",
+				Mapping = new List<DataMappingProperty>() {
+					new DataMappingProperty(){CDMProperty = "Name", APIProperty =  "name"},
+					new DataMappingProperty(){CDMProperty = "DescriptionProp", APIProperty =  "description"},
+				}
+			};
+			_mockDataMappingRepository.Setup(x => x.GetMap(It.IsAny<string>())).Returns<string>(id =>
+			{
+				if (id == "1")
+					return Task.FromResult(dataMap);
+				else
+					return Task.FromResult(dataMap2);
+			});
+
+			DataMappingTransfer documentMap = new DataMappingTransfer(_mockRepository.Object, _mockDataMappingRepository.Object, _mockOAuthService.Object, _mockLoggerTransfer.Object);
+
+			// ACT
+			dynamic documents = await documentMap.Get<dynamic>(dataMap, "fakeTransferToken");
+
+			// ASSERT
+			Assert.IsNotNull(documents);
+			Assert.AreEqual(2, documents.Count);
+			Assert.AreEqual(3, documents[0].ObjectArray.Count);
+			Assert.AreEqual("testIndex2", documents[0].ObjectArray[1].Name.ToString());
+            Assert.AreEqual("fakeDesc2", documents[0].ObjectArray[1].DescriptionProp.ToString());
+        }
 
 
 		[TestMethod]
@@ -360,7 +419,7 @@ namespace Zurich.Connector.Tests
 			};
 			_mockDataMappingRepository.Setup(x => x.GetMap(It.IsAny<string>())).Returns(Task.FromResult(dataMap));
 
-			DataMappingOAuth documentMap = new DataMappingOAuth(_mockRepository.Object, _mockDataMappingRepository.Object, _mockOAuthService.Object, null);
+			DataMappingOAuth documentMap = new DataMappingOAuth(_mockRepository.Object, _mockDataMappingRepository.Object, _mockOAuthService.Object, _mockLoggerOAuth.Object);
 			
 			// ACT
 			string newUrl = await documentMap.UpdateUrl("/work/api/v2/customers/{UserInfo.id}/documents", dataMap);

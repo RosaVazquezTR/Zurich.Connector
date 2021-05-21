@@ -97,29 +97,28 @@ namespace Zurich.Connector.Data.DataMap
 		{
 			// TODO: Remove this JToken logic when database is set up
 			bool isJToken = typeof(T).Name == "JToken";
+			JToken jTokenResponse = JToken.Parse(stringResponse);
 			if (!string.IsNullOrEmpty(resultLocation) || isJToken)
 			{
-				JToken jToken = JToken.Parse(stringResponse);
 				if (!string.IsNullOrEmpty(resultLocation))
 				{
 					string[] resultsLocation = resultLocation.Split(".");
 					foreach (string location in resultsLocation)
 					{
-						jToken = jToken[location];
+						jTokenResponse = jTokenResponse[location];
 					}
 				}
 				// Needed so we can prefetch api results that are needed in the original api call
 				if (isJToken)
 				{
 					// I can't just return a jToken... so bamboozle it with a dynamic
-					return (dynamic)jToken;
+					return (dynamic)jTokenResponse;
 				}
-				stringResponse = jToken.ToString();
 			}
 
 			try
 			{
-				return PerformMapping(stringResponse, propertyMap);
+				return await PerformMapping(jTokenResponse, propertyMap);
 			}
 			catch (Exception e)
 			{
@@ -130,21 +129,20 @@ namespace Zurich.Connector.Data.DataMap
             return default(T);
 		}
 
-		private dynamic PerformMapping(string stringResponse, List<DataMappingProperty> propertyMap)
+		private async Task<dynamic> PerformMapping(JToken response, List<DataMappingProperty> propertyMap)
         {
-			var response = JsonConvert.DeserializeObject<JToken>(stringResponse);
 			if (response is JArray)
 			{
-				List<dynamic> results = new List<dynamic>();
+				JArray results = new JArray();
 				foreach (var result in response)
 				{
-					results.Add(MapResult(result, propertyMap));
+					results.Add(await MapResult(result, propertyMap));
 				}
 				return (dynamic)results;
 			}
 			else if (response is JObject)
 			{
-				return MapResult(response, propertyMap);
+				return await MapResult (response, propertyMap);
 			}
 			else
 			{
@@ -152,7 +150,7 @@ namespace Zurich.Connector.Data.DataMap
 			}
 		}
 
-		private dynamic MapResult(dynamic apiResult, List<DataMappingProperty> properties)
+		private async Task<dynamic> MapResult(dynamic apiResult, List<DataMappingProperty> properties)
         {
 			dynamic cdmResult = new JObject();
 			foreach (var property in properties)
@@ -165,8 +163,17 @@ namespace Zurich.Connector.Data.DataMap
 				var tempResult = apiResult;
 				foreach (string location in resultsLocation)
 				{
-					// Check if result is part of an array
-					if (location.Contains('['))
+					// Perform new mapping recursively of array results
+					if (location.Contains('{'))
+                    {
+						var match = Regex.Match(location, @"{(.*?)}");
+						var connectionId = match.Groups[1].ToString();
+						// TODO: Cache this datamapping so we don't have to call the DB for every result
+						var datamapping = await RetrieveProductInformationMap(connectionId, null);
+						tempResult = await MapToCDM<dynamic>(JsonConvert.SerializeObject(apiResult), datamapping.ResultLocation, datamapping.Mapping);
+					}
+					// Flatten array results instead 
+					else if (location.Contains('['))
 					{
 						var match = Regex.Match(location, @"\[(.*?)\]");
 						var index = match.Groups[1].ToString();
@@ -179,6 +186,7 @@ namespace Zurich.Connector.Data.DataMap
 					if (tempResult == null)
 						break;
 				}
+			
 				cdmResult[property.CDMProperty] = tempResult;
 			}
 			return cdmResult;

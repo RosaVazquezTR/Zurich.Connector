@@ -16,7 +16,8 @@ namespace Zurich.Connector.Data.Model
         Matters,
         Search,
         UserInfo,
-        History
+        History,
+        Favorites
     }
 
     /// <summary>
@@ -37,6 +38,7 @@ namespace Zurich.Connector.Data.Model
         Document,
         History,
         Matters,
-        UserProfile
+        UserProfile,
+        Favorites
     }
 }
