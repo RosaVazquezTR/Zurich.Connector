@@ -1,4 +1,8 @@
 parameters:
+  - name: apimName
+    type: string
+  - name: apimResourceGroup
+    type: string
   - name: appInsightsName
     type: string
   - name: availabilityAlertGroups
@@ -103,10 +107,22 @@ steps:
         $subnets = @(${{ parameters.subnetConnectorBackend }})
 
         Add-SubNets -ResourceGroup "${{ parameters.vnetResourceGroup }}" -subnetPreFix "${{ parameters.subnetPreFix }}" -env "${{ parameters.environmentName }}" -Location "${{ parameters.resourceLocation }}" -RouteTableName "${{ parameters.routeTableName }}" -VirtualNetworkName "${{ parameters.vnetName }}" -subNets $subNets -armTemplateFolderLocation "$(Build.SourcesDirectory)/Zurich.Deploy/ArmTemplates"
+  - task: AzurePowerShell@5
+    displayName: 'Get Apim IP'
+    inputs:
+      azureSubscription: '${{ parameters.subscriptionName }}'
+      ScriptType: 'InlineScript'
+      Inline: |
+        . $(Build.SourcesDirectory)/Zurich.Deploy/Scripts/Common.ps1
+        $apimIps = @(Get-APIManagementPublicIps -ResourceGroup "${{ parameters.apimResourceGroup }}" -Environment "${{ parameters.environmentName }}" -ApimName "${{ parameters.apimName }}")
+        $apimIp = $apimIps | Select-Object -first 1
+
+        Write-Host  "##vso[task.setvariable variable=apimIp;isSecret=false]$apimIp"
+      azurePowerShellVersion: 'LatestVersion'
   - template: Templates\ZurichDeploy-AzureAppService.yml@ZurichDeploy
     parameters:
       appInsightsName: ${{ parameters.appInsightsName }}
-      appGatewayIp: '52.141.220.108'  #TODO: this should not be needed.
+      appGatewayIp: $(apimIp)
       environmentName: ${{ parameters.environmentName }}
       appServiceName: ${{ parameters.connectorServiceName }}
       appServiceSubnet: ${{ parameters.subnetConnectorBackend}}

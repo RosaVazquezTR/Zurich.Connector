@@ -54,6 +54,8 @@ stages:
               - checkout: ZurichDeploy
               - template: ../Templates/connector-prereqs.yml
                 parameters:
+                  apimName: ${{ variables.apimName }}
+                  apimResourceGroup: ${{ variables.apimResourceGroup }}
                   appInsightsName: ${{ variables.appInsightsName }}
                   availabilityAlertGroups: ${{ variables.availabilityAlertGroups }}
                   azureAdClientId: ${{ variables.azureAdClientId }}
