@@ -25,6 +25,7 @@ using Zurich.Common.Models;
 using Microsoft.Data.SqlClient;
 using Microsoft.Data.SqlClient.AlwaysEncrypted.AzureKeyVaultProvider;
 using Zurich.Connector.Data.Services;
+using Zurich.Common.Models.Cosmos;
 
 namespace Zurich.Connector.Web
 {
@@ -34,6 +35,8 @@ namespace Zurich.Connector.Web
         private static OAuthOptions _oAuthOptions;
         private static MicroServiceOptions _microServOptions;
         private ClientCredential _clientCredential;
+        private CosmosDbOptions _connectorCosmosDbOptions;
+        private CosmosClientSettings _connectorCosmosClientOptions;
 
         public Startup(IConfiguration configuration, IHostEnvironment environment)
         {
@@ -47,14 +50,7 @@ namespace Zurich.Connector.Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            _azureOptions = new AzureAdOptions();
-            Configuration.Bind("AzureAd", _azureOptions);
-
-            _oAuthOptions = new OAuthOptions();
-            Configuration.Bind("PartnerOAuthApps", _oAuthOptions);
-
-            _microServOptions = new MicroServiceOptions();
-            Configuration.Bind("HighqMS", _microServOptions);
+            BindConfigurationOptions();
 
             string authority = Configuration.GetValue<string>("TokenIssuer");
             if (Environment.IsDevelopment() && !string.IsNullOrWhiteSpace(Configuration.GetValue<string>("LocalTokenIssuer")))
@@ -93,7 +89,7 @@ namespace Zurich.Connector.Web
             services.AddAuthenticationServices(Configuration.GetValue<string>("Audience"), authority);
             services.AddPartnerAppAuth(tenantConnectionString, productsConnectionString, _oAuthOptions, _microServOptions);
             services.AddAutoMapper(typeof(Startup), typeof(CommonMappingsProfile));
-           
+            services.AddConnectorCosmosServices(_connectorCosmosDbOptions, _connectorCosmosClientOptions);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -151,6 +147,27 @@ namespace Zurich.Connector.Web
                 throw new InvalidOperationException("Failed to obtain access token");
 
             return result.AccessToken;
+        }
+
+        /// <summary>
+        /// Bind configuration options
+        /// </summary>
+        private void BindConfigurationOptions()
+        {
+            _azureOptions = new AzureAdOptions();
+            Configuration.Bind("AzureAd", _azureOptions);
+
+            _oAuthOptions = new OAuthOptions();
+            Configuration.Bind("PartnerOAuthApps", _oAuthOptions);
+
+            _microServOptions = new MicroServiceOptions();
+            Configuration.Bind("HighqMS", _microServOptions);
+
+            _connectorCosmosDbOptions = new CosmosDbOptions();
+            Configuration.Bind("CosmosDb", _connectorCosmosDbOptions);
+
+            _connectorCosmosClientOptions = new CosmosClientSettings();
+            Configuration.Bind("Connector:CosmosClientOptions", _connectorCosmosClientOptions);
         }
     }
 }
