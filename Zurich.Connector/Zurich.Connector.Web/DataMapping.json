@@ -221,8 +221,12 @@
             "APIProperty": "item.searchCount"
           },
           {
+            "CDMProperty": "SearchContent",
+            "APIProperty": "item.searchDescription.[property:Content].description"
+          },
+          {
             "CDMProperty": "SearchType",
-            "APIProperty": "item.searchDescription.[0].description"
+            "APIProperty": "item.searchDescription.[property:Search Type].description"
           },
           {
             "CDMProperty": "WebLink",

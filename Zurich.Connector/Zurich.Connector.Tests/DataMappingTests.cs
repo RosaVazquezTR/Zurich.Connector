@@ -328,7 +328,8 @@ namespace Zurich.Connector.Tests
 					new DataMappingProperty(){CDMProperty = "WebLink", APIProperty =  ""},
 					new DataMappingProperty(){CDMProperty = "ComplexObjectFieldOne", APIProperty =  "complexObject.testItem1"},
 					new DataMappingProperty(){CDMProperty = "ComplexObjectLevelTwo", APIProperty =  "complexObject.testItem3.level2"},
-					new DataMappingProperty(){CDMProperty = "ArrayValue", APIProperty =  "testArray.[1].description"},
+					new DataMappingProperty(){CDMProperty = "ArrayValue1", APIProperty =  "testArray.[name:testIndex2].description"},
+					new DataMappingProperty(){CDMProperty = "ArrayValue2", APIProperty =  "testArray.[description:fakeDesc3].name"},
 				}
 			};
 			_mockDataMappingRepository.Setup(x => x.GetMap(It.IsAny<string>())).Returns(Task.FromResult(dataMap));
@@ -343,7 +344,8 @@ namespace Zurich.Connector.Tests
 			Assert.AreEqual(2, documents.Count);
 			Assert.AreEqual("fakeDescription1", documents[0].ComplexObjectFieldOne.ToString());
 			Assert.AreEqual("level 2 variable", documents[0].ComplexObjectLevelTwo.ToString());
-			Assert.AreEqual("fakeDesc2", documents[0].ArrayValue.ToString());
+			Assert.AreEqual("fakeDesc2", documents[0].ArrayValue1.ToString());
+			Assert.AreEqual("testIndex3", documents[0].ArrayValue2.ToString());
 		}
 
 		[TestMethod]

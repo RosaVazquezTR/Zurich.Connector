@@ -131,6 +131,10 @@ namespace Zurich.Connector.Data.DataMap
 
 		private async Task<dynamic> PerformMapping(JToken response, List<DataMappingProperty> propertyMap)
         {
+			if (response == null)
+            {
+				return null;
+            }
 			if (response is JArray)
 			{
 				JArray results = new JArray();
@@ -169,15 +173,17 @@ namespace Zurich.Connector.Data.DataMap
 						var match = Regex.Match(location, @"{(.*?)}");
 						var connectionId = match.Groups[1].ToString();
 						// TODO: Cache this datamapping so we don't have to call the DB for every result
-						var datamapping = await RetrieveProductInformationMap(connectionId, null);
-						tempResult = await MapToCDM<dynamic>(JsonConvert.SerializeObject(apiResult), datamapping.ResultLocation, datamapping.Mapping);
+						DataMappingClass datamapping = await RetrieveProductInformationMap(connectionId, null);
+						tempResult = await MapToCDM<dynamic>(JsonConvert.SerializeObject(tempResult), datamapping.ResultLocation, datamapping.Mapping);
 					}
 					// Flatten array results instead 
 					else if (location.Contains('['))
 					{
-						var match = Regex.Match(location, @"\[(.*?)\]");
-						var index = match.Groups[1].ToString();
-						tempResult = tempResult[int.Parse(index)];
+						var match = Regex.Match(location, @"\[(.*?):(.*?)\]");
+						string propertyName = match.Groups[1].ToString();
+						string valueToFind = match.Groups[2].ToString();
+						JArray resultArray = (JArray)tempResult;
+						tempResult = resultArray.FirstOrDefault(x => x[propertyName].ToString() == valueToFind);
                     } 
 					else
                     {
