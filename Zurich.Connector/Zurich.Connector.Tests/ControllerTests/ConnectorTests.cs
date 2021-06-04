@@ -104,7 +104,7 @@ namespace Zurich.Connector.Tests.ControllerTests
 		public async Task CallConnectorData()
 		{
 			// ARRANGE
-			_mockConnectorservice.Setup(x => x.GetConnectorData(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())).Returns(Task.FromResult<dynamic>(TwoDocumentsListJson));
+			_mockConnectorservice.Setup(x => x.GetConnectorData(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(),It.IsAny<Dictionary<string, string>>())).Returns(Task.FromResult<dynamic>(TwoDocumentsListJson));
 
 			ConnectorsController connector = new ConnectorsController(_mockConnectorservice.Object, null, _mapper);
 			
@@ -112,7 +112,7 @@ namespace Zurich.Connector.Tests.ControllerTests
 			var response = await connector.ConnectorData("fakeId", "fakeHost", null);
 
 			// ASSERT
-			_mockConnectorservice.Verify(x => x.GetConnectorData(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Exactly(1));
+			_mockConnectorservice.Verify(x => x.GetConnectorData(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Dictionary<string, string>>()), Times.Exactly(1));
 			var result = (ContentResult)response.Result;
 			Assert.AreEqual(StatusCodes.Status200OK, result.StatusCode);
 		}
@@ -121,7 +121,7 @@ namespace Zurich.Connector.Tests.ControllerTests
 		public async Task CallConnectorDataAndGetNullResponse()
 		{
 			// ARRANGE
-			_mockConnectorservice.Setup(x => x.GetConnectorData(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())).Returns(Task.FromResult<dynamic>(null));
+			_mockConnectorservice.Setup(x => x.GetConnectorData(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Dictionary<string, string>>())).Returns(Task.FromResult<dynamic>(null));
 
 			ConnectorsController connector = new ConnectorsController(_mockConnectorservice.Object, null, _mapper);
 
@@ -129,7 +129,7 @@ namespace Zurich.Connector.Tests.ControllerTests
 			var response = await connector.ConnectorData("fakeId", "fakeHost", null);
 
 			// ASSERT
-			_mockConnectorservice.Verify(x => x.GetConnectorData(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Exactly(1));
+			_mockConnectorservice.Verify(x => x.GetConnectorData(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Dictionary<string, string>>()), Times.Exactly(1));
 			var result = (NotFoundObjectResult)response.Result;
 			Assert.AreEqual(StatusCodes.Status404NotFound, result.StatusCode);
 		}

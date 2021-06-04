@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Collections.Specialized;
 using System.Threading.Tasks;
 using Zurich.Common.Models.OAuth;
 using Zurich.Common.Services.Security;
@@ -21,7 +22,7 @@ namespace Zurich.Connector.Data.DataMap
             this._logger = logger;
         }
 
-        public async override Task<T> Get<T>(DataMappingClass dataTypeInformation, string transferToken = null)
+        public async override Task<T> Get<T>(DataMappingClass dataTypeInformation, string transferToken = null, NameValueCollection query = null)
         {
             T results = default(T);
 
@@ -37,7 +38,7 @@ namespace Zurich.Connector.Data.DataMap
                 ApiInformation apiInfo = new ApiInformation() { AppCode = dataTypeInformation.AppCode, HostName = dataTypeInformation.Api.Hostname, UrlPath = dataTypeInformation.Api.Url, AuthHeader = dataTypeInformation.Api.AuthHeader, Token = token };
 
                 apiInfo.UrlPath = await this.UpdateUrl(apiInfo.UrlPath, dataTypeInformation);
-                return await GetFromRepo<T>(apiInfo, dataTypeInformation);
+                return await GetFromRepo<T>(apiInfo, dataTypeInformation, query);
             }
 
             return results;

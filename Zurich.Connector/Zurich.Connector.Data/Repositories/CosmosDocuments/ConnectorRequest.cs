@@ -45,6 +45,10 @@ namespace Zurich.Connector.Data.Repositories.CosmosDocuments
         /// <summary>
         /// Default value of the parameter
         /// </summary>
-        public string defaultValue { get; set; }
+        public object defaultValue { get; set; }
+        /// <summary>
+        /// Name of querys tring parameter in request
+        /// </summary>
+        public string cdmName { get; set; }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,8 +23,9 @@ namespace Zurich.Connector.Data.DataMap
         /// <typeparam name="T">The CommonDataModel that should be returned</typeparam>
         /// <param name="appCode">Application code to get the data from</param>
         /// <param name="dataType">Data type to retrieve</param>
+        /// <param name="query">Query parameters mapped from cosmo DB</param>
         /// <returns>The T model based on the request or default(T)</returns>
-        Task<T> Get<T>(DataMappingClass dataTypeInformation, string transferToken = null);
+        Task<T> Get<T>(DataMappingClass dataTypeInformation, string transferToken = null, NameValueCollection query = null);
 
         /// <summary>
         /// Passed in the appcode will pull the token

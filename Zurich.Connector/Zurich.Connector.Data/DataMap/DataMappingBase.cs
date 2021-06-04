@@ -24,7 +24,7 @@ namespace Zurich.Connector.Data.DataMap
 		protected IOAuthService _oAuthService;
 		protected ILogger<DataMappingBase> _logger;
 
-		public async virtual Task<T> Get<T>(DataMappingClass dataTypeInformation, string transferToken = null)
+		public async virtual Task<T> Get<T>(DataMappingClass dataTypeInformation, string transferToken = null, NameValueCollection query =null)
         {
             T results = default(T);
 

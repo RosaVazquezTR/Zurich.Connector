@@ -3,10 +3,12 @@ using Moq;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Zurich.Connector.Data.DataMap;
 using Zurich.Connector.Data.Model;
 using Zurich.Connector.Data.Repositories;
 using Zurich.Connector.Data.Services;
+using Zurich.Connector.App.Services;
 
 namespace Zurich.Connector.Tests.ServiceTests
 {
@@ -16,6 +18,8 @@ namespace Zurich.Connector.Tests.ServiceTests
 		private Mock<IDataMapping> _mockDataMapping;
 		private Mock<IDataMappingFactory> _mockDataMappingFactory;
 		private Mock<IDataMappingRepository> _mockDataMappingRepo;
+		private Mock<IQueryCollection> _mockQueryCollection;
+		private Mock<ICosmosService> _mockCosmosService;
 
 		[TestInitialize]
 		public void TestInitialize()
@@ -23,6 +27,8 @@ namespace Zurich.Connector.Tests.ServiceTests
 			_mockDataMapping = new Mock<IDataMapping>();
 			_mockDataMappingFactory = new Mock<IDataMappingFactory>();
 			_mockDataMappingRepo = new Mock<IDataMappingRepository>();
+			_mockQueryCollection = new Mock<IQueryCollection>();
+			_mockCosmosService = new Mock<ICosmosService>();
 		}
 
 		#region Data Setup
@@ -67,7 +73,7 @@ namespace Zurich.Connector.Tests.ServiceTests
 			ConnectorFilterModel filters = new ConnectorFilterModel();
 			_mockDataMappingRepo.Setup(x => x.GetConnectors()).Returns(Task.FromResult(testConnections));
 			
-			ConnectorService service = new ConnectorService(_mockDataMapping.Object, _mockDataMappingFactory.Object, _mockDataMappingRepo.Object, null,null);
+			ConnectorService service = new ConnectorService(_mockDataMapping.Object, _mockDataMappingFactory.Object, _mockDataMappingRepo.Object, null,null, _mockCosmosService.Object);
 
 			// ACT
 			var connectors = await service.GetConnectors(filters);
@@ -92,7 +98,7 @@ namespace Zurich.Connector.Tests.ServiceTests
 			};
 			_mockDataMappingRepo.Setup(x => x.GetConnectors()).Returns(Task.FromResult(testConnections));
 
-			ConnectorService service = new ConnectorService(_mockDataMapping.Object, _mockDataMappingFactory.Object, _mockDataMappingRepo.Object, null,null);
+			ConnectorService service = new ConnectorService(_mockDataMapping.Object, _mockDataMappingFactory.Object, _mockDataMappingRepo.Object, null,null, _mockCosmosService.Object);
 
 			// ACT
 			var connectors = await service.GetConnectors(filters);
@@ -116,7 +122,7 @@ namespace Zurich.Connector.Tests.ServiceTests
 			};
 			_mockDataMappingRepo.Setup(x => x.GetConnectors()).Returns(Task.FromResult(testConnections));
 
-			ConnectorService service = new ConnectorService(_mockDataMapping.Object, _mockDataMappingFactory.Object, _mockDataMappingRepo.Object, null,null);
+			ConnectorService service = new ConnectorService(_mockDataMapping.Object, _mockDataMappingFactory.Object, _mockDataMappingRepo.Object, null,null, _mockCosmosService.Object);
 
 			// ACT
 			var connectors = await service.GetConnectors(filters);

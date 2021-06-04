@@ -4,11 +4,16 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
+using System.IO;
+using System.Linq;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Threading.Tasks;
 using Zurich.Connector.Data.Model;
 using Zurich.Connector.Data.Services;
 using Zurich.Connector.Web.Models;
+using Microsoft.Extensions.Primitives;
+using Microsoft.Extensions.Configuration;
 
 namespace Zurich.Connector.Web.Controllers
 {
@@ -20,7 +25,7 @@ namespace Zurich.Connector.Web.Controllers
         private readonly IMapper _mapper;
         private readonly ILogger<ConnectorsController> _logger;
 
-        public ConnectorsController(IConnectorService connectorService, ILogger<ConnectorsController> logger , IMapper mapper)
+        public ConnectorsController(IConnectorService connectorService, ILogger<ConnectorsController> logger, IMapper mapper)
         {
             _connectorService = connectorService;
             _mapper = mapper;
@@ -34,12 +39,13 @@ namespace Zurich.Connector.Web.Controllers
             dynamic results;
             try
             {
-                results = await _connectorService.GetConnectorData(id, hostname, transferToken);
+                Dictionary<string, string> parameters = HttpContext.Request.Query.Keys.Cast<string>().ToDictionary(k => k, v => HttpContext.Request.Query[v].ToString());
+                results = await _connectorService.GetConnectorData(id, hostname, transferToken, parameters);
                 if (results == null)
                 {
                     return NotFound("Connector or data not found");
                 }
-            } 
+            }
             catch (Exception e)
             {
                 return BadRequest(e.Message);

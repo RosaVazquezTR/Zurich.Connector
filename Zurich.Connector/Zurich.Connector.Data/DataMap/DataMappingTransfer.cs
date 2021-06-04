@@ -21,7 +21,7 @@ namespace Zurich.Connector.Data.DataMap
             this._logger = logger;
         }
 
-        public async override Task<T> Get<T>(DataMappingClass dataTypeInformation, string transferToken)
+        public async override Task<T> Get<T>(DataMappingClass dataTypeInformation, string transferToken, NameValueCollection query = null)
         {
             T results = default(T);
 
