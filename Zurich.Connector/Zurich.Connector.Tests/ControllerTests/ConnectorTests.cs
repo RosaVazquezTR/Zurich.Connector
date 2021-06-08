@@ -106,7 +106,7 @@ namespace Zurich.Connector.Tests.ControllerTests
 			// ARRANGE
 			_mockConnectorservice.Setup(x => x.GetConnectorData(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(),It.IsAny<Dictionary<string, string>>())).Returns(Task.FromResult<dynamic>(TwoDocumentsListJson));
 
-			ConnectorsController connector = new ConnectorsController(_mockConnectorservice.Object, null, _mapper);
+			ConnectorsController connector = CreateConnectorsController();
 			
 			// ACT
 			var response = await connector.ConnectorData("fakeId", "fakeHost", null);
@@ -123,7 +123,7 @@ namespace Zurich.Connector.Tests.ControllerTests
 			// ARRANGE
 			_mockConnectorservice.Setup(x => x.GetConnectorData(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Dictionary<string, string>>())).Returns(Task.FromResult<dynamic>(null));
 
-			ConnectorsController connector = new ConnectorsController(_mockConnectorservice.Object, null, _mapper);
+			ConnectorsController connector = CreateConnectorsController();
 
 			// ACT
 			var response = await connector.ConnectorData("fakeId", "fakeHost", null);
@@ -159,7 +159,7 @@ namespace Zurich.Connector.Tests.ControllerTests
 			// ARRANGE
 			_mockConnectorservice.Setup(x => x.GetConnectorConfiguration(It.IsAny<string>())).Returns(Task.FromResult(Connector_Configuration));
 
-			ConnectorsController connector = new ConnectorsController(_mockConnectorservice.Object, null,_mockmapper.Object);
+			ConnectorsController connector = CreateConnectorsController();
 
 			// ACT
 			var response = await connector.ConnectorconfigData("fakeId");
@@ -176,7 +176,7 @@ namespace Zurich.Connector.Tests.ControllerTests
 			// ARRANGE
 			_mockConnectorservice.Setup(x => x.GetConnectorConfiguration(It.IsAny<string>()));
 
-			ConnectorsController connector = new ConnectorsController(_mockConnectorservice.Object, null,_mockmapper.Object);
+			ConnectorsController connector = CreateConnectorsController();
 
 			// ACT
 			var response = await connector.ConnectorconfigData("fakeId");
@@ -185,6 +185,20 @@ namespace Zurich.Connector.Tests.ControllerTests
 			_mockConnectorservice.Verify(x => x.GetConnectorConfiguration(It.IsAny<string>()), Times.Exactly(1));
 			var result = (NotFoundObjectResult)response.Result;
 			Assert.AreEqual(StatusCodes.Status404NotFound, result.StatusCode);
+		}
+
+		private ConnectorsController CreateConnectorsController()
+        {
+			var httpContext = new DefaultHttpContext();
+			httpContext.Request.Headers["Authorization"] = "FakeToken";
+			httpContext.Request.Query = null;
+
+			var controllerContext = new ControllerContext()
+			{
+				HttpContext = httpContext,
+			};
+
+			return new ConnectorsController(_mockConnectorservice.Object, null, _mockmapper.Object) { ControllerContext = controllerContext };
 		}
 	}
 }

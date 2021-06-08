@@ -28,7 +28,6 @@ namespace Zurich.Connector.Web.Controllers
         public ConnectorsController(IConnectorService connectorService, ILogger<ConnectorsController> logger, IMapper mapper)
         {
             _connectorService = connectorService;
-            _mapper = mapper;
             _logger = logger;
             _mapper = mapper;
         }
