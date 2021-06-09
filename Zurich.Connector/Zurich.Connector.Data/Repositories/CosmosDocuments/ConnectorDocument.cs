@@ -35,7 +35,7 @@ namespace Zurich.Connector.Data.Repositories.CosmosDocuments
         /// <summary>
         /// CDM Mapping of properties
         /// </summary>
-        public List<CDMMapping> cdmMapping { get; set; }
+        public CDMMapping cdmMapping { get; set; }
     }
 
     public class ConnectorInfo
