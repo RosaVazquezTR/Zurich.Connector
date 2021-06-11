@@ -139,20 +139,18 @@ namespace Zurich.Connector.Data.Services
         {
             NameValueCollection modifiedQueryParameters = new NameValueCollection();
 
-            if (queryParameters.Any())
-            {
-                var connectorDocument = await _cosmosService.GetConnector(id);
+            var connectorDocument = await _cosmosService.GetConnector(id);
             
-                var dataForNameValueCollection = (from param in queryParameters
-                                                  join requestParam in connectorDocument.Request?.Parameters
-                                                  on param.Key.ToString().ToLower() equals requestParam.CdmName.ToLower()
-                                                  select new { name = requestParam.Name, value = param.Value.ToString() }).ToList();
+            var dataForNameValueCollection = (from param in queryParameters
+                                              join requestParam in connectorDocument.Request.Parameters
+                                              on param.Key.ToString().ToLower() equals requestParam.CdmName.ToLower()
+                                              select new { name = requestParam.Name, value = param.Value.ToString() }).ToList();
 
-                dataForNameValueCollection.ForEach(data => modifiedQueryParameters.Add(data.name, data.value));
-                modifiedQueryParameters = dataForNameValueCollection.Count>0 ? modifiedQueryParameters : null;
-            }
-
+            dataForNameValueCollection.ForEach(data => modifiedQueryParameters.Add(data.name, data.value));
+            modifiedQueryParameters = dataForNameValueCollection.Count>0 ? modifiedQueryParameters : null;
+            
             return modifiedQueryParameters;
+
         }
     }
 }
