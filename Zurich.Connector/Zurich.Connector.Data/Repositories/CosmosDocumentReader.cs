@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
@@ -19,7 +20,8 @@ namespace Zurich.Connector.Data.Repositories
 		/// Fetche the list of connector document from Cosmos
 		/// </summary>
 		/// <returns>list of connector documents</returns>
-		public Task<List<ConnectorDocument>> GetAllConnectorDocuments();
+
+		public Task<IEnumerable<ConnectorDocument>> GetConnectorDocuments(Expression<Func<ConnectorDocument, bool>> condition = null);
 
 		/// <summary>
 		/// Fetch connector document from Cosmos by ID
@@ -28,23 +30,18 @@ namespace Zurich.Connector.Data.Repositories
 		public Task<ConnectorDocument> GetConnectorDocument(string connectorId);
 
 		/// <summary>
-		/// Fetch connectors from Cosmos by a list of connectorID
-		/// </summary>
-		/// <returns>List of connector document.</returns> 
-		public Task<List<ConnectorDocument>> GetConnectorDocuments(IEnumerable<string> connectorId);
-
-		/// <summary>
 		/// Fetche the list of data source document from Cosmos
 		/// </summary>
 		/// <returns>list of data source documents</returns>
-		public Task<List<DataSourceDocument>> GetAllDataSourceDocuments();
+		public Task<IEnumerable<DataSourceDocument>> GetDataSourceDocuments(Expression<Func<DataSourceDocument, bool>> condition = null);
 
 		/// <summary>
 		/// Fetch a data sources from Cosmos by dataSourceID
 		/// </summary>
 		/// <returns>data source.</returns> 
 		public Task<DataSourceDocument> GetDataSourceDocument(string dataSourceId);
-	}
+
+    }
 
 	public class CosmosDocumentReader: ICosmosDocumentReader
 	{
@@ -63,15 +60,18 @@ namespace Zurich.Connector.Data.Repositories
 		/// Fetche the list of connector document from Cosmos
 		/// </summary>
 		/// <returns>list of connector documents</returns>
-		public async Task<List<ConnectorDocument>> GetAllConnectorDocuments()
+		public async Task<IEnumerable<ConnectorDocument>> GetConnectorDocuments(Expression<Func<ConnectorDocument, bool>> condition = null)
 		{
 			try
 			{
-				var response = this._documentClient.CreateDocumentQuery<ConnectorDocument>
-										(UriFactory.CreateDocumentCollectionUri(this.options.Database, CosmosConstants.ConnectorCollection))
-										.AsEnumerable().ToList();
+				IQueryable<ConnectorDocument> response = null;
 
-				return response;
+				response = _documentClient.CreateDocumentQuery<ConnectorDocument>(UriFactory.CreateDocumentCollectionUri(this.options.Database, CosmosConstants.ConnectorCollection), new FeedOptions { PartitionKey = new PartitionKey(CosmosConstants.ConnectorList) });
+				if (condition != null)
+				{
+					response = response.Where(condition);
+				}
+				return response.AsEnumerable();
 			}
 			catch(Exception ex)
             {
@@ -101,39 +101,21 @@ namespace Zurich.Connector.Data.Repositories
 		}
 
 		/// <summary>
-		/// Fetch connectors from Cosmos by a list of connectorID
-		/// </summary>
-		/// <returns>List of connector document.</returns> 
-		public async Task<List<ConnectorDocument>> GetConnectorDocuments(IEnumerable<string> connectorId)
-		{
-			try
-			{
-				var response = this._documentClient.CreateDocumentQuery<ConnectorDocument>
-										(UriFactory.CreateDocumentCollectionUri(this.options.Database, CosmosConstants.ConnectorCollection),
-										new FeedOptions { EnableCrossPartitionQuery = true })
-										.Where(t=> connectorId.Contains(t.Id) ).AsEnumerable().ToList();
-
-				return response;
-			}
-			catch (Exception ex)
-			{
-				_logger.LogError(ex.Message);
-				throw;
-			}
-		}
-
-		/// <summary>
 		/// Fetche the list of data source document from Cosmos
 		/// </summary>
 		/// <returns>list of data source documents</returns>
-		public async Task<List<DataSourceDocument>> GetAllDataSourceDocuments()
+		public async Task<IEnumerable<DataSourceDocument>> GetDataSourceDocuments(Expression<Func<DataSourceDocument, bool>> condition = null)
         {
 			try
 			{
-				var response = this._documentClient.CreateDocumentQuery<DataSourceDocument>
-										(UriFactory.CreateDocumentCollectionUri(this.options.Database, CosmosConstants.DataSourceCollection)).AsEnumerable().ToList();
+				IQueryable<DataSourceDocument> response = null;
 
-				return response;
+				response = _documentClient.CreateDocumentQuery<DataSourceDocument>(UriFactory.CreateDocumentCollectionUri(this.options.Database, CosmosConstants.DataSourceCollection), new FeedOptions { PartitionKey = new PartitionKey(CosmosConstants.DataSourceList) });
+				if (condition != null)
+				{
+					response = response.Where(condition);
+				}
+				return response.AsEnumerable();
 			}
 			catch (Exception ex)
 			{

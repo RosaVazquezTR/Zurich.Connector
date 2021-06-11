@@ -1,10 +1,13 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using AutoMapper;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
+using Zurich.Connector.App;
 using Zurich.Connector.App.Services;
 using Zurich.Connector.Data.Repositories;
 using Zurich.Connector.Data.Repositories.CosmosDocuments;
@@ -16,6 +19,7 @@ namespace Zurich.Connector.Tests.ServiceTests
     {
         private Mock<ICosmosDocumentReader> _mockCosmosDocumentReader;
         private Mock<ICosmosDocumentWriter> _mockCosmosDocumentWriter;
+        private IMapper _mapper;
 
 
         [TestInitialize]
@@ -23,10 +27,16 @@ namespace Zurich.Connector.Tests.ServiceTests
         {
             _mockCosmosDocumentReader = new Mock<ICosmosDocumentReader>();
             _mockCosmosDocumentWriter = new Mock<ICosmosDocumentWriter>();
+            var mapConfig = new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile(new ServiceMappingRegistrar());
+            });
+            _mapper = mapConfig.CreateMapper();
+
         }
 
         #region Data Setup
-        private List<ConnectorDocument> SetupConnectors()
+        private IEnumerable<ConnectorDocument> SetupConnectors()
         {
             return new List<ConnectorDocument>()
             {
@@ -62,7 +72,7 @@ namespace Zurich.Connector.Tests.ServiceTests
                 }
             };
         }
-        private List<DataSourceDocument> SetupDataSources()
+        private IEnumerable<DataSourceDocument> SetupDataSources()
         {
             return new List<DataSourceDocument>()
             {
@@ -87,21 +97,22 @@ namespace Zurich.Connector.Tests.ServiceTests
 
 
         [TestMethod]
-        public async Task CallGetAllConnectors()
+        public async Task CallGetConnectors()
         {
             //Arrange
             var testConnectors = SetupConnectors();
-            _mockCosmosDocumentReader.Setup(x => x.GetAllConnectorDocuments()).Returns(Task.FromResult(testConnectors));
-            var cosmostService = new CosmosService(_mockCosmosDocumentReader.Object, _mockCosmosDocumentWriter.Object, null, null);
+            var testConnectorsList = testConnectors.ToList();
+            _mockCosmosDocumentReader.Setup(x => x.GetConnectorDocuments(null)).Returns(Task.FromResult(testConnectors));
+            var cosmostService = new CosmosService(_mockCosmosDocumentReader.Object, _mockCosmosDocumentWriter.Object, null,_mapper, null);
 
             //Act
-            var connectors = await cosmostService.GetAllConnectors();
+            var connectors = (await cosmostService.GetConnectors()).ToList();
 
             //Assert
-            _mockCosmosDocumentReader.Verify(x => x.GetAllConnectorDocuments(), Times.Once());
+            _mockCosmosDocumentReader.Verify(x => x.GetConnectorDocuments(null), Times.Once());
             Assert.IsNotNull(connectors);
             Assert.AreEqual(SetupConnectors().Count(), connectors.Count());
-            Assert.AreEqual(testConnectors[0].Id, connectors[0].Id);
+            Assert.AreEqual(testConnectorsList[0].Id, connectors[0].Id);
         }
 
         [TestMethod]
@@ -111,7 +122,7 @@ namespace Zurich.Connector.Tests.ServiceTests
             var testId = "3";
             var testConnector = SetupConnectors().Where(x => x.Id == testId).FirstOrDefault();
             _mockCosmosDocumentReader.Setup(x => x.GetConnectorDocument(testId)).Returns(Task.FromResult(testConnector));
-            var cosmostService = new CosmosService(_mockCosmosDocumentReader.Object, _mockCosmosDocumentWriter.Object, null, null);
+            var cosmostService = new CosmosService(_mockCosmosDocumentReader.Object, _mockCosmosDocumentWriter.Object, null, _mapper, null);
 
             //Act
             var connector = await cosmostService.GetConnector(testId);
@@ -120,45 +131,47 @@ namespace Zurich.Connector.Tests.ServiceTests
             _mockCosmosDocumentReader.Verify(x => x.GetConnectorDocument(testId), Times.Once());
             Assert.IsNotNull(connector);
             Assert.AreEqual(testConnector.Id, connector.Id);
-            Assert.AreEqual(testConnector.info.title, connector.info.title);
+            Assert.AreEqual(testConnector.info.title, connector.Info.Title);
         }
 
         [TestMethod]
-        public async Task CallGetConnectors()
+        public async Task CallGetConnectorsByIds()
         {
             //Arrange
             var testIds = new List<string> { "1", "3" };
-            var testConnectors = SetupConnectors().Where(x => testIds.Contains(x.Id)).ToList();
-            _mockCosmosDocumentReader.Setup(x => x.GetConnectorDocuments(testIds)).Returns(Task.FromResult(testConnectors));
-            var cosmostService = new CosmosService(_mockCosmosDocumentReader.Object, _mockCosmosDocumentWriter.Object, null, null);
+            var testConnectors = SetupConnectors().Where(x => testIds.Contains(x.Id));
+            Expression<Func<ConnectorDocument, bool>> condition = connectors => testIds.Contains(connectors.Id);
+            _mockCosmosDocumentReader.Setup(x => x.GetConnectorDocuments(condition)).Returns(Task.FromResult(testConnectors));
+            var cosmostService = new CosmosService(_mockCosmosDocumentReader.Object, _mockCosmosDocumentWriter.Object, null, _mapper, null);
 
             //Act
-            var connectors = await cosmostService.GetConnectors(testIds);
+            var connectors = (await cosmostService.GetConnectors(condition)).ToList();
 
             //Assert
-            _mockCosmosDocumentReader.Verify(x => x.GetConnectorDocuments(testIds), Times.Once());
+            _mockCosmosDocumentReader.Verify(x => x.GetConnectorDocuments(condition), Times.Once());
             Assert.IsNotNull(connectors);
             Assert.AreEqual(testConnectors.Count(), connectors.Count());
-            Assert.AreEqual(testConnectors[0].Id, connectors[0].Id);
-            Assert.AreEqual(testConnectors[0].info.title, connectors[0].info.title);
+            Assert.AreEqual(testConnectors.ToList()[0].Id, connectors[0].Id);
+            Assert.AreEqual(testConnectors.ToList()[0].info.title, connectors[0].Info.Title);
         }
 
         [TestMethod]
-        public async Task CallGetAllDataSources()
+        public async Task CallGetDataSources()
         {
             //Arrange
             var testDataSources = SetupDataSources();
-            _mockCosmosDocumentReader.Setup(x => x.GetAllDataSourceDocuments()).Returns(Task.FromResult(testDataSources));
-            var cosmostService = new CosmosService(_mockCosmosDocumentReader.Object, _mockCosmosDocumentWriter.Object, null, null);
+            var testDataSourcesList = SetupDataSources().ToList();
+            _mockCosmosDocumentReader.Setup(x => x.GetDataSourceDocuments(null)).Returns(Task.FromResult(testDataSources));
+            var cosmostService = new CosmosService(_mockCosmosDocumentReader.Object, _mockCosmosDocumentWriter.Object, null, _mapper, null);
 
             //Act
-            var dataSources = await cosmostService.GetAllDataSources();
+            var dataSources = (await cosmostService.GetDataSources()).ToList();
 
             //Assert
-            _mockCosmosDocumentReader.Verify(x => x.GetAllDataSourceDocuments(), Times.Once());
+            _mockCosmosDocumentReader.Verify(x => x.GetDataSourceDocuments(null), Times.Once());
             Assert.IsNotNull(dataSources);
             Assert.AreEqual(SetupDataSources().Count(), dataSources.Count());
-            Assert.AreEqual(testDataSources[0].Id, dataSources[0].Id);
+            Assert.AreEqual(testDataSourcesList[0].Id, dataSources[0].Id);
         }
 
         [TestMethod]
@@ -168,7 +181,7 @@ namespace Zurich.Connector.Tests.ServiceTests
             var testId = "101";
             var testDataSource = SetupDataSources().Where(p => p.Id == testId).FirstOrDefault();
             _mockCosmosDocumentReader.Setup(x => x.GetDataSourceDocument(testId)).Returns(Task.FromResult(testDataSource));
-            var cosmostService = new CosmosService(_mockCosmosDocumentReader.Object, _mockCosmosDocumentWriter.Object, null, null);
+            var cosmostService = new CosmosService(_mockCosmosDocumentReader.Object, _mockCosmosDocumentWriter.Object, null, _mapper, null);
 
             //Act
             var dataSource = await cosmostService.GetDataSource(testId);
@@ -177,7 +190,7 @@ namespace Zurich.Connector.Tests.ServiceTests
             _mockCosmosDocumentReader.Verify(x => x.GetDataSourceDocument(testId), Times.Once());
             Assert.IsNotNull(dataSource);
             Assert.AreEqual(testDataSource.Id, dataSource.Id);
-            Assert.AreEqual(testDataSource.description, dataSource.description);
+            Assert.AreEqual(testDataSource.description, dataSource.Description);
 
         }
 
@@ -187,7 +200,7 @@ namespace Zurich.Connector.Tests.ServiceTests
             //Arrange
             var testId = "1";
             var testConnector = SetupConnectors().Where(p => p.Id == testId).FirstOrDefault();
-            var cosmostService = new CosmosService(_mockCosmosDocumentReader.Object, _mockCosmosDocumentWriter.Object, null, null);
+            var cosmostService = new CosmosService(_mockCosmosDocumentReader.Object, _mockCosmosDocumentWriter.Object, null, _mapper, null);
 
             //Act
             await cosmostService.StoreConnector(testConnector);
@@ -202,7 +215,7 @@ namespace Zurich.Connector.Tests.ServiceTests
             //Arrange
             var testId = "101";
             var testDataSource = SetupDataSources().Where(p => p.Id == testId).FirstOrDefault();
-            var cosmostService = new CosmosService(_mockCosmosDocumentReader.Object, _mockCosmosDocumentWriter.Object, null, null);
+            var cosmostService = new CosmosService(_mockCosmosDocumentReader.Object, _mockCosmosDocumentWriter.Object, null, _mapper, null);
 
             //Act
             await cosmostService.StoreDataSource(testDataSource);

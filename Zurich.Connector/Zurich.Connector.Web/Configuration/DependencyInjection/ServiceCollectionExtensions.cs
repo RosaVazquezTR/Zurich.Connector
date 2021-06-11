@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IdentityModel.Tokens.Jwt;
+using AutoMapper;
 using IdentityModel;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -115,7 +116,8 @@ namespace Microsoft.Extensions.DependencyInjection
 				var reader = serviceProvider.GetRequiredService<ICosmosDocumentReader>();
 				var writer = serviceProvider.GetRequiredService<ICosmosDocumentWriter>();
 				var logger = serviceProvider.GetRequiredService<ILogger<CosmosService>>();
-				return new CosmosService(reader, writer, clientOptions, logger);
+				var mapper = serviceProvider.GetRequiredService<IMapper>();
+				return new CosmosService(reader, writer, clientOptions, mapper, logger);
 			});
 		}
 	}

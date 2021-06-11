@@ -9,6 +9,7 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Threading.Tasks;
+using Zurich.Connector.App.Model;
 using Zurich.Connector.Data.Model;
 using Zurich.Connector.Data.Services;
 using Zurich.Connector.Web.Models;
@@ -38,7 +39,7 @@ namespace Zurich.Connector.Web.Controllers
             dynamic results;
             try
             {
-                Dictionary<string, string> parameters = HttpContext.Request.Query.Keys.Cast<string>().ToDictionary(k => k, v => HttpContext.Request.Query[v].ToString());
+                Dictionary<string, string> parameters = HttpContext?.Request.Query.Keys.Cast<string>().ToDictionary(k => k, v => HttpContext?.Request.Query[v].ToString());
                 results = await _connectorService.GetConnectorData(id, hostname, transferToken, parameters);
                 if (results == null)
                 {
@@ -59,11 +60,36 @@ namespace Zurich.Connector.Web.Controllers
             };
         }
 
+        /// <summary>
+        /// API to get a list of connectors
+        /// </summary>
+        /// <remarks>
+        /// Sample request:
+        /// 
+        ///		GET /connectors?<params>
+        ///		
+        /// </remarks>
+        /// <param name="filters">
+        /// 1. entityType is optional parameter to filter to specific data types of connectors e.g. Document, Search, etc.
+        /// 2. registrationMode is optional parameter to filter by specific registration mode for the connectors, e.g.registered would return all connectors that are registered for the user.
+        /// 3. dataSource is optional parameter to filter by specific data source.
+        /// </param>
+        /// <returns>
+        /// A <see cref="ConnectorViewModel"/> with the connectors</returns>
+        /// id (this is a generic id for the specific connector used by all users), entityType, dataSource, registrationMode(registered/autoReg/manualReg), registeredOn (optional date time), domain (optional)
+        /// </returns>
+        /// <response code="200">A <see cref="ConnectorViewModel"/> representing the connectors</response>
+
         [HttpGet()]
         public async Task<ActionResult<List<ConnectorViewModel>>> Connectors([FromQuery] ConnectorFilterModel filters)
         {
-            List<DataMappingConnection> connections = await _connectorService.GetConnectors(filters);
+            List<ConnectorModel> connections = await _connectorService.GetConnectors(filters);
             List<ConnectorViewModel> results = _mapper.Map<List<ConnectorViewModel>>(connections);
+
+            if(results.Count == 0)
+            {
+                return NotFound();
+            }
 
             var jsonSettings = new JsonSerializerSettings
             {
@@ -83,7 +109,7 @@ namespace Zurich.Connector.Web.Controllers
             var results = await _connectorService.GetConnectorConfiguration(Connectorid);
             if (results == null)
             {
-                return NotFound("Connector or data not found");
+                return NotFound("Connector not found");
             }
             var responsedata = _mapper.Map<ConnectorConfigViewModel>(results);
             return Ok(responsedata);

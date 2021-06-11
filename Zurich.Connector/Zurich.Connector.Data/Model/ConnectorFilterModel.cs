@@ -6,22 +6,23 @@ using System.Threading.Tasks;
 namespace Zurich.Connector.Data.Model
 {
     /// <summary>
-    /// Class for filtering connections
+    /// Class to filter connectors
     /// </summary>
     public class ConnectorFilterModel
     {
         /// <summary>
-        /// Entity type filters
+        /// EntityType is optional parameter to filter to specific data types of connectors e.g. Document, Search, etc.
         /// </summary>
         public List<EntityType> EntityTypes { get; set; }
 
         /// <summary>
-        /// Authorization type filters
+        /// RegistrationMode is optional parameter to filter by specific registration mode for the connectors.
+        /// e.g. Registered would return all connectors that are registered for the user.
         /// </summary>
-        public List<AuthType> AuthTypes { get; set; }
+        public List<RegistrationEntityMode> RegistrationModes { get; set; }
 
         /// <summary>
-        /// Data source filtered by app codes
+        /// DataSource is optional parameter to filter by specific data source.
         /// </summary>
         public List<string> DataSources { get; set; }
     }

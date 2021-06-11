@@ -1,6 +1,7 @@
 ﻿
 using System.Collections.Generic;
 using Zurich.Common.Cosmos;
+using Zurich.Connector.Data.Model;
 
 namespace Zurich.Connector.Data.Repositories.CosmosDocuments
 {
@@ -51,7 +52,7 @@ namespace Zurich.Connector.Data.Repositories.CosmosDocuments
         /// <summary>
         /// Entity type like Document, Search etc.
         /// </summary>
-        public string entityType { get; set; }
+        public EntityType entityType { get; set; }
         /// <summary>
         /// Data Source ID
         /// </summary>

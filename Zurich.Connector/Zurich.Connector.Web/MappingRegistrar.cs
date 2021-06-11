@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Linq;
 using AutoMapper;
+using Zurich.Connector.App.Model;
 using Zurich.Connector.Data.Model;
+using Zurich.Connector.Data.Repositories.CosmosDocuments;
 using Zurich.Connector.Web.Models;
 
 namespace Zurich.Connector.Web
@@ -10,9 +12,7 @@ namespace Zurich.Connector.Web
 	{
 		public MappingRegistrar()
 		{
-			CreateMap<DataMappingConnection, ConnectorViewModel>()
-				.ForMember(dest => dest.AuthType, opt => opt.MapFrom(src => src.Auth.Type))
-				.ForMember(dest => dest.DataSource, opt => opt.MapFrom(src => src.AppCode));
+
             CreateMap<ConnectorsConfigResponseEntity, ConnectorConfigViewModel>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.AppCode, opt => opt.MapFrom(src => src.AppCode))
@@ -21,6 +21,16 @@ namespace Zurich.Connector.Web
                 .ForMember(dest => dest.Api, opt => opt.MapFrom(src => src.Api))
                 .ForMember(dest => dest.filters, opt => opt.MapFrom(src => src.filters))
                 .ForAllOtherMembers(opt => opt.Ignore());
-		}
-	}
+
+            CreateMap<ConnectorModel, ConnectorViewModel>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.EntityType, opt => opt.MapFrom(src => src.Info.EntityType))
+                .ForMember(dest => dest.DataSource, opt => opt.MapFrom(src => src.DataSource))
+                .ForAllOtherMembers(opt => opt.Ignore());
+
+            CreateMap<DataSourceModel, DataSourceViewModel>();
+            CreateMap<SecurityDefinitionModel, SecurityDefinitionViewModel>();
+            CreateMap<SecurityDefinitionDetailsModel, SecurityDefinitionDetailsViewModel>();
+        }
+    }
 }

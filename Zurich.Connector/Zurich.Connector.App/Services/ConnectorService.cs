@@ -8,6 +8,8 @@ using System.Linq;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
+using Zurich.Connector.App.Model;
+using Zurich.Connector.App.Services;
 using Zurich.Connector.Data.DataMap;
 using Zurich.Connector.Data.Model;
 using Zurich.Connector.Data.Repositories;
@@ -16,6 +18,7 @@ using System.Collections.Specialized;
 using Microsoft.Extensions.Primitives;
 using Newtonsoft.Json;
 using Zurich.Connector.Data.Repositories.CosmosDocuments;
+using System.Linq.Expressions;
 
 namespace Zurich.Connector.Data.Services
 {
@@ -35,11 +38,11 @@ namespace Zurich.Connector.Data.Services
         Task<dynamic> GetConnectorData(string connectionId, string hostname, string transferToken, Dictionary<string, string> queryParameters);
 
         /// <summary>
-        /// Gets all connections from the data mapping file
+        /// Gets all connections from cosmos
         /// </summary>
         /// <param name="filters">Filters to get different connections</param>
         /// <returns>List of Data Mapping Connections <see cref="DataMappingConnection"/></returns>
-        Task<List<DataMappingConnection>> GetConnectors(ConnectorFilterModel filters);
+        Task<List<ConnectorModel>> GetConnectors(ConnectorFilterModel filters);
         Task<ConnectorsConfigResponseEntity> GetConnectorConfiguration(string connectorId);
     }
 
@@ -48,18 +51,19 @@ namespace Zurich.Connector.Data.Services
         private readonly IDataMapping _dataMapping;
         private readonly IDataMappingFactory _dataMappingFactory;
         private readonly IDataMappingRepository _dataMappingRepo;
+        private readonly ICosmosService _cosmosService;
         private readonly ILogger<ConnectorService> _logger;
         private readonly IMapper _mapper;
-        private readonly ICosmosService _cosmosService;
 
-        public ConnectorService(IDataMapping dataMapping, IDataMappingFactory dataMappingFactory, IDataMappingRepository dataMappingRepo, ILogger<ConnectorService> logger, IMapper mapper, ICosmosService CosmosService)
+        public ConnectorService(IDataMapping dataMapping, IDataMappingFactory dataMappingFactory, IDataMappingRepository dataMappingRepo, 
+                                ILogger<ConnectorService> logger, IMapper mapper, ICosmosService cosmosService)
         {
             _dataMapping = dataMapping;
             _dataMappingFactory = dataMappingFactory;
             _dataMappingRepo = dataMappingRepo;
+            _cosmosService = cosmosService;
             _logger = logger;
             _mapper = mapper;
-            _cosmosService = CosmosService;
         }
 
         public async Task<dynamic> GetConnectorData(string connectionId, string hostname, string transferToken, Dictionary<string, string> queryParameters)
@@ -78,27 +82,51 @@ namespace Zurich.Connector.Data.Services
             return await service.Get<dynamic>(dataMappingInformation, transferToken, mappedQueryParameters);
         }
 
-        public async Task<List<DataMappingConnection>> GetConnectors(ConnectorFilterModel filters)
+        /// <summary>
+        /// Gets all connections from cosmos
+        /// </summary>
+        /// <param name="filters">Filters to get different connections</param>
+        /// <returns>List of Data Mapping Connections <see cref="DataMappingConnection"/></returns>
+        public async Task<List<ConnectorModel>> GetConnectors(ConnectorFilterModel filters)
         {
-            IEnumerable<DataMappingConnection> connectors = await _dataMappingRepo.GetConnectors();
-
-            // TODO: This filtering will eventually move to the repo on the DB call
-            if (filters.EntityTypes?.Count > 0)
+            try
             {
-                connectors = connectors.Where(connector => filters.EntityTypes.Contains(connector.EntityType));
-            }
+                Expression<Func<ConnectorDocument, bool>> condition = null;
 
-            if (filters.DataSources?.Count > 0)
+                if (filters?.EntityTypes?.Count > 0)
+                {
+                    var entityTypeFilter = filters.EntityTypes.Select(t => t.ToString());
+                    condition = connector => entityTypeFilter.Contains(connector.info.entityType.ToString());
+                }
+
+                if (filters?.DataSources?.Count > 0)
+                {
+                    condition = connector => filters.DataSources.Contains(connector.info.dataSourceId);
+                }
+
+                if (filters?.RegistrationModes?.Count > 0)
+                {
+                    //TODO: Implement registration mode filtering here.
+                }
+
+                var connectors = await _cosmosService.GetConnectors(condition);
+
+                var dataSourceIDs = connectors.Select(t => t.Info.DataSourceId).Distinct().ToList();
+
+                Expression<Func<DataSourceDocument, bool>> dsCondition = dataSources => dataSourceIDs.Contains(dataSources.Id);
+                var dataSourceResult = await _cosmosService.GetDataSources(dsCondition);
+
+                foreach(var connector in connectors)
+                {
+                    connector.DataSource = _mapper.Map<DataSourceModel>(dataSourceResult.Where(d => d.Id == connector.Info.DataSourceId).ToList().First());
+                }
+
+                return connectors.ToList();
+            } catch(Exception ex)
             {
-                connectors = connectors.Where(connector => filters.DataSources.Contains(connector.AppCode));
+                _logger.LogError(ex.Message);
+                throw;
             }
-
-            if (filters.AuthTypes?.Count > 0)
-            {
-                connectors = connectors.Where(connector => filters.AuthTypes.Contains(connector.Auth.Type));
-            }
-
-            return connectors.ToList();
         }
 
         public async Task<ConnectorsConfigResponseEntity> GetConnectorConfiguration(string ConnectorId)
@@ -114,9 +142,9 @@ namespace Zurich.Connector.Data.Services
             var connectorDocument = await _cosmosService.GetConnector(id);
             
             var dataForNameValueCollection = (from param in queryParameters
-                                              join requestParam in connectorDocument.request.parameters
-                                              on param.Key.ToString().ToLower() equals requestParam.cdmName.ToLower()
-                                              select new { name = requestParam.name, value = param.Value.ToString() }).ToList();
+                                              join requestParam in connectorDocument.Request.Parameters
+                                              on param.Key.ToString().ToLower() equals requestParam.CdmName.ToLower()
+                                              select new { name = requestParam.Name, value = param.Value.ToString() }).ToList();
 
             dataForNameValueCollection.ForEach(data => modifiedQueryParameters.Add(data.name, data.value));
             modifiedQueryParameters = dataForNameValueCollection.Count>0 ? modifiedQueryParameters : null;

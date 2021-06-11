@@ -26,6 +26,7 @@ using Microsoft.Data.SqlClient;
 using Microsoft.Data.SqlClient.AlwaysEncrypted.AzureKeyVaultProvider;
 using Zurich.Connector.Data.Services;
 using Zurich.Common.Models.Cosmos;
+using Zurich.Connector.App;
 
 namespace Zurich.Connector.Web
 {
@@ -88,7 +89,7 @@ namespace Zurich.Connector.Web
 
             services.AddAuthenticationServices(Configuration.GetValue<string>("Audience"), authority);
             services.AddPartnerAppAuth(tenantConnectionString, productsConnectionString, _oAuthOptions, _microServOptions);
-            services.AddAutoMapper(typeof(Startup), typeof(CommonMappingsProfile));
+            services.AddAutoMapper(typeof(Startup), typeof(CommonMappingsProfile), typeof(ServiceMappingRegistrar));
             services.AddConnectorCosmosServices(_connectorCosmosDbOptions, _connectorCosmosClientOptions);
         }
 

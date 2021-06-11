@@ -22,14 +22,9 @@ namespace Zurich.Connector.Web.Models
         public string EntityType { get; set; }
 
         /// <summary>
-        /// Data source for connector. Maps to app code for now
+        /// Data source for connector.
         /// </summary>
-        public string DataSource { get; set; }
-
-        /// <summary>
-        /// Type of authorization protocol for the connector
-        /// </summary>
-        public string AuthType { get; set; }
+        public DataSourceViewModel DataSource { get; set; }
 
         /// <summary>
         /// Time of creation
