@@ -1,0 +1,31 @@
+trigger: none
+
+pool:
+  vmImage: 'windows-latest'
+
+resources:
+  repositories:
+    - repository: ZurichDeploy
+      type: git
+      name: Zurich.Deploy
+
+variables:
+- name: solution
+  value: '**/*.sln'
+- name: buildPlatform
+  value: 'Any CPU'
+- name: buildConfiguration
+  value: 'Release'
+- template: ../Variables/connector-variables-Shared.yml   
+
+stages:
+- stage: Build
+  jobs:
+    - job: 'Build'
+      displayName: 'Connectors Build'
+      steps:
+        - checkout: self
+        - checkout: ZurichDeploy
+        - template: Templates\ZurichDeploy-BuildWebAPI.yml@ZurichDeploy
+          parameters:
+            projectName: ${{ variables.projectName }}
