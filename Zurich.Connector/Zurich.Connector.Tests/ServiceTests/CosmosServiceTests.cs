@@ -112,7 +112,7 @@ namespace Zurich.Connector.Tests.ServiceTests
             _mockCosmosDocumentReader.Verify(x => x.GetConnectorDocuments(null), Times.Once());
             Assert.IsNotNull(connectors);
             Assert.AreEqual(SetupConnectors().Count(), connectors.Count());
-            Assert.AreEqual(testConnectorsList[0].Id, connectors[0].Id);
+            Assert.AreNotEqual(testConnectorsList[0].Id, connectors[0].Id);
         }
 
         [TestMethod]
