@@ -1,4 +1,6 @@
 parameters:
+- name: appInsightsName
+  type: string
 - name: connectorServiceName
   type: string
 - name: connectorSubnets
@@ -107,3 +109,11 @@ steps:
     SlotName: '${{ parameters.slotName }}'
     #TODO For some reason we get a Zurich.Connector.zip and a Zurich.Connectors.Web.zip we shoudl figure that out.
     packageForLinux: '$(Pipeline.Workspace)/${{ parameters.projectName }}/${{ parameters.projectName }}.Web.zip'
+- task: AzureResourceGroupDeployment@2
+  displayName: 'Create Dashboard'
+  inputs:
+    azureSubscription: ${{ parameters.subscriptionName }}
+    resourceGroupName: '${{ parameters.resourceGroup }}'
+    location: '${{ parameters.resourceLocation }}'
+    csmFile: '$(Build.SourcesDirectory)/Zurich.Connector/Zurich.Connector.Deploy/ArmTemplates/Dashboard.json'
+    overrideParameters: '-env "${{ parameters.environmentName }}" -dashboardName "Connectors-Dashboard" -connectorsWebApi "${{ parameters.connectorServiceName }}" -ConnectorsAppInsights "${{ parameters.appInsightsName }}"'
