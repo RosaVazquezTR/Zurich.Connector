@@ -1,0 +1,464 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "env": {
+      "defaultValue": "CI",
+      "metadata": {
+        "description": "Deployment environment."
+      },
+      "type": "string"
+    },
+    "dashboardName": {
+      "defaultValue": "Dashboard",
+      "type": "string",
+      "metadata": {
+        "description": "Name to be used for the dashboard will get concatenated with environment variable."
+      }
+    },
+    "connectorsWebApi": {
+      "type": "string",
+      "metadata": {
+        "description": "Shows connectorsWebApi"
+      }
+    },
+    "connectorsAppInsights": {
+      "type": "string",
+      "metadata": {
+        "description": "Shows connectorsAppInsights"
+      }
+    },
+    "location": {
+      "defaultValue": "[resourceGroup().location]",
+      "type": "string",
+      "metadata": {
+        "description": "Resource location for resource group"
+      }
+    },
+    "resourceGroup": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().name]",
+      "metadata": {
+        "description": "Resource group that holds app insights"
+      }
+    }
+  },
+  "variables": {
+    "FSConnectorsAppinsight-Dashboard-powershell": "[concat(parameters('dashboardName'), '-', parameters('env'))]",
+    "connectorsWebApi": "[concat(parameters('connectorsWebApi'), parameters('env'))]",
+    "connectorsAppInsights": "[concat(parameters('connectorsAppInsights'), parameters('env'))]"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Portal/dashboards",
+      "apiVersion": "2015-08-01-preview",
+      "name": "[variables('FSConnectorsAppinsight-Dashboard-powershell')]",
+      "location": "[parameters('location')]",
+      "tags": {
+        "hidden-title": "[variables('FSConnectorsAppinsight-Dashboard-powershell')]"
+      },
+      "properties": {
+        "lenses": {
+          "0": {
+            "order": 0,
+            "parts": {
+              "0": {
+                "position": {
+                  "x": 0,
+                  "y": 0,
+                  "colSpan": 4,
+                  "rowSpan": 3
+                },
+                "metadata": {
+                  "inputs": [
+                    {
+                      "name": "options",
+                      "isOptional": true
+                    },
+                    {
+                      "name": "sharedTimeRange",
+                      "isOptional": true
+                    }
+                  ],
+                  "type": "Extension/HubsExtension/PartType/MonitorChartPart",
+                  "settings": {
+                    "content": {
+                      "options": {
+                        "chart": {
+                          "metrics": [
+                            {
+                              "resourceMetadata": {
+                                "id": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('resourceGroup'), '/providers/Microsoft.Web/sites/', variables('connectorsWebApi'))]"
+                              },
+                              "name": "Http5xx",
+                              "aggregationType": 1,
+                              "namespace": "microsoft.web/sites",
+                              "metricVisualization": {
+                                "displayName": "Http Server Errors",
+                                "resourceDisplayName": "connectorsWebApi"
+                              }
+                            }
+                          ],
+                          "title": "Sum Http Server Errors for connectorsWebApi",
+                          "titleKind": 1,
+                          "visualization": {
+                            "chartType": 2,
+                            "legendVisualization": {
+                              "isVisible": true,
+                              "position": 2,
+                              "hideSubtitle": false
+                            },
+                            "axisVisualization": {
+                              "x": {
+                                "isVisible": true,
+                                "axisType": 2
+                              },
+                              "y": {
+                                "isVisible": true,
+                                "axisType": 1
+                              }
+                            },
+                            "disablePinning": true
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "1": {
+                "position": {
+                  "x": 4,
+                  "y": 0,
+                  "colSpan": 4,
+                  "rowSpan": 3
+                },
+                "metadata": {
+                  "inputs": [
+                    {
+                      "name": "options",
+                      "isOptional": true
+                    },
+                    {
+                      "name": "sharedTimeRange",
+                      "isOptional": true
+                    }
+                  ],
+                  "type": "Extension/HubsExtension/PartType/MonitorChartPart",
+                  "settings": {
+                    "content": {
+                      "options": {
+                        "chart": {
+                          "metrics": [
+                            {
+                              "resourceMetadata": {
+                                "id": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('resourceGroup'), '/providers/Microsoft.Insights/components/', variables('connectorsAppInsights'))]"
+                              },
+                              "name": "requests/failed",
+                              "aggregationType": 7,
+                              "namespace": "microsoft.insights/components",
+                              "metricVisualization": {
+                                "displayName": "Failed requests",
+                                "resourceDisplayName": "connectorsAppInsights"
+                              }
+                            }
+                          ],
+                          "title": "Count Failed requests for connectorsAppInsights",
+                          "titleKind": 1,
+                          "visualization": {
+                            "chartType": 2,
+                            "legendVisualization": {
+                              "isVisible": true,
+                              "position": 2,
+                              "hideSubtitle": false
+                            },
+                            "axisVisualization": {
+                              "x": {
+                                "isVisible": true,
+                                "axisType": 2
+                              },
+                              "y": {
+                                "isVisible": true,
+                                "axisType": 1
+                              }
+                            },
+                            "disablePinning": true
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "2": {
+                "position": {
+                  "x": 8,
+                  "y": 0,
+                  "colSpan": 4,
+                  "rowSpan": 3
+                },
+                "metadata": {
+                  "inputs": [
+                    {
+                      "name": "options",
+                      "isOptional": true
+                    },
+                    {
+                      "name": "sharedTimeRange",
+                      "isOptional": true
+                    }
+                  ],
+                  "type": "Extension/HubsExtension/PartType/MonitorChartPart",
+                  "settings": {
+                    "content": {
+                      "options": {
+                        "chart": {
+                          "metrics": [
+                            {
+                              "resourceMetadata": {
+                                "id": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('resourceGroup'), '/providers/Microsoft.Web/sites/', variables('connectorsWebApi'))]"
+                              },
+                              "name": "AppConnections",
+                              "aggregationType": 4,
+                              "namespace": "microsoft.web/sites",
+                              "metricVisualization": {
+                                "displayName": "Connections",
+                                "resourceDisplayName": "connectorsWebApi"
+                              }
+                            }
+                          ],
+                          "title": "Avg Connections for connectorsWebApi",
+                          "titleKind": 1,
+                          "visualization": {
+                            "chartType": 2,
+                            "legendVisualization": {
+                              "isVisible": true,
+                              "position": 2,
+                              "hideSubtitle": false
+                            },
+                            "axisVisualization": {
+                              "x": {
+                                "isVisible": true,
+                                "axisType": 2
+                              },
+                              "y": {
+                                "isVisible": true,
+                                "axisType": 1
+                              }
+                            },
+                            "disablePinning": true
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "3": {
+                "position": {
+                  "x": 0,
+                  "y": 3,
+                  "colSpan": 4,
+                  "rowSpan": 3
+                },
+                "metadata": {
+                  "inputs": [
+                    {
+                      "name": "options",
+                      "isOptional": true
+                    },
+                    {
+                      "name": "sharedTimeRange",
+                      "isOptional": true
+                    }
+                  ],
+                  "type": "Extension/HubsExtension/PartType/MonitorChartPart",
+                  "settings": {
+                    "content": {
+                      "options": {
+                        "chart": {
+                          "metrics": [
+                            {
+                              "resourceMetadata": {
+                                "id": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('resourceGroup'), '/providers/Microsoft.Web/sites/', variables('connectorsWebApi'))]"
+                              },
+                              "name": "Requests",
+                              "aggregationType": 1,
+                              "namespace": "microsoft.web/sites",
+                              "metricVisualization": {
+                                "displayName": "Requests",
+                                "resourceDisplayName": "connectorsWebApi"
+                              }
+                            }
+                          ],
+                          "title": "Sum Requests for connectorsWebApi",
+                          "titleKind": 1,
+                          "visualization": {
+                            "chartType": 2,
+                            "legendVisualization": {
+                              "isVisible": true,
+                              "position": 2,
+                              "hideSubtitle": false
+                            },
+                            "axisVisualization": {
+                              "x": {
+                                "isVisible": true,
+                                "axisType": 2
+                              },
+                              "y": {
+                                "isVisible": true,
+                                "axisType": 1
+                              }
+                            },
+                            "disablePinning": true
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "4": {
+                "position": {
+                  "x": 4,
+                  "y": 3,
+                  "colSpan": 4,
+                  "rowSpan": 3
+                },
+                "metadata": {
+                  "inputs": [
+                    {
+                      "name": "options",
+                      "isOptional": true
+                    },
+                    {
+                      "name": "sharedTimeRange",
+                      "isOptional": true
+                    }
+                  ],
+                  "type": "Extension/HubsExtension/PartType/MonitorChartPart",
+                  "settings": {
+                    "content": {
+                      "options": {
+                        "chart": {
+                          "metrics": [
+                            {
+                              "resourceMetadata": {
+                                "id": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('resourceGroup'), '/providers/Microsoft.Insights/components/', variables('connectorsAppInsights'))]"
+                              },
+                              "name": "availabilityResults/count",
+                              "aggregationType": 7,
+                              "namespace": "microsoft.insights/components",
+                              "metricVisualization": {
+                                "displayName": "Availability tests",
+                                "resourceDisplayName": "connectorsAppInsights"
+                              }
+                            }
+                          ],
+                          "title": "Count Availability tests for connectorsAppInsights",
+                          "titleKind": 1,
+                          "visualization": {
+                            "chartType": 2,
+                            "legendVisualization": {
+                              "isVisible": true,
+                              "position": 2,
+                              "hideSubtitle": false
+                            },
+                            "axisVisualization": {
+                              "x": {
+                                "isVisible": true,
+                                "axisType": 2
+                              },
+                              "y": {
+                                "isVisible": true,
+                                "axisType": 1
+                              }
+                            },
+                            "disablePinning": true
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "5": {
+                "position": {
+                  "x": 0,
+                  "y": 6,
+                  "colSpan": 4,
+                  "rowSpan": 3
+                },
+                "metadata": {
+                  "inputs": [
+                    {
+                      "name": "resourceType",
+                      "value": "Microsoft.Resources/subscriptions/resourcegroups",
+                      "isOptional": true
+                    },
+                    {
+                      "name": "filter",
+                      "isOptional": true
+                    },
+                    {
+                      "name": "scope",
+                      "isOptional": true
+                    },
+                    {
+                      "name": "kind",
+                      "isOptional": true
+                    }
+                  ],
+                  "type": "Extension/HubsExtension/PartType/BrowseResourceGroupPinnedPart",
+                  "savedContainerState": {
+                    "partTitle": "Resource groups",
+                    "assetName": "All subscriptions"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "metadata": {
+          "model": {
+            "timeRange": {
+              "value": {
+                "relative": {
+                  "duration": 24,
+                  "timeUnit": 1
+                }
+              },
+              "type": "MsPortalFx.Composition.Configuration.ValueTypes.TimeRange"
+            },
+            "filterLocale": {
+              "value": "en-us"
+            },
+            "filters": {
+              "value": {
+                "MsPortalFx_TimeRange": {
+                  "model": {
+                    "format": "utc",
+                    "granularity": "auto",
+                    "relative": "24h"
+                  },
+                  "displayCache": {
+                    "name": "UTC Time",
+                    "value": "Past 24 hours"
+                  },
+                  "filteredPartIds": [
+                    "StartboardPart-MonitorChartPart-aac3899f-230d-4373-b15a-0d5b0f7e3164",
+                    "StartboardPart-MonitorChartPart-aac3899f-230d-4373-b15a-0d5b0f7e3224",
+                    "StartboardPart-MonitorChartPart-aac3899f-230d-4373-b15a-0d5b0f7e3429",
+                    "StartboardPart-MonitorChartPart-aac3899f-230d-4373-b15a-0d5b0f7e37e0",
+                    "StartboardPart-MonitorChartPart-aac3899f-230d-4373-b15a-0d5b0f7e388b",
+                    "StartboardPart-MonitorChartPart-aac3899f-230d-4373-b15a-0d5b0f7e39d6"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}
