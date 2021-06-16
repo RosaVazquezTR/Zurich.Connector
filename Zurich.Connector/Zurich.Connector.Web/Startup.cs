@@ -27,6 +27,8 @@ using Microsoft.Data.SqlClient.AlwaysEncrypted.AzureKeyVaultProvider;
 using Zurich.Connector.Data.Services;
 using Zurich.Common.Models.Cosmos;
 using Zurich.Connector.App;
+using Zurich.Connector.App.Services;
+using Zurich.Connector.Data;
 
 namespace Zurich.Connector.Web
 {
@@ -77,6 +79,7 @@ namespace Zurich.Connector.Web
             services.AddControllers();
             services.AddScoped<IDataMappingFactory, DataMappingFactory>();
             services.AddScoped<IDataMapping, DataMapping>();
+            services.AddScoped<IDataMappingService, DataMappingService>();
             services.AddScoped<IConnectorService, ConnectorService>();
             services.AddScoped<DataMappingOAuth>();
             services.AddScoped<DataMappingTransfer>();

@@ -42,6 +42,10 @@ namespace Zurich.Connector.Data.Repositories.CosmosDocuments
         /// Define scope
         /// </summary>
         public DataSourceScopes scopes { get; set; }
+        /// <summary>
+        /// App Code
+        /// </summary>
+        public string AppCode { get; set; }
 
     }
 

@@ -3,14 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Zurich.Connector.Data.Model;
 
-namespace Zurich.Connector.App.Model
+namespace Zurich.Connector.Data.Model
 {
     /// <summary>
     /// Store data source details.
     /// </summary>
-    public class DataSourceModel
+    public class DataSourceModelEntity
     {
         /// <summary>
         /// Data source ID
@@ -39,7 +38,7 @@ namespace Zurich.Connector.App.Model
         /// <summary>
         /// Define security definition
         /// </summary>
-        public SecurityDefinitionModel SecurityDefinition { get; set; }
+        public SecurityDefinitionModelEntity SecurityDefinition { get; set; }
         // TODO
         // Define scope here.
     }
@@ -47,7 +46,7 @@ namespace Zurich.Connector.App.Model
     /// <summary>
     /// Store security definition 
     /// </summary>
-    public class SecurityDefinitionModel
+    public class SecurityDefinitionModelEntity
     {
         /// <summary>
         /// Type. Ex: "oauth2"
@@ -65,14 +64,14 @@ namespace Zurich.Connector.App.Model
         /// Default security definition
         /// users can override default values, if left blank then needs to be requested during connector registration
         /// </summary>
-        public SecurityDefinitionDetailsModel DefaultSecurityDefinition { get; set; }
+        public SecurityDefinitionDetailsModelEntity DefaultSecurityDefinition { get; set; }
 
     }
 
     /// <summary>
     /// Store security definition details
     /// </summary>
-    public class SecurityDefinitionDetailsModel
+    public class SecurityDefinitionDetailsModelEntity
     {
         /// <summary>
         /// Authorization URL

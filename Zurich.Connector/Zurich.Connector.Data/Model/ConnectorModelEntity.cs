@@ -3,14 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Zurich.Connector.Data.Model;
 
-namespace Zurich.Connector.App.Model
+namespace Zurich.Connector.Data.Model
 {
     /// <summary>
     /// Store connector details
     /// </summary>
-    public class ConnectorModel
+    public class ConnectorModelEntity
     {
         /// <summary>
         /// Connector ID
@@ -19,15 +18,15 @@ namespace Zurich.Connector.App.Model
         /// <summary>
         /// Connector Info like title, description etc.
         /// </summary>
-        public ConnectorInfoModel Info { get; set; }
+        public ConnectorInfoModelEntity Info { get; set; }
         /// <summary>
         /// Store the data source details.
         /// </summary>
-        public DataSourceModel DataSource { get; set; }
+        public DataSourceModelEntity DataSource { get; set; }
         /// <summary>
         /// Request details
         /// </summary>
-        public ConnectorRequestModel Request { get; set; }
+        public ConnectorRequestModelEntity Request { get; set; }
         /// <summary>
         /// Host name
         /// </summary>
@@ -35,13 +34,13 @@ namespace Zurich.Connector.App.Model
         /// <summary>
         /// Cdm Mapping
         /// </summary>
-        public CdmMapping CdmMapping { get; set; }
+        public CdmMappingEntity CdmMappingEntity { get; set; }
     }
 
     /// <summary>
     /// Store connector info
     /// </summary>
-    public class ConnectorInfoModel
+    public class ConnectorInfoModelEntity
     {
         /// <summary>
         /// Connector title
@@ -68,19 +67,19 @@ namespace Zurich.Connector.App.Model
     /// <summary>
     /// Stores Cdm Mapping
     /// </summary>
-    public class CdmMapping
+    public class CdmMappingEntity
     {
-        public Structured Structured { get; set; }
+        public StructuredEntity StructuredEntity { get; set; }
 
-        public Unstructured Unstructured { get; set; }
+        public UnstructuredEntity UnstructuredEntity { get; set; }
     }
 
-    public class Structured
+    public class StructuredEntity
     {
-        public List<CdmElement> CdmElement{ get; set; }
+        public List<CdmElementEntity> CdmElementEntity { get; set; }
     }
 
-    public class CdmElement
+    public class CdmElementEntity
     {
         /// <summary>
         /// Name of the property
@@ -100,8 +99,8 @@ namespace Zurich.Connector.App.Model
         public string _Comment { get; set; }
     }
 
-    public class Unstructured
+    public class UnstructuredEntity
     {
-        public CdmElement DataElement { get; set; }
+        public CdmElementEntity DataElementEntity { get; set; }
     }
 }

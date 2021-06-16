@@ -18,9 +18,9 @@ namespace Zurich.Connector.Data.Services
         /// <summary>
         /// Gets the service needed to map data
         /// </summary>
-        /// <param name="dataMappingInformation">Information used for data mapping <see cref="DataMappingClass"/></param>
+        /// <param name="authType">Information used for Authorization type </param>
         /// <returns>IDataMapping service used to map the results</returns>
-        IDataMapping GetMapper(DataMappingClass dataMappingInformation);
+        IDataMapping GetMapper(AuthType authType);
     }
     public class DataMappingFactory : IDataMappingFactory
     {
@@ -33,14 +33,14 @@ namespace Zurich.Connector.Data.Services
             _logger = logger;
         }
 
-        public IDataMapping GetMapper(DataMappingClass dataMappingInformation)
+        public IDataMapping GetMapper(AuthType authType)
         {
-            if (dataMappingInformation.AuthType == AuthType.TransferToken)
+            if (authType == AuthType.TransferToken)
             {
-                DataMappingTransfer service = (DataMappingTransfer)_serviceProvider.GetService(typeof(DataMappingTransfer)); 
+                DataMappingTransfer service = (DataMappingTransfer)_serviceProvider.GetService(typeof(DataMappingTransfer));
                 return service;
-            } 
-            else if (dataMappingInformation.AuthType == AuthType.OAuth)
+            }
+            else if (authType == AuthType.OAuth)
             {
                 DataMappingOAuth service = (DataMappingOAuth)_serviceProvider.GetService(typeof(DataMappingOAuth));
                 return service;

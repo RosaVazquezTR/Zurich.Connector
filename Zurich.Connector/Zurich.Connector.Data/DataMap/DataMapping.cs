@@ -25,7 +25,7 @@ namespace Zurich.Connector.Data.DataMap
         /// <param name="dataType">Data type to retrieve</param>
         /// <param name="query">Query parameters mapped from cosmo DB</param>
         /// <returns>The T model based on the request or default(T)</returns>
-        Task<T> Get<T>(DataMappingClass dataTypeInformation, string transferToken = null, NameValueCollection query = null);
+        Task<T> Get<T>(ConnectorModelEntity dataTypeInformation, string transferToken = null, NameValueCollection query = null);
 
         /// <summary>
         /// Passed in the appcode will pull the token
@@ -39,8 +39,8 @@ namespace Zurich.Connector.Data.DataMap
         /// </summary>
         /// <param name="appCode">Application code to get the data from</param>
         /// <param name="hostname">The domain of the api being called</param>
-        /// <returns>Class that can be used to map the data</returns>
-        Task<DataMappingClass> RetrieveProductInformationMap(string connectionId, string hostname);
+        /// <returns>Returns ConnectorModelEntity</returns>
+        Task<ConnectorModelEntity> RetrieveProductInformationMap(string connectionId, string hostname);
 
         /// <summary>
         /// This will update the url to have correct values replaced if dataMap is setup correctly
@@ -49,7 +49,7 @@ namespace Zurich.Connector.Data.DataMap
         /// <param name="appCode">Application code to get the data from</param>
         /// <param name="urlPath">Current url path to be used</param>
         /// <returns>The urlPath without formating</returns>
-        Task<string> UpdateUrl(string urlPath, DataMappingClass dataTypeInformation, string transferToken = null);
+        Task<string> UpdateUrl(string urlPath, ConnectorModelEntity dataTypeInformation, string transferToken = null);
 
         /// <summary>
         /// Method will map a string json object to the CDM object passed in
@@ -57,9 +57,9 @@ namespace Zurich.Connector.Data.DataMap
         /// <typeparam name="T">The CommonDataModel that should be returned</typeparam>
         /// <param name="stringJsonResponse">the string value of the json response coming in</param>
         /// <param name="resultLocation">What values we should grab to get to the data ie: "data.results"</param>
-        /// <param name="propertyMap">The list of property maps from the json object to the CDM object</param>
+        /// <param name="propertyMap">ConnectorModelEntity object</param>
         /// <returns>The CDM Model</returns>
-        Task<T> MapToCDM<T>(string stringJsonResponse, string resultLocation, List<DataMappingProperty> propertyMap);
+        Task<T> MapToCDM<T>(string stringJsonResponse, string resultLocation, ConnectorModelEntity propertyMap);
     }
 
     public class DataMapping : DataMappingBase, IDataMapping
