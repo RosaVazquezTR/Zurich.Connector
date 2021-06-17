@@ -27,6 +27,18 @@
           {
             "CDMProperty": "Id",
             "APIProperty": "customer_id"
+          },
+          {
+            "CDMProperty": "UserName",
+            "APIProperty": "id"
+          },
+          {
+            "CDMProperty": "Email",
+            "APIProperty": "email"
+          },
+          {
+            "CDMProperty": "UserType",
+            "APIProperty": "user_type"
           }
         ]
       }
