@@ -10,7 +10,6 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Threading.Tasks;
 using Zurich.Connector.App.Model;
-using Zurich.Connector.Data.Model;
 using Zurich.Connector.Data.Services;
 using Zurich.Connector.Web.Models;
 using Microsoft.Extensions.Primitives;
@@ -76,16 +75,16 @@ namespace Zurich.Connector.Web.Controllers
         /// 3. dataSource is optional parameter to filter by specific data source.
         /// </param>
         /// <returns>
-        /// A <see cref="ConnectorViewModel"/> with the connectors</returns>
+        /// A <see cref="ConnectorListViewModel"/> with the connectors</returns>
         /// id (this is a generic id for the specific connector used by all users), entityType, dataSource, registrationMode(registered/autoReg/manualReg), registeredOn (optional date time), domain (optional)
         /// </returns>
-        /// <response code="200">A <see cref="ConnectorViewModel"/> representing the connectors</response>
+        /// <response code="200">A <see cref="ConnectorListViewModel"/> representing the connectors</response>
 
         [HttpGet()]
-        public async Task<ActionResult<List<ConnectorViewModel>>> Connectors([FromQuery] ConnectorFilterModel filters)
+        public async Task<ActionResult<List<ConnectorListViewModel>>> Connectors([FromQuery] ConnectorFilterModel filters)
         {
             List<ConnectorModel> connections = await _connectorService.GetConnectors(filters);
-            List<ConnectorViewModel> results = _mapper.Map<List<ConnectorViewModel>>(connections);
+            List<ConnectorListViewModel> results = _mapper.Map<List<ConnectorListViewModel>>(connections);
 
             if(results.Count == 0)
             {
@@ -104,15 +103,31 @@ namespace Zurich.Connector.Web.Controllers
                 StatusCode = StatusCodes.Status200OK
             };
         }
+
+        /// <summary>
+        /// Get connector definition - Returns the configuration of the connector, configuration is generic for all users
+        /// </summary>
+        /// <remarks>
+        /// Sample reque3st:
+        ///     GET /connectors/<ID>
+        /// </remarks>
+        /// <param name="id">
+        /// Connector ID
+        /// </param>
+        /// <returns>
+        /// A <see cref="ConnectorViewModel"/> with the connectors</returns>
+        /// (includes connector authorization and base configuration, CDM returned, data of request and response for external API, 
+        /// filters, extra set up – specific to search sorting and query parameters)
+        /// </returns>
         [HttpGet("{id}")]
-        public async Task<ActionResult<ConnectorConfigViewModel>> ConnectorconfigData([FromQuery] string Connectorid)
+        public async Task<ActionResult<ConnectorViewModel>> Connectors(string id)
         {
-            var results = await _connectorService.GetConnectorConfiguration(Connectorid);
+            var results = await _connectorService.GetConnector(id);
             if (results == null)
             {
                 return NotFound("Connector not found");
             }
-            var responsedata = _mapper.Map<ConnectorConfigViewModel>(results);
+            var responsedata = _mapper.Map<ConnectorViewModel>(results);
             return Ok(responsedata);
         }
 

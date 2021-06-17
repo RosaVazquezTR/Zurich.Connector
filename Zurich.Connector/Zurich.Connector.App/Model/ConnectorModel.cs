@@ -28,6 +28,18 @@ namespace Zurich.Connector.App.Model
         /// Request details
         /// </summary>
         public ConnectorRequestModel Request { get; set; }
+        /// <summary>
+        /// Response details
+        /// </summary>
+        public ConnectorResponseModel Response { get; set; }
+        /// <summary>
+        /// Filter details
+        /// </summary>
+        public List<ConnectorFilterModel> Filters { get; set; }
+        /// <summary>
+        /// CDM Mapping of properties
+        /// </summary>
+        public CDMMappingModel CDMMapping { get; set; }
     }
 
     /// <summary>

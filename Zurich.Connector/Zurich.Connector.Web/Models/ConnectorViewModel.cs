@@ -7,33 +7,64 @@ using Zurich.Connector.Data.Model;
 namespace Zurich.Connector.Web.Models
 {
     /// <summary>
-    /// Class with only connection information shown to user
+    /// To store detailed connector information.
     /// </summary>
     public class ConnectorViewModel
     {
         /// <summary>
-        /// The connector id
+        /// Connector ID
         /// </summary>
         public string Id { get; set; }
-
         /// <summary>
-        /// The type of connector
+        /// Connector Info like title, description etc.
         /// </summary>
-        public string EntityType { get; set; }
-
+        public ConnectorDetailsInfoViewModel Info { get; set; }
         /// <summary>
-        /// Data source for connector.
+        /// Store the data source details.
         /// </summary>
         public DataSourceViewModel DataSource { get; set; }
-
         /// <summary>
-        /// Time of creation
+        /// Request details
         /// </summary>
-        public DateTime? CreatedTime { get; set; }
-
+        public ConnectorRequestViewModel Request { get; set; }
         /// <summary>
-        /// Domain of the api endpoint
+        /// Response details
         /// </summary>
-        public string? Domain { get; set; }
+        public ConnectorResponseViewModel Response { get; set; }
+        /// <summary>
+        /// Filter details
+        /// </summary>
+        public List<ConnectorFilterViewModel> Filters { get; set; }
+        /// <summary>
+        /// CDM Mapping of properties
+        /// </summary>
+        public CDMMappingViewModel CDMMapping { get; set; }
+    }
+
+    /// <summary>
+    /// Store connector info
+    /// </summary>
+    public class ConnectorDetailsInfoViewModel
+    {
+        /// <summary>
+        /// Connector title
+        /// </summary>
+        public string Title { get; set; }
+        /// <summary>
+        /// Connector description
+        /// </summary>
+        public string Description { get; set; }
+        /// <summary>
+        /// Entity type like Document, Search etc.
+        /// </summary>
+        public EntityType EntityType { get; set; }
+        /// <summary>
+        /// Data Source ID
+        /// </summary>
+        public string DataSourceId { get; set; }
+        /// <summary>
+        /// Version
+        /// </summary>
+        public string Version { get; set; }
     }
 }

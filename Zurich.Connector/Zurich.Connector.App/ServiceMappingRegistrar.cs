@@ -12,14 +12,20 @@ namespace Zurich.Connector.App
     {
         public ServiceMappingRegistrar()
         {
-            CreateMap<ConnectorDocument, ConnectorModel>()
-                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
-                .ForMember(dest => dest.Info, opt => opt.MapFrom(src => src.info))
-                .ForAllOtherMembers(opt => opt.Ignore());
+            CreateMap<ConnectorDocument, ConnectorModel>();
 
             CreateMap<ConnectorInfo, ConnectorInfoModel>();
 
             CreateMap<ConnectorRequest, ConnectorRequestModel>();
+            CreateMap<ConnectorResponse, ConnectorResponseModel>();
+            CreateMap<ConnectorReponseSchema, ConnectorReponseSchemaModel>();
+            CreateMap<ConnectorReponseProperties, ConnectorReponsePropertiesModel> ();
+
+            CreateMap<ConnectorFilter, ConnectorFilterModel>();
+
+            CreateMap<CDMMapping, CDMMappingModel>();
+            CreateMap<CDMElement, CDMElementModel>();
+
             CreateMap<ConnectorRequestParameter, ConnectorRequestParameterModel>();
 
             CreateMap<DataSourceDocument, DataSourceModel>()

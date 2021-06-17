@@ -18,12 +18,12 @@ namespace Zurich.Connector.App.Services
 		/// Fetch all connectors from Cosmos
 		/// </summary>
 		/// <returns>Connector document list.</returns> 
-		public Task<IEnumerable<ConnectorModel>> GetConnectors(Expression<Func<ConnectorDocument, bool>> condition = null);
+		public Task<IEnumerable<ConnectorModel>> GetConnectors(bool includeDataSource = false, Expression<Func<ConnectorDocument, bool>> condition = null);
 		/// <summary>
 		/// Fetch connector from Cosmos by ID
 		/// </summary>
 		/// <returns>Connector document.</returns> 
-		public Task<ConnectorModel> GetConnector(string connectorId);
+		public Task<ConnectorModel> GetConnector(string connectorId, bool includeDataSource = false);
 
 		/// <summary>
 		/// Fetch all data sources from Cosmos

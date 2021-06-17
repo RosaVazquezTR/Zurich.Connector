@@ -68,18 +68,18 @@ namespace Zurich.Connector.Tests.Common
 		{
 			return new List<DataSourceModel>()
 			{
-				new DataSourceModel()
+                new DataSourceModel()
+                {
+                    Id = "11",
+                    Name = "DataSource11",
+                    Description = "DataSource 11 desc"
+                },
+                new DataSourceModel()
 				{
-					Id = "11",
-					Name = "data source",
-					Description = "data source 11",
-				},
-				new DataSourceModel()
-				{
-					Id = "22",
-					Name = "data source",
-					Description = "data source 22",
-				},
+                    Id = "22",
+                    Name = "DataSource22",
+                    Description = "DataSource 22 desc"
+                },
 			};
 		}
 	}
