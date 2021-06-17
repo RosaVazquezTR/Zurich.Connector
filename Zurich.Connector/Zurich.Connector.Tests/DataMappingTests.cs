@@ -9,6 +9,7 @@ using Zurich.Common.Services.Security;
 using Zurich.Connector.Data.DataMap;
 using Zurich.Connector.Data.Model;
 using Zurich.Connector.Data.Repositories;
+using Zurich.ProductData.Models;
 
 namespace Zurich.Connector.Tests
 {
@@ -32,7 +33,8 @@ namespace Zurich.Connector.Tests
 
 			// feels like this won't change
 			AppToken token = new AppToken() { access_token = "fakeToken" };
-			_mockOAuthService.Setup(x => x.GetToken(It.IsAny<string>(), It.IsAny<OAuthApplicationType>(), It.IsAny<bool>(), It.IsAny<string>())).Returns(Task.FromResult(token));
+			_mockOAuthService.Setup(x => x.GetToken(It.IsAny<string>(), It.IsAny<OAuthApplicationType>(), It.IsAny<bool>(), It.IsAny<string>(), It.IsAny<ProductType>())).Returns(Task.FromResult(token));
+
 		}
 
 		#region json Strings
