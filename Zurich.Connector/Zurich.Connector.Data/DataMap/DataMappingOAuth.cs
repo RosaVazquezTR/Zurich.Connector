@@ -10,6 +10,7 @@ using Zurich.Common.Services.Security;
 using Zurich.Connector.Data.Model;
 using Zurich.Connector.Data.Repositories;
 using AutoMapper;
+using Zurich.Connector.Data.Repositories.CosmosDocuments;
 
 namespace Zurich.Connector.Data.DataMap
 {
@@ -25,7 +26,7 @@ namespace Zurich.Connector.Data.DataMap
             this._mapper = mapper;
         }
 
-        public async override Task<T> Get<T>(ConnectorModelEntity dataTypeInformation, string transferToken = null, NameValueCollection query = null)
+        public async override Task<T> Get<T>(ConnectorDocument dataTypeInformation, string transferToken = null, NameValueCollection query = null)
         {
             T results = default(T);
 
@@ -34,14 +35,14 @@ namespace Zurich.Connector.Data.DataMap
                 return results;
             }
 
-            AppToken token = await this.RetrieveToken(dataTypeInformation?.DataSource?.AppCode );
+            AppToken token = await this.RetrieveToken(dataTypeInformation?.dataSource?.AppCode );
 
             if (!string.IsNullOrEmpty(token?.access_token))
             {
                 ApiInformation apiInfo = new ApiInformation() { 
-                    AppCode = dataTypeInformation.DataSource.AppCode, HostName = dataTypeInformation.HostName,
-                    UrlPath = dataTypeInformation.Request.EndpointPath,
-                    AuthHeader = dataTypeInformation.DataSource.SecurityDefinition.DefaultSecurityDefinition.AuthorizationHeader, Token = token };
+                    AppCode = dataTypeInformation.dataSource.AppCode, HostName = dataTypeInformation.hostName,
+                    UrlPath = dataTypeInformation.request.endpointPath,
+                    AuthHeader = dataTypeInformation.dataSource.securityDefinition.defaultSecurityDefinition.authorizationHeader, Token = token };
 
                 apiInfo.UrlPath = await this.UpdateUrl(apiInfo.UrlPath, dataTypeInformation);
                 return await GetFromRepo<T>(apiInfo, dataTypeInformation, query);

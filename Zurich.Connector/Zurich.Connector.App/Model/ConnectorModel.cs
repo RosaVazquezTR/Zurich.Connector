@@ -36,6 +36,10 @@ namespace Zurich.Connector.App.Model
         /// Cdm Mapping
         /// </summary>
         public CdmMapping CdmMapping { get; set; }
+        /// <summary>
+        /// Result Location
+        /// </summary>
+        public string ResultLocation { get; set; }
     }
 
     /// <summary>
@@ -97,7 +101,7 @@ namespace Zurich.Connector.App.Model
         /// <summary>
         /// Comment
         /// </summary>
-        public string _Comment { get; set; }
+        public string Comment { get; set; }
     }
 
     public class Unstructured

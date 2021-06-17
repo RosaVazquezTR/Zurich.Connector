@@ -107,6 +107,10 @@ namespace Zurich.Connector.Data.Repositories.CosmosDocuments
         /// Secret of the key vault.
         /// </summary>
         public string keyVaultSecret { get; set; }
+        /// <summary>
+        /// Authorization Header
+        /// </summary>
+        public string authorizationHeader { get; set; }
 
     }
 }

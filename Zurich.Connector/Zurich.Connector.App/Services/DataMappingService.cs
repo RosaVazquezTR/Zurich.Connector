@@ -9,11 +9,23 @@ using AutoMapper;
 
 namespace Zurich.Connector.App.Services
 {
+    /// <summary>
+    /// Interface implemented by DataMappingService
+    /// </summary>
     public interface IDataMappingService
     {
-        public Task<ConnectorModelEntity> RetrieveProductInformationMap(string connectionId, string hostname);
+        /// <summary>
+        /// Gets data from cosmo db using Cosmo service and reorganizes the data
+        /// </summary>
+        /// <param name="connectionId">Connection Id</param>
+        /// <param name="hostname">Host name</param>
+        /// <returns> Returns ConnectorModel</returns>
+        public Task<ConnectorModel> RetrieveProductInformationMap(string connectionId, string hostname);
     }
 
+    /// <summary>
+    /// DataMappingService gets data from cosmo db using Cosmo service and reorganizes the data
+    /// </summary>
     public class DataMappingService : IDataMappingService
     {
         private readonly ICosmosService _cosmosService;
@@ -27,30 +39,33 @@ namespace Zurich.Connector.App.Services
 
         }
 
-        public async virtual Task<ConnectorModelEntity> RetrieveProductInformationMap(string connectionId, string hostname)
+        /// <summary>
+        /// Gets data from cosmo db using Cosmo service and reorganizes the data
+        /// </summary>
+        /// <param name="connectionId">Connection Id</param>
+        /// <param name="hostname">Host name</param>
+        /// <returns> Returns ConnectorModel</returns>
+        public async virtual Task<ConnectorModel> RetrieveProductInformationMap(string connectionId, string hostname)
         {
             ConnectorModel connectorModel = await _cosmosService.GetConnector(connectionId);
 
             string dataSourceId = connectorModel?.Info?.DataSourceId;
 
-            ConnectorModelEntity connectorModelEntity = _mapper.Map<ConnectorModelEntity>(connectorModel);
             DataSourceModel dataSourceModel = null;
-            DataSourceModelEntity dataSourceModelEntity = null;
 
             if (!string.IsNullOrEmpty(dataSourceId))
             {
                 dataSourceModel = await _cosmosService.GetDataSource(dataSourceId);
-                dataSourceModelEntity = _mapper.Map<DataSourceModelEntity>(dataSourceModel);
             }
 
-            connectorModelEntity.DataSource = dataSourceModelEntity;
+            connectorModel.DataSource = dataSourceModel;
 
-            if (connectorModelEntity != null)
+            if (connectorModel != null)
             {
-                connectorModelEntity.HostName = hostname;
+                connectorModel.HostName = hostname;
             }
 
-            return connectorModelEntity;
+            return connectorModel;
         }
 
     }

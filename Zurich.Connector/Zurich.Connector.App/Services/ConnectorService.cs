@@ -70,22 +70,25 @@ namespace Zurich.Connector.Data.Services
 
         public async Task<dynamic> GetConnectorData(string connectionId, string hostname, string transferToken, Dictionary<string, string> queryParameters)
         {
-            ConnectorModelEntity connectorModelEntity = await _dataMappingService.RetrieveProductInformationMap(connectionId, hostname);
+            ConnectorModel connectorModel = await _dataMappingService.RetrieveProductInformationMap(connectionId, hostname);
 
-            NameValueCollection mappedQueryParameters;
-            mappedQueryParameters =  MapQueryParametersFromDB(connectionId, queryParameters, connectorModelEntity);
-
-            if (connectorModelEntity == null)
+            if (connectorModel == null)
             {
                 return null;
             }
 
-            AuthType authType = (connectorModelEntity != null && connectorModelEntity.DataSource != null
-                                 && connectorModelEntity.DataSource.SecurityDefinition != null)
-                                 ? connectorModelEntity.DataSource.SecurityDefinition.TypeEnum : AuthType.None;
-            IDataMapping service = _dataMappingFactory.GetMapper(authType);
+            NameValueCollection mappedQueryParameters;
+            mappedQueryParameters = MapQueryParametersFromDB(connectionId, queryParameters, connectorModel);
 
-            return await service.Get<dynamic>(connectorModelEntity, transferToken, mappedQueryParameters);
+            AuthType authType = (connectorModel != null && connectorModel.DataSource != null
+                                 && connectorModel.DataSource.SecurityDefinition != null)
+                                 ? connectorModel.DataSource.SecurityDefinition.TypeEnum : AuthType.None;
+
+            IDataMapping service = _dataMappingFactory.GetMapper(authType);
+            
+            ConnectorDocument connectorDocument = this._mapper.Map<ConnectorDocument>(connectorModel);
+           
+            return await service.Get<dynamic>(connectorDocument, transferToken, mappedQueryParameters);
         }
 
         /// <summary>
@@ -141,16 +144,14 @@ namespace Zurich.Connector.Data.Services
             return this._mapper.Map<ConnectorsConfigResponseEntity>(connectorconfiguration);
         }
 
-        private NameValueCollection  MapQueryParametersFromDB(string id, Dictionary<string, string> queryParameters, ConnectorModelEntity connectorModelEntity)
+        private NameValueCollection  MapQueryParametersFromDB(string id, Dictionary<string, string> queryParameters, ConnectorModel connectorModel)
         {
             NameValueCollection modifiedQueryParameters = new NameValueCollection();
 
             if (queryParameters.Any())
             {
-                //var connectorDocument = await _cosmosService.GetConnector(id);
-            
                 var dataForNameValueCollection = (from param in queryParameters
-                                                  join requestParam in connectorModelEntity.Request?.Parameters
+                                                  join requestParam in connectorModel.Request?.Parameters
                                                   on param.Key.ToString().ToLower() equals requestParam.CdmName.ToLower()
                                                   select new { name = requestParam.Name, value = param.Value.ToString() }).ToList();
 

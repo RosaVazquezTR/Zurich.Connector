@@ -44,7 +44,7 @@ namespace Zurich.Connector.Data.Repositories.CosmosDocuments
         /// <summary>
         /// Comment
         /// </summary>
-        public string _Comment { get; set; }
+        public string Comment { get; set; }
     }
 
     public class Unstructured
