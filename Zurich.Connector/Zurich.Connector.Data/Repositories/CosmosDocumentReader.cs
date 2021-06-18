@@ -93,12 +93,16 @@ namespace Zurich.Connector.Data.Repositories
                     new RequestOptions { PartitionKey = new PartitionKey(CosmosConstants.ConnectorList) });
 				return response;
 			}
-			catch (Exception ex)
-			{
-				_logger.LogError(ex.Message);
-				throw;
-			}	
-		}
+            catch (DocumentClientException ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                return null;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                throw;
+            }
+        }
 
 		/// <summary>
 		/// Fetche the list of data source document from Cosmos

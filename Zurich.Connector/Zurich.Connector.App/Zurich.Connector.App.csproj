@@ -8,4 +8,8 @@
     <ProjectReference Include="..\Zurich.Connector.Data\Zurich.Connector.Data.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Model\" />
+  </ItemGroup>
+
 </Project>

@@ -12,6 +12,7 @@ using Zurich.Connector.Data.Services;
 using Zurich.Connector.Tests.Common;
 using Zurich.Connector.Web;
 using Zurich.Connector.Web.Controllers;
+using Zurich.Connector.Web.Models;
 
 namespace Zurich.Connector.Tests.ControllerTests
 {
@@ -67,10 +68,10 @@ namespace Zurich.Connector.Tests.ControllerTests
 
 		};
 
-        #endregion
+		#endregion
 
-        #region Data Setup
-        private List<DataMappingConnection> SetupConnections()
+		#region Data Setup
+		private List<DataMappingConnection> SetupConnections()
 		{
 			return new List<DataMappingConnection>()
 			{
@@ -79,7 +80,7 @@ namespace Zurich.Connector.Tests.ControllerTests
 					{
 						AppCode = "testApp1",
 						Auth = new DataMappingAuth() { Type = AuthType.OAuth },
-						EntityType = EntityType.History
+						EntityType = Data.Model.EntityType.History
 					}
 				},
 				{
@@ -87,7 +88,7 @@ namespace Zurich.Connector.Tests.ControllerTests
 					{
 						AppCode = "testApp2",
 						Auth = new DataMappingAuth() { Type = AuthType.TransferToken },
-						EntityType = EntityType.Document
+						EntityType = Data.Model.EntityType.History
 					}
 				},
 				{
@@ -95,9 +96,109 @@ namespace Zurich.Connector.Tests.ControllerTests
 					{
 						AppCode = "testApp2",
 						Auth = new DataMappingAuth() { Type = AuthType.OAuth },
-						EntityType = EntityType.History
+						EntityType = Data.Model.EntityType.History
 					}
 				}
+
+			};
+			}
+		private List<ConnectorModel> SetupMultiConnections()
+		{
+			return new List<ConnectorModel>()
+			{
+					new ConnectorModel()
+					{
+						Id="1",
+						Filters= new List<ConnectorFilterModel>()
+					},
+					new ConnectorModel()
+					{
+						Id="101",
+						Info=new ConnectorInfoModel()
+						{
+							Title="PracticleLaw",
+							DataSourceId="1",
+							Description="Test Connector",
+							Version="1.0"
+
+						},
+						Request=new ConnectorRequestModel()
+						{
+							EndpointPath="/PracticalLaw/UK/Test",
+							Method="Get",
+							Parameters=new List<ConnectorRequestParameterModel>()
+							{
+							  new ConnectorRequestParameterModel()
+							  {
+								  Name="Test",
+								  InClause="InClause",
+								  Required=false,
+								  CdmName="Test",
+								  DefaultValue="Test",
+								  Type="string"
+
+							  }
+
+							}
+
+						},
+						Response=new ConnectorResponseModel()
+						{
+							Schema=new ConnectorReponseSchemaModel()
+							{
+								Properties= new ConnectorReponsePropertiesModel()
+								{
+									Property="string"
+								}
+							}
+						},
+						Filters= new List<ConnectorFilterModel>()
+						{
+						}
+						},
+					new ConnectorModel()
+					{
+						Id="103",
+						Info=new ConnectorInfoModel()
+						{
+							Title="Office",
+							DataSourceId="1",
+							Description="Test Connector",
+							Version="1.0"
+
+						},
+						Request=new ConnectorRequestModel()
+						{
+							EndpointPath="/Office/Test",
+							Method="Get",
+							Parameters=new List<ConnectorRequestParameterModel>()
+							{
+							  new ConnectorRequestParameterModel()
+							  {
+								  Name="Test",
+								  InClause="InClause",
+								  Required=false,
+								  CdmName="Test",
+								  DefaultValue="Test",
+								  Type="string"
+
+							  }
+
+							}
+
+						},
+						Response=new ConnectorResponseModel()
+						{
+							Schema=new ConnectorReponseSchemaModel()
+							{
+								Properties=new ConnectorReponsePropertiesModel()
+								{ Property=""}
+							}
+						},
+						Filters= new List<ConnectorFilterModel>()
+
+
+					}
 			};
 		}
 
@@ -157,18 +258,19 @@ namespace Zurich.Connector.Tests.ControllerTests
         }
 
         [TestMethod]
-        public async Task CallSearchConnectorData()
+        public async Task CallConnectorsById()
         {
-            // ARRANGE
-            _mockConnectorservice.Setup(x => x.GetConnectorConfiguration(It.IsAny<string>())).Returns(Task.FromResult(Connector_Configuration));
+			// ARRANGE
+			var connections = MockConnectorData.SetupConnectorModel().ToList()[0];
+			_mockConnectorservice.Setup(x => x.GetConnector(It.IsAny<string>())).Returns(Task.FromResult(connections));
 
 			ConnectorsController connector = CreateConnectorsController();
 
             // ACT
-            var response = await connector.ConnectorconfigData("fakeId");
+            var response = await connector.Connectors("1");
 
             // ASSERT
-            _mockConnectorservice.Verify(x => x.GetConnectorConfiguration(It.IsAny<string>()), Times.Exactly(1));
+            _mockConnectorservice.Verify(x => x.GetConnector(It.IsAny<string>()), Times.Exactly(1));
             var result = response.Result;
             Assert.AreEqual(StatusCodes.Status200OK, ((Microsoft.AspNetCore.Mvc.ObjectResult)result).StatusCode);
         }
@@ -177,15 +279,15 @@ namespace Zurich.Connector.Tests.ControllerTests
         public async Task Call_Connector_Data_And_Get_Null_Response()
         {
             // ARRANGE
-            _mockConnectorservice.Setup(x => x.GetConnectorConfiguration(It.IsAny<string>()));
+            _mockConnectorservice.Setup(x => x.GetConnector(It.IsAny<string>()));
 
 			ConnectorsController connector = CreateConnectorsController();
 
             // ACT
-            var response = await connector.ConnectorconfigData("fakeId");
+            var response = await connector.Connectors("22");
 
 			// ASSERT
-			_mockConnectorservice.Verify(x => x.GetConnectorConfiguration(It.IsAny<string>()), Times.Exactly(1));
+			_mockConnectorservice.Verify(x => x.GetConnector(It.IsAny<string>()), Times.Exactly(1));
 			var result = (NotFoundObjectResult)response.Result;
 			Assert.AreEqual(StatusCodes.Status404NotFound, result.StatusCode);
 		}

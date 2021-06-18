@@ -8,7 +8,7 @@ namespace Zurich.Connector.Data.Model
     /// <summary>
     /// Class to filter connectors
     /// </summary>
-    public class ConnectorFilterModel
+    public class ConnectorFilterEntity
     {
         /// <summary>
         /// EntityType is optional parameter to filter to specific data types of connectors e.g. Document, Search, etc.

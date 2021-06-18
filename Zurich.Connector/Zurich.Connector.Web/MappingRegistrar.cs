@@ -13,21 +13,27 @@ namespace Zurich.Connector.Web
 		public MappingRegistrar()
 		{
 
-            CreateMap<ConnectorsConfigResponseEntity, ConnectorConfigViewModel>()
-                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
-                .ForMember(dest => dest.AppCode, opt => opt.MapFrom(src => src.AppCode))
-                .ForMember(dest => dest.AuthType, opt => opt.MapFrom(src => src.AuthType))
-                .ForMember(dest => dest.CDMData, opt => opt.MapFrom(src => src.CDMData))
-                .ForMember(dest => dest.Api, opt => opt.MapFrom(src => src.Api))
-                .ForMember(dest => dest.filters, opt => opt.MapFrom(src => src.filters))
-                .ForAllOtherMembers(opt => opt.Ignore());
+            CreateMap<ConnectorModel, ConnectorViewModel>();
+            CreateMap<ConnectorInfoModel, ConnectorDetailsInfoViewModel>();
+            CreateMap<DataSourceModel, DataSourceViewModel>();
+            CreateMap<ConnectorRequestModel, ConnectorRequestViewModel>();
+            CreateMap<ConnectorRequestParameterModel, ConnectorRequestParameterViewModel>();
+            CreateMap<ConnectorResponseModel, ConnectorResponseViewModel>();
+            CreateMap<ConnectorReponseSchemaModel, ConnectorReponseSchemaViewModel>();
+            CreateMap<ConnectorReponsePropertiesModel, ConnectorReponsePropertiesViewModel>();
 
-            CreateMap<ConnectorModel, ConnectorViewModel>()
+            CreateMap<ConnectorFilterModel, ConnectorFilterViewModel>();
+
+            CreateMap<CDMMappingModel, CDMMappingViewModel>();
+            CreateMap<CDMElementModel, CDMElementViewModel>();
+
+            CreateMap<ConnectorModel, ConnectorListViewModel>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.EntityType, opt => opt.MapFrom(src => src.Info.EntityType))
                 .ForMember(dest => dest.DataSource, opt => opt.MapFrom(src => src.DataSource))
                 .ForAllOtherMembers(opt => opt.Ignore());
 
+            
             CreateMap<DataSourceModel, DataSourceViewModel>();
             CreateMap<SecurityDefinitionModel, SecurityDefinitionViewModel>();
             CreateMap<SecurityDefinitionDetailsModel, SecurityDefinitionDetailsViewModel>();

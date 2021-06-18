@@ -145,7 +145,7 @@ namespace Zurich.Connector.Tests.ServiceTests
             var cosmostService = new CosmosService(_mockCosmosDocumentReader.Object, _mockCosmosDocumentWriter.Object, null, _mapper, null);
 
             //Act
-            var connectors = (await cosmostService.GetConnectors(condition)).ToList();
+            var connectors = (await cosmostService.GetConnectors(false, condition)).ToList();
 
             //Assert
             _mockCosmosDocumentReader.Verify(x => x.GetConnectorDocuments(condition), Times.Once());

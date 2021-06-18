@@ -1,54 +1,58 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace Zurich.Connector.Data.Repositories.CosmosDocuments
+namespace Zurich.Connector.Web.Models
 {
     /// <summary>
     /// Stores details about the connector request.
     /// </summary>
-    public class ConnectorRequest
+    public class ConnectorRequestViewModel
     {
         /// <summary>
         /// End point path. Ex: "/api/6/sites",
         /// </summary>
-        public string endpointPath { get; set; }
+        public string EndpointPath { get; set; }
         /// <summary>
         /// Method type. Ex: "get"
         /// </summary>
-        public string method { get; set; }
+        public string Method { get; set; }
         /// <summary>
         /// Request parameters
         /// </summary>
-        public List<ConnectorRequestParameter> parameters { get; set; }
+        public List<ConnectorRequestParameterViewModel> Parameters { get; set; }
     }
 
     /// <summary>
     /// Request parameter definition
     /// </summary>
-    public class ConnectorRequestParameter
+    public class ConnectorRequestParameterViewModel
     {
         /// <summary>
         /// Parameter name
         /// </summary>
-        public string name { get; set; }
+        public string Name { get; set; }
         /// <summary>
         /// Use "Query" or "Header"
         /// </summary>
-        public string inClause { get; set; }
+        public string InClause { get; set; }
         /// <summary>
         /// Specify if the parameter is a required property.
         /// </summary>
-        public bool required { get; set; }
+        public bool Required { get; set; }
         /// <summary>
         /// Type of the parameter
         /// </summary>
-        public string type { get; set; }
+        public string Type { get; set; }
         /// <summary>
         /// Default value of the parameter
         /// </summary>
-        public object defaultValue { get; set; }
+        public object DefaultValue { get; set; }
         /// <summary>
         /// Name of querys tring parameter in request
         /// </summary>
-        public string cdmname { get; set; }
+        public string CdmName { get; set; }
     }
 }

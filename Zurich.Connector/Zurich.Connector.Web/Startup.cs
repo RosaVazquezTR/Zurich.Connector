@@ -89,7 +89,7 @@ namespace Zurich.Connector.Web
 
             services.AddAuthenticationServices(Configuration.GetValue<string>("Audience"), authority);
             services.AddPartnerAppAuth(tenantConnectionString, productsConnectionString, _oAuthOptions, _microServOptions);
-            services.AddAutoMapper(typeof(Startup), typeof(CommonMappingsProfile), typeof(ServiceMappingRegistrar));
+            services.AddAutoMapper(typeof(Startup), typeof(CommonMappingsProfile), typeof(ServiceMappingRegistrar), typeof(MappingRegistrar));
             services.AddConnectorCosmosServices(_connectorCosmosDbOptions, _connectorCosmosClientOptions);
         }
 

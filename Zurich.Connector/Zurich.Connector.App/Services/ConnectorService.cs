@@ -11,14 +11,13 @@ using System.Threading.Tasks;
 using Zurich.Connector.App.Model;
 using Zurich.Connector.App.Services;
 using Zurich.Connector.Data.DataMap;
-using Zurich.Connector.Data.Model;
 using Zurich.Connector.Data.Repositories;
-using Zurich.Connector.App.Services;
 using System.Collections.Specialized;
 using Microsoft.Extensions.Primitives;
 using Newtonsoft.Json;
 using Zurich.Connector.Data.Repositories.CosmosDocuments;
 using System.Linq.Expressions;
+using Zurich.Connector.App.Model;
 
 namespace Zurich.Connector.Data.Services
 {
@@ -43,7 +42,7 @@ namespace Zurich.Connector.Data.Services
         /// <param name="filters">Filters to get different connections</param>
         /// <returns>List of Data Mapping Connections <see cref="DataMappingConnection"/></returns>
         Task<List<ConnectorModel>> GetConnectors(ConnectorFilterModel filters);
-        Task<ConnectorsConfigResponseEntity> GetConnectorConfiguration(string connectorId);
+        Task<ConnectorModel> GetConnector(string connectorId);
     }
 
     public class ConnectorService : IConnectorService
@@ -71,7 +70,7 @@ namespace Zurich.Connector.Data.Services
             NameValueCollection mappedQueryParameters;
             mappedQueryParameters = await MapQueryParametersFromDB(connectionId, queryParameters);
 
-            DataMappingClass dataMappingInformation =  await _dataMapping.RetrieveProductInformationMap(connectionId, hostname);
+            var dataMappingInformation =  await _dataMapping.RetrieveProductInformationMap(connectionId, hostname);
             if (dataMappingInformation == null)
             {
                 return null;
@@ -109,17 +108,7 @@ namespace Zurich.Connector.Data.Services
                     //TODO: Implement registration mode filtering here.
                 }
 
-                var connectors = await _cosmosService.GetConnectors(condition);
-
-                var dataSourceIDs = connectors.Select(t => t.Info.DataSourceId).Distinct().ToList();
-
-                Expression<Func<DataSourceDocument, bool>> dsCondition = dataSources => dataSourceIDs.Contains(dataSources.Id);
-                var dataSourceResult = await _cosmosService.GetDataSources(dsCondition);
-
-                foreach(var connector in connectors)
-                {
-                    connector.DataSource = _mapper.Map<DataSourceModel>(dataSourceResult.Where(d => d.Id == connector.Info.DataSourceId).ToList().First());
-                }
+                var connectors = await _cosmosService.GetConnectors(true, condition);
 
                 return connectors.ToList();
             } catch(Exception ex)
@@ -129,10 +118,10 @@ namespace Zurich.Connector.Data.Services
             }
         }
 
-        public async Task<ConnectorsConfigResponseEntity> GetConnectorConfiguration(string ConnectorId)
+        public async Task<ConnectorModel> GetConnector(string connectorId)
         {
-            var connectorconfiguration = await this._dataMappingRepo.GetConnectorConfiguration(ConnectorId);
-            return this._mapper.Map<ConnectorsConfigResponseEntity>(connectorconfiguration);
+            var connector = await _cosmosService.GetConnector(connectorId, true);
+            return connector;
         }
 
         private async Task<NameValueCollection>  MapQueryParametersFromDB(string id, Dictionary<string, string> queryParameters)

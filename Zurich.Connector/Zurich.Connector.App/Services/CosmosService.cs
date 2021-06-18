@@ -37,20 +37,40 @@ namespace Zurich.Connector.App.Services
 		/// Fetch connector from Cosmos by ID
 		/// </summary>
 		/// <returns>Connector document.</returns> 
-		public async Task<ConnectorModel> GetConnector(string connectorId)
+		public async Task<ConnectorModel> GetConnector(string connectorId, bool includeDataSource = false)
         {
 			var connectorDocument = await _cosmosDocumentReader.GetConnectorDocument(connectorId);
-			return _mapper.Map<ConnectorModel>(connectorDocument);
+			var connector = _mapper.Map<ConnectorModel>(connectorDocument);
+			if (includeDataSource)
+			{
+				connector.DataSource = _mapper.Map<DataSourceModel>
+											(await _cosmosDocumentReader.GetDataSourceDocument(connectorDocument.info.dataSourceId));
+			}
+			return connector;
 		}
 
 		/// <summary>
 		/// Fetch all connectors from Cosmos
 		/// </summary>
 		/// <returns>Connector document list.</returns> 
-		public async Task<IEnumerable<ConnectorModel>> GetConnectors(Expression<Func<ConnectorDocument, bool>> condition = null)
+		public async Task<IEnumerable<ConnectorModel>> GetConnectors(bool includeDataSource = false, Expression<Func<ConnectorDocument, bool>> condition = null)
         {
             var connectorDocuments = await _cosmosDocumentReader.GetConnectorDocuments(condition);
 			List<ConnectorModel> connectors = _mapper.Map<List<ConnectorModel>>(connectorDocuments.ToList());
+
+			if (includeDataSource)
+			{
+				var dataSourceIDs = connectors.Select(t => t.Info.DataSourceId).Distinct().ToList();
+
+				Expression<Func<DataSourceDocument, bool>> dsCondition = dataSources => dataSourceIDs.Contains(dataSources.Id);
+				var dataSourceResult = await _cosmosDocumentReader.GetDataSourceDocuments(dsCondition);
+
+				foreach (var connector in connectors)
+				{
+					connector.DataSource = _mapper.Map<DataSourceModel>(dataSourceResult.Where(d => d.Id == connector.Info.DataSourceId).ToList().FirstOrDefault());
+				}
+			}
+
 			return connectors;
         }
 
