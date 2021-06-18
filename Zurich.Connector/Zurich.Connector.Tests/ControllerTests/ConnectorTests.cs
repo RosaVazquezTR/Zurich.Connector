@@ -12,6 +12,7 @@ using Zurich.Connector.Data.Services;
 using Zurich.Connector.Tests.Common;
 using Zurich.Connector.Web;
 using Zurich.Connector.Web.Controllers;
+using Zurich.Connector.Web.Models;
 
 namespace Zurich.Connector.Tests.ControllerTests
 {
@@ -67,10 +68,10 @@ namespace Zurich.Connector.Tests.ControllerTests
 
 		};
 
-        #endregion
+		#endregion
 
-        #region Data Setup
-        private List<DataMappingConnection> SetupConnections()
+		#region Data Setup
+		private List<DataMappingConnection> SetupConnections()
 		{
 			return new List<DataMappingConnection>()
 			{
@@ -98,6 +99,106 @@ namespace Zurich.Connector.Tests.ControllerTests
 						EntityType = Data.Model.EntityType.History
 					}
 				}
+
+			};
+			}
+		private List<ConnectorModel> SetupMultiConnections()
+		{
+			return new List<ConnectorModel>()
+			{
+					new ConnectorModel()
+					{
+						Id="1",
+						Filters= new List<ConnectorFilterModel>()
+					},
+					new ConnectorModel()
+					{
+						Id="101",
+						Info=new ConnectorInfoModel()
+						{
+							Title="PracticleLaw",
+							DataSourceId="1",
+							Description="Test Connector",
+							Version="1.0"
+
+						},
+						Request=new ConnectorRequestModel()
+						{
+							EndpointPath="/PracticalLaw/UK/Test",
+							Method="Get",
+							Parameters=new List<ConnectorRequestParameterModel>()
+							{
+							  new ConnectorRequestParameterModel()
+							  {
+								  Name="Test",
+								  InClause="InClause",
+								  Required=false,
+								  CdmName="Test",
+								  DefaultValue="Test",
+								  Type="string"
+
+							  }
+
+							}
+
+						},
+						Response=new ConnectorResponseModel()
+						{
+							Schema=new ConnectorReponseSchemaModel()
+							{
+								Properties= new ConnectorReponsePropertiesModel()
+								{
+									Property="string"
+								}
+							}
+						},
+						Filters= new List<ConnectorFilterModel>()
+						{
+						}
+						},
+					new ConnectorModel()
+					{
+						Id="103",
+						Info=new ConnectorInfoModel()
+						{
+							Title="Office",
+							DataSourceId="1",
+							Description="Test Connector",
+							Version="1.0"
+
+						},
+						Request=new ConnectorRequestModel()
+						{
+							EndpointPath="/Office/Test",
+							Method="Get",
+							Parameters=new List<ConnectorRequestParameterModel>()
+							{
+							  new ConnectorRequestParameterModel()
+							  {
+								  Name="Test",
+								  InClause="InClause",
+								  Required=false,
+								  CdmName="Test",
+								  DefaultValue="Test",
+								  Type="string"
+
+							  }
+
+							}
+
+						},
+						Response=new ConnectorResponseModel()
+						{
+							Schema=new ConnectorReponseSchemaModel()
+							{
+								Properties=new ConnectorReponsePropertiesModel()
+								{ Property=""}
+							}
+						},
+						Filters= new List<ConnectorFilterModel>()
+
+
+					}
 			};
 		}
 

@@ -14,19 +14,19 @@ namespace Zurich.Connector.Data.Repositories.CosmosDocuments
         /// <summary>
         /// Name of the filter
         /// </summary>
-        public string name { get; set; }
+        public string Name { get; set; }
         /// <summary>
         /// Description about the filter
         /// </summary>
-        public string description { get; set; }
+        public string Description { get; set; }
         /// <summary>
         /// Define the source of filters
         /// </summary>
-        public List<FilterSource> sources { get; set; }
+        public FilterSource Source { get; set; }
         /// <summary>
         /// Mapping for request parameter
         /// </summary>
-        public MappingRequestParameter mappingRequestParameter {get; set; }
+        public string RequestParameter { get; set; }
     }
     /// <summary>
     /// Define the source of filters. There can be 3 types of sources
@@ -36,18 +36,19 @@ namespace Zurich.Connector.Data.Repositories.CosmosDocuments
     /// </summary>
     public class FilterSource
     {
+        public string ResponseElement { get; set; }
         /// <summary>
         /// Define the filter options as part of an API response (Not supported currently)
-        /// </summary>
-        public FilterResponse response { get; set; }
-        /// <summary>
-        /// Get filter sources from an end point (ex: PL UK filters)
-        /// </summary>
-        public string endPointPath { get; set; }
-        /// <summary>
-        /// Flat list of key-value pairs (ex: O365 filters)
-        /// </summary>
-        public List<KeyValuePair<string, string>> keyValue { get; set; }
+        ///// </summary>
+        public FilterResponse Response { get; set; }
+        ///// <summary>
+        ///// Get filter sources from an end point (ex: PL UK filters)
+        ///// </summary>
+        public string EndPointPath { get; set; }
+        ///// <summary>
+        ///// Flat list of key-value pairs (ex: O365 filters)
+        ///// </summary>
+        public List<KeyValuePair<string, string>> KeyValue { get; set; }
     }
 
     /// <summary>
@@ -55,8 +56,8 @@ namespace Zurich.Connector.Data.Repositories.CosmosDocuments
     /// </summary>
     public class FilterResponse
     {
-        public string responseProperty { get; set; }
-        public string filterCDM { get; set; }
+        public string ResponseProperty { get; set; }
+        public string FilterCDM { get; set; }
     }
 
     /// <summary>
@@ -67,19 +68,19 @@ namespace Zurich.Connector.Data.Repositories.CosmosDocuments
         /// <summary>
         /// Name of the filter property
         /// </summary>
-        public string name { get; set; }
+        public string Name { get; set; }
         /// <summary>
         /// Specify Query or Header
         /// </summary>
-        public string inClause { get; set; }
+        public string InClause { get; set; }
         /// <summary>
         /// Type of the filter property
         /// </summary>
-        public string type { get; set; }
+        public string Type { get; set; }
         /// <summary>
         /// Default value of the filter property.
         /// </summary>
-        public string defaultValue { get; set; }
+        public string DefaultValue { get; set; }
 
     }
 }

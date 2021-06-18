@@ -49,6 +49,6 @@ namespace Zurich.Connector.Data.Repositories.CosmosDocuments
         /// <summary>
         /// Name of querys tring parameter in request
         /// </summary>
-        public string cdmName { get; set; }
+        public string cdmname { get; set; }
     }
 }

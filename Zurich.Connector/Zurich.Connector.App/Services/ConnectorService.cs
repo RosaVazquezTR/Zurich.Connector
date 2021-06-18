@@ -17,6 +17,7 @@ using Microsoft.Extensions.Primitives;
 using Newtonsoft.Json;
 using Zurich.Connector.Data.Repositories.CosmosDocuments;
 using System.Linq.Expressions;
+using Zurich.Connector.App.Model;
 
 namespace Zurich.Connector.Data.Services
 {
