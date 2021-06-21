@@ -24,9 +24,9 @@ variables:
 - name: buildConfiguration
   value: 'Release'
 - template: Variables\ZurichDeploy-variables-Shared.yml@ZurichDeploy
-- template: Variables\ZurichDeploy-variables-CI.yml@ZurichDeploy
+- template: Variables\ZurichDeploy-variables-Prod.yml@ZurichDeploy
 - template: ../Variables/connector-variables-Shared.yml   
-- template: ../Variables/connector-variables-CI.yml
+- template: ../Variables/connector-variables-Prod.yml
 
 stages:
 - stage: Build
@@ -39,13 +39,36 @@ stages:
         - template: Templates\ZurichDeploy-BuildWebAPI.yml@ZurichDeploy
           parameters:
             projectName: ${{ variables.projectName }}
-- stage: CI
-  pool: DCO-HighQ-Platform-N
+- stage: ServiceNow
+  pool: DCO-HighQ-Platform-P
   dependsOn:
-    - Build
+  - Build
+  jobs:
+  - deployment: ServiceNow
+    environment: Prod_L2
+    strategy:
+     runOnce:
+       deploy:
+         steps:
+         - download: none
+         - checkout: self
+         - checkout: ZurichDeploy
+         - template: Templates/ZurichDeploy-NotifyBuildOwners.yml@ZurichDeploy
+           parameters:
+             additionalEmails: ${{ variables.additionalEmailsForServiceNowRequest }}
+             applicationName: ${{ variables.applicationName }}
+             assignmentGroup: "${{ variables.assignmentGroup }}"
+             environmentName: ${{ variables.environmentName }}
+             serviceNowUserName: ${{ variables.serviceNowUserName }}
+             serviceNowPassword: "$(serviceNowPassword)"
+             subscriptionName: ${{ variables.subscriptionName }}
+- stage: Prod
+  pool: DCO-HighQ-Platform-P
+  dependsOn:
+    - ServiceNow
   jobs:
     - deployment: Prereqs
-      environment: CI
+      environment: Prod
       strategy:
         runOnce:
           deploy:
@@ -97,7 +120,7 @@ stages:
                   webDnsServer: ${{ variables.webDnsServer }}
 
     - deployment: Connector
-      environment: CI
+      environment: Prod
       dependsOn: Prereqs
       strategy:
         runOnce:
@@ -107,7 +130,6 @@ stages:
               - checkout: ZurichDeploy
               - template: ../Templates/connector-deploy.yml
                 parameters:
-                  appInsightsName: ${{ variables.appInsightsName }}
                   connectorCosmosContainerNames: ${{ variables.connectorCosmosContainerNames }}
                   connectorCosmosThroughput: ${{ variables.connectorCosmosThroughput }}
                   connectorCosmosMaxThroughput: ${{ variables.connectorCosmosMaxThroughput }}
@@ -138,8 +160,7 @@ stages:
                   vnetName: ${{ variables.vnetName }}
                   vnetResourceGroup: ${{ variables.vnetResourceGroup }}
 - stage: Swap_Slots
-  dependsOn: CI
-  condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'master'))
+  dependsOn: Prod
   jobs:
     - template: ../Templates/connector-swap-slots.yml
       parameters:
@@ -150,7 +171,6 @@ stages:
         subscriptionName: ${{ variables.subscriptionName }}
 - stage: Update_APIM_Product
   dependsOn: Swap_Slots
-  condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'master'))
   jobs:
   - job: 'UpdateApim'
     displayName: 'Update Apim Connector Service'

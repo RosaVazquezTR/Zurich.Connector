@@ -11,6 +11,10 @@ parameters:
     type: string
   - name: azureAdClientSecret
     type: string
+  - name: databaseName
+    type: string
+  - name: databaseServerName
+    type: string
   - name: developerActionGroupName
     type: string
   - name: developerEmailAddress
@@ -28,6 +32,22 @@ parameters:
   - name: keyVault
     type: string
   - name: keyVaultSubnets
+    type: string
+  - name: legalHomeDbUser
+    type: string
+  - name: legalHomeDbUserPassword
+    type: string
+  - name: ltioL1ActionGroupName
+    type: string
+  - name: ltioL1EmailAddress
+    type: string
+  - name: ltioL1EmailName
+    type: string
+  - name: ltioL2ActionGroupName
+    type: string
+  - name: ltioL2EmailAddress
+    type: string
+  - name: ltioL2EmailName
     type: string
   - name: notificationEmailGroup
     type: string
@@ -52,6 +72,8 @@ parameters:
   - name: subscriptionName
     type: string
   - name: tagNames
+    type: string
+  - name: tenantDbConnStringKey
     type: string
   - name: vnetName
     type: string
@@ -83,12 +105,12 @@ steps:
       environmentName: ${{ parameters.environmentName }}
       flowWebhook: ${{ parameters.flowWebhook }}
       flowWebhookName: ${{ parameters.flowWebhookName }}
-      ltioL1ActionGroupName: ''
-      ltioL1EmailAddress: ''
-      ltioL1EmailName: ''
-      ltioL2ActionGroupName: ''
-      ltioL2EmailAddress: ''
-      ltioL2EmailName: ''
+      ltioL1ActionGroupName: ${{parameters.ltioL1ActionGroupName}}
+      ltioL1EmailAddress: ${{ parameters.ltioL1EmailAddress }}
+      ltioL1EmailName: ${{ parameters.ltioL1EmailName }}
+      ltioL2ActionGroupName: ${{ parameters.ltioL2ActionGroupName }}
+      ltioL2EmailAddress: ${{ parameters.ltioL2EmailAddress }}
+      ltioL2EmailName: ${{ parameters.ltioL2EmailName }}
       notificationEmailGroup: ${{ parameters.notificationEmailGroup }}
       resourceGroup: ${{ parameters.resourceGroup }}
       resourceLocation: ${{ parameters.resourceLocation }}
@@ -155,4 +177,13 @@ steps:
       azureSubscription: ${{ parameters.subscriptionName }}
       ScriptPath: '$(Build.SourcesDirectory)/Zurich.Deploy/Scripts/PopulateKeyVault.ps1'
       ScriptArguments: '-vaultName "${{ parameters.keyVault }}${{ parameters.environmentName }}" -nameValuePairsJson ''{"AzureAd--ClientId": "${{ parameters.azureAdClientId }}", "AzureAd--ClientSecret": "${{ parameters.azureAdClientSecret }}"}'' -verbose'
+      azurePowerShellVersion: LatestVersion
+  
+# this can eventually get removed when we no longer need to go directly to db to get tokens
+  - task: AzurePowerShell@4
+    displayName: 'Add tenant connection string to keyvault'
+    inputs:
+      azureSubscription: ${{ parameters.subscriptionName }}
+      ScriptPath: '$(Build.SourcesDirectory)/Zurich.Connector/Zurich.Connector.Deploy/Scripts/AddConnectionStringToKeyvault.ps1'
+      ScriptArguments: '-resourceGroup "${{ parameters.resourceGroup }}" -vaultName "${{ parameters.keyVault }}${{ parameters.environmentName }}" -databaseServerName "${{ parameters.databaseServerName}}" -databaseName "${{ parameters.databaseName }}" -databaseUserName "${{ parameters.legalHomeDbUser }}" -databaseUserPassword "${{ parameters.legalHomeDbUserPassword }}" -environment "${{ parameters.environmentName }}" -keyName "${{ parameters.tenantDbConnStringKey}}" -alwaysEncrypted "true" -verbose'
       azurePowerShellVersion: LatestVersion
