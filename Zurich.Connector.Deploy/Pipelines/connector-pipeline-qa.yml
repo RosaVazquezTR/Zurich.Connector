@@ -132,6 +132,7 @@ stages:
               - checkout: ZurichDeploy
               - template: ../Templates/connector-deploy.yml
                 parameters:
+                  appInsightsName: ${{ variables.appInsightsName }}
                   connectorCosmosContainerNames: ${{ variables.connectorCosmosContainerNames }}
                   connectorCosmosThroughput: ${{ variables.connectorCosmosThroughput }}
                   connectorCosmosMaxThroughput: ${{ variables.connectorCosmosMaxThroughput }}

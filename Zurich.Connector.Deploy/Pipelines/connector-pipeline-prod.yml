@@ -4,8 +4,7 @@
 # Add steps that publish symbols, save build artifacts, and more:
 # https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
 
-trigger:
-    - master
+trigger: none
 
 pool:
   vmImage: 'windows-latest'
@@ -130,6 +129,7 @@ stages:
               - checkout: ZurichDeploy
               - template: ../Templates/connector-deploy.yml
                 parameters:
+                  appInsightsName: ${{ variables.appInsightsName }}
                   connectorCosmosContainerNames: ${{ variables.connectorCosmosContainerNames }}
                   connectorCosmosThroughput: ${{ variables.connectorCosmosThroughput }}
                   connectorCosmosMaxThroughput: ${{ variables.connectorCosmosMaxThroughput }}
