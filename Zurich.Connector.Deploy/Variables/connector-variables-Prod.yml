@@ -1,0 +1,30 @@
+variables:
+  - name: apiVersion 
+    value: "v1" 
+  - name: assignmentGroup
+    value: "APP-OPS-L1-ASE-LEGALSHARED"
+  - name: azureAdClientId
+    value: "3e1c6d20-9663-41bb-84fd-669fa96a1dc3"
+  - name: connectorCosmosMaxThroughput
+    value: "400"
+  - name: connectorCosmosThroughput
+    value: "400"
+  - name: connectorCosmosShouldAutoScale
+    value: "false"
+  - name: connectorSubnets
+    value: '["connector-webApi-Prod-Backend", "hqh-RelMgmtVM-PROD-backend"]'
+  - name: connectorServiceFQND
+    value: "connectorswebapiprod.azurewebsites.net"
+  - name: groups
+    value: "@('Administrators','Developers')"
+  - name: keyVaultSubnets
+    value: "@('connector-webApi-Prod-Backend','hqh-RelMgmtVM-PROD-backend')"
+  - name: resourceGroup
+    value: 'centralus-connectors'
+  - name: subnetConnectorBackend
+    value: "@{SubNetName = 'WebApi'; SubNetCidr = '10.175.10.224/27'; SubNetType = 'backend'; subNetServiceEndpoints = @('Microsoft.AzureCosmosDB', 'Microsoft.KeyVault', 'Microsoft.Sql')}"
+  - name: subnetPreFix
+    value: 'connector'
+  - name: swaggerEndpoint
+    value: 'https://connectorswebapiprod.azurewebsites.net/swagger/v1/swagger.json'
+    

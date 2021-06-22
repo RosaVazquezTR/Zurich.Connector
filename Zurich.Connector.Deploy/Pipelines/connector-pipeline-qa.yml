@@ -5,7 +5,9 @@
 # https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
 
 trigger:
-    - master
+  branches:
+    include:
+      - releases/*
 
 pool:
   vmImage: 'windows-latest'
@@ -24,9 +26,9 @@ variables:
 - name: buildConfiguration
   value: 'Release'
 - template: Variables\ZurichDeploy-variables-Shared.yml@ZurichDeploy
-- template: Variables\ZurichDeploy-variables-CI.yml@ZurichDeploy
+- template: Variables\ZurichDeploy-variables-QA.yml@ZurichDeploy
 - template: ../Variables/connector-variables-Shared.yml   
-- template: ../Variables/connector-variables-CI.yml
+- template: ../Variables/connector-variables-QA.yml
 
 stages:
 - stage: Build
@@ -39,13 +41,36 @@ stages:
         - template: Templates\ZurichDeploy-BuildWebAPI.yml@ZurichDeploy
           parameters:
             projectName: ${{ variables.projectName }}
-- stage: CI
+- stage: Send_Email
   pool: DCO-HighQ-Platform-N
   dependsOn:
-    - Build
+  - Build
+  jobs:
+  - deployment: Send_Email
+    environment: QA
+    strategy:
+     runOnce:
+       deploy:
+         steps:
+         - download: none
+         - checkout: self
+         - checkout: ZurichDeploy
+         - template: Templates\ZurichDeploy-NotifyBuildOwners.yml@ZurichDeploy
+           parameters:
+             additionalEmails: ${{ variables.additionalEmailsForServiceNowRequest }}
+             applicationName: ${{ variables.applicationName }}
+             assignmentGroup: "${{ variables.assignmentGroup }}"
+             environmentName: ${{ variables.environmentName }}
+             serviceNowUserName: ${{ variables.serviceNowUserName }}
+             serviceNowPassword: ""
+             subscriptionName: ${{ variables.subscriptionName }}
+- stage: QA
+  pool: DCO-HighQ-Platform-N
+  dependsOn:
+    - Send_Email
   jobs:
     - deployment: Prereqs
-      environment: CI
+      environment: QA
       strategy:
         runOnce:
           deploy:
@@ -97,7 +122,7 @@ stages:
                   webDnsServer: ${{ variables.webDnsServer }}
 
     - deployment: Connector
-      environment: CI
+      environment: QA
       dependsOn: Prereqs
       strategy:
         runOnce:
@@ -138,8 +163,7 @@ stages:
                   vnetName: ${{ variables.vnetName }}
                   vnetResourceGroup: ${{ variables.vnetResourceGroup }}
 - stage: Swap_Slots
-  dependsOn: CI
-  condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'master'))
+  dependsOn: QA
   jobs:
     - template: ../Templates/connector-swap-slots.yml
       parameters:
@@ -150,7 +174,6 @@ stages:
         subscriptionName: ${{ variables.subscriptionName }}
 - stage: Update_APIM_Product
   dependsOn: Swap_Slots
-  condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'master'))
   jobs:
   - job: 'UpdateApim'
     displayName: 'Update Apim Connector Service'
@@ -175,3 +198,24 @@ stages:
           serviceName: ${{ variables.connectorServiceName }}
           subscriptionName: ${{ variables.subscriptionName }}
           swaggerEndpoint: ${{ variables.swaggerEndpoint }}
+# This will probably end up being dev signoff.
+# - stage: QaApproval
+#   dependsOn: 
+#   - Swap_Slots
+#   jobs:
+#     - deployment: QaApproval
+#       environment: QA_Quality
+- stage: KickOffProd
+  # dependsOn: BusinessApproval
+  # condition: eq(dependencies.BusinessApproval.result,'Succeeded')
+  jobs:
+    - deployment: KickOffProd
+      environment: QA
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+              - template: Templates\ZurichDeploy-KickOffPipeline.yml@ZurichDeploy
+                parameters:
+                  #Prod pipeline
+                  pipelineDefinitionId: "1554"

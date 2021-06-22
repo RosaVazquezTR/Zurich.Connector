@@ -1,0 +1,30 @@
+variables:
+  - name: apiVersion 
+    value: "v1" 
+  - name: assignmentGroup
+    value: "LegalHomeDevs"
+  - name: azureAdClientId
+    value: 'b4a0d298-06dd-4738-83be-9b57653980b1'
+  - name: connectorCosmosMaxThroughput
+    value: "400"
+  - name: connectorCosmosThroughput
+    value: "400"
+  - name: connectorCosmosShouldAutoScale
+    value: "false"
+  - name: connectorSubnets
+    value: '["connector-webApi-QA-Backend", "hqh-VM-RelMgmt-backend"]'
+  - name: connectorServiceFQND
+    value: "connectorswebapiqa.azurewebsites.net"
+  - name: groups
+    value: "@('Administrators','Developers')"
+  - name: keyVaultSubnets
+    value: "@('connector-webApi-QA-Backend','hqh-VM-RelMgmt-backend')"
+  - name: resourceGroup
+    value: 'centralus-connectors-qa'
+  - name: subnetConnectorBackend
+    value: "@{SubNetName = 'WebApi'; SubNetCidr = '10.175.64.160/27'; SubNetType = 'backend'; subNetServiceEndpoints = @('Microsoft.AzureCosmosDB', 'Microsoft.KeyVault', 'Microsoft.Sql')}"
+  - name: subnetPreFix
+    value: 'connector'
+  - name: swaggerEndpoint
+    value: 'https://connectorswebapiqa.azurewebsites.net/swagger/v1/swagger.json'
+    

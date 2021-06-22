@@ -3,6 +3,8 @@ variables:
     value: "connector"
   - name: appInsightsName
     value: 'ConnectorsAppInsights'
+  - name: applicationName
+    value: 'Connectors'
   - name: connectorServiceName
     value: 'connectorsWebApi'
   - name: connectorCosmosContainerNames
@@ -15,12 +17,20 @@ variables:
     value: "CosmosDb"
   - name: connectorCosmosPartitionPath
     value: "/partitionkey"
+  - name: connectorServiceName
+    value: 'connectorsWebApi'
+  - name: databaseName
+    value: "ztenantdb"
+  - name: databaseServerName
+    value: "hqhomedbserver"
   - name: deployArmTemplates
     value: "Zurich.Deploy/ArmTemplates"
   - name: deployScriptFolder
     value: "Zurich.Deploy/Scripts"
   - name: keyVault
     value: 'connectorsKeyVault'
+  - name: legalHomeDbUser
+    value: "hqhomeService"
   - name: moduleFolder
     value: "Deploy/Zurich.Deploy/Modules"
   - name: productDescription 
@@ -29,5 +39,5 @@ variables:
     value: "legalApis"
   - name: projectName
     value: 'Zurich.Connector'
-  - name: connectorServiceName
-    value: 'connectorsWebApi'
+  - name: tenantDbConnStringKey
+    value: "ConnectionStrings--LegalHomeDB"
