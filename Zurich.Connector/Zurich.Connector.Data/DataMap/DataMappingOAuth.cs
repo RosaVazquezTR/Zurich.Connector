@@ -35,12 +35,12 @@ namespace Zurich.Connector.Data.DataMap
                 return results;
             }
 
-            AppToken token = await this.RetrieveToken(dataTypeInformation?.dataSource?.AppCode );
+            AppToken token = await this.RetrieveToken(dataTypeInformation?.dataSource?.appCode );
 
             if (!string.IsNullOrEmpty(token?.access_token))
             {
                 ApiInformation apiInfo = new ApiInformation() { 
-                    AppCode = dataTypeInformation.dataSource.AppCode, HostName = dataTypeInformation.hostName,
+                    AppCode = dataTypeInformation.dataSource.appCode, HostName = dataTypeInformation.hostName,
                     UrlPath = dataTypeInformation.request.endpointPath,
                     AuthHeader = dataTypeInformation.dataSource.securityDefinition.defaultSecurityDefinition.authorizationHeader, Token = token };
 

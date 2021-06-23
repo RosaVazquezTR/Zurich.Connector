@@ -11,20 +11,9 @@ namespace Zurich.Connector.Data.Repositories.CosmosDocuments
     /// </summary>
     public class CDMMapping
     {
-        /// <summary>
-        /// CMD mapping of properties.
-        /// </summary>
-        public Structured structured { get; set; }
-        /// <summary>
-        /// Place holder to store properties which is not part of the structured definition.
-        /// </summary>
-        public Unstructured unstructured { get; set; }
+        public List<CdmElement> structured { get; set; }
+        public List<CdmElement> unstructured { get; set; }
 
-    }
-
-    public class Structured
-    {
-        public List<CdmElement> CdmElement { get; set; }
     }
 
     public class CdmElement
@@ -46,9 +35,5 @@ namespace Zurich.Connector.Data.Repositories.CosmosDocuments
         /// </summary>
         public string Comment { get; set; }
     }
-
-    public class Unstructured
-    {
-        public CdmElement DataElement { get; set; }
-    }
+ 
 }

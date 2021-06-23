@@ -45,7 +45,7 @@ namespace Zurich.Connector.Data.Repositories.CosmosDocuments
         /// <summary>
         /// App Code
         /// </summary>
-        public string AppCode { get; set; }
+        public string appCode { get; set; }
 
     }
 

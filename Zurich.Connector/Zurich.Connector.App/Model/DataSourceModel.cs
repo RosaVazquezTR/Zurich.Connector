@@ -53,10 +53,7 @@ namespace Zurich.Connector.App.Model
         /// Type. Ex: "oauth2"
         /// </summary>
         public string Type { get; set; }
-        /// <summary>
-        /// Type represented as Enum
-        /// </summary>
-        public AuthType TypeEnum { get; set; }
+        
         /// <summary>
         /// Flow. Ex: "accessCode"
         /// </summary>

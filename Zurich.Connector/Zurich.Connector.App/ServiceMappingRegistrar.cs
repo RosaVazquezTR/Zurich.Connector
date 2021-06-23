@@ -16,10 +16,6 @@ namespace Zurich.Connector.App
             CreateMap<CosmosDocuments.ConnectorDocument, ConnectorModel>();
 
             CreateMap<CosmosDocuments.CDMMapping, CdmMapping>();
-
-            CreateMap<CosmosDocuments.Structured, Structured>();
-            CreateMap<CosmosDocuments.Unstructured, Unstructured>();
-
             CreateMap<CosmosDocuments.CdmElement, CdmElement>();
 
             CreateMap<CosmosDocuments.ConnectorInfo, ConnectorInfoModel>();
@@ -29,22 +25,13 @@ namespace Zurich.Connector.App
 
             CreateMap<CosmosDocuments.DataSourceDocument, DataSourceModel>();
 
-            CreateMap<CosmosDocuments.SecurityDefinition, SecurityDefinitionModel>()
-                .ForMember(dest => dest.Type, opt => opt.MapFrom(src => src.type))
-                .ForMember(dest => dest.TypeEnum, opt => opt.MapFrom(src => MapAuthTypeToEnum(src.type)))
-                .ForMember(dest => dest.Flow, opt => opt.MapFrom(src => src.flow))
-                .ForMember(dest => dest.DefaultSecurityDefinition, opt => opt.MapFrom(src => src.defaultSecurityDefinition))
-                .ForAllOtherMembers(opt => opt.Ignore());
-
+            CreateMap<CosmosDocuments.SecurityDefinition, SecurityDefinitionModel>();
             CreateMap<CosmosDocuments.SecurityDefinitionDetails, SecurityDefinitionDetailsModel>();
 
             /************************************************************************************************************/
             CreateMap<ConnectorModel, CosmosDocuments.ConnectorDocument>();
 
             CreateMap<CdmMapping, CosmosDocuments.CDMMapping>();
-
-            CreateMap<Structured, CosmosDocuments.Structured>(); 
-            CreateMap<Unstructured, CosmosDocuments.Unstructured>();
 
             CreateMap<CdmElement, CosmosDocuments.CdmElement>();
 
@@ -55,11 +42,8 @@ namespace Zurich.Connector.App
 
             CreateMap<DataSourceModel, CosmosDocuments.DataSourceDocument>();
 
-            CreateMap<SecurityDefinitionModel, CosmosDocuments.SecurityDefinition>()
-                .ForMember(dest => dest.type, opt => opt.MapFrom(src => src.Type))
-                .ForMember(dest => dest.flow, opt => opt.MapFrom(src => src.Flow))
-                .ForMember(dest => dest.defaultSecurityDefinition, opt => opt.MapFrom(src => src.DefaultSecurityDefinition))
-                .ForAllOtherMembers(opt => opt.Ignore());
+            CreateMap<SecurityDefinitionModel, CosmosDocuments.SecurityDefinition>();
+               
 
             CreateMap<SecurityDefinitionDetailsModel, CosmosDocuments.SecurityDefinitionDetails>();
         }
@@ -69,7 +53,7 @@ namespace Zurich.Connector.App
             switch (authType.ToLower())
             {
                 case "oauth2":
-                    return AuthType.OAuth;
+                    return AuthType.OAuth2;
                 case "transfertoken":
                     return AuthType.TransferToken;
                 default:

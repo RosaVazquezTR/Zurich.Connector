@@ -27,7 +27,7 @@ namespace Zurich.Connector.Data.Model
     {
         None,
         TransferToken,
-        OAuth
+        OAuth2
     }
 
     /// <summary>

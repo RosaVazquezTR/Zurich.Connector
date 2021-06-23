@@ -78,7 +78,7 @@ namespace Zurich.Connector.Tests.ControllerTests
 					new DataMappingConnection()
 					{
 						AppCode = "testApp1",
-						Auth = new DataMappingAuth() { Type = AuthType.OAuth },
+						Auth = new DataMappingAuth() { Type = AuthType.OAuth2 },
 						EntityType = EntityType.History
 					}
 				},
@@ -94,7 +94,7 @@ namespace Zurich.Connector.Tests.ControllerTests
 					new DataMappingConnection()
 					{
 						AppCode = "testApp2",
-						Auth = new DataMappingAuth() { Type = AuthType.OAuth },
+						Auth = new DataMappingAuth() { Type = AuthType.OAuth2 },
 						EntityType = EntityType.History
 					}
 				}

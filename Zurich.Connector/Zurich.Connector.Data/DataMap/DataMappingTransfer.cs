@@ -34,7 +34,7 @@ namespace Zurich.Connector.Data.DataMap
                 return results;
             }
 
-            ApiInformation apiInfo = new ApiInformation() { AppCode = dataTypeInformation.dataSource.AppCode, 
+            ApiInformation apiInfo = new ApiInformation() { AppCode = dataTypeInformation.dataSource.appCode, 
                                                             HostName = dataTypeInformation.hostName, 
                                                             UrlPath = dataTypeInformation.request.endpointPath, 
                                                             AuthHeader = dataTypeInformation.dataSource.securityDefinition.defaultSecurityDefinition.authorizationHeader, 

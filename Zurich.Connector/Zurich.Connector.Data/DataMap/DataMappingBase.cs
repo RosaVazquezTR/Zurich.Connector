@@ -162,8 +162,7 @@ namespace Zurich.Connector.Data.DataMap
 		private async Task<dynamic> MapResult(dynamic apiResult, ConnectorDocument connectorDocument)
 		{
 			dynamic cdmResult = new JObject();
-			//List<DataMappingProperty> properties = connectorModelEntity.;
-			List<CdmElement> properties = connectorDocument?.cdmMapping?.structured?.CdmElement;
+			List<CdmElement> properties = connectorDocument?.cdmMapping?.structured;
 
 			foreach (var property in properties)
 			{

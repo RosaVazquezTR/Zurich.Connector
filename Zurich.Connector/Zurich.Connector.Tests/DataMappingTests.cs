@@ -9,6 +9,8 @@ using Zurich.Common.Services.Security;
 using Zurich.Connector.Data.DataMap;
 using Zurich.Connector.Data.Model;
 using Zurich.Connector.Data.Repositories;
+using AutoMapper;
+using Zurich.Connector.Data.Repositories.CosmosDocuments;
 
 namespace Zurich.Connector.Tests
 {
@@ -20,6 +22,8 @@ namespace Zurich.Connector.Tests
 		private Mock<IOAuthService> _mockOAuthService;
 		private Mock<ILogger<DataMappingOAuth>> _mockLoggerOAuth;
 		private Mock<ILogger<DataMappingTransfer>> _mockLoggerTransfer;
+		private Mock<ICosmosDocumentReader> _mockCosmosDocumentReader;
+		private Mock<IMapper> _mockMapper;
 
 		[TestInitialize]
 		public void TestInitialize()
@@ -33,6 +37,8 @@ namespace Zurich.Connector.Tests
 			// feels like this won't change
 			AppToken token = new AppToken() { access_token = "fakeToken" };
 			_mockOAuthService.Setup(x => x.GetToken(It.IsAny<string>(), It.IsAny<OAuthApplicationType>(), It.IsAny<bool>(), It.IsAny<string>())).Returns(Task.FromResult(token));
+			_mockCosmosDocumentReader = new Mock<ICosmosDocumentReader>();
+			_mockMapper = new Mock<IMapper>();
 		}
 
 		#region json Strings
@@ -244,31 +250,64 @@ namespace Zurich.Connector.Tests
 			string appCode = "TestApp";
 
 			_mockRepository.Setup(x => x.Get(It.IsAny<ApiInformation>(), It.IsAny<NameValueCollection>())).Returns(Task.FromResult(TwoDocumentsJson));
-			DataMappingClass dataMap = new DataMappingClass()
+
+			ConnectorDocument connectorDocument = new ConnectorDocument() { 
+																			resultLocation = "data.results",
+																			request = new ConnectorRequest()
+																					  {endpointPath= "https://fakeaddress.thomsonreuters.com" }
+																		  };
+			connectorDocument.cdmMapping = new CDMMapping()
 			{
-				Api = new DataMappingApiRequest() { Url = "https://fakeaddress.thomsonreuters.com", AuthHeader = "differentAuthHeader" },
-				AppCode = appCode,
-				ResultLocation = "data.results",
-				Mapping = new List<DataMappingProperty>() {
-					new DataMappingProperty(){CDMProperty = "Name", APIProperty =  "name"},
-					new DataMappingProperty(){CDMProperty = "Id", APIProperty =  "id"},
-					new DataMappingProperty(){CDMProperty = "WebLink", APIProperty =  ""},
-					new DataMappingProperty(){CDMProperty = "LastOpened", APIProperty =  ""},
-					new DataMappingProperty(){CDMProperty = "LastUpdated", APIProperty =  "file_edit_date"},
-					new DataMappingProperty(){CDMProperty = "LastModifiedUser", APIProperty =  "last_user_description"},
-					new DataMappingProperty(){CDMProperty = "CreatedDate", APIProperty =  "file_create_date"},
-					new DataMappingProperty(){CDMProperty = "CreatedByUser", APIProperty =  "author_description"},
-					new DataMappingProperty(){CDMProperty = "FileType", APIProperty =  "type"},
-					new DataMappingProperty(){CDMProperty = "FileTypeExtended", APIProperty =  "type_description"}
+				structured = new List<CdmElement>() {
+							{
+								new CdmElement(){ Name="Name", ResponseElement ="name"}
+							},
+							{
+								new CdmElement(){ Name="Id", ResponseElement ="id"}
+							},
+							{
+								new CdmElement(){ Name="WebLink", ResponseElement =""}
+							},
+							{
+								new CdmElement(){ Name="LastOpened", ResponseElement =""}
+							},
+							{
+								new CdmElement(){ Name="LastUpdated", ResponseElement ="file_edit_date"}
+							},
+							{
+								new CdmElement(){ Name="LastModifiedUser", ResponseElement ="last_user_description"}
+							},
+							{
+								new CdmElement(){ Name="CreatedDate", ResponseElement ="file_create_date"}
+							},
+							{
+								new CdmElement(){ Name="CreatedByUser", ResponseElement ="author_description"}
+							},
+							{
+								new CdmElement(){ Name="FileType", ResponseElement ="type"}
+							},
+							{
+								new CdmElement(){ Name="FileTypeExtended", ResponseElement ="type_description"}
+							}
 				}
 			};
-			_mockDataMappingRepository.Setup(x => x.GetMap(It.IsAny<string>())).Returns(Task.FromResult(dataMap));
 
-			DataMappingOAuth documentMap = new DataMappingOAuth(_mockRepository.Object, _mockDataMappingRepository.Object, _mockOAuthService.Object, _mockLoggerOAuth.Object);
-			
+			connectorDocument.dataSource = new DataSourceDocument()
+			{ 
+				appCode = appCode,
+				securityDefinition = new SecurityDefinition() {
+					defaultSecurityDefinition = new SecurityDefinitionDetails()
+												{
+														authorizationHeader = "differentAuthHeader"
+												 }
+											  }  
+			};
+
+			DataMappingOAuth documentMap = new DataMappingOAuth(_mockRepository.Object, _mockDataMappingRepository.Object, _mockOAuthService.Object, _mockLoggerOAuth.Object,_mockCosmosDocumentReader.Object, _mockMapper.Object);
+
 			// ACT
-			dynamic documents = await documentMap.Get<dynamic>(dataMap, null);
-			
+			dynamic documents = await documentMap.Get<dynamic>(connectorDocument, null);
+
 			// ASSERT
 			Assert.IsNotNull(documents);
 			Assert.AreEqual(2, documents.Count);
@@ -281,30 +320,65 @@ namespace Zurich.Connector.Tests
 			string appCode = "TestApp";
 
 			_mockRepository.Setup(x => x.Get(It.IsAny<ApiInformation>(), It.IsAny<NameValueCollection>())).Returns(Task.FromResult(TwoDocumentsListJson));
-			DataMappingClass dataMap = new DataMappingClass()
+			
+			ConnectorDocument connectorDocument = new ConnectorDocument()
 			{
-				Api = new DataMappingApiRequest() { Url = "https://fakeaddress.thomsonreuters.com", AuthHeader = "differentAuthHeader" },
-				AppCode = appCode,
-				Mapping = new List<DataMappingProperty>() {
-					new DataMappingProperty(){CDMProperty = "Name", APIProperty =  "name"},
-					new DataMappingProperty(){CDMProperty = "Id", APIProperty =  "id"},
-					new DataMappingProperty(){CDMProperty = "WebLink", APIProperty =  ""},
-					new DataMappingProperty(){CDMProperty = "LastOpened", APIProperty =  ""},
-					new DataMappingProperty(){CDMProperty = "LastUpdated", APIProperty =  "file_edit_date"},
-					new DataMappingProperty(){CDMProperty = "LastModifiedUser", APIProperty =  "last_user_description"},
-					new DataMappingProperty(){CDMProperty = "CreatedDate", APIProperty =  "file_create_date"},
-					new DataMappingProperty(){CDMProperty = "CreatedByUser", APIProperty =  "author_description"},
-					new DataMappingProperty(){CDMProperty = "FileType", APIProperty =  "type"},
-					new DataMappingProperty(){CDMProperty = "FileTypeExtended", APIProperty =  "type_description"}
+				request = new ConnectorRequest()
+				{ endpointPath = "https://fakeaddress.thomsonreuters.com" }
+			};
+			connectorDocument.cdmMapping = new CDMMapping()
+			{
+				structured = new List<CdmElement>() {
+							{
+								new CdmElement(){ Name="Name", ResponseElement ="name"}
+							},
+							{
+								new CdmElement(){ Name="Id", ResponseElement ="id"}
+							},
+							{
+								new CdmElement(){ Name="WebLink", ResponseElement =""}
+							},
+							{
+								new CdmElement(){ Name="LastOpened", ResponseElement =""}
+							},
+							{
+								new CdmElement(){ Name="LastUpdated", ResponseElement ="file_edit_date"}
+							},
+							{
+								new CdmElement(){ Name="LastModifiedUser", ResponseElement ="last_user_description"}
+							},
+							{
+								new CdmElement(){ Name="CreatedDate", ResponseElement ="file_create_date"}
+							},
+							{
+								new CdmElement(){ Name="CreatedByUser", ResponseElement ="author_description"}
+							},
+							{
+								new CdmElement(){ Name="FileType", ResponseElement ="type"}
+							},
+							{
+								new CdmElement(){ Name="FileTypeExtended", ResponseElement ="type_description"}
+							}
 				}
 			};
-			_mockDataMappingRepository.Setup(x => x.GetMap(It.IsAny<string>())).Returns(Task.FromResult(dataMap));
 
-			DataMappingOAuth documentMap = new DataMappingOAuth(_mockRepository.Object, _mockDataMappingRepository.Object, _mockOAuthService.Object, _mockLoggerOAuth.Object);
+			connectorDocument.dataSource = new DataSourceDocument()
+			{
+				appCode = appCode,
+				securityDefinition = new SecurityDefinition()
+				{
+					defaultSecurityDefinition = new SecurityDefinitionDetails()
+					{
+						authorizationHeader = "differentAuthHeader"
+					}
+				}
+			};
+
+			DataMappingOAuth documentMap = new DataMappingOAuth(_mockRepository.Object, _mockDataMappingRepository.Object, _mockOAuthService.Object, _mockLoggerOAuth.Object, _mockCosmosDocumentReader.Object, _mockMapper.Object);
 
 			// ACT
-			dynamic documents = await documentMap.Get<dynamic>(dataMap);
-			
+			dynamic documents = await documentMap.Get<dynamic>(connectorDocument);
+
 			// ASSERT
 			Assert.IsNotNull(documents);
 			Assert.AreEqual(2, documents.Count);
@@ -317,28 +391,57 @@ namespace Zurich.Connector.Tests
 			string appCode = "TestApp";
 
 			_mockRepository.Setup(x => x.Get(It.IsAny<ApiInformation>(), It.IsAny<NameValueCollection>())).Returns(Task.FromResult(TwoDocumentsJson));
-			DataMappingClass dataMap = new DataMappingClass()
+			
+			ConnectorDocument connectorDocument = new ConnectorDocument()
 			{
-				Api = new DataMappingApiRequest() { Url = "https://fakeaddress.thomsonreuters.com", AuthHeader = "differentAuthHeader" },
-				AppCode = appCode,
-				ResultLocation = "data.results",
-				Mapping = new List<DataMappingProperty>() {
-					new DataMappingProperty(){CDMProperty = "Name", APIProperty =  "name"},
-					new DataMappingProperty(){CDMProperty = "Id", APIProperty =  "id"},
-					new DataMappingProperty(){CDMProperty = "WebLink", APIProperty =  ""},
-					new DataMappingProperty(){CDMProperty = "ComplexObjectFieldOne", APIProperty =  "complexObject.testItem1"},
-					new DataMappingProperty(){CDMProperty = "ComplexObjectLevelTwo", APIProperty =  "complexObject.testItem3.level2"},
-					new DataMappingProperty(){CDMProperty = "ArrayValue1", APIProperty =  "testArray.[name:testIndex2].description"},
-					new DataMappingProperty(){CDMProperty = "ArrayValue2", APIProperty =  "testArray.[description:fakeDesc3].name"},
+				resultLocation = "data.results",
+				request = new ConnectorRequest()
+				{ endpointPath = "https://fakeaddress.thomsonreuters.com" }
+			};
+			connectorDocument.cdmMapping = new CDMMapping()
+			{
+				structured = new List<CdmElement>() {
+							{
+								new CdmElement(){ Name="Name", ResponseElement ="name"}
+							},
+							{
+								new CdmElement(){ Name="Id", ResponseElement ="id"}
+							},
+							{
+								new CdmElement(){ Name="WebLink", ResponseElement =""}
+							},
+							{
+								new CdmElement(){ Name="ComplexObjectFieldOne", ResponseElement ="complexObject.testItem1"}
+							},
+							{
+								new CdmElement(){ Name="ComplexObjectLevelTwo", ResponseElement ="complexObject.testItem3.level2"}
+							},
+							{
+								new CdmElement(){ Name="ArrayValue1", ResponseElement ="testArray.[name:testIndex2].description"}
+							},
+							{
+								new CdmElement(){ Name="ArrayValue2", ResponseElement ="testArray.[description:fakeDesc3].name"}
+							}
 				}
 			};
-			_mockDataMappingRepository.Setup(x => x.GetMap(It.IsAny<string>())).Returns(Task.FromResult(dataMap));
 
-			DataMappingTransfer documentMap = new DataMappingTransfer(_mockRepository.Object, _mockDataMappingRepository.Object, _mockOAuthService.Object, _mockLoggerTransfer.Object);
+			connectorDocument.dataSource = new DataSourceDocument()
+			{
+				appCode = appCode,
+				securityDefinition = new SecurityDefinition()
+				{
+					defaultSecurityDefinition = new SecurityDefinitionDetails()
+					{
+						authorizationHeader = "differentAuthHeader"
+					}
+				}
+			};
+
+			DataMappingTransfer documentMap = new DataMappingTransfer(_mockRepository.Object, _mockDataMappingRepository.Object, _mockOAuthService.Object, _mockLoggerTransfer.Object, _mockCosmosDocumentReader.Object, _mockMapper.Object);
 
 			// ACT
-			dynamic documents = await documentMap.Get<dynamic>(dataMap, "fakeTransferToken");
-			
+			dynamic documents = await documentMap.Get<dynamic>(connectorDocument, "fakeTransferToken");
+
 			// ASSERT
 			Assert.IsNotNull(documents);
 			Assert.AreEqual(2, documents.Count);
@@ -355,44 +458,86 @@ namespace Zurich.Connector.Tests
 			string appCode = "TestApp";
 
 			_mockRepository.Setup(x => x.Get(It.IsAny<ApiInformation>(), It.IsAny<NameValueCollection>())).Returns(Task.FromResult(TwoDocumentsJson));
-			DataMappingClass dataMap = new DataMappingClass()
+			
+			ConnectorDocument connectorDocument1 = new ConnectorDocument()
+			{ 
+				Id ="1",
+				resultLocation = "data.results",
+				request = new ConnectorRequest()
+				{ endpointPath = "https://fakeaddress.thomsonreuters.com" }
+			};
+			connectorDocument1.cdmMapping = new CDMMapping()
 			{
-				Id = "1",
-				Api = new DataMappingApiRequest() { Url = "https://fakeaddress.thomsonreuters.com", AuthHeader = "differentAuthHeader" },
-				AppCode = appCode,
-				ResultLocation = "data.results",
-				Mapping = new List<DataMappingProperty>() {
-					new DataMappingProperty(){CDMProperty = "Name", APIProperty =  "name"},
-					new DataMappingProperty(){CDMProperty = "Id", APIProperty =  "id"},
-					new DataMappingProperty(){CDMProperty = "WebLink", APIProperty =  ""},
-					new DataMappingProperty(){CDMProperty = "ObjectArray", APIProperty =  "{2}"},
+				structured = new List<CdmElement>() {
+							{
+								new CdmElement(){ Name="Name", ResponseElement ="name"}
+							},
+							{
+								new CdmElement(){ Name="Id", ResponseElement ="id"}
+							},
+							{
+								new CdmElement(){ Name="WebLink", ResponseElement =""}
+							},
+							{
+								new CdmElement(){ Name="ObjectArray", ResponseElement ="{2}"}
+							}
 				}
 			};
 
-			// This contains the mapping for the nested array "testArray"
-			DataMappingClass dataMap2 = new DataMappingClass()
+			connectorDocument1.dataSource = new DataSourceDocument()
+			{
+				appCode = appCode,
+				securityDefinition = new SecurityDefinition()
+				{
+					defaultSecurityDefinition = new SecurityDefinitionDetails()
+					{
+						authorizationHeader = "differentAuthHeader"
+					}
+				}
+			};
+
+			ConnectorDocument connectorDocument2 = new ConnectorDocument()
 			{
 				Id = "2",
-				Api = new DataMappingApiRequest() { Url = "https://fakeaddress.thomsonreuters.com", AuthHeader = "differentAuthHeader" },
-				AppCode = appCode,
-				ResultLocation = "testArray",
-				Mapping = new List<DataMappingProperty>() {
-					new DataMappingProperty(){CDMProperty = "Name", APIProperty =  "name"},
-					new DataMappingProperty(){CDMProperty = "DescriptionProp", APIProperty =  "description"},
+				resultLocation = "testArray",
+				request = new ConnectorRequest()
+				{ endpointPath = "https://fakeaddress.thomsonreuters.com" }
+			};
+			connectorDocument2.cdmMapping = new CDMMapping()
+			{
+				structured = new List<CdmElement>() {
+							{
+								new CdmElement(){ Name="Name", ResponseElement ="name"}
+							},
+							{
+								new CdmElement(){ Name="DescriptionProp", ResponseElement ="description"}
+							}
 				}
 			};
-			_mockDataMappingRepository.Setup(x => x.GetMap(It.IsAny<string>())).Returns<string>(id =>
-			{
-				if (id == "1")
-					return Task.FromResult(dataMap);
-				else
-					return Task.FromResult(dataMap2);
-			});
 
-			DataMappingTransfer documentMap = new DataMappingTransfer(_mockRepository.Object, _mockDataMappingRepository.Object, _mockOAuthService.Object, _mockLoggerTransfer.Object);
+			connectorDocument2.dataSource = new DataSourceDocument()
+			{
+				appCode = appCode,
+				securityDefinition = new SecurityDefinition()
+				{
+					defaultSecurityDefinition = new SecurityDefinitionDetails()
+					{
+						authorizationHeader = "differentAuthHeader"
+					}
+				}
+			};
+            _mockCosmosDocumentReader.Setup(x => x.GetConnectorDocument(It.IsAny<string>())).Returns<string>(id =>
+            {
+                if (id == "1")
+                    return Task.FromResult(connectorDocument1);
+                else
+                    return Task.FromResult(connectorDocument2);
+            });
+
+            DataMappingTransfer documentMap = new DataMappingTransfer(_mockRepository.Object, _mockDataMappingRepository.Object, _mockOAuthService.Object, _mockLoggerTransfer.Object, _mockCosmosDocumentReader.Object, _mockMapper.Object);
 
 			// ACT
-			dynamic documents = await documentMap.Get<dynamic>(dataMap, "fakeTransferToken");
+			dynamic documents = await documentMap.Get<dynamic>(connectorDocument1, "fakeTransferToken");
 
 			// ASSERT
 			Assert.IsNotNull(documents);
@@ -410,22 +555,51 @@ namespace Zurich.Connector.Tests
 			string appCode = "TestApp";
 
 			_mockRepository.Setup(x => x.Get(It.IsAny<ApiInformation>(), It.IsAny<NameValueCollection>())).Returns(Task.FromResult(userInfoJson));
-			DataMappingClass dataMap = new DataMappingClass()
+
+			ConnectorDocument connectorDocument = new ConnectorDocument()
 			{
-				Api = new DataMappingApiRequest() { Url = "https://fakeaddress.thomsonreuters.com", AuthHeader = "differentAuthHeader" },
-				AppCode = appCode,
-				Mapping = new List<DataMappingProperty>() {
-					new DataMappingProperty(){CDMProperty = "Name", APIProperty =  "name"},
-					new DataMappingProperty(){CDMProperty = "Id", APIProperty =  "id"},
+				request = new ConnectorRequest()
+				{ endpointPath = "https://fakeaddress.thomsonreuters.com" }
+			};
+			connectorDocument.cdmMapping = new CDMMapping()
+			{
+				structured = new List<CdmElement>() {
+							{
+								new CdmElement(){ Name="Name", ResponseElement ="name"}
+							},
+							{
+								new CdmElement(){ Name="Id", ResponseElement ="id"}
+							}
 				}
 			};
-			_mockDataMappingRepository.Setup(x => x.GetMap(It.IsAny<string>())).Returns(Task.FromResult(dataMap));
 
-			DataMappingOAuth documentMap = new DataMappingOAuth(_mockRepository.Object, _mockDataMappingRepository.Object, _mockOAuthService.Object, _mockLoggerOAuth.Object);
-			
+			DataSourceDocument dataSourceDocument = new DataSourceDocument()
+			{
+				appCode = appCode,
+				securityDefinition = new SecurityDefinition()
+				{
+					defaultSecurityDefinition = new SecurityDefinitionDetails()
+					{
+						authorizationHeader = "differentAuthHeader"
+					}
+				}
+			};
+			connectorDocument.dataSource = dataSourceDocument;
+
+			_mockCosmosDocumentReader.Setup(x => x.GetConnectorDocument(It.IsAny<string>())).Returns<string>(id =>
+			{
+				return Task.FromResult(connectorDocument);
+			});
+			_mockCosmosDocumentReader.Setup(x => x.GetDataSourceDocument(It.IsAny<string>())).Returns<string>(id =>
+			{
+				return Task.FromResult(dataSourceDocument);
+			});
+
+			DataMappingOAuth documentMap = new DataMappingOAuth(_mockRepository.Object, _mockDataMappingRepository.Object, _mockOAuthService.Object, _mockLoggerOAuth.Object, _mockCosmosDocumentReader.Object, _mockMapper.Object);
+
 			// ACT
-			string newUrl = await documentMap.UpdateUrl("/work/api/v2/customers/{UserInfo.id}/documents", dataMap);
-			
+			string newUrl = await documentMap.UpdateUrl("/work/api/v2/customers/{UserInfo.id}/documents", connectorDocument);
+
 			// ASSERT
 			Assert.IsNotNull(newUrl);
 			Assert.AreEqual("/work/api/v2/customers/241/documents", newUrl);

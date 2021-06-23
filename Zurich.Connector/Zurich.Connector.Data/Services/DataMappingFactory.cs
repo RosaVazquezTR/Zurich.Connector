@@ -40,7 +40,7 @@ namespace Zurich.Connector.Data.Services
                 DataMappingTransfer service = (DataMappingTransfer)_serviceProvider.GetService(typeof(DataMappingTransfer));
                 return service;
             }
-            else if (authType == AuthType.OAuth)
+            else if (authType == AuthType.OAuth2)
             {
                 DataMappingOAuth service = (DataMappingOAuth)_serviceProvider.GetService(typeof(DataMappingOAuth));
                 return service;

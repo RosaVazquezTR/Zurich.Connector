@@ -74,14 +74,8 @@ namespace Zurich.Connector.App.Model
     /// </summary>
     public class CdmMapping
     {
-        public Structured Structured { get; set; }
-
-        public Unstructured Unstructured { get; set; }
-    }
-
-    public class Structured
-    {
-        public List<CdmElement> CdmElement{ get; set; }
+        public List<CdmElement> Structured { get; set; }
+        public List<CdmElement> Unstructured { get; set; }
     }
 
     public class CdmElement
@@ -104,8 +98,5 @@ namespace Zurich.Connector.App.Model
         public string Comment { get; set; }
     }
 
-    public class Unstructured
-    {
-        public CdmElement DataElement { get; set; }
-    }
+    
 }

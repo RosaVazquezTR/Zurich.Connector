@@ -79,12 +79,11 @@ namespace Zurich.Connector.Data.Services
 
             NameValueCollection mappedQueryParameters;
             mappedQueryParameters = MapQueryParametersFromDB(connectionId, queryParameters, connectorModel);
+            
+            AuthType outputEnum;
+            Enum.TryParse<AuthType>(connectorModel?.DataSource?.SecurityDefinition?.Type, true, out outputEnum);
 
-            AuthType authType = (connectorModel != null && connectorModel.DataSource != null
-                                 && connectorModel.DataSource.SecurityDefinition != null)
-                                 ? connectorModel.DataSource.SecurityDefinition.TypeEnum : AuthType.None;
-
-            IDataMapping service = _dataMappingFactory.GetMapper(authType);
+            IDataMapping service = _dataMappingFactory.GetMapper(outputEnum);
             
             ConnectorDocument connectorDocument = this._mapper.Map<ConnectorDocument>(connectorModel);
            
