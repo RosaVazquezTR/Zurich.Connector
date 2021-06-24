@@ -40,6 +40,14 @@ namespace Zurich.Connector.App.Model
         /// CDM Mapping of properties
         /// </summary>
         public CDMMappingModel CDMMapping { get; set; }
+        /// <summary>
+        /// Host name
+        /// </summary>
+        public string HostName { get; set; }
+        /// <summary>
+        /// Result Location
+        /// </summary>
+        public string ResultLocation { get; set; }
     }
 
     /// <summary>

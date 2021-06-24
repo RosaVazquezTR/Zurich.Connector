@@ -147,7 +147,7 @@ namespace Zurich.Connector.Data.Repositories
                          AppCode="Office",
                          Auth= new DataMappingAuth
                          {
-                             Type= AuthType.OAuth,
+                             Type= AuthType.OAuth2,
 
                              OAuth= new DataMappingOAuthType
                              {

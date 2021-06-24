@@ -22,10 +22,4 @@
     <ProjectReference Include="..\Zurich.Connector.App\Zurich.Connector.App.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Content Update="DataMapping.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-
 </Project>

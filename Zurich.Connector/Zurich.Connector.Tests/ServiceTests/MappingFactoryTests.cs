@@ -23,17 +23,6 @@ namespace Zurich.Connector.Tests.ServiceTests
 		[TestMethod]
 		public async Task GetDataMapperWithTransferAuth()
 		{
-			// ARRANGE
-			DataMappingClass dataMap = new DataMappingClass()
-			{
-				Api = new DataMappingApiRequest() { Url = "https://fakeaddress.thomsonreuters.com", AuthHeader = "differentAuthHeader" },
-				AuthType = AuthType.TransferToken,
-				AppCode = "fakeCode",
-				ResultLocation = "data.results",
-				Mapping = new List<DataMappingProperty>() {
-					new DataMappingProperty(){CDMProperty = "Name", APIProperty =  "name"},
-				}
-			};
 
 			Type inputType = null;
 			_serviceProvider.Setup(x => x.GetService(It.IsAny<Type>()))
@@ -43,7 +32,7 @@ namespace Zurich.Connector.Tests.ServiceTests
 			DataMappingFactory factory = new DataMappingFactory(_serviceProvider.Object, null);
 
 			// ACT
-			var response = factory.GetMapper(dataMap);
+			var response = factory.GetMapper(AuthType.TransferToken);
 
 			// ASSERT
 			_serviceProvider.Verify(x => x.GetService(It.IsAny<Type>()), Times.Once());
@@ -53,17 +42,6 @@ namespace Zurich.Connector.Tests.ServiceTests
 		[TestMethod]
 		public async Task GetDataMapperWithOAuth()
 		{
-			// ARRANGE
-			DataMappingClass dataMap = new DataMappingClass()
-			{
-				Api = new DataMappingApiRequest() { Url = "https://fakeaddress.thomsonreuters.com", AuthHeader = "differentAuthHeader" },
-				AuthType = AuthType.OAuth,
-				AppCode = "fakeCode",
-				ResultLocation = "data.results",
-				Mapping = new List<DataMappingProperty>() {
-					new DataMappingProperty(){CDMProperty = "Name", APIProperty =  "name"},
-				}
-			};
 
 			Type inputType = null;
 			_serviceProvider.Setup(x => x.GetService(It.IsAny<Type>()))
@@ -73,7 +51,7 @@ namespace Zurich.Connector.Tests.ServiceTests
 			DataMappingFactory factory = new DataMappingFactory(_serviceProvider.Object, null);
 
 			// ACT
-			var response = factory.GetMapper(dataMap);
+			var response = factory.GetMapper(AuthType.OAuth2);
 
 			// ASSERT
 			_serviceProvider.Verify(x => x.GetService(It.IsAny<Type>()), Times.Once());
