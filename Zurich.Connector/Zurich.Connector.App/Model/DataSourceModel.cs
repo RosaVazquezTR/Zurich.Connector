@@ -24,6 +24,10 @@ namespace Zurich.Connector.App.Model
         /// </summary>
         public string Description { get; set; }
         /// <summary>
+        /// App code
+        /// </summary>
+        public string AppCode { get; set; }
+        /// <summary>
         /// Data source infomation url.
         /// </summary>
         public string InfoUrl { get; set; }
@@ -73,6 +77,10 @@ namespace Zurich.Connector.App.Model
         /// Authorization Path
         /// </summary>
         public string AuthorizationPath { get; set; }
+        /// <summary>
+        /// Authorization Header
+        /// </summary>
+        public string AuthorizationHeader { get; set; }
         /// <summary>
         /// Token URL
         /// </summary>

@@ -42,6 +42,10 @@ namespace Zurich.Connector.Data.Repositories.CosmosDocuments
         /// Define scope
         /// </summary>
         public DataSourceScopes scopes { get; set; }
+        /// <summary>
+        /// App Code
+        /// </summary>
+        public string appCode { get; set; }
 
     }
 
@@ -103,6 +107,10 @@ namespace Zurich.Connector.Data.Repositories.CosmosDocuments
         /// Secret of the key vault.
         /// </summary>
         public string keyVaultSecret { get; set; }
+        /// <summary>
+        /// Authorization Header
+        /// </summary>
+        public string authorizationHeader { get; set; }
 
     }
 }

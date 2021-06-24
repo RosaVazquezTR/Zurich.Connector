@@ -13,6 +13,8 @@ using Zurich.Connector.Data.Model;
 using Zurich.Connector.Data.Repositories;
 using Zurich.Connector.Data.Serializer;
 using System.Collections.Specialized;
+using AutoMapper;
+using Zurich.Connector.Data.Repositories.CosmosDocuments;
 
 namespace Zurich.Connector.Data.DataMap
 {
@@ -23,26 +25,28 @@ namespace Zurich.Connector.Data.DataMap
 		protected Type _objectType;
 		protected IOAuthService _oAuthService;
 		protected ILogger<DataMappingBase> _logger;
+		protected ICosmosDocumentReader _cosmosDocumentReader;
+		protected IMapper _mapper;
 
-		public async virtual Task<T> Get<T>(DataMappingClass dataTypeInformation, string transferToken = null, NameValueCollection query =null)
-        {
-            T results = default(T);
+		public async virtual Task<T> Get<T>(ConnectorDocument dataTypeInformation, string transferToken = null, NameValueCollection query = null)
+		{
+			T results = default(T);
 
-            return results;
-        }
+			return results;
+		}
 
-    protected async Task<T> GetFromRepo<T>(ApiInformation apiInfo, DataMappingClass dataTypeInformation, NameValueCollection query = null)
-        {
+		protected async Task<T> GetFromRepo<T>(ApiInformation apiInfo, ConnectorDocument dataTypeInformation, NameValueCollection query = null)
+		{
 			var response = await _repository.Get(apiInfo, query);
 
 			if (!string.IsNullOrWhiteSpace(response))
 			{
-				return await MapToCDM<T>(response, dataTypeInformation.ResultLocation, dataTypeInformation.Mapping);
+				return await MapToCDM<T>(response, dataTypeInformation.resultLocation, dataTypeInformation);
 			}
 			else
-            {
+			{
 				return default(T);
-            }
+			}
 		}
 
 		public async virtual Task<AppToken> RetrieveToken(string appCode)
@@ -51,17 +55,18 @@ namespace Zurich.Connector.Data.DataMap
 			return token;
 		}
 
-		public async virtual Task<DataMappingClass> RetrieveProductInformationMap(string connectionId, string hostname)
+		public async virtual Task<ConnectorDocument> RetrieveProductInformationMap(string connectionId, string hostname)
 		{
-			DataMappingClass dataTypeInformation = await _dataMappingRepository.GetMap(connectionId);
+			var dataTypeInformation = await GenerateConnectorModelEntity(connectionId);
+
 			if (dataTypeInformation != null)
-            {
-				dataTypeInformation.Api.Hostname = hostname;
-            }
+			{
+				dataTypeInformation.hostName = hostname;
+			}
 			return dataTypeInformation;
 		}
 
-		public async virtual Task<string> UpdateUrl(string urlPath, DataMappingClass dataTypeInformation, string transferToken = null)
+		public async virtual Task<string> UpdateUrl(string urlPath, ConnectorDocument dataTypeInformation, string transferToken = null)
 		{
 			string newUrlPath = urlPath;
 			// Find all areas that have { } in url. ie. /work/api/v2/customers/{UserInfo.customer_id}/documents
@@ -71,12 +76,12 @@ namespace Zurich.Connector.Data.DataMap
 				//probably a better way to do this
 				string stringFormat = capture.ToString();
 				string stringFormatTrimmed = stringFormat.Trim('{', '}');
-				string[] splitString = stringFormatTrimmed.Split(".");	
+				string[] splitString = stringFormatTrimmed.Split(".");
 
-                if (splitString.Length > 1)
+				if (splitString.Length > 1)
 				{
 					string id = splitString.First();
-					dataTypeInformation = await this.RetrieveProductInformationMap(id, dataTypeInformation.Api.Hostname);
+					dataTypeInformation = await this.RetrieveProductInformationMap(id, dataTypeInformation.hostName);
 
 					// Make api call to get the information for the url variable inside { }
 					JToken result = await this.Get<JToken>(dataTypeInformation, transferToken);
@@ -93,7 +98,7 @@ namespace Zurich.Connector.Data.DataMap
 			return newUrlPath;
 		}
 
-		public async virtual Task<T> MapToCDM<T>(string stringResponse, string resultLocation, List<DataMappingProperty> propertyMap)
+		public async virtual Task<T> MapToCDM<T>(string stringResponse, string resultLocation, ConnectorDocument connectorDocument)
 		{
 			// TODO: Remove this JToken logic when database is set up
 			bool isJToken = typeof(T).Name == "JToken";
@@ -118,7 +123,7 @@ namespace Zurich.Connector.Data.DataMap
 
 			try
 			{
-				return await PerformMapping(jTokenResponse, propertyMap);
+				return await PerformMapping(jTokenResponse, connectorDocument);
 			}
 			catch (Exception e)
 			{
@@ -126,27 +131,27 @@ namespace Zurich.Connector.Data.DataMap
 				//Should we throw the exception here?
 			}
 
-            return default(T);
+			return default(T);
 		}
 
-		private async Task<dynamic> PerformMapping(JToken response, List<DataMappingProperty> propertyMap)
-        {
+		private async Task<dynamic> PerformMapping(JToken response, ConnectorDocument connectorDocument)
+		{
 			if (response == null)
-            {
+			{
 				return null;
-            }
+			}
 			if (response is JArray)
 			{
 				JArray results = new JArray();
 				foreach (var result in response)
 				{
-					results.Add(await MapResult(result, propertyMap));
+					results.Add(await MapResult(result, connectorDocument));
 				}
 				return (dynamic)results;
 			}
 			else if (response is JObject)
 			{
-				return await MapResult (response, propertyMap);
+				return await MapResult(response, connectorDocument);
 			}
 			else
 			{
@@ -154,27 +159,33 @@ namespace Zurich.Connector.Data.DataMap
 			}
 		}
 
-		private async Task<dynamic> MapResult(dynamic apiResult, List<DataMappingProperty> properties)
-        {
+		private async Task<dynamic> MapResult(dynamic apiResult, ConnectorDocument connectorDocument)
+		{
 			dynamic cdmResult = new JObject();
+			List<CDMElement> properties = connectorDocument?.cdmMapping?.structured;
+
 			foreach (var property in properties)
 			{
-				if (cdmResult[property.CDMProperty] != null)
+				if (cdmResult[property.name] != null)
 					continue;
 
 				// Get the correct json property when not on the same level
-				string[] resultsLocation = property.APIProperty.Split('.');
+				string[] resultsLocation = property.responseElement.Split('.');
+
 				var tempResult = apiResult;
 				foreach (string location in resultsLocation)
 				{
 					// Perform new mapping recursively of array results
 					if (location.Contains('{'))
-                    {
+					{
 						var match = Regex.Match(location, @"{(.*?)}");
 						var connectionId = match.Groups[1].ToString();
 						// TODO: Cache this datamapping so we don't have to call the DB for every result
-						DataMappingClass datamapping = await RetrieveProductInformationMap(connectionId, null);
-						tempResult = await MapToCDM<dynamic>(JsonConvert.SerializeObject(tempResult), datamapping.ResultLocation, datamapping.Mapping);
+						var dataMappingInformationEntity = await GenerateConnectorModelEntity(connectionId);
+
+						tempResult = await MapToCDM<dynamic>(JsonConvert.SerializeObject(tempResult),
+																dataMappingInformationEntity.resultLocation,
+																dataMappingInformationEntity);
 					}
 					// Flatten array results instead 
 					else if (location.Contains('['))
@@ -184,19 +195,28 @@ namespace Zurich.Connector.Data.DataMap
 						string valueToFind = match.Groups[2].ToString();
 						JArray resultArray = (JArray)tempResult;
 						tempResult = resultArray.FirstOrDefault(x => x[propertyName].ToString() == valueToFind);
-                    } 
+					}
 					else
-                    {
+					{
 						tempResult = tempResult[location];
-                    }
+					}
 					if (tempResult == null)
 						break;
 				}
-			
-				cdmResult[property.CDMProperty] = tempResult;
+
+				cdmResult[property.name] = tempResult;
 			}
 			return cdmResult;
 		}
 
+		private async Task<ConnectorDocument> GenerateConnectorModelEntity(string connectionId)
+		{
+			var connectorDocument = await _cosmosDocumentReader.GetConnectorDocument(connectionId);
+			string dataSourceId = connectorDocument?.info?.dataSourceId;
+			var connectorDataSourceDocument = await _cosmosDocumentReader.GetDataSourceDocument(dataSourceId);
+			connectorDocument.dataSource = connectorDataSourceDocument;
+
+			return connectorDocument;
+		}
 	}
 }

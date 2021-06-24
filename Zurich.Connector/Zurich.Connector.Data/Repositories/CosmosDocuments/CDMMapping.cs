@@ -14,11 +14,11 @@ namespace Zurich.Connector.Data.Repositories.CosmosDocuments
         /// <summary>
         /// CMD mapping of properties.
         /// </summary>
-        public CDMElement structured { get; set; }
+        public List<CDMElement> structured { get; set; }
         /// <summary>
         /// Place holder to store properties which is not part of the structured definition.
         /// </summary>
-        public CDMElement unstructured { get; set; }
+        public List<CDMElement> unstructured { get; set; }
 
     }
 

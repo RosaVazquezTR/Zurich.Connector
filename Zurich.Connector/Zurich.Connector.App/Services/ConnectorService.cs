@@ -17,7 +17,7 @@ using Microsoft.Extensions.Primitives;
 using Newtonsoft.Json;
 using Zurich.Connector.Data.Repositories.CosmosDocuments;
 using System.Linq.Expressions;
-using Zurich.Connector.App.Model;
+using Zurich.Connector.Data.Model;
 
 namespace Zurich.Connector.Data.Services
 {
@@ -53,9 +53,10 @@ namespace Zurich.Connector.Data.Services
         private readonly ICosmosService _cosmosService;
         private readonly ILogger<ConnectorService> _logger;
         private readonly IMapper _mapper;
+        private readonly IDataMappingService _dataMappingService;
 
         public ConnectorService(IDataMapping dataMapping, IDataMappingFactory dataMappingFactory, IDataMappingRepository dataMappingRepo, 
-                                ILogger<ConnectorService> logger, IMapper mapper, ICosmosService cosmosService)
+                                ILogger<ConnectorService> logger, IMapper mapper, ICosmosService cosmosService, IDataMappingService dataMappingService)
         {
             _dataMapping = dataMapping;
             _dataMappingFactory = dataMappingFactory;
@@ -63,22 +64,29 @@ namespace Zurich.Connector.Data.Services
             _cosmosService = cosmosService;
             _logger = logger;
             _mapper = mapper;
+            _dataMappingService = dataMappingService;
         }
 
         public async Task<dynamic> GetConnectorData(string connectionId, string hostname, string transferToken, Dictionary<string, string> queryParameters)
         {
-            NameValueCollection mappedQueryParameters;
-            mappedQueryParameters = await MapQueryParametersFromDB(connectionId, queryParameters);
+            ConnectorModel connectorModel = await _dataMappingService.RetrieveProductInformationMap(connectionId, hostname);
 
-            var dataMappingInformation =  await _dataMapping.RetrieveProductInformationMap(connectionId, hostname);
-            if (dataMappingInformation == null)
+            if (connectorModel == null)
             {
                 return null;
             }
 
-            IDataMapping service = _dataMappingFactory.GetMapper(dataMappingInformation);
+            NameValueCollection mappedQueryParameters;
+            mappedQueryParameters = MapQueryParametersFromDB(connectionId, queryParameters, connectorModel);
 
-            return await service.Get<dynamic>(dataMappingInformation, transferToken, mappedQueryParameters);
+            AuthType outputEnum;
+            Enum.TryParse<AuthType>(connectorModel?.DataSource?.SecurityDefinition?.Type, true, out outputEnum);
+
+            IDataMapping service = _dataMappingFactory.GetMapper(outputEnum);
+
+            ConnectorDocument connectorDocument = this._mapper.Map<ConnectorDocument>(connectorModel);
+
+            return await service.Get<dynamic>(connectorDocument, transferToken, mappedQueryParameters);
         }
 
         /// <summary>
@@ -124,21 +132,19 @@ namespace Zurich.Connector.Data.Services
             return connector;
         }
 
-        private async Task<NameValueCollection>  MapQueryParametersFromDB(string id, Dictionary<string, string> queryParameters)
+        private NameValueCollection MapQueryParametersFromDB(string id, Dictionary<string, string> queryParameters, ConnectorModel connectorModel)
         {
             NameValueCollection modifiedQueryParameters = new NameValueCollection();
 
             if (queryParameters.Any())
             {
-                var connectorDocument = await _cosmosService.GetConnector(id);
-            
                 var dataForNameValueCollection = (from param in queryParameters
-                                                  join requestParam in connectorDocument.Request?.Parameters
+                                                  join requestParam in connectorModel.Request?.Parameters
                                                   on param.Key.ToString().ToLower() equals requestParam.CdmName.ToLower()
                                                   select new { name = requestParam.Name, value = param.Value.ToString() }).ToList();
 
                 dataForNameValueCollection.ForEach(data => modifiedQueryParameters.Add(data.name, data.value));
-                modifiedQueryParameters = dataForNameValueCollection.Count>0 ? modifiedQueryParameters : null;
+                modifiedQueryParameters = dataForNameValueCollection.Count > 0 ? modifiedQueryParameters : null;
             }
 
             return modifiedQueryParameters;
