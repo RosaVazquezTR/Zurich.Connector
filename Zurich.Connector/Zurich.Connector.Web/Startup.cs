@@ -1,25 +1,19 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using Polly;
 using System;
 using AutoMapper;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Zurich.Common;
 using Zurich.Common.Models.HighQ;
 using Zurich.Common.Models.OAuth;
 using Zurich.Connector.Data.DataMap;
 using Zurich.Connector.Data.Repositories;
-using System.IdentityModel.Tokens.Jwt;
-using System.IdentityModel.Tokens;
 using Microsoft.IdentityModel.Clients.ActiveDirectory;
 using Zurich.Common.Models;
 using Microsoft.Data.SqlClient;
@@ -82,6 +76,8 @@ namespace Zurich.Connector.Web
             services.AddScoped<DataMappingTransfer>();
             services.AddScoped<IDataMappingRepository, DataMappingRepository>();
             services.AddScoped<IRepository, Repository>();
+
+            services.AddDiagnostics();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Zurich.Connector.Web", Version = "v1" });
@@ -113,6 +109,7 @@ namespace Zurich.Connector.Web
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapHealthChecks("/health");
                 endpoints.MapControllers();
             });
         }

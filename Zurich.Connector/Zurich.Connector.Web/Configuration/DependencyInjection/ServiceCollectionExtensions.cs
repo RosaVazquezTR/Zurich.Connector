@@ -32,29 +32,40 @@ namespace Microsoft.Extensions.DependencyInjection
 		/// <param name="oAuthOptions">The OAuth partner app connections details</param>
 		public static void AddPartnerAppAuth(this IServiceCollection services, string tenantConnectionString, string productsConnectionString, OAuthOptions oAuthOptions, MicroServiceOptions microServiceOptions)
 		{
-			services.AddSingleton(oAuthOptions);
 			services.AddSingleton(microServiceOptions);
+			//////////////////////TODO: We should check if we can get rid of this section. The AddCommonTenantServices should already be adding these
+			services.AddSingleton(oAuthOptions);
 			services.AddHttpClient(HttpClientNames.OAuth, httpClient =>
 			{
 				httpClient.DefaultRequestHeaders.Add("Accept", "application/json");
 			})
 			.AddTransientHttpErrorPolicy(policy => policy.WaitAndRetryAsync(new[] { TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(10) }));
+			services.AddScoped<IOAuthService, OAuthService>();
+			services.AddScoped<IOAuthStore, OAuthTenantStore>();
+			/////////////////////
 
-            services.AddHttpClient(HttpClientNames.HighQ, httpClient =>
+			services.AddHttpClient(HttpClientNames.HighQ, httpClient =>
             {
                 httpClient.DefaultRequestHeaders.Add("Accept", "application/json");
             })
             .AddTransientHttpErrorPolicy(policy => policy.WaitAndRetryAsync(new[] { TimeSpan.FromSeconds(1) }));
 
             services.AddScoped<IEncryptionService, EncryptionService>();
-            services.AddScoped<IOAuthService, OAuthService>();
-            services.AddScoped<IOAuthStore, OAuthTenantStore>();
-
             services.AddHttpContextAccessor();
             services.AddCommonTenantServices(tenantConnectionString, oAuthOptions);
             services.AddDefaultProductsDbConnection(productsConnectionString);
             services.AddProductServices();
 
+        }
+
+		/// <summary>
+		/// Adds diagnostics related services
+		/// </summary>
+		/// <param name="services">The app service collection</param>
+		public static void AddDiagnostics(this IServiceCollection services)
+        {
+			services.AddApplicationInsightsTelemetry();
+			services.AddHealthChecks();
         }
 
 		/// <summary>
