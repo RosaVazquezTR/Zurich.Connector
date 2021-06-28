@@ -11,6 +11,7 @@ using Zurich.Common;
 using Zurich.Common.Models.Cosmos;
 using Zurich.Common.Models.HighQ;
 using Zurich.Common.Models.OAuth;
+using Zurich.Common.Repositories.Cosmos;
 using Zurich.Common.Services.Security;
 using Zurich.Connector.App.Services;
 using Zurich.Connector.Data.Repositories;
@@ -99,36 +100,22 @@ namespace Microsoft.Extensions.DependencyInjection
 		/// <param name="clientOptions"> cosmos client options</param>
 		public static void AddConnectorCosmosServices(this IServiceCollection services, CosmosDbOptions dbOptions, CosmosClientSettings clientOptions)
         {
-			//TODO - Review and update the below cosmos client options.
-			var clientSettings = new CosmosClientOptions()
-			{
-				AllowBulkExecution = clientOptions.AllowBulkExecution,
-				ConnectionMode = ConnectionMode.Gateway,
-				GatewayModeMaxConnectionLimit = clientOptions.GatewayModeMaxConnectionLimit == 0 ? 10 : clientOptions.GatewayModeMaxConnectionLimit,
-				MaxRetryAttemptsOnRateLimitedRequests = clientOptions.MaxRetryAttemptsOnRateLimitedRequests == 0 ? 9 : clientOptions.MaxRetryAttemptsOnRateLimitedRequests,
-				MaxRetryWaitTimeOnRateLimitedRequests = clientOptions.MaxRetryWaitTimeOnRateLimitedRequests == 0 ? new TimeSpan(0, 0, 30) : new TimeSpan(0, 0, clientOptions.MaxRetryWaitTimeOnRateLimitedRequests)
-			};
-
-			var cosmosClientFactory = new CosmosClientFactory(dbOptions, clientSettings);
-			services.AddSingleton<ICosmosClientFactory>(cosmosClientFactory);
-
-			services.AddTransient<ICosmosDocumentReader>(serviceProvider =>
-			{
-				var logger = serviceProvider.GetRequiredService<ILogger<CosmosDocumentReader>>();
-				return new CosmosDocumentReader(dbOptions, cosmosClientFactory, logger);
-			});
-            services.AddTransient<ICosmosDocumentWriter>(serviceProvider =>
+            var clientSettings = new CosmosClientOptions()
             {
-                var logger = serviceProvider.GetRequiredService<ILogger<CosmosDocumentWriter>>();
-                return new CosmosDocumentWriter(dbOptions, cosmosClientFactory, logger);
-            });
-            services.AddTransient<ICosmosService>(serviceProvider =>
+                AllowBulkExecution = clientOptions.AllowBulkExecution,
+                ConnectionMode = ConnectionMode.Gateway,
+                GatewayModeMaxConnectionLimit = clientOptions.GatewayModeMaxConnectionLimit == 0 ? 10 : clientOptions.GatewayModeMaxConnectionLimit,
+                MaxRetryAttemptsOnRateLimitedRequests = clientOptions.MaxRetryAttemptsOnRateLimitedRequests == 0 ? 9 : clientOptions.MaxRetryAttemptsOnRateLimitedRequests,
+                MaxRetryWaitTimeOnRateLimitedRequests = clientOptions.MaxRetryWaitTimeOnRateLimitedRequests == 0 ? new TimeSpan(0, 0, 30) : new TimeSpan(0, 0, clientOptions.MaxRetryWaitTimeOnRateLimitedRequests)
+            };
+
+			services.AddCosmosClientStore(dbOptions, clientSettings);
+			services.AddTransient<ICosmosService>(serviceProvider =>
 			{
-				var reader = serviceProvider.GetRequiredService<ICosmosDocumentReader>();
-				var writer = serviceProvider.GetRequiredService<ICosmosDocumentWriter>();
+				var cosmosStore = serviceProvider.GetRequiredService<ICosmosClientStore>();
 				var logger = serviceProvider.GetRequiredService<ILogger<CosmosService>>();
 				var mapper = serviceProvider.GetRequiredService<IMapper>();
-				return new CosmosService(reader, writer, clientOptions, mapper, logger);
+				return new CosmosService(cosmosStore, clientOptions, mapper, logger);
 			});
 		}
 	}

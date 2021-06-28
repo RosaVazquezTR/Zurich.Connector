@@ -11,12 +11,12 @@ namespace Zurich.Connector.Data.Repositories.CosmosDocuments
     // Reference - https://trten-my.sharepoint.com/:w:/g/personal/vassil_vassilev_thomsonreuters_com/EUbDYj4Yi1hKnSft6DgfzZQBxTKt07JW-LlDrMBo4VbgXQ
     public class ConnectorDocument: CosmosDocument
     {
-        public ConnectorDocument() : base(CosmosConstants.ConnectorList) { }
+        public ConnectorDocument() : base(CosmosConstants.ConnectorPartitionKey) { }
         /// <summary>
         /// Connector ID
         /// </summary>
         public override string Id { get; set; }
-        public string partitionkey { get { return CosmosConstants.ConnectorList; } }
+        public string partitionkey { get { return CosmosConstants.ConnectorPartitionKey; } }
         /// <summary>
         /// Connector Info like title, description etc.
         /// </summary>

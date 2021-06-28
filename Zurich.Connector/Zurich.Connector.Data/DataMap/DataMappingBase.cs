@@ -15,6 +15,7 @@ using Zurich.Connector.Data.Serializer;
 using System.Collections.Specialized;
 using AutoMapper;
 using Zurich.Connector.Data.Repositories.CosmosDocuments;
+using Zurich.Common.Repositories.Cosmos;
 
 namespace Zurich.Connector.Data.DataMap
 {
@@ -25,7 +26,7 @@ namespace Zurich.Connector.Data.DataMap
 		protected Type _objectType;
 		protected IOAuthService _oAuthService;
 		protected ILogger<DataMappingBase> _logger;
-		protected ICosmosDocumentReader _cosmosDocumentReader;
+		protected ICosmosClientStore _cosmosClientStore;
 		protected IMapper _mapper;
 
 		public async virtual Task<T> Get<T>(ConnectorDocument dataTypeInformation, string transferToken = null, NameValueCollection query = null)
@@ -211,9 +212,14 @@ namespace Zurich.Connector.Data.DataMap
 
 		private async Task<ConnectorDocument> GenerateConnectorModelEntity(string connectionId)
 		{
-			var connectorDocument = await _cosmosDocumentReader.GetConnectorDocument(connectionId);
+			var connectorDocument = await _cosmosClientStore.GetDocument<ConnectorDocument>
+										(CosmosConstants.ConnectorContainerId, connectionId, CosmosConstants.ConnectorPartitionKey);
+
 			string dataSourceId = connectorDocument?.info?.dataSourceId;
-			var connectorDataSourceDocument = await _cosmosDocumentReader.GetDataSourceDocument(dataSourceId);
+
+			var connectorDataSourceDocument = await _cosmosClientStore.GetDocument<DataSourceDocument>
+										(CosmosConstants.DataSourceContainerId, dataSourceId, CosmosConstants.DataSourcePartitionKey);
+
 			connectorDocument.dataSource = connectorDataSourceDocument;
 
 			return connectorDocument;

@@ -12,12 +12,12 @@ namespace Zurich.Connector.Data.Repositories.CosmosDocuments
     /// </summary>
     public class DataSourceDocument : CosmosDocument
     {
-        public DataSourceDocument() : base(CosmosConstants.DataSourceList) { }
+        public DataSourceDocument() : base(CosmosConstants.DataSourcePartitionKey) { }
         /// <summary>
         /// Data source ID
         /// </summary>
         public override string Id { get; set; }
-        public string partitionkey { get { return CosmosConstants.DataSourceList; } }
+        public string partitionkey { get { return CosmosConstants.DataSourcePartitionKey; } }
         /// <summary>
         /// Data source name
         /// </summary>
