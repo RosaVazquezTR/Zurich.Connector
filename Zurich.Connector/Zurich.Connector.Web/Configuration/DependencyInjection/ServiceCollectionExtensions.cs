@@ -4,14 +4,19 @@ using AutoMapper;
 using IdentityModel;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.Azure.Cosmos;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Polly;
 using Zurich.Common;
+using Zurich.Common.Exceptions;
+using Zurich.Common.Middleware;
 using Zurich.Common.Models.Cosmos;
 using Zurich.Common.Models.HighQ;
 using Zurich.Common.Models.OAuth;
 using Zurich.Common.Repositories.Cosmos;
+using Zurich.Common.Services;
 using Zurich.Common.Services.Security;
 using Zurich.Connector.App.Services;
 using Zurich.Connector.Data.Repositories;
@@ -118,5 +123,22 @@ namespace Microsoft.Extensions.DependencyInjection
 				return new CosmosService(cosmosStore, clientOptions, mapper, logger);
 			});
 		}
-	}
+
+		/// <summary>
+		/// Configuring the ExceptionHandling Middleware.
+		/// </summary>
+		public static void ConfigureExceptionHandleMiddleware(this IApplicationBuilder App, IHostEnvironment env)
+        {
+			App.UseMiddleware<ExceptionHandlingMiddleware>();
+        }
+
+		/// <summary>
+		/// Adding Exception handler dependency class from Common package.
+		/// </summary>
+		public static void ConfigureExceptonhandler(this IServiceCollection services)
+        {
+			services.AddSingleton<IExceptionHandler, ExceptionHandler>();
+		}
+		}
+
 }

@@ -18,6 +18,7 @@ using Zurich.Connector.App.Services;
 using Zurich.Connector.Data.Repositories.CosmosDocuments;
 using Zurich.Connector.App.Enum;
 using Microsoft.OpenApi.Extensions;
+using Zurich.Common.Exceptions;
 
 namespace Zurich.Connector.Web.Controllers
 {
@@ -49,21 +50,22 @@ namespace Zurich.Connector.Web.Controllers
                 results = await _connectorService.GetConnectorData(id, hostName, transferToken, parameters);
                 if (results == null)
                 {
-                    return NotFound("Connector or data not found");
+                    throw  new ResourceNotFoundException("Connector or data not found");
                 }
+                var jsonResults = JsonConvert.SerializeObject(results);
+                return new ContentResult
+                {
+                    Content = jsonResults,
+                    ContentType = System.Net.Mime.MediaTypeNames.Application.Json,
+                    StatusCode = StatusCodes.Status200OK
+                };
             }
             catch (Exception e)
             {
-                return BadRequest(e.Message);
+                return new Exception(e.Message);
             }
 
-            var jsonResults = JsonConvert.SerializeObject(results);
-            return new ContentResult
-            {
-                Content = jsonResults,
-                ContentType = System.Net.Mime.MediaTypeNames.Application.Json,
-                StatusCode = StatusCodes.Status200OK
-            };
+            
         }
 
         /// <summary>
@@ -94,7 +96,7 @@ namespace Zurich.Connector.Web.Controllers
 
             if(results.Count == 0)
             {
-                return NotFound();
+                throw new ResourceNotFoundException("Connector or data not found");
             }
 
             var jsonSettings = new JsonSerializerSettings
@@ -131,7 +133,7 @@ namespace Zurich.Connector.Web.Controllers
             var results = await _connectorService.GetConnector(id);
             if (results == null)
             {
-                return NotFound("Connector not found");
+                throw new  ResourceNotFoundException($"Connector 'id' not found");
             }
             var responsedata = _mapper.Map<ConnectorViewModel>(results);
             return Ok(responsedata);

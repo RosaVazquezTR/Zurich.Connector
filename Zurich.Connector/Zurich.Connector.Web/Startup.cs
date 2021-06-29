@@ -89,6 +89,7 @@ namespace Zurich.Connector.Web
             services.AddPartnerAppAuth(tenantConnectionString, productsConnectionString, _oAuthOptions, _microServOptions);
             services.AddAutoMapper(typeof(Startup), typeof(CommonMappingsProfile), typeof(ServiceMappingRegistrar), typeof(MappingRegistrar));
             services.AddConnectorCosmosServices(_connectorCosmosDbOptions, _connectorCosmosClientOptions);
+            services.ConfigureExceptonhandler();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -99,7 +100,7 @@ namespace Zurich.Connector.Web
             {
                 app.UseDeveloperExceptionPage();
             }
-
+            app.ConfigureExceptionHandleMiddleware(env);
             app.UseSwagger();
             app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Zurich.Connector.Web v1"));
 
