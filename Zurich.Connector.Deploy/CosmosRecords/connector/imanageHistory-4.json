@@ -1,0 +1,148 @@
+{
+    "id": "4",
+    "partitionkey": "ConnectorList",
+    "info": {
+        "title": "Get Research History",
+        "description": "Pull Research History from PL",
+        "entityType": "History",
+        "dataSourceId": "12",
+        "version": "1.0"
+    },
+    "request": {
+        "endpointPath": "/Micro/V4/RecentHistory?pageSize=25",
+        "method": "get",
+        "parameters": []
+    },
+    "response": {
+        "schema": {
+            "properties": {}
+        }
+    },
+    "resultLocation": "historyResult.results",
+    "filters": [],
+    "cdmMapping": {
+        "structured": [
+            {
+                "name": "EventType",
+                "type": "string",
+                "responseElement": "event",
+                "_comment": ""
+            },
+            {
+                "name": "EventDate",
+                "type": "string",
+                "responseElement": "eventDate",
+                "_comment": ""
+            },
+            {
+                "name": "EventDateUTC",
+                "type": "string",
+                "responseElement": "eventDateUtc",
+                "_comment": ""
+            },
+            {
+                "name": "ClientId",
+                "type": "string",
+                "responseElement": "clientId",
+                "_comment": ""
+            },
+            {
+                "name": "EventId",
+                "type": "string",
+                "responseElement": "eventId",
+                "_comment": ""
+            },
+            {
+                "name": "ContentType",
+                "type": "string",
+                "responseElement": "item.contentType",
+                "_comment": ""
+            },
+            {
+                "name": "ContentTypeDisplay",
+                "type": "string",
+                "responseElement": "item.contentTypeDisplay",
+                "_comment": ""
+            },
+            {
+                "name": "DomainType",
+                "type": "string",
+                "responseElement": "item.domainType",
+                "_comment": ""
+            },
+            {
+                "name": "Jurisdiction",
+                "type": "string",
+                "responseElement": "item.jurisdiction",
+                "_comment": ""
+            },
+            {
+                "name": "SearchQuery",
+                "type": "string",
+                "responseElement": "item.queryString",
+                "_comment": ""
+            },
+            {
+                "name": "SearchCount",
+                "type": "string",
+                "responseElement": "item.searchCount",
+                "_comment": ""
+            },
+            {
+                "name": "SearchContent",
+                "type": "string",
+                "responseElement": "item.searchDescription.[property:Content].description",
+                "_comment": ""
+            },
+            {
+                "name": "SearchType",
+                "type": "string",
+                "responseElement": "item.searchDescription.[property:Search Type].description",
+                "_comment": ""
+            },
+            {
+                "name": "WebLink",
+                "type": "string",
+                "responseElement": "item.searchLink",
+                "_comment": ""
+            },
+            {
+                "name": "Citation",
+                "type": "string",
+                "responseElement": "item.citation",
+                "_comment": ""
+            },
+            {
+                "name": "Metadata",
+                "type": "string",
+                "responseElement": "item.metadata",
+                "_comment": ""
+            },
+            {
+                "name": "TruncatedTitle",
+                "type": "string",
+                "responseElement": "item.truncatedTitle",
+                "_comment": ""
+            },
+            {
+                "name": "WebLink",
+                "type": "string",
+                "responseElement": "item.docLink",
+                "_comment": ""
+            },
+            {
+                "name": "WebLink",
+                "type": "string",
+                "responseElement": "item.link",
+                "_comment": ""
+            },
+            {
+                "name": "EventName",
+                "type": "string",
+                "responseElement": "item.displayName",
+                "_comment": ""
+            }
+        ],
+        "unstructured": []
+    }
+}

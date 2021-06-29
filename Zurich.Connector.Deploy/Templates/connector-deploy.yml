@@ -117,3 +117,13 @@ steps:
     location: '${{ parameters.resourceLocation }}'
     csmFile: '$(Build.SourcesDirectory)/Zurich.Connector/Zurich.Connector.Deploy/ArmTemplates/Dashboard.json'
     overrideParameters: '-env "${{ parameters.environmentName }}" -dashboardName "Connectors-Dashboard" -connectorsWebApi "${{ parameters.connectorServiceName }}" -ConnectorsAppInsights "${{ parameters.appInsightsName }}"'
+- task: AzurePowerShell@5
+  displayName: 'Update CosmosDb document'
+  inputs:
+    azureSubscription: ${{ parameters.subscriptionName }}
+    ScriptType: 'InlineScript'
+    azurePowerShellVersion: 'LatestVersion'
+    Inline: |
+      . $(Build.SourcesDirectory)/Zurich.Connector/Zurich.Connector.Deploy/Scripts/SetupApiConnector.ps1
+      updateCosmosRecords -ResourceGroupName '${{ parameters.resourceGroup }}' -AccountName '${{ parameters.connectorCosmosName }}${{ lower(parameters.environmentName) }}' -DatabaseName '${{ parameters.connectorCosmosDatabaseName}}' -CollectionName 'connector' -FolderPath "$(Build.SourcesDirectory)/Zurich.Connector/Zurich.Connector.Deploy/CosmosRecords/connector/" -Properties @("id", "partitionkey", "info", "request", "response", "filters", "cdmMapping", "type") -PartitionKey 'ConnectorList'
+      updateCosmosRecords -ResourceGroupName '${{ parameters.resourceGroup }}' -AccountName '${{ parameters.connectorCosmosName }}${{ lower(parameters.environmentName) }}' -DatabaseName '${{ parameters.connectorCosmosDatabaseName}}' -CollectionName 'datasource' -FolderPath "$(Build.SourcesDirectory)/Zurich.Connector/Zurich.Connector.Deploy/CosmosRecords/datasource/" -Properties @("id", "partitionkey", "name", "description", "infoUrl", "extraRequestContext", "securityDefinition", "type") -PartitionKey 'DataSourceList'

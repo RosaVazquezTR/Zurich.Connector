@@ -1,0 +1,40 @@
+{
+    "id": "5",
+    "partitionkey": "ConnectorList",
+    "info": {
+        "title": "Get Research Favorites",
+        "description": "Pull Research Favorite Groups from PL",
+        "entityType": "History",
+        "dataSourceId": "12",
+        "version": "1.0"
+    },
+    "request": {
+        "endpointPath": "/Micro/FavoriteAndFrequentlyUsed",
+        "method": "get",
+        "parameters": []
+    },
+    "response": {
+        "schema": {
+            "properties": {}
+        }
+    },
+    "resultLocation": "FavoritesAndFrequentlyUsed",
+    "filters": [],
+    "cdmMapping": {
+        "structured": [
+            {
+                "name": "GroupName",
+                "type": "string",
+                "responseElement": "group",
+                "_comment": ""
+            },
+            {
+                "name": "Items",
+                "type": "string",
+                "responseElement": "{6}",
+                "_comment": ""
+            }
+        ],
+        "unstructured": []
+    }
+}
