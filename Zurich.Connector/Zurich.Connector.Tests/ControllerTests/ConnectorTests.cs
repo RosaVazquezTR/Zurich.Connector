@@ -246,7 +246,7 @@ namespace Zurich.Connector.Tests.ControllerTests
             ConnectorFilterModel filters = new ConnectorFilterModel();
             _mockConnectorservice.Setup(x => x.GetConnectors(It.IsAny<ConnectorFilterModel>())).Returns(Task.FromResult(connections.ToList()));
 
-            ConnectorsController connector = new ConnectorsController(_mockConnectorservice.Object, null, _mapper);
+            ConnectorsController connector = new ConnectorsController(_mockConnectorservice.Object, null, _mapper,null);
 
             // ACT
             var response = await connector.Connectors(filters);
@@ -303,7 +303,7 @@ namespace Zurich.Connector.Tests.ControllerTests
 				HttpContext = httpContext,
 			};
 
-			return new ConnectorsController(_mockConnectorservice.Object, null, _mockmapper.Object) { ControllerContext = controllerContext };
+			return new ConnectorsController(_mockConnectorservice.Object, null, _mockmapper.Object,null) { ControllerContext = controllerContext };
 		}
 	}
 }

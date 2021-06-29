@@ -14,6 +14,10 @@ using Zurich.Connector.Data.Services;
 using Zurich.Connector.Web.Models;
 using Microsoft.Extensions.Primitives;
 using Microsoft.Extensions.Configuration;
+using Zurich.Connector.App.Services;
+using Zurich.Connector.Data.Repositories.CosmosDocuments;
+using Zurich.Connector.App.Enum;
+using Microsoft.OpenApi.Extensions;
 
 namespace Zurich.Connector.Web.Controllers
 {
@@ -22,12 +26,14 @@ namespace Zurich.Connector.Web.Controllers
     public class ConnectorsController : ControllerBase
     {
         private readonly IConnectorService _connectorService;
+        private readonly ICosmosService _cosmosService;
         private readonly IMapper _mapper;
         private readonly ILogger<ConnectorsController> _logger;
 
-        public ConnectorsController(IConnectorService connectorService, ILogger<ConnectorsController> logger, IMapper mapper)
+        public ConnectorsController(IConnectorService connectorService, ILogger<ConnectorsController> logger, IMapper mapper, ICosmosService cosmosService)
         {
             _connectorService = connectorService;
+            _cosmosService = cosmosService;
             _logger = logger;
             _mapper = mapper;
         }
@@ -129,6 +135,20 @@ namespace Zurich.Connector.Web.Controllers
             }
             var responsedata = _mapper.Map<ConnectorViewModel>(results);
             return Ok(responsedata);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<ConnectorRegistrationViewModel>>ConnectorRegistration([FromBody] ConnectorRegistrationDocument connectorRegistrationDocument)
+        {
+            try
+            {
+                 await _cosmosService.StoreConnectorRegistration(connectorRegistrationDocument);
+                return Ok(RegistrationStatus.register);
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(RegistrationStatus.notRegister);
+            }
         }
 
     }

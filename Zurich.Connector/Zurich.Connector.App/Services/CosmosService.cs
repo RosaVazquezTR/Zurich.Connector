@@ -107,5 +107,14 @@ namespace Zurich.Connector.App.Services
 		{
 			await _cosmosClientStore.UpsertDocument(dataSourceDocument, CosmosConstants.DataSourceContainerId);
 		}
-	}
+
+		/// <summary>
+		/// Write connector registration document to cosmos
+		/// </summary>
+		public async Task StoreConnectorRegistration(ConnectorRegistrationDocument connectorRegistrationDocument)
+        {
+		 await _cosmosClientStore.UpsertDocument(connectorRegistrationDocument, CosmosConstants.ConnectorRegistrationContainerId);
+		}
+
+    }
 }

@@ -45,5 +45,8 @@ namespace Zurich.Connector.App.Services
 		/// Write data source document to cosmos
 		/// </summary>
 		public Task StoreDataSource(DataSourceDocument dataSourceDocument);
+
+		public Task StoreConnectorRegistration(ConnectorRegistrationDocument connectorRegistrationDocument);
+
 	}
 }
