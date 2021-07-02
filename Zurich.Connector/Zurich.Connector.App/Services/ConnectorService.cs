@@ -34,7 +34,7 @@ namespace Zurich.Connector.Data.Services
         /// <param name="transferToken">The transfer token to pass with the api call, if needed</param>
         /// <param name="queryParameters">The query string parameters of request</param>
         /// <returns>Mapped data for the connector</returns>
-        Task<dynamic> GetConnectorData(string connectionId, string hostname, string transferToken, Dictionary<string, string> queryParameters);
+        Task<dynamic> GetConnectorData(string connectionId, string hostname, string transferToken, Dictionary<string, string> queryParameters, bool retrievefilters);
 
         /// <summary>
         /// Gets all connections from cosmos
@@ -67,9 +67,9 @@ namespace Zurich.Connector.Data.Services
             _dataMappingService = dataMappingService;
         }
 
-        public async Task<dynamic> GetConnectorData(string connectionId, string hostname, string transferToken, Dictionary<string, string> queryParameters)
+        public async Task<dynamic> GetConnectorData(string connectionId, string hostname, string transferToken, Dictionary<string, string> queryParameters, bool retrievefilters)
         {
-            ConnectorModel connectorModel = await _dataMappingService.RetrieveProductInformationMap(connectionId, hostname);
+            ConnectorModel connectorModel = await _dataMappingService.RetrieveProductInformationMap(connectionId, hostname, retrievefilters);
 
             if (connectorModel == null)
             {

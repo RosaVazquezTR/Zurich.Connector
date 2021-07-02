@@ -40,14 +40,19 @@ namespace Zurich.Connector.Web.Controllers
         }
 
         [HttpGet("{id}/data")]
-        public async Task<ActionResult<dynamic>> ConnectorData(string id, [FromQuery] string hostName, [FromQuery] string transferToken)
+        public async Task<ActionResult<dynamic>> ConnectorData(string id, [FromQuery] string hostName, [FromQuery] string transferToken,[FromQuery] bool retrievefilters)
         {
             dynamic results;
             try
             {
                 // TODO: Eventually hostname and transferToken will be removed 
-                Dictionary<string, string> parameters = HttpContext?.Request.Query.Keys.Cast<string>().Where(param => !param.Equals("hostname", StringComparison.InvariantCultureIgnoreCase) && !param.Equals("transferToken", StringComparison.InvariantCultureIgnoreCase)).ToDictionary(k => k, v => HttpContext?.Request.Query[v].ToString());
-                results = await _connectorService.GetConnectorData(id, hostName, transferToken, parameters);
+                Dictionary<string, string> parameters = HttpContext?.Request.Query.Keys.Cast<string>()
+                    .Where(param => !param.Equals("hostname", StringComparison.InvariantCultureIgnoreCase) 
+                    && !param.Equals("transferToken", StringComparison.InvariantCultureIgnoreCase) 
+                    && !param.Equals("retrievefilters", StringComparison.InvariantCultureIgnoreCase))
+                    .ToDictionary(k => k, v => HttpContext?.Request.Query[v].ToString());
+
+                results = await _connectorService.GetConnectorData(id, hostName, transferToken, parameters, retrievefilters);
                 if (results == null)
                 {
                     throw  new ResourceNotFoundException("Connector or data not found");
