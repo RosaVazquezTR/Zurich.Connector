@@ -29,11 +29,12 @@ namespace Zurich.Connector.Data.DataMap
         Task<T> Get<T>(ConnectorDocument dataTypeInformation, string transferToken = null, NameValueCollection query = null);
 
         /// <summary>
-        /// Passed in the appcode will pull the token
+        /// Retrieve token based on appCode, appType, locale, grandType
         /// </summary>
         /// <param name="appCode">Application code to get the data from</param>
         /// <returns>Token to use</returns>
-        Task<AppToken> RetrieveToken(string appCode);
+        Task<AppToken> RetrieveToken(string appCode, OAuthApplicationType? appType = null,
+                                     string locale = null, string grandType = null, bool? sendCredentialsInBody = false);
 
         /// <summary>
         /// Retreives the Map to be used for this product call

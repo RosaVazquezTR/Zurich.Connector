@@ -1,0 +1,123 @@
+{
+    "id": "10",
+    "partitionkey": "ConnectorList",
+    "info": {
+        "title": "Get Search Practical law documents - UK",
+        "description": "Pull Practical law documents - UK",
+        "entityType": "Search",
+        "dataSourceId": "15",
+        "version": "1.0"
+    },
+    "request": {
+        "endpointPath": "https://api-test.thomsonreuters.com:443/practicallaw/v4/federatedsearch",
+        "method": "get",
+        "responseContentType": "XML",
+        "parameters": [
+            {
+                "cdmName": "Query",
+                "name": "searchTerm",
+                "in": "body",
+                "required": false,
+                "type": "string",
+                "defaultValue": ""
+            },
+            {
+                "cdmName": "ResourceType",
+                "name": "ResourceType",
+                "in": "body",
+                "required": false,
+                "type": "string",
+                "defaultValue": ""
+            },
+            {
+                "cdmName": "PracticeAreasIds",
+                "name": "PracticeAreasIds",
+                "in": "body",
+                "required": true,
+                "type": "string",
+                "defaultValue": ""
+            },
+            {
+                "cdmName": "JurisdictionIds",
+                "name": "JurisdictionIds",
+                "in": "body",
+                "required": true,
+                "type": "string",
+                "defaultValue": ""
+            },
+            {
+                "cdmName": "Locale",
+                "name": "locale",
+                "in": "body",
+                "required": true,
+                "type": "string",
+                "defaultValue": "US"
+            },
+            {
+                "cdmName": "ResultsCount",
+                "name": "resultsCount",
+                "in": "body",
+                "required": true,
+                "type": "string",
+                "defaultValue": ""
+            },
+            {
+                "cdmName": "ResultStartIndex",
+                "name": "ResultStartIndex",
+                "in": "body",
+                "required": true,
+                "type": "string",
+                "defaultValue": ""
+            },
+            {
+                "cdmName": "SortOrder",
+                "name": "SortOrder",
+                "in": "body",
+                "required": true,
+                "type": "string",
+                "defaultValue": ""
+            },
+            {
+                "cdmName": "StartDate",
+                "name": "StartDate",
+                "in": "body",
+                "required": true,
+                "type": "string",
+                "defaultValue": ""
+            }
+        ]
+    },
+    "response": {
+        "schema": {
+            "properties": {}
+        }
+    },
+    "filters": [
+        {
+            "name": "",
+            "description": "",
+            "source": {
+                "responseElement": ""
+            },
+            "requestParameter": ""
+        }
+    ],
+    "resultLocation": "searchResults.detail",
+    "cdmMapping": {
+        "structured": [
+            {
+                "name": "Count",
+                "type": "short",
+                "responseElement": "total",
+                "_comment": ""
+            },
+            {
+                "name": "document",
+                "type": "String",
+                "responseElement": "{11}",
+                "_comment": ""
+            }
+        ],
+        "unstructured": []
+    }
+}

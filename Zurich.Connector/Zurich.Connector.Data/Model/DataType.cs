@@ -53,4 +53,13 @@ namespace Zurich.Connector.Data.Model
         ManualRegistered,
         None
     }
+
+    /// <summary>
+    /// Response content type
+    /// </summary>
+    public enum ResponseContentType
+    {
+        JSON = 0,
+        XML = 1,
+    }
 }

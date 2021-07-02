@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Zurich.Connector.Data.Model;
 
 namespace Zurich.Connector.App.Model
 {
@@ -19,6 +20,10 @@ namespace Zurich.Connector.App.Model
         /// Method type. Ex: "get"
         /// </summary>
         public string Method { get; set; }
+        /// <summary>
+        /// Reponse Content Type Ex: JSON, XML etc.
+        /// </summary>
+        public ResponseContentType? responseContentType { get; set; }
         /// <summary>
         /// Request parameters
         /// </summary>

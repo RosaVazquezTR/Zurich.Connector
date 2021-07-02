@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Zurich.Connector.Data.Model;
 
 namespace Zurich.Connector.Data.Repositories.CosmosDocuments
 {
@@ -15,6 +16,10 @@ namespace Zurich.Connector.Data.Repositories.CosmosDocuments
         /// Method type. Ex: "get"
         /// </summary>
         public string method { get; set; }
+        /// <summary>
+        /// Reponse Content Type Ex: JSON, XML etc.
+        /// </summary>
+        public ResponseContentType? responseContentType { get; set; }
         /// <summary>
         /// Request parameters
         /// </summary>
