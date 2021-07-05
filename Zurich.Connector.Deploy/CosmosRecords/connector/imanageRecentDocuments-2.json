@@ -1,0 +1,94 @@
+{
+  "id": "2",
+  "partitionkey": "ConnectorList",
+  "info": {
+    "title": "Get Recent Documents from iManage",
+    "description": "Get Recent Documents from iManage",
+    "entityType": "Document",
+    "dataSourceId": "10",
+    "version": "1.0"
+  },
+  "request": {
+    "endpointPath": "/work/api/v2/customers/{1.customer_id}/recent-documents",
+    "method": "GET",
+    "parameters": []
+  },
+  "response": {
+    "schema": {
+      "properties": {}
+    }
+  },
+  "resultLocation": "data.results",
+  "filters": [],
+  "cdmMapping": {
+    "structured": [
+      {
+        "name": "Title",
+        "type": "string",
+        "responseElement": "name",
+        "_comment": ""
+      },
+      {
+        "name": "Id",
+        "type": "string",
+        "responseElement": "id",
+        "_comment": ""
+      },
+      {
+        "name": "DesktopUrl",
+        "type": "string",
+        "responseElement": "iwl",
+        "_comment": ""
+      },
+      {
+        "name": "AuthorName",
+        "type": "string",
+        "responseElement": "author_description",
+        "_comment": ""
+      },
+      {
+        "name": "LastModifiedUser",
+        "type": "string",
+        "responseElement": "last_user_description",
+        "_comment": ""
+      },
+      {
+        "name": "LastModifiedDateTime",
+        "type": "string",
+        "responseElement": "file_edit_date",
+        "_comment": ""
+      },
+      {
+        "name": "Type",
+        "type": "string",
+        "responseElement": "type",
+        "_comment": ""
+      },
+      {
+        "name": "ContainerDisplayName",
+        "type": "string",
+        "responseElement": "workspace_name",
+        "_comment": ""
+      },
+      {
+        "name": "Size",
+        "type": "string",
+        "responseElement": "size",
+        "_comment": ""
+      },
+      {
+        "name": "FileCreatedDate",
+        "type": "string",
+        "responseElement": "file_create_date",
+        "_comment": ""
+      },
+      {
+        "name": "Version",
+        "type": "string",
+        "responseElement": "version",
+        "_comment": ""
+      }
+    ],
+    "unstructured": []
+  }
+}
