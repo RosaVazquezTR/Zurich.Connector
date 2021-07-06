@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using System.IdentityModel.Tokens.Jwt;
 using Zurich.Connector.Web;
 
 namespace Zurich.Connector.IntegrationTests
@@ -14,11 +15,13 @@ namespace Zurich.Connector.IntegrationTests
 
         public override void AddAuthServices(IServiceCollection services, string audience, string authority)
         {
-            //services.AddAuthentication("IntegrationTest")
-            //    .AddScheme<AuthenticationSchemeOptions, IntegrationTestAuthenticationHandler>(
-            //      "IntegrationTest",
-            //      options => { }
-            //    );
+            JwtSecurityTokenHandler.DefaultMapInboundClaims = false;
+
+            services.AddAuthentication("IntegrationTest")
+                .AddScheme<AuthenticationSchemeOptions, IntegrationTestAuthenticationHandler>(
+                  "IntegrationTest",
+                  options => { }
+                );
         }
     }
 }
