@@ -1,0 +1,33 @@
+{
+  "ASPNETCORE_ENVIRONMENT": "Development",
+  "TokenIssuer": "https://ci.login.legalplatform.thomsonreuters.com/is/",
+  "AzureAd": {
+    "ClientId": "b4a0d298-06dd-4738-83be-9b57653980b1",
+    "ClientSecret": "wSL.8nz-NCW5_9O8fJztPCa21GU~se~.CZ"
+  },
+  "KeyVault": {
+    //"Endpoint": "https://connectorsKeyVaultCI.vault.azure.net/"
+    "Endpoint": ""
+  },
+  "Audience": "legalhome",
+  "AllowedCORSOrigins": [ "http://localhost:4200" ],
+  "PartnerOAuthApps": {
+    "Connections": {
+      "MsGraph-GPS": {
+        "Id": "4f5aaed1-0258-45a7-86d6-fcfb5d70f171",
+        "TokenUrl": "https://login.microsoftonline.com/organizations/oauth2/v2.0/token",
+        "AuthUrl": "https://login.microsoftonline.com/organizations/oauth2/v2.0/authorize",
+        "Scopes": "User.Read Sites.Read.All Presence.Read.All offline_access Calendars.ReadWrite ChatMessage.Send Chat.ReadWrite",
+        "PKCE": true
+      }
+    }
+  },
+  "PublicBasePath": "",
+  "DataMappingFilePath": "C:\\Federate\\25-40102-Process Query 2\\Zurich.Connector\\Zurich.Connector\\Zurich.Connector.Web\\DataMapping.json",
+  "AllowedHosts": "*",
+  "CosmosDb": {
+    "Database": "connectordb",
+    "AuditApplicationId": "ConnectorService",
+    "OfferThroughput": "400"
+  }
+}
