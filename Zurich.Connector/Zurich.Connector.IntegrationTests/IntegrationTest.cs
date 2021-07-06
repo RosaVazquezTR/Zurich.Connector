@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using Microsoft.AspNetCore.Mvc.Testing;
 using System.Net.Http;
-using System.Threading.Tasks;
+using System.Net.Http.Headers;
 using Xunit;
 
 namespace Zurich.Connector.IntegrationTests
@@ -16,7 +14,12 @@ namespace Zurich.Connector.IntegrationTests
         public IntegrationTest(CustomWebApplicationFactory fixture)
         {
             _factory = fixture;
-            _client = _factory.CreateClient();
+            _client = _factory.CreateClient(new WebApplicationFactoryClientOptions
+            {
+                AllowAutoRedirect = false,
+            });
+
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("IntegrationTest");
         }
     }
 }

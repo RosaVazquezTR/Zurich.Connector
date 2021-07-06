@@ -10,6 +10,9 @@ using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
 using Zurich.Connector.Web;
 using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Zurich.Connector.Web.Configuration;
 
 namespace Zurich.Connector.IntegrationTests
 {
@@ -20,6 +23,7 @@ namespace Zurich.Connector.IntegrationTests
 
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
+            builder.UseStartup<FakeStartup>();
             builder.ConfigureAppConfiguration(config =>
             {
                 Configuration = new ConfigurationBuilder()
@@ -31,6 +35,22 @@ namespace Zurich.Connector.IntegrationTests
 
             builder.ConfigureTestServices(services =>
             {
+                /*services.AddAuthentication("IntegrationTest")
+                 .AddScheme<AuthenticationSchemeOptions, IntegrationTestAuthenticationHandler>(
+                   "IntegrationTest",
+                   options => { }
+                 );*/
+                /*services.AddAuthentication(options =>
+                {
+                    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+                }).AddJwtBearer(options =>
+                {
+                    options.Authority = authority;
+                    options.Audience = audience;
+                    options.TokenValidationParameters.ValidTypes = new[] { SupportedTokenTypes.AccessTokenJwt };
+                });*/
             });
         }
     }

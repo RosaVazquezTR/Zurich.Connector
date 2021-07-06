@@ -27,10 +27,19 @@ namespace Zurich.Connector.IntegrationTests
 
         protected override Task<AuthenticateResult> HandleAuthenticateAsync()
         {
-            var claims = new[] {
-            new Claim(ClaimTypes.Name, "IntegrationTest User"),
-            new Claim(ClaimTypes.NameIdentifier, "IntegrationTest User"),
-        };
+            var userId = Guid.NewGuid();
+            var tenantId = Guid.NewGuid();
+            var sessionId = "SessionId";
+            var email = "Email";
+            var name = "FirstName LastName";
+            var orgType = "OrgType";
+
+            var claims = new Claim[]
+            {
+                new Claim("sub", userId.ToString()),
+                new Claim("tenant", tenantId.ToString()),
+                new Claim("session_id", sessionId)
+            };
             var identity = new ClaimsIdentity(claims, "IntegrationTest");
             var principal = new ClaimsPrincipal(identity);
             var ticket = new AuthenticationTicket(principal, "IntegrationTest");

@@ -24,31 +24,11 @@ namespace Zurich.Connector.IntegrationTests
 
 
         [Fact]
-        public async Task  GetConnectorConfigDataTest()
+        public async Task GetConnectorConfigDataTest()
         {
             // Arrange
+            var response = await _client.GetAsync("/Connectors");
 
-            var client = _factory.WithWebHostBuilder(builder =>
-            {
-
-                builder.ConfigureTestServices(services =>
-                {
-                    services.AddAuthentication("IntegrationTest")
-                        .AddScheme<AuthenticationSchemeOptions, IntegrationTestAuthenticationHandler>(
-                          "IntegrationTest",
-                          options => { }
-                        );
-                });
-
-            })
-        .CreateClient(new WebApplicationFactoryClientOptions
-        {
-            AllowAutoRedirect = false,
-        });
-
-            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("IntegrationTest");
-
-            var response = await client.GetAsync("/Connectors");
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 

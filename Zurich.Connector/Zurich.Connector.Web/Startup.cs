@@ -80,16 +80,21 @@ namespace Zurich.Connector.Web
             services.AddScoped<IRepository, Repository>();
 
             services.AddDiagnostics();
-            services.AddSwaggerGen(c =>
+            /*services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Zurich.Connector.Web", Version = "v1" });
-            });
+            });*/
 
-            services.AddAuthenticationServices(Configuration.GetValue<string>("Audience"), authority);
+            this.AddAuthServices(services, Configuration.GetValue<string>("Audience"), authority);
             services.AddPartnerAppAuth(tenantConnectionString, productsConnectionString, _oAuthOptions, _microServOptions);
             services.AddAutoMapper(typeof(Startup), typeof(CommonMappingsProfile), typeof(ServiceMappingRegistrar), typeof(MappingRegistrar));
             services.AddConnectorCosmosServices(_connectorCosmosDbOptions, _connectorCosmosClientOptions);
             services.ConfigureExceptonhandler();
+        }
+
+        public virtual void AddAuthServices(IServiceCollection services, string audience, string authority)
+        {
+            services.AddAuthenticationServices(audience, authority);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
