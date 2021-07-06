@@ -13,7 +13,7 @@ function GetKey([System.String]$Verb = '', [System.String]$ResourceId = '',
 function GetUTDate() {
 	$date = get-date
 	$date = $date.ToUniversalTime();
-	return $date.ToString("ddd, d MMM yyyy HH:mm:ss \G\M\T")
+	return $date.ToString("ddd, dd MMM yyyy HH:mm:ss \G\M\T")
 }
  
 function GetDatabases([string]$connectionKey) {
