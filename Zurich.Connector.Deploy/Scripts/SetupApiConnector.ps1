@@ -74,7 +74,7 @@ function  updateCosmosRecords {
 	write-host ("collectionName is " + $collectionName)
         
 		
-    $keys = Get-AzCosmosDBAccountKey -ResourceGroupName $resourceGroupName -Name $accountName 
+	$keys = Get-AzCosmosDBAccountKey -ResourceGroupName $resourceGroupName -Name $accountName 
 	$connectionKey = $keys.PrimaryMasterKey
 
 	$rootUri = "https://" + $accountName + ".documents.azure.com"
@@ -102,13 +102,19 @@ function  updateCosmosRecords {
 		$currentFilePath = "$folderPath$($file[0].Name)"
 		$fileObject = (Get-Content -Path $currentFilePath | Out-String | ConvertFrom-Json)
 		$dbObject = $jsonResponse.Documents | Where-Object { $_.id -eq $fileObject.id }
-		write-host ("Connector Object - " + $dbObject)
-
-		$changes = Compare-Object -referenceobject $fileObject -differenceobject $dbObject -Property $properties
-		write-host ("Changes is " + $changes)
+		
+		if ($dbObject) {
+			write-host ("Connector Object - " + $dbObject)
+			$changes = Compare-Object -referenceobject $fileObject -differenceobject $dbObject -Property $properties
+		}
+		else {
+			#DB object not there, so assume changes.
+			write-host ("Connector record is empty for $file")
+			$changes = "No doc"
+		}
 		if ($changes) {
+			write-host ("Changes are needed for $file - " + $changes)
 			PostDocument PostDocument -document $fileObject -dbname $databaseName -collection $collectionName -partitionKey $partitionKey -connectionKey $connectionKey
 		}
 	}
 }
-
