@@ -21,7 +21,7 @@ using Zurich.Common.Services.Security;
 using Zurich.Connector.App.Services;
 using Zurich.Connector.Data.Repositories;
 using Zurich.Connector.Web.Configuration;
-
+using Zurich.TenantData;
 namespace Microsoft.Extensions.DependencyInjection
 {
 	/// <summary>
@@ -36,7 +36,7 @@ namespace Microsoft.Extensions.DependencyInjection
 		/// <param name="productsConnectionString">The products database connection string</param>
 		/// <param name="services">The app service collection</param>
 		/// <param name="oAuthOptions">The OAuth partner app connections details</param>
-		public static void AddPartnerAppAuth(this IServiceCollection services, string tenantConnectionString, string productsConnectionString, OAuthOptions oAuthOptions, MicroServiceOptions microServiceOptions)
+		public static void AddPartnerAppAuth(this IServiceCollection services, string tenantConnectionString, string authority, OAuthOptions oAuthOptions, MicroServiceOptions microServiceOptions)
 		{
 			services.AddSingleton(microServiceOptions);
 			//////////////////////TODO: We should check if we can get rid of this section. The AddCommonTenantServices should already be adding these
@@ -58,11 +58,18 @@ namespace Microsoft.Extensions.DependencyInjection
 
             services.AddScoped<IEncryptionService, EncryptionService>();
             services.AddHttpContextAccessor();
-            services.AddCommonTenantServices(tenantConnectionString, oAuthOptions);
-            services.AddDefaultProductsDbConnection(productsConnectionString);
-            services.AddProductServices();
+			services.AddCommonTenantServicesWithWebApiAuth(tenantConnectionString, authority, oAuthOptions);
 
         }
+
+		/// <summary>
+		/// Adds services to dependency injection
+		/// </summary>
+		/// <param name="services">The app service collection</param>
+		public static void AddServices(this IServiceCollection services)
+		{
+			services.AddScoped<IRegistrationService, RegistrationService>();
+		}
 
 		/// <summary>
 		/// Adds diagnostics related services

@@ -19,6 +19,7 @@ using Zurich.Connector.Data.Repositories.CosmosDocuments;
 using Zurich.Connector.App.Enum;
 using Microsoft.OpenApi.Extensions;
 using Zurich.Common.Exceptions;
+using System.Net;
 
 namespace Zurich.Connector.Web.Controllers
 {
@@ -27,14 +28,14 @@ namespace Zurich.Connector.Web.Controllers
     public class ConnectorsController : ControllerBase
     {
         private readonly IConnectorService _connectorService;
-        private readonly ICosmosService _cosmosService;
+        private readonly IRegistrationService _registrationService;
         private readonly IMapper _mapper;
         private readonly ILogger<ConnectorsController> _logger;
 
-        public ConnectorsController(IConnectorService connectorService, ILogger<ConnectorsController> logger, IMapper mapper, ICosmosService cosmosService)
+        public ConnectorsController(IConnectorService connectorService, ILogger<ConnectorsController> logger, IMapper mapper,  IRegistrationService registrationService)
         {
             _connectorService = connectorService;
-            _cosmosService = cosmosService;
+            _registrationService = registrationService;
             _logger = logger;
             _mapper = mapper;
         }
@@ -145,17 +146,29 @@ namespace Zurich.Connector.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<ConnectorRegistrationViewModel>>ConnectorRegistration([FromBody] ConnectorRegistrationDocument connectorRegistrationDocument)
+        public async Task<ActionResult<ConnectorRegistrationViewModel>>ConnectorRegistration([FromBody] ConnectorRegistrationModel registrationModel)
         {
             try
             {
-                 await _cosmosService.StoreConnectorRegistration(connectorRegistrationDocument);
+                await _registrationService.RegisterDataSource(registrationModel.DataSourceId, registrationModel.ConnectorId);
                 return Ok(RegistrationStatus.register);
             }
             catch(Exception ex)
             {
                 return BadRequest(RegistrationStatus.notRegister);
+                
             }
+        }
+
+        [HttpDelete("{dataSourceId}")]
+        public async Task<ActionResult<ConnectorRegistrationViewModel>> DeleteConnectorAsync(string dataSourceId)
+        {
+            if (String.IsNullOrEmpty(dataSourceId))
+            {
+                return await Task.FromResult(StatusCode((int)HttpStatusCode.BadRequest));
+            }
+            await _registrationService.RemoveDataSource(dataSourceId);
+            return Ok(HttpStatusCode.OK);
         }
 
     }

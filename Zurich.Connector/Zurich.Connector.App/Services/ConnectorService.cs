@@ -43,6 +43,7 @@ namespace Zurich.Connector.Data.Services
         /// <returns>List of Data Mapping Connections <see cref="DataMappingConnection"/></returns>
         Task<List<ConnectorModel>> GetConnectors(ConnectorFilterModel filters);
         Task<ConnectorModel> GetConnector(string connectorId);
+
     }
 
     public class ConnectorService : IConnectorService
@@ -149,5 +150,6 @@ namespace Zurich.Connector.Data.Services
 
             return modifiedQueryParameters;
         }
+
     }
 }

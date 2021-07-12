@@ -9,6 +9,7 @@ using Zurich.Common.Repositories.Cosmos;
 using Zurich.Common.Models.Cosmos;
 using Zurich.Connector.App.Model;
 using Zurich.Connector.Data.Repositories.CosmosDocuments;
+using Zurich.TenantData;
 
 namespace Zurich.Connector.App.Services
 {
@@ -113,8 +114,17 @@ namespace Zurich.Connector.App.Services
 		/// </summary>
 		public async Task StoreConnectorRegistration(ConnectorRegistrationDocument connectorRegistrationDocument)
         {
-		 await _cosmosClientStore.UpsertDocument(connectorRegistrationDocument, CosmosConstants.ConnectorRegistrationContainerId);
+			
+			await _cosmosClientStore.UpsertDocument(connectorRegistrationDocument, CosmosConstants.ConnectorRegistrationContainerId);
+		  
+		}
+		/// <summary>
+		/// delete data  from Cosmos by ID
+		/// </summary>
+		public async Task DeleteConnectorAsync(string id, string partitionId)
+		{
+			await _cosmosClientStore.DeleteDocument<ConnectorRegistrationDocument>(CosmosConstants.ConnectorRegistrationContainerId, id, partitionId);
 		}
 
-    }
+	}
 }
