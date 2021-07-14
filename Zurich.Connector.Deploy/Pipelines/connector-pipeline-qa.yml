@@ -147,6 +147,8 @@ stages:
                   environmentName: ${{ variables.environmentName }}
                   keyVault: '${{ variables.keyVault }}'
                   moduleFolder: ${{ variables.moduleFolder }}
+                  monitorAlertGroups: ${{ variables.monitorAlertGroups }}
+                  monitorAlertPrefix: ${{ variables.monitorAlertPrefix }}
                   projectName: '${{ variables.projectName }}'
                   resourceGroup: ${{ variables.resourceGroup }}
                   resourceLocation: ${{ variables.resourceLocation }}

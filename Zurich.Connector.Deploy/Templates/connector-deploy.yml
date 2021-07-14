@@ -31,6 +31,10 @@ parameters:
   type: string
 - name: moduleFolder
   type: string
+- name: monitorAlertGroups
+  type: string
+- name: monitorAlertPrefix
+  type: string
 - name: projectName
   type: string
 - name: resourceGroup
@@ -127,3 +131,10 @@ steps:
       . $(Build.SourcesDirectory)/Zurich.Connector/Zurich.Connector.Deploy/Scripts/SetupApiConnector.ps1
       updateCosmosRecords -ResourceGroupName '${{ parameters.resourceGroup }}' -AccountName '${{ parameters.connectorCosmosName }}${{ lower(parameters.environmentName) }}' -DatabaseName '${{ parameters.connectorCosmosDatabaseName}}' -CollectionName 'connector' -FolderPath "$(Build.SourcesDirectory)/Zurich.Connector/Zurich.Connector.Deploy/CosmosRecords/connector/" -Properties @("id", "partitionkey", "info", "request", "response", "filters", "cdmMapping", "type") -PartitionKey 'ConnectorList'
       updateCosmosRecords -ResourceGroupName '${{ parameters.resourceGroup }}' -AccountName '${{ parameters.connectorCosmosName }}${{ lower(parameters.environmentName) }}' -DatabaseName '${{ parameters.connectorCosmosDatabaseName}}' -CollectionName 'datasource' -FolderPath "$(Build.SourcesDirectory)/Zurich.Connector/Zurich.Connector.Deploy/CosmosRecords/datasource/" -Properties @("id", "partitionkey", "name", "description", "infoUrl", "extraRequestContext", "securityDefinition", "type") -PartitionKey 'DataSourceList'
+- task: AzureCLI@2
+  displayName: 'Create Metric Alerts'
+  inputs:
+    azureSubscription: ${{ parameters.subscriptionName }}
+    scriptPath: '$(Build.SourcesDirectory)/Zurich.Connector/Zurich.Connector.Deploy/Scripts/CreateMetricAlerts.ps1'
+    arguments: '-subscription ${{ parameters.subscriptionName }} -subscriptionId ${{ parameters.subscriptionId }} -resourceGroup ${{ parameters.resourceGroup }} -env ${{ parameters.environmentName }} -alertPrefix ${{ parameters.monitorAlertPrefix }} -monitorGroups ${{ parameters.monitorAlertGroups }}'
+    scriptType: 'ps'
