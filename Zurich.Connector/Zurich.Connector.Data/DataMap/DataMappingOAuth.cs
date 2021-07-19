@@ -48,7 +48,14 @@ namespace Zurich.Connector.Data.DataMap
                 };
 
                 apiInfo.UrlPath = await this.UpdateUrl(apiInfo.UrlPath, connector);
-                return await GetFromRepo<T>(apiInfo, connector, query);
+                try
+                {
+                    return await GetFromRepo<T>(apiInfo, connector, query);
+                } catch(Exception e)
+                {
+                    _logger.LogError(e.Message);
+                    throw;
+                }
             }
             else
             {

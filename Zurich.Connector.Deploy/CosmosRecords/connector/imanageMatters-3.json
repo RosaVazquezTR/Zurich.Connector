@@ -20,8 +20,7 @@
     },
     "filters": [],
     "CDMmapping": {
-        "structured": {
-            "CDMelement": [
+        "structured": [
                 {
                     "name": "Name",
                     "type": "string",
@@ -88,8 +87,7 @@
                     "responseElement": "data.results.create_date",
                     "_comment": ""
                 }
-            ]
-        },
-        "unstructured": {}
+            ],
+        "unstructured": []
     }
 }

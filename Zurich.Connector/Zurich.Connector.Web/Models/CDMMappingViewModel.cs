@@ -14,11 +14,11 @@ namespace Zurich.Connector.Web.Models
         /// <summary>
         /// CMD mapping of properties.
         /// </summary>
-        public CDMElementViewModel Structured { get; set; }
+        public List<CDMElementViewModel> Structured { get; set; }
         /// <summary>
         /// Place holder to store properties which is not part of the structured definition.
         /// </summary>
-        public CDMElementViewModel Unstructured { get; set; }
+        public List<CDMElementViewModel> Unstructured { get; set; }
     }
 
     /// <summary>

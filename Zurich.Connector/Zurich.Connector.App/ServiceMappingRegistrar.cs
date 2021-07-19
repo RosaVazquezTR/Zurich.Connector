@@ -17,6 +17,7 @@ namespace Zurich.Connector.App
 
             CreateMap<ConnectorInfo, ConnectorInfoModel>();
 
+            CreateMap<PaginationInfo, PaginationModel>();
             CreateMap<ConnectorRequest, ConnectorRequestModel>();
             CreateMap<ConnectorResponse, ConnectorResponseModel>();
             CreateMap<ConnectorReponseSchema, ConnectorReponseSchemaModel>();
@@ -82,6 +83,7 @@ namespace Zurich.Connector.App
 
             CreateMap<ConnectorInfoModel, ConnectorInfo>();
 
+            CreateMap<PaginationModel, PaginationInfo>();
             CreateMap<ConnectorRequestModel,ConnectorRequest>();
             CreateMap<ConnectorRequestParameterModel, ConnectorRequestParameter>();
 

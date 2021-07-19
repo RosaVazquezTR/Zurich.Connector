@@ -12,19 +12,20 @@
         "endpointPath": "https://api-test.thomsonreuters.com:443/practicallaw/v4/federatedsearch",
         "method": "get",
         "responseContentType": "XML",
+        "xmlArrayAttribute": "//searchResults/detail/document",
         "parameters": [
             {
                 "cdmName": "Query",
                 "name": "searchTerm",
-                "in": "body",
+                "inClause": "Query",
                 "required": false,
                 "type": "string",
-                "defaultValue": ""
+                "defaultValue": "*"
             },
             {
                 "cdmName": "ResourceType",
                 "name": "ResourceType",
-                "in": "body",
+                "inClause": "Query",
                 "required": false,
                 "type": "string",
                 "defaultValue": ""
@@ -32,7 +33,7 @@
             {
                 "cdmName": "PracticeAreasIds",
                 "name": "PracticeAreasIds",
-                "in": "body",
+                "inClause": "Query",
                 "required": true,
                 "type": "string",
                 "defaultValue": ""
@@ -40,7 +41,7 @@
             {
                 "cdmName": "JurisdictionIds",
                 "name": "JurisdictionIds",
-                "in": "body",
+                "inClause": "Query",
                 "required": true,
                 "type": "string",
                 "defaultValue": ""
@@ -48,31 +49,37 @@
             {
                 "cdmName": "Locale",
                 "name": "locale",
-                "in": "body",
+                "inClause": "Query",
                 "required": true,
                 "type": "string",
-                "defaultValue": "US"
+                "defaultValue": "UK"
             },
             {
-                "cdmName": "ResultsCount",
+                "cdmName": "ResultSize",
                 "name": "resultsCount",
-                "in": "body",
+                "inClause": "Query",
                 "required": true,
                 "type": "string",
-                "defaultValue": ""
+                "defaultValue": "25",
+                "tags": [
+                    "pagination"
+                ]
             },
             {
-                "cdmName": "ResultStartIndex",
-                "name": "ResultStartIndex",
+                "cdmName": "Offset",
+                "name": "resultsStartIndex",
                 "in": "body",
                 "required": true,
                 "type": "string",
-                "defaultValue": ""
+                "defaultValue": "1",
+                "tags": [
+                    "pagination"
+                ]
             },
             {
                 "cdmName": "SortOrder",
                 "name": "SortOrder",
-                "in": "body",
+                "inClause": "Query",
                 "required": true,
                 "type": "string",
                 "defaultValue": ""
@@ -80,7 +87,7 @@
             {
                 "cdmName": "StartDate",
                 "name": "StartDate",
-                "in": "body",
+                "inClause": "Query",
                 "required": true,
                 "type": "string",
                 "defaultValue": ""
@@ -102,6 +109,11 @@
             "requestParameter": ""
         }
     ],
+    "pagination": {
+        "available": true,
+        "paginationType": "",
+        "isZeroBasedOffset": false
+    },
     "resultLocation": "searchResults.detail",
     "cdmMapping": {
         "structured": [
