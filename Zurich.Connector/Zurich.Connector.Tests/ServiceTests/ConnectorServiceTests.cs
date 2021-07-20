@@ -121,7 +121,8 @@ namespace Zurich.Connector.Tests.ServiceTests
 			var cdmQueryParameters = new Dictionary<string, string>() { { "Offset", "1" }, {"ResultSize", "10" } };
 			var connector = MockConnectorData.SetupConnectorModel().Where(t => t.Id == "1").FirstOrDefault();
 
-			ConnectorService service = new ConnectorService(_mockDataMapping.Object, _mockDataMappingFactory.Object, _mockDataMappingRepo.Object, null, _mapper, _mockCosmosService.Object, _mockdataMappingService.Object);
+			ConnectorService service = new ConnectorService(_mockDataMapping.Object, _mockDataMappingFactory.Object, _mockDataMappingRepo.Object, null, _mapper, _mockCosmosService.Object, _mockdataMappingService.Object,
+				_mockDataSourceOperationsFactory.Object);
 
 			// ACT
 			var mappedResult = service.MapQueryParametersFromDB(cdmQueryParameters, connector);
@@ -139,7 +140,8 @@ namespace Zurich.Connector.Tests.ServiceTests
 			var cdmQueryParameters = new Dictionary<string, string>() { { "Offset", "1" } };
 			var connector = MockConnectorData.SetupConnectorModel().Where(t => t.Id == "2").FirstOrDefault();
 
-			ConnectorService service = new ConnectorService(_mockDataMapping.Object, _mockDataMappingFactory.Object, _mockDataMappingRepo.Object, null, _mapper, _mockCosmosService.Object, _mockdataMappingService.Object);
+			ConnectorService service = new ConnectorService(_mockDataMapping.Object, _mockDataMappingFactory.Object, _mockDataMappingRepo.Object, null, _mapper, _mockCosmosService.Object, _mockdataMappingService.Object,
+				_mockDataSourceOperationsFactory.Object);
 
 			// ACT
 			var mappedResult = service.MapQueryParametersFromDB(cdmQueryParameters, connector);
