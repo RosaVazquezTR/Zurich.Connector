@@ -115,7 +115,7 @@ namespace Zurich.Connector.Data.DataMap
 			// TODO: Remove this JToken logic when database is set up
 			bool isJToken = typeof(T).Name == "JToken";
 
-			JToken jsonResponse = GetJsonResponse(stringResponse, connectorDocument.request?.responseContentType);
+			JToken jsonResponse = GetJsonResponse(stringResponse, connectorDocument.request);
 
 			if (!string.IsNullOrEmpty(resultLocation) || isJToken)
 			{
@@ -148,14 +148,21 @@ namespace Zurich.Connector.Data.DataMap
 			return default(T);
 		}
 
-        private JToken GetJsonResponse(string stringResponse, ResponseContentType? responseContentType)
+        private JToken GetJsonResponse(string stringResponse, ConnectorRequest connectorRequest)
         {
 			string jsonText = String.Empty;
 
-			if (responseContentType.HasValue && responseContentType.Value == ResponseContentType.XML && stringResponse.StartsWith("<"))
+			if (connectorRequest.responseContentType.HasValue && 
+				connectorRequest.responseContentType.Value == ResponseContentType.XML && 
+				stringResponse.StartsWith("<"))
 			{
 				XmlDocument xmlDoc = new XmlDocument();
 				xmlDoc.LoadXml(stringResponse);
+				if (!String.IsNullOrWhiteSpace(connectorRequest?.xmlArrayAttribute))
+				{
+					// if the search result has only one xml record, manually convert that into an array.
+					xmlDoc = AddJsonArrayAttributes(xmlDoc, connectorRequest.xmlArrayAttribute);
+				}
 				jsonText = JsonConvert.SerializeXmlNode(xmlDoc);
 			}
 			else
@@ -166,7 +173,26 @@ namespace Zurich.Connector.Data.DataMap
 			return JToken.Parse(jsonText);
 		}
 
-        private async Task<dynamic> PerformMapping(JToken response, ConnectorDocument connectorDocument)
+		/// <summary>
+		/// Convert any single element XML to a JSON Array by adding a tag "json:Array='true'".
+		/// TODO - Replace this with any better solution.
+		/// </summary>
+		/// <param name="xmlArrayAttribute"></param>
+		/// <param name="doc"></param>
+		private XmlDocument AddJsonArrayAttributes(XmlDocument doc, string xmlArrayAttribute)
+		{
+			var elements = doc.SelectNodes(xmlArrayAttribute);
+			if (elements != null && elements.Count == 1)
+			{
+				// Below namespaceURL is required to work the functionality.
+				var jsonArray = doc.CreateAttribute("json", "Array", "http://james.newtonking.com/projects/json");
+				jsonArray.Value = "true";
+				(elements[0] as XmlElement).SetAttributeNode(jsonArray);
+			}
+			return doc;
+		}
+
+		private async Task<dynamic> PerformMapping(JToken response, ConnectorDocument connectorDocument)
 		{
 			if (response == null)
 			{

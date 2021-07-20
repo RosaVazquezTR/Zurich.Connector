@@ -8,39 +8,40 @@ using Zurich.Common.Cosmos;
 namespace Zurich.Connector.Data.Repositories.CosmosDocuments
 {
     public class ConnectorRegistrationDocument : CosmosDocument
-    {
+    {   
+
         public ConnectorRegistrationDocument() : base(CosmosConstants.ConnectorRegistrationPartitionKey) { }
-        public string partitionkey { get { return CosmosConstants.ConnectorRegistrationPartitionKey; } }
+
+        /// <summary>
+        /// Partition information for the cosmos record.
+        /// TODO: update casing after updating cosmos
+        /// </summary>
+        public string partitionkey { get; set; }
 
         /// <summary>
         /// connectorid        
         /// </summary>
-        public string connectorid { get; set; }
+        public string ConnectorId { get; set; }
         /// <summary>
         /// userID        
         /// </summary>
-        public string userid { get; set; }
+        public Guid UserId { get; set; }
 
         /// <summary>
         /// tenantid ID
         /// </summary>
-        public string tenantid { get; set; }
+        public Guid TenantId { get; set; }
 
         /// <summary>
         /// data source ID
         /// </summary>
-        public string datasourceid { get; set; }
+        public string DatasourceId { get; set; }
 
        
         /// <summary>
-        /// Use For appname
+        /// Use For App Name... TODO: Is this needed?
         /// </summary>
-        public string appname { get; set; }
-
-        /// <summary>
-        /// use for registrationStatus
-        /// </summary>
-        public Status registrationStatus { get; set; }
+        public string AppName { get; set; }
     }
 
     /// <summary>

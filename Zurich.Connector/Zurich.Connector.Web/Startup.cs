@@ -59,10 +59,6 @@ namespace Zurich.Connector.Web
             if (Environment.IsDevelopment() && !string.IsNullOrEmpty(Configuration.GetConnectionString("LocalLegalHomeDB")))
                 tenantConnectionString = Configuration.GetConnectionString("LocalLegalHomeDB");
 
-            string productsConnectionString = Configuration.GetConnectionString("ProductsDB");
-            if (Environment.IsDevelopment() && !string.IsNullOrEmpty(Configuration.GetConnectionString("LocalProductsDB")))
-                productsConnectionString = Configuration.GetConnectionString("LocalProductsDB");
-
             //TODO Move this to an extension method
             services.AddHttpClient(HttpClientNames.IdPDiscovery, httpClient =>
             {
@@ -82,6 +78,7 @@ namespace Zurich.Connector.Web
             services.AddScoped<IConnectorDataSourceOperations, IManageConnectorOperations>();
             services.AddScoped<IConnectorDataSourceOperationsFactory, ConnectorDataSourceOperationsFactory>();
 
+            services.AddServices();
             services.AddDiagnostics();
             services.AddSwaggerGen(c =>
             {
@@ -89,7 +86,7 @@ namespace Zurich.Connector.Web
             });
 
             services.AddAuthenticationServices(Configuration.GetValue<string>("Audience"), authority);
-            services.AddPartnerAppAuth(tenantConnectionString, productsConnectionString, _oAuthOptions, _microServOptions);
+            services.AddPartnerAppAuth(tenantConnectionString, authority, _oAuthOptions, _microServOptions);
             services.AddAutoMapper(typeof(Startup), typeof(CommonMappingsProfile), typeof(ServiceMappingRegistrar), typeof(MappingRegistrar));
             services.AddConnectorCosmosServices(_connectorCosmosDbOptions, _connectorCosmosClientOptions);
             services.ConfigureExceptonhandler();

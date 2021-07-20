@@ -34,6 +34,10 @@ namespace Zurich.Connector.Data.Repositories.CosmosDocuments
         /// </summary>
         public List<ConnectorFilter> filters { get; set; }
         /// <summary>
+        /// Pagination details.
+        /// </summary>
+        public PaginationInfo pagination { get; set; }
+        /// <summary>
         /// CDM Mapping of properties
         /// </summary>
         public CDMMapping cdmMapping { get; set; }
@@ -73,5 +77,18 @@ namespace Zurich.Connector.Data.Repositories.CosmosDocuments
         /// Version
         /// </summary>
         public string version { get; set; }
+    }
+
+    /// <summary>
+    /// Pagination properties.
+    /// </summary>
+    public class PaginationInfo
+    {
+        // Indicates id pagination is available.
+        public bool available { get; set; }
+        // Pagination type.
+        public string paginationType { get; set; }
+        // Set true if the offset indexing is zero based.
+        public bool isZeroBasedOffset { get; set; }
     }
 }

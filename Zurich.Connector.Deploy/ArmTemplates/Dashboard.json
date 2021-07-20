@@ -95,6 +95,7 @@
                               "namespace": "microsoft.web/sites",
                               "metricVisualization": {
                                 "displayName": "Http Server Errors",
+                                "color": "#d40027",
                                 "resourceDisplayName": "connectorsWebApi"
                               }
                             }
@@ -159,6 +160,7 @@
                               "namespace": "microsoft.insights/components",
                               "metricVisualization": {
                                 "displayName": "Failed requests",
+                                "color": "#d40031",
                                 "resourceDisplayName": "connectorsAppInsights"
                               }
                             }

@@ -115,6 +115,42 @@ namespace Zurich.Connector.Tests.ServiceTests
 		}
 
 		[TestMethod]
+		public async Task CallMapQueryParametersFromDB()
+        {
+			// ARRANGE
+			var cdmQueryParameters = new Dictionary<string, string>() { { "Offset", "1" }, {"ResultSize", "10" } };
+			var connector = MockConnectorData.SetupConnectorModel().Where(t => t.Id == "1").FirstOrDefault();
+
+			ConnectorService service = new ConnectorService(_mockDataMapping.Object, _mockDataMappingFactory.Object, _mockDataMappingRepo.Object, null, _mapper, _mockCosmosService.Object, _mockdataMappingService.Object);
+
+			// ACT
+			var mappedResult = service.MapQueryParametersFromDB(cdmQueryParameters, connector);
+
+			// ASSERT
+			Assert.AreEqual(mappedResult["searchTerm"], "*");
+			Assert.AreEqual(mappedResult["resultsStartIndex"], "1");
+			Assert.AreEqual(mappedResult["resultsCount"], "10");
+		}
+
+		[TestMethod]
+		public async Task CallMapQueryParametersFromDBWithZeroOffsetBasedPagination()
+		{
+			// ARRANGE
+			var cdmQueryParameters = new Dictionary<string, string>() { { "Offset", "1" } };
+			var connector = MockConnectorData.SetupConnectorModel().Where(t => t.Id == "2").FirstOrDefault();
+
+			ConnectorService service = new ConnectorService(_mockDataMapping.Object, _mockDataMappingFactory.Object, _mockDataMappingRepo.Object, null, _mapper, _mockCosmosService.Object, _mockdataMappingService.Object);
+
+			// ACT
+			var mappedResult = service.MapQueryParametersFromDB(cdmQueryParameters, connector);
+
+			// ASSERT
+			Assert.AreEqual(mappedResult["searchTerm"], "*");
+			Assert.AreEqual(mappedResult["resultsStartIndex"], "0");
+			Assert.AreEqual(mappedResult["resultsCount"], "25");
+		}
+
+		[TestMethod]
 		public async Task CallGetConnectorsWithFilters()
 		{
 			// ARRANGE

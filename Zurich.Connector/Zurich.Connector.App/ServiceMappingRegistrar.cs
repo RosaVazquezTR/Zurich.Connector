@@ -17,6 +17,7 @@ namespace Zurich.Connector.App
 
             CreateMap<ConnectorInfo, ConnectorInfoModel>();
 
+            CreateMap<PaginationInfo, PaginationModel>();
             CreateMap<ConnectorRequest, ConnectorRequestModel>();
             CreateMap<ConnectorResponse, ConnectorResponseModel>();
             CreateMap<ConnectorReponseSchema, ConnectorReponseSchemaModel>();
@@ -54,12 +55,11 @@ namespace Zurich.Connector.App
                 .ForAllOtherMembers(opt => opt.Ignore());
 
             CreateMap<ConnectorRegistrationDocument, ConnectorRegistration>()
-                .ForMember(dest => dest.ConnectorId, opt => opt.MapFrom(src => src.connectorid))
-                .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.userid))
-                .ForMember(dest => dest.TenantId, opt => opt.MapFrom(src => src.tenantid))
-                .ForMember(dest => dest.DataSourceId, opt => opt.MapFrom(src => src.datasourceid))
-                .ForMember(dest => dest.AppName, opt => opt.MapFrom(src => src.appname))
-                .ForMember(dest => dest.RegistrationStatus, opt => opt.MapFrom(src => src.registrationStatus))
+                .ForMember(dest => dest.ConnectorId, opt => opt.MapFrom(src => src.ConnectorId))
+                .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId))
+                .ForMember(dest => dest.TenantId, opt => opt.MapFrom(src => src.TenantId))
+                .ForMember(dest => dest.DataSourceId, opt => opt.MapFrom(src => src.DatasourceId))
+                .ForMember(dest => dest.AppName, opt => opt.MapFrom(src => src.AppName))
                 .ForAllOtherMembers(opt => opt.Ignore());
 
 
@@ -83,6 +83,7 @@ namespace Zurich.Connector.App
 
             CreateMap<ConnectorInfoModel, ConnectorInfo>();
 
+            CreateMap<PaginationModel, PaginationInfo>();
             CreateMap<ConnectorRequestModel,ConnectorRequest>();
             CreateMap<ConnectorRequestParameterModel, ConnectorRequestParameter>();
 

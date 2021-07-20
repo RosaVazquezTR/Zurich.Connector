@@ -20,7 +20,7 @@ namespace Zurich.Connector.Tests.ServiceTests
     {
         private Mock<ICosmosClientStore> _mockCosmosClientStore;
         private IMapper _mapper;
-
+       
 
         [TestInitialize]
         public void TestInitialize()
@@ -89,6 +89,24 @@ namespace Zurich.Connector.Tests.ServiceTests
                 {
                     Id = "103",
                     description = "data source doc 3"
+                }
+            };
+        }
+        private IEnumerable<ConnectorRegistrationDocument> SetupConnectorRegistration()
+        {
+            return new List<ConnectorRegistrationDocument>()
+            {
+                new ConnectorRegistrationDocument()
+                {
+                    Id = "101",
+                    ConnectorId = "1",
+                    DatasourceId = "2",
+                },
+                new ConnectorRegistrationDocument()
+                {
+                    Id = "102",
+                    ConnectorId = "3",
+                    DatasourceId = "4",
                 }
             };
         }
@@ -231,6 +249,21 @@ namespace Zurich.Connector.Tests.ServiceTests
 
             //Assert
             _mockCosmosClientStore.Verify(x => x.UpsertDocument(testDataSource, CosmosConstants.DataSourceContainerId), Times.Once());
+        }
+
+        [TestMethod]
+        public async Task CallStoreConnectorRegistration()
+        {
+            //Arrange
+            var testId = "101";
+            var testDataSource = SetupConnectorRegistration().Where(p => p.Id == testId).FirstOrDefault();
+            var cosmostService = new CosmosService(_mockCosmosClientStore.Object, null, _mapper, null);
+
+            //Act
+            await cosmostService.StoreConnectorRegistration(testDataSource);
+
+            //Assert
+            _mockCosmosClientStore.Verify(x => x.UpsertDocument(testDataSource, CosmosConstants.ConnectorRegistrationContainerId), Times.Once());
         }
     }
 }

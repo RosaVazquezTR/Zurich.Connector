@@ -21,6 +21,10 @@ namespace Zurich.Connector.Data.Repositories.CosmosDocuments
         /// </summary>
         public ResponseContentType? responseContentType { get; set; }
         /// <summary>
+        /// Indicates if there is any array in the xml. 
+        /// </summary>
+        public string xmlArrayAttribute { get; set; }
+        /// <summary>
         /// Request parameters
         /// </summary>
         public List<ConnectorRequestParameter> parameters { get; set; }
@@ -55,5 +59,9 @@ namespace Zurich.Connector.Data.Repositories.CosmosDocuments
         /// Name of querys tring parameter in request
         /// </summary>
         public string cdmname { get; set; }
+        /// <summary>
+        /// Tags for the related to the parameter. Ex: pagination/ sort etc.
+        /// </summary>
+        public List<string> tags { get; set; }
     }
 }

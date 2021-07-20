@@ -37,6 +37,10 @@ namespace Zurich.Connector.App.Model
         /// </summary>
         public List<ConnectorFilterModel> Filters { get; set; }
         /// <summary>
+        /// Pagination properties.
+        /// </summary>
+        public PaginationModel Pagination { get; set; }
+        /// <summary>
         /// CDM Mapping of properties
         /// </summary>
         public CDMMappingModel CDMMapping { get; set; }
@@ -75,5 +79,24 @@ namespace Zurich.Connector.App.Model
         /// Version
         /// </summary>
         public string Version { get; set; }
+    }
+
+    /// <summary>
+    /// Pagination properties.
+    /// </summary>
+    public class PaginationModel
+    {
+        /// <summary>
+        /// Indicates if pagination available for this connector.
+        /// </summary>
+        public bool Available { get; set; }
+        /// <summary>
+        /// Pagination Type.
+        /// </summary>
+        public string PaginationType { get; set; }
+        /// <summary>
+        /// Offset base. It will be true if the offset base is 0.
+        /// </summary>
+        public bool IsZeroBasedOffset { get; set; }
     }
 }
