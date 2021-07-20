@@ -1,25 +1,19 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using Polly;
 using System;
 using AutoMapper;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Zurich.Common;
 using Zurich.Common.Models.HighQ;
 using Zurich.Common.Models.OAuth;
 using Zurich.Connector.Data.DataMap;
 using Zurich.Connector.Data.Repositories;
-using System.IdentityModel.Tokens.Jwt;
-using System.IdentityModel.Tokens;
 using Microsoft.IdentityModel.Clients.ActiveDirectory;
 using Zurich.Common.Models;
 using Microsoft.Data.SqlClient;
@@ -28,7 +22,6 @@ using Zurich.Connector.Data.Services;
 using Zurich.Common.Models.Cosmos;
 using Zurich.Connector.App;
 using Zurich.Connector.App.Services;
-using Zurich.Connector.Data;
 
 namespace Zurich.Connector.Web
 {
@@ -65,10 +58,6 @@ namespace Zurich.Connector.Web
             if (Environment.IsDevelopment() && !string.IsNullOrEmpty(Configuration.GetConnectionString("LocalLegalHomeDB")))
                 tenantConnectionString = Configuration.GetConnectionString("LocalLegalHomeDB");
 
-            string productsConnectionString = Configuration.GetConnectionString("ProductsDB");
-            if (Environment.IsDevelopment() && !string.IsNullOrEmpty(Configuration.GetConnectionString("LocalProductsDB")))
-                productsConnectionString = Configuration.GetConnectionString("LocalProductsDB");
-
             //TODO Move this to an extension method
             services.AddHttpClient(HttpClientNames.IdPDiscovery, httpClient =>
             {
@@ -85,15 +74,19 @@ namespace Zurich.Connector.Web
             services.AddScoped<DataMappingTransfer>();
             services.AddScoped<IDataMappingRepository, DataMappingRepository>();
             services.AddScoped<IRepository, Repository>();
+
+            services.AddServices();
+            services.AddDiagnostics();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Zurich.Connector.Web", Version = "v1" });
             });
 
             services.AddAuthenticationServices(Configuration.GetValue<string>("Audience"), authority);
-            services.AddPartnerAppAuth(tenantConnectionString, productsConnectionString, _oAuthOptions, _microServOptions);
+            services.AddPartnerAppAuth(tenantConnectionString, authority, _oAuthOptions, _microServOptions);
             services.AddAutoMapper(typeof(Startup), typeof(CommonMappingsProfile), typeof(ServiceMappingRegistrar), typeof(MappingRegistrar));
             services.AddConnectorCosmosServices(_connectorCosmosDbOptions, _connectorCosmosClientOptions);
+            services.ConfigureExceptonhandler();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -104,7 +97,7 @@ namespace Zurich.Connector.Web
             {
                 app.UseDeveloperExceptionPage();
             }
-
+            app.ConfigureExceptionHandleMiddleware(env);
             app.UseSwagger();
             app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Zurich.Connector.Web v1"));
 
@@ -116,6 +109,7 @@ namespace Zurich.Connector.Web
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapHealthChecks("/health");
                 endpoints.MapControllers();
             });
         }

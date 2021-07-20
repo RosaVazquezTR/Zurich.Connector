@@ -14,6 +14,12 @@ using Zurich.Connector.Data.Services;
 using Zurich.Connector.Web.Models;
 using Microsoft.Extensions.Primitives;
 using Microsoft.Extensions.Configuration;
+using Zurich.Connector.App.Services;
+using Zurich.Connector.Data.Repositories.CosmosDocuments;
+using Zurich.Connector.App.Enum;
+using Microsoft.OpenApi.Extensions;
+using Zurich.Common.Exceptions;
+using System.Net;
 
 namespace Zurich.Connector.Web.Controllers
 {
@@ -22,42 +28,50 @@ namespace Zurich.Connector.Web.Controllers
     public class ConnectorsController : ControllerBase
     {
         private readonly IConnectorService _connectorService;
+        private readonly IRegistrationService _registrationService;
         private readonly IMapper _mapper;
         private readonly ILogger<ConnectorsController> _logger;
 
-        public ConnectorsController(IConnectorService connectorService, ILogger<ConnectorsController> logger, IMapper mapper)
+        public ConnectorsController(IConnectorService connectorService, ILogger<ConnectorsController> logger, IMapper mapper,  IRegistrationService registrationService)
         {
             _connectorService = connectorService;
+            _registrationService = registrationService;
             _logger = logger;
             _mapper = mapper;
         }
 
         [HttpGet("{id}/data")]
-        public async Task<ActionResult<dynamic>> ConnectorData(string id, [FromQuery] string hostName, [FromQuery] string transferToken)
+        public async Task<ActionResult<dynamic>> ConnectorData(string id, [FromQuery] string hostName, [FromQuery] string transferToken,[FromQuery] bool retrievefilters)
         {
             dynamic results;
             try
             {
                 // TODO: Eventually hostname and transferToken will be removed 
-                Dictionary<string, string> parameters = HttpContext?.Request.Query.Keys.Cast<string>().Where(param => !param.Equals("hostname", StringComparison.InvariantCultureIgnoreCase) && !param.Equals("transferToken", StringComparison.InvariantCultureIgnoreCase)).ToDictionary(k => k, v => HttpContext?.Request.Query[v].ToString());
-                results = await _connectorService.GetConnectorData(id, hostName, transferToken, parameters);
+                Dictionary<string, string> parameters = HttpContext?.Request.Query.Keys.Cast<string>()
+                    .Where(param => !param.Equals("hostname", StringComparison.InvariantCultureIgnoreCase) 
+                    && !param.Equals("transferToken", StringComparison.InvariantCultureIgnoreCase) 
+                    && !param.Equals("retrievefilters", StringComparison.InvariantCultureIgnoreCase))
+                    .ToDictionary(k => k, v => HttpContext?.Request.Query[v].ToString());
+
+                results = await _connectorService.GetConnectorData(id, hostName, transferToken, parameters, retrievefilters);
                 if (results == null)
                 {
-                    return NotFound("Connector or data not found");
+                    throw  new ResourceNotFoundException("Connector or data not found");
                 }
+                var jsonResults = JsonConvert.SerializeObject(results);
+                return new ContentResult
+                {
+                    Content = jsonResults,
+                    ContentType = System.Net.Mime.MediaTypeNames.Application.Json,
+                    StatusCode = StatusCodes.Status200OK
+                };
             }
             catch (Exception e)
             {
-                return BadRequest(e.Message);
+                return new Exception(e.Message);
             }
 
-            var jsonResults = JsonConvert.SerializeObject(results);
-            return new ContentResult
-            {
-                Content = jsonResults,
-                ContentType = System.Net.Mime.MediaTypeNames.Application.Json,
-                StatusCode = StatusCodes.Status200OK
-            };
+            
         }
 
         /// <summary>
@@ -88,7 +102,7 @@ namespace Zurich.Connector.Web.Controllers
 
             if(results.Count == 0)
             {
-                return NotFound();
+                throw new ResourceNotFoundException("Connector or data not found");
             }
 
             var jsonSettings = new JsonSerializerSettings
@@ -125,10 +139,36 @@ namespace Zurich.Connector.Web.Controllers
             var results = await _connectorService.GetConnector(id);
             if (results == null)
             {
-                return NotFound("Connector not found");
+                throw new  ResourceNotFoundException($"Connector 'id' not found");
             }
             var responsedata = _mapper.Map<ConnectorViewModel>(results);
             return Ok(responsedata);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<ConnectorRegistrationViewModel>>ConnectorRegistration([FromBody] ConnectorRegistrationModel registrationModel)
+        {
+            try
+            {
+                await _registrationService.RegisterDataSource(registrationModel.DataSourceId, registrationModel.ConnectorId);
+                return Ok(RegistrationStatus.register);
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(RegistrationStatus.notRegister);
+                
+            }
+        }
+
+        [HttpDelete("{dataSourceId}")]
+        public async Task<ActionResult<ConnectorRegistrationViewModel>> DeleteConnectorAsync(string dataSourceId)
+        {
+            if (String.IsNullOrEmpty(dataSourceId))
+            {
+                return await Task.FromResult(StatusCode((int)HttpStatusCode.BadRequest));
+            }
+            await _registrationService.RemoveDataSource(dataSourceId);
+            return Ok(HttpStatusCode.OK);
         }
 
     }

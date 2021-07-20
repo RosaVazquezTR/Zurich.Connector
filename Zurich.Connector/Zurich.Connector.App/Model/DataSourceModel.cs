@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Zurich.Common.Services.Security;
 
 namespace Zurich.Connector.App.Model
 {
@@ -27,6 +28,15 @@ namespace Zurich.Connector.App.Model
         /// App code
         /// </summary>
         public string AppCode { get; set; }
+        /// <summary>
+        /// Application Type.
+        /// </summary>
+        public OAuthApplicationType? appType { get; set; }
+
+        /// <summary>
+        /// Locale (ex: US / UK etc).
+        /// </summary>
+        public string locale { get; set; }
         /// <summary>
         /// Data source infomation url.
         /// </summary>
@@ -97,6 +107,13 @@ namespace Zurich.Connector.App.Model
         /// Secret of the key vault.
         /// </summary>
         public string KeyVaultSecret { get; set; }
-
+        /// <summary>
+        /// Grant Type. Ex: client_credentials
+        /// </summary>
+        public string grantType { get; set; }
+        /// <summary>
+        /// sendCredentialsInBody. Ex: true / false.
+        /// </summary>
+        public bool? sendCredentialsInBody { get; set; }
     }
 }

@@ -1,0 +1,93 @@
+{
+    "id": "3",
+    "partitionkey": "ConnectorList",
+    "info": {
+        "title": "Get Matters from iManage",
+        "description": "Get Matters from iManage",
+        "entityType": "Matters",
+        "dataSourceId": "10",
+        "version": "1.0"
+    },
+    "request": {
+        "endpointPath": "/work/api/v2/customers/{1.customer_id}/recent-workspaces?limit=5",
+        "method": "GET",
+        "parameters": []
+    },
+    "response": {
+        "schema": {
+            "properties": {}
+        }
+    },
+    "filters": [],
+    "CDMmapping": {
+        "structured": [
+                {
+                    "name": "Name",
+                    "type": "string",
+                    "responseElement": "data.results.name",
+                    "_comment": ""
+                },
+                {
+                    "name": "Id",
+                    "type": "string",
+                    "responseElement": "data.results.id",
+                    "_comment": ""
+                },
+                {
+                    "name": "Client",
+                    "type": "string",
+                    "responseElement": "data.results.custom1",
+                    "_comment": ""
+                },
+                {
+                    "name": "ClientDescription",
+                    "type": "string",
+                    "responseElement": "data.results.custom1_description",
+                    "_comment": ""
+                },
+                {
+                    "name": "WebLink",
+                    "type": "string",
+                    "responseElement": "data.results.iwl",
+                    "_comment": ""
+                },
+                {
+                    "name": "Library",
+                    "type": "string",
+                    "responseElement": "data.results.database",
+                    "_comment": ""
+                },
+                {
+                    "name": "Description",
+                    "type": "string",
+                    "responseElement": "data.results.description",
+                    "_comment": ""
+                },
+                {
+                    "name": "Owner",
+                    "type": "string",
+                    "responseElement": "data.results.owner_description",
+                    "_comment": ""
+                },
+                {
+                    "name": "LastUpdated",
+                    "type": "string",
+                    "responseElement": "data.results.edit_date",
+                    "_comment": ""
+                },
+                {
+                    "name": "LastModifiedUser",
+                    "type": "string",
+                    "responseElement": "data.results.last_user_description",
+                    "_comment": ""
+                },
+                {
+                    "name": "CreatedDate",
+                    "type": "string",
+                    "responseElement": "data.results.create_date",
+                    "_comment": ""
+                }
+            ],
+        "unstructured": []
+    }
+}

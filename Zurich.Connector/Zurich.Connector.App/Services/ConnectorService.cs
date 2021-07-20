@@ -34,7 +34,7 @@ namespace Zurich.Connector.Data.Services
         /// <param name="transferToken">The transfer token to pass with the api call, if needed</param>
         /// <param name="queryParameters">The query string parameters of request</param>
         /// <returns>Mapped data for the connector</returns>
-        Task<dynamic> GetConnectorData(string connectionId, string hostname, string transferToken, Dictionary<string, string> queryParameters);
+        Task<dynamic> GetConnectorData(string connectionId, string hostname, string transferToken, Dictionary<string, string> queryParameters, bool retrievefilters);
 
         /// <summary>
         /// Gets all connections from cosmos
@@ -43,6 +43,7 @@ namespace Zurich.Connector.Data.Services
         /// <returns>List of Data Mapping Connections <see cref="DataMappingConnection"/></returns>
         Task<List<ConnectorModel>> GetConnectors(ConnectorFilterModel filters);
         Task<ConnectorModel> GetConnector(string connectorId);
+
     }
 
     public class ConnectorService : IConnectorService
@@ -67,9 +68,9 @@ namespace Zurich.Connector.Data.Services
             _dataMappingService = dataMappingService;
         }
 
-        public async Task<dynamic> GetConnectorData(string connectionId, string hostname, string transferToken, Dictionary<string, string> queryParameters)
+        public async Task<dynamic> GetConnectorData(string connectionId, string hostname, string transferToken, Dictionary<string, string> queryParameters, bool retrievefilters)
         {
-            ConnectorModel connectorModel = await _dataMappingService.RetrieveProductInformationMap(connectionId, hostname);
+            ConnectorModel connectorModel = await _dataMappingService.RetrieveProductInformationMap(connectionId, hostname, retrievefilters);
 
             if (connectorModel == null)
             {
@@ -77,7 +78,7 @@ namespace Zurich.Connector.Data.Services
             }
 
             NameValueCollection mappedQueryParameters;
-            mappedQueryParameters = MapQueryParametersFromDB(connectionId, queryParameters, connectorModel);
+            mappedQueryParameters = MapQueryParametersFromDB(queryParameters, connectorModel);
 
             AuthType outputEnum;
             Enum.TryParse<AuthType>(connectorModel?.DataSource?.SecurityDefinition?.Type, true, out outputEnum);
@@ -132,22 +133,45 @@ namespace Zurich.Connector.Data.Services
             return connector;
         }
 
-        private NameValueCollection MapQueryParametersFromDB(string id, Dictionary<string, string> queryParameters, ConnectorModel connectorModel)
+        public NameValueCollection MapQueryParametersFromDB(Dictionary<string, string> cdmQueryParameters, ConnectorModel connectorModel)
         {
             NameValueCollection modifiedQueryParameters = new NameValueCollection();
+            var queryParameters = new Dictionary<string, string>();
 
-            if (queryParameters.Any())
+            if (cdmQueryParameters.Any())
             {
-                var dataForNameValueCollection = (from param in queryParameters
+                if (connectorModel?.Pagination?.Available == true)
+                {
+                    cdmQueryParameters = SetupPagination(connectorModel, cdmQueryParameters);
+                }
+
+                queryParameters = (from param in cdmQueryParameters
                                                   join requestParam in connectorModel.Request?.Parameters
                                                   on param.Key.ToString().ToLower() equals requestParam.CdmName.ToLower()
-                                                  select new { name = requestParam.Name, value = param.Value.ToString() }).ToList();
+                                                  select new { name = requestParam.Name, value = param.Value.ToString() }).ToDictionary(c => c.name, c=> c.value);
+            }
+    
+            // Add default parameters if not present in the request. ex: locale, ResultSize etc
+            var allParameters = connectorModel.Request?.Parameters.Where(t => 
+                                !String.IsNullOrWhiteSpace(t.DefaultValue) && !queryParameters.ContainsKey(t.Name))
+                                .ToDictionary(c => c.Name, c => c.DefaultValue).Concat(queryParameters);
 
-                dataForNameValueCollection.ForEach(data => modifiedQueryParameters.Add(data.name, data.value));
-                modifiedQueryParameters = dataForNameValueCollection.Count > 0 ? modifiedQueryParameters : null;
+            foreach (var parameter in allParameters)
+            {
+                modifiedQueryParameters.Add(parameter.Key, parameter.Value);
             }
 
             return modifiedQueryParameters;
+        }
+
+        private Dictionary<string, string> SetupPagination(ConnectorModel connectorModel, Dictionary<string, string> cdmQueryParameters)
+        {
+            // Ex: Office 365 uses 0 based offset numbering.
+            if (connectorModel.Pagination?.IsZeroBasedOffset == true && cdmQueryParameters.ContainsKey("Offset"))
+            {
+                cdmQueryParameters["Offset"] = (int.Parse(cdmQueryParameters["Offset"]) - 1).ToString();
+            }
+            return cdmQueryParameters;
         }
     }
 }

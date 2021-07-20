@@ -1,0 +1,46 @@
+{
+    "id": "6",
+    "partitionkey": "ConnectorList",
+    "info": {
+        "title": "Get Favorite item PL",
+        "description": "Get Favorite item from PL",
+        "entityType": "Favorites",
+        "dataSourceId": "12",
+        "version": "1.0"
+    },
+    "request": {
+        "endpointPath": "/Micro/FavoriteAndFrequentlyUsed",
+        "method": "GET",
+        "parameters": []
+    },
+    "response": {
+        "schema": {
+            "properties": {}
+        }
+    },
+    "resultLocation": "list",
+    "filters": [],
+    "cdmMapping": {
+        "structured": [
+            {
+                "name": "Name",
+                "type": "string",
+                "responseElement": "name",
+                "_comment": ""
+            },
+            {
+                "name": "WebLink",
+                "type": "string",
+                "responseElement": "url",
+                "_comment": ""
+            },
+            {
+                "name": "Valid",
+                "type": "string",
+                "responseElement": "valid",
+                "_comment": ""
+            }
+        ],
+        "unstructured": []
+    }
+}

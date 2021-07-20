@@ -10,18 +10,19 @@ using Zurich.Connector.Data.Model;
 using Zurich.Connector.Data.Repositories;
 using AutoMapper;
 using Zurich.Connector.Data.Repositories.CosmosDocuments;
+using Zurich.Common.Repositories.Cosmos;
 
 namespace Zurich.Connector.Data.DataMap
 {
     public class DataMappingTransfer : DataMappingBase, IDataMapping
     {
-        public DataMappingTransfer(IRepository repository, IDataMappingRepository dataMappingRepository, IOAuthService oAuthService, ILogger<DataMappingTransfer> logger, ICosmosDocumentReader cosmosDocumentReader, IMapper mapper)
+        public DataMappingTransfer(IRepository repository, IDataMappingRepository dataMappingRepository, IOAuthService oAuthService, ILogger<DataMappingTransfer> logger, ICosmosClientStore cosmosClientStore, IMapper mapper)
         {
             this._repository = repository;
             this._dataMappingRepository = dataMappingRepository;
             this._oAuthService = oAuthService;
             this._logger = logger;
-            this._cosmosDocumentReader = cosmosDocumentReader;
+            this._cosmosClientStore = cosmosClientStore;
             this._mapper = mapper;
         }
 

@@ -15,6 +15,9 @@ using Zurich.Connector.Data.Serializer;
 using System.Collections.Specialized;
 using AutoMapper;
 using Zurich.Connector.Data.Repositories.CosmosDocuments;
+using Zurich.Common;
+using Zurich.Common.Repositories.Cosmos;
+using System.Xml;
 
 namespace Zurich.Connector.Data.DataMap
 {
@@ -25,7 +28,7 @@ namespace Zurich.Connector.Data.DataMap
 		protected Type _objectType;
 		protected IOAuthService _oAuthService;
 		protected ILogger<DataMappingBase> _logger;
-		protected ICosmosDocumentReader _cosmosDocumentReader;
+		protected ICosmosClientStore _cosmosClientStore;
 		protected IMapper _mapper;
 
 		public async virtual Task<T> Get<T>(ConnectorDocument dataTypeInformation, string transferToken = null, NameValueCollection query = null)
@@ -49,21 +52,30 @@ namespace Zurich.Connector.Data.DataMap
 			}
 		}
 
-		public async virtual Task<AppToken> RetrieveToken(string appCode)
+		public async virtual Task<AppToken> RetrieveToken(string appCode, OAuthApplicationType? appType = null, 
+														  string locale = null, string grandType = null, bool? sendCredentialsInBody = false)
 		{
-			AppToken token = await _oAuthService.GetToken(appCode);
+			AppToken token;
+			if (locale != null && grandType != null && appType.HasValue && sendCredentialsInBody.HasValue)
+			{
+				token = await _oAuthService.RequestNewToken(appCode, grandType, appType.Value, sendCredentialsInBody: sendCredentialsInBody.Value, locale: locale);
+			}
+			else
+            {
+				token = await _oAuthService.GetToken(appCode);
+			}
 			return token;
 		}
 
 		public async virtual Task<ConnectorDocument> RetrieveProductInformationMap(string connectionId, string hostname)
 		{
-			var dataTypeInformation = await GenerateConnectorModelEntity(connectionId);
+			var connector = await GetConnector(connectionId);
 
-			if (dataTypeInformation != null)
+			if (connector != null)
 			{
-				dataTypeInformation.hostName = hostname;
+				connector.hostName = hostname;
 			}
-			return dataTypeInformation;
+			return connector;
 		}
 
 		public async virtual Task<string> UpdateUrl(string urlPath, ConnectorDocument dataTypeInformation, string transferToken = null)
@@ -102,7 +114,9 @@ namespace Zurich.Connector.Data.DataMap
 		{
 			// TODO: Remove this JToken logic when database is set up
 			bool isJToken = typeof(T).Name == "JToken";
-			JToken jTokenResponse = JToken.Parse(stringResponse);
+
+			JToken jsonResponse = GetJsonResponse(stringResponse, connectorDocument.request);
+
 			if (!string.IsNullOrEmpty(resultLocation) || isJToken)
 			{
 				if (!string.IsNullOrEmpty(resultLocation))
@@ -110,20 +124,20 @@ namespace Zurich.Connector.Data.DataMap
 					string[] resultsLocation = resultLocation.Split(".");
 					foreach (string location in resultsLocation)
 					{
-						jTokenResponse = jTokenResponse[location];
+						jsonResponse = jsonResponse[location];
 					}
 				}
 				// Needed so we can prefetch api results that are needed in the original api call
 				if (isJToken)
 				{
 					// I can't just return a jToken... so bamboozle it with a dynamic
-					return (dynamic)jTokenResponse;
+					return (dynamic)jsonResponse;
 				}
 			}
 
 			try
 			{
-				return await PerformMapping(jTokenResponse, connectorDocument);
+				return await PerformMapping(jsonResponse, connectorDocument);
 			}
 			catch (Exception e)
 			{
@@ -132,6 +146,50 @@ namespace Zurich.Connector.Data.DataMap
 			}
 
 			return default(T);
+		}
+
+        private JToken GetJsonResponse(string stringResponse, ConnectorRequest connectorRequest)
+        {
+			string jsonText = String.Empty;
+
+			if (connectorRequest.responseContentType.HasValue && 
+				connectorRequest.responseContentType.Value == ResponseContentType.XML && 
+				stringResponse.StartsWith("<"))
+			{
+				XmlDocument xmlDoc = new XmlDocument();
+				xmlDoc.LoadXml(stringResponse);
+				if (!String.IsNullOrWhiteSpace(connectorRequest?.xmlArrayAttribute))
+				{
+					// if the search result has only one xml record, manually convert that into an array.
+					xmlDoc = AddJsonArrayAttributes(xmlDoc, connectorRequest.xmlArrayAttribute);
+				}
+				jsonText = JsonConvert.SerializeXmlNode(xmlDoc);
+			}
+			else
+			{
+				jsonText = stringResponse;
+			}
+
+			return JToken.Parse(jsonText);
+		}
+
+		/// <summary>
+		/// Convert any single element XML to a JSON Array by adding a tag "json:Array='true'".
+		/// TODO - Replace this with any better solution.
+		/// </summary>
+		/// <param name="xmlArrayAttribute"></param>
+		/// <param name="doc"></param>
+		private XmlDocument AddJsonArrayAttributes(XmlDocument doc, string xmlArrayAttribute)
+		{
+			var elements = doc.SelectNodes(xmlArrayAttribute);
+			if (elements != null && elements.Count == 1)
+			{
+				// Below namespaceURL is required to work the functionality.
+				var jsonArray = doc.CreateAttribute("json", "Array", "http://james.newtonking.com/projects/json");
+				jsonArray.Value = "true";
+				(elements[0] as XmlElement).SetAttributeNode(jsonArray);
+			}
+			return doc;
 		}
 
 		private async Task<dynamic> PerformMapping(JToken response, ConnectorDocument connectorDocument)
@@ -159,10 +217,10 @@ namespace Zurich.Connector.Data.DataMap
 			}
 		}
 
-		private async Task<dynamic> MapResult(dynamic apiResult, ConnectorDocument connectorDocument)
+		private async Task<dynamic> MapResult(dynamic apiResult, ConnectorDocument connector)
 		{
 			dynamic cdmResult = new JObject();
-			List<CDMElement> properties = connectorDocument?.cdmMapping?.structured;
+			List<CDMElement> properties = connector?.cdmMapping?.structured;
 
 			foreach (var property in properties)
 			{
@@ -181,11 +239,11 @@ namespace Zurich.Connector.Data.DataMap
 						var match = Regex.Match(location, @"{(.*?)}");
 						var connectionId = match.Groups[1].ToString();
 						// TODO: Cache this datamapping so we don't have to call the DB for every result
-						var dataMappingInformationEntity = await GenerateConnectorModelEntity(connectionId);
+						var childConnector = await GetConnector(connectionId);
 
 						tempResult = await MapToCDM<dynamic>(JsonConvert.SerializeObject(tempResult),
-																dataMappingInformationEntity.resultLocation,
-																dataMappingInformationEntity);
+																childConnector.resultLocation,
+																childConnector);
 					}
 					// Flatten array results instead 
 					else if (location.Contains('['))
@@ -209,11 +267,16 @@ namespace Zurich.Connector.Data.DataMap
 			return cdmResult;
 		}
 
-		private async Task<ConnectorDocument> GenerateConnectorModelEntity(string connectionId)
+		private async Task<ConnectorDocument> GetConnector(string connectionId)
 		{
-			var connectorDocument = await _cosmosDocumentReader.GetConnectorDocument(connectionId);
+			var connectorDocument = await _cosmosClientStore.GetDocument<ConnectorDocument>
+										(CosmosConstants.ConnectorContainerId, connectionId, CosmosConstants.ConnectorPartitionKey);
+
 			string dataSourceId = connectorDocument?.info?.dataSourceId;
-			var connectorDataSourceDocument = await _cosmosDocumentReader.GetDataSourceDocument(dataSourceId);
+
+			var connectorDataSourceDocument = await _cosmosClientStore.GetDocument<DataSourceDocument>
+										(CosmosConstants.DataSourceContainerId, dataSourceId, CosmosConstants.DataSourcePartitionKey);
+
 			connectorDocument.dataSource = connectorDataSourceDocument;
 
 			return connectorDocument;

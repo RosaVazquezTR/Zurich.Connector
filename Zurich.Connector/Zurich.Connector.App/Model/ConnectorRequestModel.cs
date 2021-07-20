@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Zurich.Connector.Data.Model;
 
 namespace Zurich.Connector.App.Model
 {
@@ -19,6 +20,14 @@ namespace Zurich.Connector.App.Model
         /// Method type. Ex: "get"
         /// </summary>
         public string Method { get; set; }
+        /// <summary>
+        /// Reponse Content Type Ex: JSON, XML etc.
+        /// </summary>
+        public ResponseContentType? ResponseContentType { get; set; }
+        /// <summary>
+        /// Indicates if there is any array in the xml. 
+        /// </summary>
+        public string XmlArrayAttribute { get; set; }
         /// <summary>
         /// Request parameters
         /// </summary>
@@ -49,10 +58,15 @@ namespace Zurich.Connector.App.Model
         /// <summary>
         /// Default value of the parameter
         /// </summary>
-        public object DefaultValue { get; set; }
+        public string DefaultValue { get; set; }
         /// <summary>
         /// Name of querys tring parameter in request
         /// </summary>
         public string CdmName { get; set; }
+        /// <summary>
+        /// Tags related to the parameter. Ex: Pagination/ filter etc.
+        /// </summary>
+        public List<string> Tags { get; set; }
+
     }
 }

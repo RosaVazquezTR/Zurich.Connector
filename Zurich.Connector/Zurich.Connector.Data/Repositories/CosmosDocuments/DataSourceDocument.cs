@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Zurich.Common.Cosmos;
+using Zurich.Common.Services.Security;
 
 namespace Zurich.Connector.Data.Repositories.CosmosDocuments
 {
@@ -12,12 +13,12 @@ namespace Zurich.Connector.Data.Repositories.CosmosDocuments
     /// </summary>
     public class DataSourceDocument : CosmosDocument
     {
-        public DataSourceDocument() : base(CosmosConstants.DataSourceList) { }
+        public DataSourceDocument() : base(CosmosConstants.DataSourcePartitionKey) { }
         /// <summary>
         /// Data source ID
         /// </summary>
         public override string Id { get; set; }
-        public string partitionkey { get { return CosmosConstants.DataSourceList; } }
+        public string partitionkey { get { return CosmosConstants.DataSourcePartitionKey; } }
         /// <summary>
         /// Data source name
         /// </summary>
@@ -47,6 +48,15 @@ namespace Zurich.Connector.Data.Repositories.CosmosDocuments
         /// </summary>
         public string appCode { get; set; }
 
+        /// <summary>
+        /// Application Type.
+        /// </summary>
+        public OAuthApplicationType? appType { get; set; }
+
+        /// <summary>
+        /// Locale (ex: US / UK etc).
+        /// </summary>
+        public string locale { get; set; }
     }
 
     /// <summary>
@@ -111,6 +121,14 @@ namespace Zurich.Connector.Data.Repositories.CosmosDocuments
         /// Authorization Header
         /// </summary>
         public string authorizationHeader { get; set; }
+        /// <summary>
+        /// Grant Type. Ex: client_credentials
+        /// </summary>
+        public string grantType { get; set; }
+        /// <summary>
+        /// sendCredentialsInBody. Ex: true / false.
+        /// </summary>
+        public bool? sendCredentialsInBody { get; set; }
 
     }
 }

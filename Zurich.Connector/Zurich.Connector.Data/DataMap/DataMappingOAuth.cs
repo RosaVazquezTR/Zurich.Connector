@@ -11,48 +11,56 @@ using Zurich.Connector.Data.Model;
 using Zurich.Connector.Data.Repositories;
 using AutoMapper;
 using Zurich.Connector.Data.Repositories.CosmosDocuments;
+using Zurich.Common.Repositories.Cosmos;
+using System.Security.Authentication;
 
 namespace Zurich.Connector.Data.DataMap
 {
     public class DataMappingOAuth : DataMappingBase, IDataMapping
     {
-        public DataMappingOAuth(IRepository repository, IDataMappingRepository dataMappingRepository, IOAuthService oAuthService, ILogger<DataMappingOAuth> logger, ICosmosDocumentReader cosmosDocumentReader, IMapper mapper)
+        public DataMappingOAuth(IRepository repository, IDataMappingRepository dataMappingRepository, IOAuthService oAuthService, ILogger<DataMappingOAuth> logger, ICosmosClientStore cosmosClientStore, IMapper mapper)
         {
             this._repository = repository;
             this._dataMappingRepository = dataMappingRepository;
             this._oAuthService = oAuthService;
             this._logger = logger;
-            this._cosmosDocumentReader = cosmosDocumentReader;
+            this._cosmosClientStore = cosmosClientStore;
             this._mapper = mapper;
         }
 
-        public async override Task<T> Get<T>(ConnectorDocument dataTypeInformation, string transferToken = null, NameValueCollection query = null)
+        public async override Task<T> Get<T>(ConnectorDocument connector, string transferToken = null, NameValueCollection query = null)
         {
-            T results = default(T);
-
-            if (dataTypeInformation == null)
-            {
-                return results;
-            }
-
-            AppToken token = await this.RetrieveToken(dataTypeInformation?.dataSource?.appCode);
+            var token = await this.RetrieveToken(connector?.dataSource?.appCode,
+                                                 connector?.dataSource?.appType,
+                                                 connector?.dataSource?.locale,
+                                                 connector?.dataSource?.securityDefinition?.defaultSecurityDefinition?.grantType,
+                                                 connector?.dataSource?.securityDefinition?.defaultSecurityDefinition?.sendCredentialsInBody);
 
             if (!string.IsNullOrEmpty(token?.access_token))
             {
                 ApiInformation apiInfo = new ApiInformation()
                 {
-                    AppCode = dataTypeInformation.dataSource.appCode,
-                    HostName = dataTypeInformation.hostName,
-                    UrlPath = dataTypeInformation.request.endpointPath,
-                    AuthHeader = dataTypeInformation.dataSource.securityDefinition.defaultSecurityDefinition.authorizationHeader,
+                    AppCode = connector.dataSource.appCode,
+                    HostName = connector.hostName,
+                    UrlPath = connector.request.endpointPath,
+                    AuthHeader = connector.dataSource.securityDefinition.defaultSecurityDefinition.authorizationHeader,
                     Token = token
                 };
 
-                apiInfo.UrlPath = await this.UpdateUrl(apiInfo.UrlPath, dataTypeInformation);
-                return await GetFromRepo<T>(apiInfo, dataTypeInformation, query);
+                apiInfo.UrlPath = await this.UpdateUrl(apiInfo.UrlPath, connector);
+                try
+                {
+                    return await GetFromRepo<T>(apiInfo, connector, query);
+                } catch(Exception e)
+                {
+                    _logger.LogError(e.Message);
+                    throw;
+                }
             }
-
-            return results;
+            else
+            {
+                throw new AuthenticationException("Invalid token");
+            }
         }
     }
 }

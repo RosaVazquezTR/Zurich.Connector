@@ -5,12 +5,14 @@
 	/// </summary>
     public class CosmosConstants
     {
-		// Collections
-		public const string ConnectorCollection = "connector";
-		public const string DataSourceCollection = "datasource";
 
-		//Partitions
-		public const string ConnectorList = "ConnectorList";
-		public const string DataSourceList = "DataSourceList";
+		// Containers
+		public const string ConnectorContainerId = "connector";
+		public const string DataSourceContainerId = "datasource";
+		public const string ConnectorRegistrationContainerId = "connectorRegistration";
+		// Partitions
+		public const string ConnectorPartitionKey = "ConnectorList";
+		public const string DataSourcePartitionKey = "DataSourceList";
+		public const string ConnectorRegistrationPartitionKey = "ConnectorRegistrationList";
 	}
 }

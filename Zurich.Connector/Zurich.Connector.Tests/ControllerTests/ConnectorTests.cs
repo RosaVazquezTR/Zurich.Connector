@@ -3,9 +3,11 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Zurich.Common.Exceptions;
 using Zurich.Connector.App.Model;
 using Zurich.Connector.Data.Model;
 using Zurich.Connector.Data.Services;
@@ -101,7 +103,7 @@ namespace Zurich.Connector.Tests.ControllerTests
 				}
 
 			};
-			}
+		}
 		private List<ConnectorModel> SetupMultiConnections()
 		{
 			return new List<ConnectorModel>()
@@ -202,21 +204,21 @@ namespace Zurich.Connector.Tests.ControllerTests
 			};
 		}
 
-        #endregion
+		#endregion
 
-        [TestMethod]
+		[TestMethod]
 		public async Task CallConnectorData()
 		{
 			// ARRANGE
-			_mockConnectorservice.Setup(x => x.GetConnectorData(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(),It.IsAny<Dictionary<string, string>>())).Returns(Task.FromResult<dynamic>(TwoDocumentsListJson));
+			_mockConnectorservice.Setup(x => x.GetConnectorData(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(),It.IsAny<Dictionary<string, string>>(), It.IsAny<bool>())).Returns(Task.FromResult<dynamic>(TwoDocumentsListJson));
 
 			ConnectorsController connector = CreateConnectorsController();
-			
+
 			// ACT
-			var response = await connector.ConnectorData("fakeId", "fakeHost", null);
+			var response = await connector.ConnectorData("fakeId", "fakeHost", null,true);
 
 			// ASSERT
-			_mockConnectorservice.Verify(x => x.GetConnectorData(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Dictionary<string, string>>()), Times.Exactly(1));
+			_mockConnectorservice.Verify(x => x.GetConnectorData(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<bool>()), Times.Exactly(1));
 			var result = (ContentResult)response.Result;
 			Assert.AreEqual(StatusCodes.Status200OK, result.StatusCode);
 		}
@@ -225,75 +227,73 @@ namespace Zurich.Connector.Tests.ControllerTests
 		public async Task CallConnectorDataAndGetNullResponse()
 		{
 			// ARRANGE
-			_mockConnectorservice.Setup(x => x.GetConnectorData(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Dictionary<string, string>>())).Returns(Task.FromResult<dynamic>(null));
+			_mockConnectorservice.Setup(x => x.GetConnectorData(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<bool>())).Returns(Task.FromResult<dynamic>(null));
 
 			ConnectorsController connector = CreateConnectorsController();
 
             // ACT
-            var response = await connector.ConnectorData("fakeId", "fakeHost", null);
+            var response = await connector.ConnectorData("fakeId", "fakeHost", null, true);
 
 			// ASSERT
-			_mockConnectorservice.Verify(x => x.GetConnectorData(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Dictionary<string, string>>()), Times.Exactly(1));
-			var result = (NotFoundObjectResult)response.Result;
-			Assert.AreEqual(StatusCodes.Status404NotFound, result.StatusCode);
+			_mockConnectorservice.Verify(x => x.GetConnectorData(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<bool>()), Times.Exactly(1));
+			var result = response.Value;
+			Assert.AreEqual("Connector or data not found", result.Message);
 		}
 
-        [TestMethod]
-        public async Task CallConnectors()
-        {
-            // ARRANGE
-            var connections = MockConnectorData.SetupConnectorModel();
-            ConnectorFilterModel filters = new ConnectorFilterModel();
-            _mockConnectorservice.Setup(x => x.GetConnectors(It.IsAny<ConnectorFilterModel>())).Returns(Task.FromResult(connections.ToList()));
+		[TestMethod]
+		public async Task CallConnectors()
+		{
+			// ARRANGE
+			var connections = MockConnectorData.SetupConnectorModel();
+			ConnectorFilterModel filters = new ConnectorFilterModel();
+			_mockConnectorservice.Setup(x => x.GetConnectors(It.IsAny<ConnectorFilterModel>())).Returns(Task.FromResult(connections.ToList()));
 
-            ConnectorsController connector = new ConnectorsController(_mockConnectorservice.Object, null, _mapper);
+            ConnectorsController connector = new ConnectorsController(_mockConnectorservice.Object, null, _mapper,null);
 
-            // ACT
-            var response = await connector.Connectors(filters);
+			// ACT
+			var response = await connector.Connectors(filters);
 
-            // ASSERT
-            _mockConnectorservice.Verify(x => x.GetConnectors(It.IsAny<ConnectorFilterModel>()), Times.Exactly(1));
-            var result = (ContentResult)response.Result;
-            Assert.AreEqual(StatusCodes.Status200OK, result.StatusCode);
-        }
+			// ASSERT
+			_mockConnectorservice.Verify(x => x.GetConnectors(It.IsAny<ConnectorFilterModel>()), Times.Exactly(1));
+			var result = (ContentResult)response.Result;
+			Assert.AreEqual(StatusCodes.Status200OK, result.StatusCode);
+		}
 
-        [TestMethod]
-        public async Task CallConnectorsById()
-        {
+		[TestMethod]
+		public async Task CallConnectorsById()
+		{
 			// ARRANGE
 			var connections = MockConnectorData.SetupConnectorModel().ToList()[0];
 			_mockConnectorservice.Setup(x => x.GetConnector(It.IsAny<string>())).Returns(Task.FromResult(connections));
 
 			ConnectorsController connector = CreateConnectorsController();
 
-            // ACT
-            var response = await connector.Connectors("1");
-
-            // ASSERT
-            _mockConnectorservice.Verify(x => x.GetConnector(It.IsAny<string>()), Times.Exactly(1));
-            var result = response.Result;
-            Assert.AreEqual(StatusCodes.Status200OK, ((Microsoft.AspNetCore.Mvc.ObjectResult)result).StatusCode);
-        }
-
-        [TestMethod]
-        public async Task Call_Connector_Data_And_Get_Null_Response()
-        {
-            // ARRANGE
-            _mockConnectorservice.Setup(x => x.GetConnector(It.IsAny<string>()));
-
-			ConnectorsController connector = CreateConnectorsController();
-
-            // ACT
-            var response = await connector.Connectors("22");
+			// ACT
+			var response = await connector.Connectors("1");
 
 			// ASSERT
 			_mockConnectorservice.Verify(x => x.GetConnector(It.IsAny<string>()), Times.Exactly(1));
-			var result = (NotFoundObjectResult)response.Result;
-			Assert.AreEqual(StatusCodes.Status404NotFound, result.StatusCode);
+			var result = response.Result;
+			Assert.AreEqual(StatusCodes.Status200OK, ((Microsoft.AspNetCore.Mvc.ObjectResult)result).StatusCode);
+		}
+
+		[TestMethod]
+		public async Task Call_Connector_Data_And_Get_Null_Response()
+		{
+			// ARRANGE
+			_mockConnectorservice.Setup(x => x.GetConnector(It.IsAny<string>()));
+
+			ConnectorsController connector = CreateConnectorsController();
+
+			// ACT
+			async Task result() => await connector.Connectors("22");
+
+			// ASSERT
+			await Assert.ThrowsExceptionAsync<ResourceNotFoundException>(result);
 		}
 
 		private ConnectorsController CreateConnectorsController()
-        {
+		{
 			var httpContext = new DefaultHttpContext();
 			httpContext.Request.Headers["Authorization"] = "FakeToken";
 			httpContext.Request.Query = null;
@@ -303,7 +303,7 @@ namespace Zurich.Connector.Tests.ControllerTests
 				HttpContext = httpContext,
 			};
 
-			return new ConnectorsController(_mockConnectorservice.Object, null, _mockmapper.Object) { ControllerContext = controllerContext };
+			return new ConnectorsController(_mockConnectorservice.Object, null, _mockmapper.Object,null) { ControllerContext = controllerContext };
 		}
 	}
 }

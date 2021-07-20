@@ -8,7 +8,7 @@
     <PackageReference Include="AutoMapper" Version="9.0.0" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="7.0.0" />
     <PackageReference Include="Serilog.Extensions.Logging" Version="3.0.1" />
-    <PackageReference Include="Zurich.Common" Version="1.0.1-CI-20210611-101717" />
+	<PackageReference Include="Zurich.Common" Version="1.0.1-CI-20210702-180444" />
   </ItemGroup>
 
 </Project>

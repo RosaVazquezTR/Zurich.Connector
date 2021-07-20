@@ -19,8 +19,8 @@ namespace Zurich.Connector.Tests.Common
 		/// <returns></returns>
 		internal static IEnumerable<ConnectorModel> SetupConnectorModel()
 		{
-			return new List<ConnectorModel>()
-			{
+            return new List<ConnectorModel>()
+            {
                 new ConnectorModel()
                 {
                     Id = "1",
@@ -31,6 +31,15 @@ namespace Zurich.Connector.Tests.Common
                         Description ="Connector 1 desc",
                         EntityType = EntityType.Search,
                         Version = "v1"
+                    },
+                    Request = new ConnectorRequestModel()
+                    {
+                        Parameters = new List<ConnectorRequestParameterModel>()
+                        {
+                            new ConnectorRequestParameterModel() { CdmName = "Query", Name = "searchTerm", DefaultValue = "*"},
+                            new ConnectorRequestParameterModel() { CdmName = "Offset", Name = "resultsStartIndex", DefaultValue = "1"},
+                            new ConnectorRequestParameterModel() { CdmName = "ResultSize", Name = "resultsCount", DefaultValue = "25"},
+                        }
                     },
                     DataSource = new DataSourceModel()
                     {
@@ -49,6 +58,20 @@ namespace Zurich.Connector.Tests.Common
                         Description ="Connector 2 desc",
                         EntityType = EntityType.Search,
                         Version = "v1"
+                    },
+                    Pagination = new PaginationModel()
+                    {
+                        Available = true,
+                        IsZeroBasedOffset = true,
+                    },
+                    Request = new ConnectorRequestModel()
+                    {
+                        Parameters = new List<ConnectorRequestParameterModel>()
+                        {
+                            new ConnectorRequestParameterModel() { CdmName = "Query", Name = "searchTerm", DefaultValue = "*"},
+                            new ConnectorRequestParameterModel() { CdmName = "Offset", Name = "resultsStartIndex", DefaultValue = "1"},
+                            new ConnectorRequestParameterModel() { CdmName = "ResultSize", Name = "resultsCount", DefaultValue = "25"},
+                        }
                     },
                     DataSource = new DataSourceModel()
                     {

@@ -20,7 +20,7 @@ namespace Zurich.Connector.App.Services
         /// <param name="connectionId">Connection Id</param>
         /// <param name="hostname">Host name</param>
         /// <returns> Returns ConnectorModel</returns>
-        public Task<ConnectorModel> RetrieveProductInformationMap(string connectionId, string hostname);
+        public Task<ConnectorModel> RetrieveProductInformationMap(string connectionId, string hostname, bool retrievefilters);
     }
 
     /// <summary>
@@ -45,7 +45,7 @@ namespace Zurich.Connector.App.Services
         /// <param name="connectionId">Connection Id</param>
         /// <param name="hostname">Host name</param>
         /// <returns> Returns ConnectorModel</returns>
-        public async virtual Task<ConnectorModel> RetrieveProductInformationMap(string connectionId, string hostname)
+        public async virtual Task<ConnectorModel> RetrieveProductInformationMap(string connectionId, string hostname, bool retrievefilters)
         {
             ConnectorModel connectorModel = await _cosmosService.GetConnector(connectionId);
 

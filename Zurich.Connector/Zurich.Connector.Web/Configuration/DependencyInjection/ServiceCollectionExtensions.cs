@@ -4,18 +4,24 @@ using AutoMapper;
 using IdentityModel;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.Azure.Cosmos;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Polly;
 using Zurich.Common;
+using Zurich.Common.Exceptions;
+using Zurich.Common.Middleware;
 using Zurich.Common.Models.Cosmos;
 using Zurich.Common.Models.HighQ;
 using Zurich.Common.Models.OAuth;
+using Zurich.Common.Repositories.Cosmos;
+using Zurich.Common.Services;
 using Zurich.Common.Services.Security;
 using Zurich.Connector.App.Services;
 using Zurich.Connector.Data.Repositories;
 using Zurich.Connector.Web.Configuration;
-
+using Zurich.TenantData;
 namespace Microsoft.Extensions.DependencyInjection
 {
 	/// <summary>
@@ -30,31 +36,49 @@ namespace Microsoft.Extensions.DependencyInjection
 		/// <param name="productsConnectionString">The products database connection string</param>
 		/// <param name="services">The app service collection</param>
 		/// <param name="oAuthOptions">The OAuth partner app connections details</param>
-		public static void AddPartnerAppAuth(this IServiceCollection services, string tenantConnectionString, string productsConnectionString, OAuthOptions oAuthOptions, MicroServiceOptions microServiceOptions)
+		public static void AddPartnerAppAuth(this IServiceCollection services, string tenantConnectionString, string authority, OAuthOptions oAuthOptions, MicroServiceOptions microServiceOptions)
 		{
-			services.AddSingleton(oAuthOptions);
 			services.AddSingleton(microServiceOptions);
+			//////////////////////TODO: We should check if we can get rid of this section. The AddCommonTenantServices should already be adding these
+			services.AddSingleton(oAuthOptions);
 			services.AddHttpClient(HttpClientNames.OAuth, httpClient =>
 			{
 				httpClient.DefaultRequestHeaders.Add("Accept", "application/json");
 			})
 			.AddTransientHttpErrorPolicy(policy => policy.WaitAndRetryAsync(new[] { TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(10) }));
+			services.AddScoped<IOAuthService, OAuthService>();
+			services.AddScoped<IOAuthStore, OAuthTenantStore>();
+			/////////////////////
 
-            services.AddHttpClient(HttpClientNames.HighQ, httpClient =>
+			services.AddHttpClient(HttpClientNames.HighQ, httpClient =>
             {
                 httpClient.DefaultRequestHeaders.Add("Accept", "application/json");
             })
             .AddTransientHttpErrorPolicy(policy => policy.WaitAndRetryAsync(new[] { TimeSpan.FromSeconds(1) }));
 
             services.AddScoped<IEncryptionService, EncryptionService>();
-            services.AddScoped<IOAuthService, OAuthService>();
-            services.AddScoped<IOAuthStore, OAuthTenantStore>();
-
             services.AddHttpContextAccessor();
-            services.AddCommonTenantServices(tenantConnectionString, oAuthOptions);
-            services.AddDefaultProductsDbConnection(productsConnectionString);
-            services.AddProductServices();
+			services.AddCommonTenantServicesWithWebApiAuth(tenantConnectionString, authority, oAuthOptions);
 
+        }
+
+		/// <summary>
+		/// Adds services to dependency injection
+		/// </summary>
+		/// <param name="services">The app service collection</param>
+		public static void AddServices(this IServiceCollection services)
+		{
+			services.AddScoped<IRegistrationService, RegistrationService>();
+		}
+
+		/// <summary>
+		/// Adds diagnostics related services
+		/// </summary>
+		/// <param name="services">The app service collection</param>
+		public static void AddDiagnostics(this IServiceCollection services)
+        {
+			services.AddApplicationInsightsTelemetry();
+			services.AddHealthChecks();
         }
 
 		/// <summary>
@@ -88,37 +112,40 @@ namespace Microsoft.Extensions.DependencyInjection
 		/// <param name="clientOptions"> cosmos client options</param>
 		public static void AddConnectorCosmosServices(this IServiceCollection services, CosmosDbOptions dbOptions, CosmosClientSettings clientOptions)
         {
-			//TODO - Review and update the below cosmos client options.
-			var clientSettings = new CosmosClientOptions()
-			{
-				AllowBulkExecution = clientOptions.AllowBulkExecution,
-				ConnectionMode = ConnectionMode.Gateway,
-				GatewayModeMaxConnectionLimit = clientOptions.GatewayModeMaxConnectionLimit == 0 ? 10 : clientOptions.GatewayModeMaxConnectionLimit,
-				MaxRetryAttemptsOnRateLimitedRequests = clientOptions.MaxRetryAttemptsOnRateLimitedRequests == 0 ? 9 : clientOptions.MaxRetryAttemptsOnRateLimitedRequests,
-				MaxRetryWaitTimeOnRateLimitedRequests = clientOptions.MaxRetryWaitTimeOnRateLimitedRequests == 0 ? new TimeSpan(0, 0, 30) : new TimeSpan(0, 0, clientOptions.MaxRetryWaitTimeOnRateLimitedRequests)
-			};
-
-			var cosmosClientFactory = new CosmosClientFactory(dbOptions, clientSettings);
-			services.AddSingleton<ICosmosClientFactory>(cosmosClientFactory);
-
-			services.AddTransient<ICosmosDocumentReader>(serviceProvider =>
-			{
-				var logger = serviceProvider.GetRequiredService<ILogger<CosmosDocumentReader>>();
-				return new CosmosDocumentReader(dbOptions, cosmosClientFactory, logger);
-			});
-            services.AddTransient<ICosmosDocumentWriter>(serviceProvider =>
+            var clientSettings = new CosmosClientOptions()
             {
-                var logger = serviceProvider.GetRequiredService<ILogger<CosmosDocumentWriter>>();
-                return new CosmosDocumentWriter(dbOptions, cosmosClientFactory, logger);
-            });
-            services.AddTransient<ICosmosService>(serviceProvider =>
+                AllowBulkExecution = clientOptions.AllowBulkExecution,
+                ConnectionMode = ConnectionMode.Gateway,
+                GatewayModeMaxConnectionLimit = clientOptions.GatewayModeMaxConnectionLimit == 0 ? 10 : clientOptions.GatewayModeMaxConnectionLimit,
+                MaxRetryAttemptsOnRateLimitedRequests = clientOptions.MaxRetryAttemptsOnRateLimitedRequests == 0 ? 9 : clientOptions.MaxRetryAttemptsOnRateLimitedRequests,
+                MaxRetryWaitTimeOnRateLimitedRequests = clientOptions.MaxRetryWaitTimeOnRateLimitedRequests == 0 ? new TimeSpan(0, 0, 30) : new TimeSpan(0, 0, clientOptions.MaxRetryWaitTimeOnRateLimitedRequests)
+            };
+
+			services.AddCosmosClientStore(dbOptions, clientSettings);
+			services.AddTransient<ICosmosService>(serviceProvider =>
 			{
-				var reader = serviceProvider.GetRequiredService<ICosmosDocumentReader>();
-				var writer = serviceProvider.GetRequiredService<ICosmosDocumentWriter>();
+				var cosmosStore = serviceProvider.GetRequiredService<ICosmosClientStore>();
 				var logger = serviceProvider.GetRequiredService<ILogger<CosmosService>>();
 				var mapper = serviceProvider.GetRequiredService<IMapper>();
-				return new CosmosService(reader, writer, clientOptions, mapper, logger);
+				return new CosmosService(cosmosStore, clientOptions, mapper, logger);
 			});
 		}
-	}
+
+		/// <summary>
+		/// Configuring the ExceptionHandling Middleware.
+		/// </summary>
+		public static void ConfigureExceptionHandleMiddleware(this IApplicationBuilder App, IHostEnvironment env)
+        {
+			App.UseMiddleware<ExceptionHandlingMiddleware>();
+        }
+
+		/// <summary>
+		/// Adding Exception handler dependency class from Common package.
+		/// </summary>
+		public static void ConfigureExceptonhandler(this IServiceCollection services)
+        {
+			services.AddSingleton<IExceptionHandler, ExceptionHandler>();
+		}
+		}
+
 }

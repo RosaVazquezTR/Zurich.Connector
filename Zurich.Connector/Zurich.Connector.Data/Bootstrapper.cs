@@ -18,8 +18,6 @@ namespace Zurich.Connector.Data
 
 		public static void BootstrapDependencies(IServiceCollection services)
 		{
-			services.AddScoped<ICosmosDocumentReader, CosmosDocumentReader>();
-			services.AddScoped<ICosmosDocumentWriter, CosmosDocumentWriter>();
 		}
 	}
 }

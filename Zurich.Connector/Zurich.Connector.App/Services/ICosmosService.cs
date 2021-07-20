@@ -45,5 +45,16 @@ namespace Zurich.Connector.App.Services
 		/// Write data source document to cosmos
 		/// </summary>
 		public Task StoreDataSource(DataSourceDocument dataSourceDocument);
+
+		/// <summary>
+		/// Store Connector Registration into the cosmosDb
+		/// </summary>
+		public Task StoreConnectorRegistration(ConnectorRegistrationDocument connectorRegistrationDocument);
+
+		/// <summary>
+		/// delete data  from Cosmos by ID
+		/// </summary>
+		public Task DeleteConnectorAsync(string id, string partitionId);
+
 	}
 }

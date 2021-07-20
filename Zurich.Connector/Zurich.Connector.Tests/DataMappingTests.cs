@@ -12,6 +12,7 @@ using Zurich.Connector.Data.Repositories;
 using Zurich.ProductData.Models;
 using AutoMapper;
 using Zurich.Connector.Data.Repositories.CosmosDocuments;
+using Zurich.Common.Repositories.Cosmos;
 
 namespace Zurich.Connector.Tests
 {
@@ -23,7 +24,7 @@ namespace Zurich.Connector.Tests
 		private Mock<IOAuthService> _mockOAuthService;
 		private Mock<ILogger<DataMappingOAuth>> _mockLoggerOAuth;
 		private Mock<ILogger<DataMappingTransfer>> _mockLoggerTransfer;
-		private Mock<ICosmosDocumentReader> _mockCosmosDocumentReader;
+		private Mock<ICosmosClientStore> _mockCosmosDocumentReader;
 		private Mock<IMapper> _mockMapper;
 
 		[TestInitialize]
@@ -38,7 +39,7 @@ namespace Zurich.Connector.Tests
 			// feels like this won't change
 			AppToken token = new AppToken() { access_token = "fakeToken" };
 			_mockOAuthService.Setup(x => x.GetToken(It.IsAny<string>(), It.IsAny<OAuthApplicationType>(), It.IsAny<bool>(), It.IsAny<string>(), It.IsAny<ProductType>())).Returns(Task.FromResult(token));
-			_mockCosmosDocumentReader = new Mock<ICosmosDocumentReader>();
+			_mockCosmosDocumentReader = new Mock<ICosmosClientStore>();
 			_mockMapper = new Mock<IMapper>();
 		}
 
@@ -454,159 +455,154 @@ namespace Zurich.Connector.Tests
 			Assert.AreEqual("testIndex3", documents[0].ArrayValue2.ToString());
 		}
 
-		[TestMethod]
-		public async Task TestMappingWithNestedArray()
-		{
-			// ARRANGE
-			string appCode = "TestApp";
+        [TestMethod]
+        public async Task TestMappingWithNestedArray()
+        {
+            // ARRANGE
+            string appCode = "TestApp";
 
-			_mockRepository.Setup(x => x.Get(It.IsAny<ApiInformation>(), It.IsAny<NameValueCollection>())).Returns(Task.FromResult(TwoDocumentsJson));
+            _mockRepository.Setup(x => x.Get(It.IsAny<ApiInformation>(), It.IsAny<NameValueCollection>())).Returns(Task.FromResult(TwoDocumentsJson));
 
-			ConnectorDocument connectorDocument1 = new ConnectorDocument()
-			{
-				Id = "1",
-				resultLocation = "data.results",
-				request = new ConnectorRequest()
-				{ endpointPath = "https://fakeaddress.thomsonreuters.com" }
-			};
-			connectorDocument1.cdmMapping = new CDMMapping()
-			{
-				structured = new List<CDMElement>() {
-							{
-								new CDMElement(){ name="Name", responseElement ="name"}
-							},
-							{
-								new CDMElement(){ name="Id", responseElement ="id"}
-							},
-							{
-								new CDMElement(){ name="WebLink", responseElement =""}
-							},
-							{
-								new CDMElement(){ name="ObjectArray", responseElement ="{2}"}
-							}
-				}
-			};
+            ConnectorDocument connectorDocument1 = new ConnectorDocument()
+            {
+                Id = "1",
+                resultLocation = "data.results",
+                request = new ConnectorRequest()
+                { endpointPath = "https://fakeaddress.thomsonreuters.com" }
+            };
+            connectorDocument1.cdmMapping = new CDMMapping()
+            {
+                structured = new List<CDMElement>() {
+                            {
+                                new CDMElement(){ name="Name", responseElement ="name"}
+                            },
+                            {
+                                new CDMElement(){ name="Id", responseElement ="id"}
+                            },
+                            {
+                                new CDMElement(){ name="WebLink", responseElement =""}
+                            },
+                            {
+                                new CDMElement(){ name="ObjectArray", responseElement ="{2}"}
+                            }
+                }
+            };
 
-			connectorDocument1.dataSource = new DataSourceDocument()
-			{
-				appCode = appCode,
-				securityDefinition = new SecurityDefinition()
-				{
-					defaultSecurityDefinition = new SecurityDefinitionDetails()
-					{
-						authorizationHeader = "differentAuthHeader"
-					}
-				}
-			};
+            connectorDocument1.dataSource = new DataSourceDocument()
+            {
+                appCode = appCode,
+                securityDefinition = new SecurityDefinition()
+                {
+                    defaultSecurityDefinition = new SecurityDefinitionDetails()
+                    {
+                        authorizationHeader = "differentAuthHeader"
+                    }
+                }
+            };
 
-			ConnectorDocument connectorDocument2 = new ConnectorDocument()
-			{
-				Id = "2",
-				resultLocation = "testArray",
-				request = new ConnectorRequest()
-				{ endpointPath = "https://fakeaddress.thomsonreuters.com" }
-			};
-			connectorDocument2.cdmMapping = new CDMMapping()
-			{
-				structured = new List<CDMElement>() {
-							{
-								new CDMElement(){ name="Name", responseElement ="name"}
-							},
-							{
-								new CDMElement(){ name="DescriptionProp", responseElement ="description"}
-							}
-				}
-			};
+            ConnectorDocument connectorDocument2 = new ConnectorDocument()
+            {
+                Id = "2",
+                resultLocation = "testArray",
+                request = new ConnectorRequest()
+                { endpointPath = "https://fakeaddress.thomsonreuters.com" }
+            };
+            connectorDocument2.cdmMapping = new CDMMapping()
+            {
+                structured = new List<CDMElement>() {
+                            {
+                                new CDMElement(){ name="Name", responseElement ="name"}
+                            },
+                            {
+                                new CDMElement(){ name="DescriptionProp", responseElement ="description"}
+                            }
+                }
+            };
 
-			connectorDocument2.dataSource = new DataSourceDocument()
-			{
-				appCode = appCode,
-				securityDefinition = new SecurityDefinition()
-				{
-					defaultSecurityDefinition = new SecurityDefinitionDetails()
-					{
-						authorizationHeader = "differentAuthHeader"
-					}
-				}
-			};
-			_mockCosmosDocumentReader.Setup(x => x.GetConnectorDocument(It.IsAny<string>())).Returns<string>(id =>
-			{
-				if (id == "1")
-					return Task.FromResult(connectorDocument1);
-				else
-					return Task.FromResult(connectorDocument2);
-			});
+            connectorDocument2.dataSource = new DataSourceDocument()
+            {
+                appCode = appCode,
+                securityDefinition = new SecurityDefinition()
+                {
+                    defaultSecurityDefinition = new SecurityDefinitionDetails()
+                    {
+                        authorizationHeader = "differentAuthHeader"
+                    }
+                }
+            };
+			_mockCosmosDocumentReader.Setup(x => x.GetDocument<ConnectorDocument>(CosmosConstants.ConnectorContainerId, "1",
+				CosmosConstants.ConnectorPartitionKey)).Returns(Task.FromResult(connectorDocument1));
+
+			_mockCosmosDocumentReader.Setup(x => x.GetDocument<ConnectorDocument>(CosmosConstants.ConnectorContainerId, "2",
+				CosmosConstants.ConnectorPartitionKey)).Returns(Task.FromResult(connectorDocument2));
 
 			DataMappingTransfer documentMap = new DataMappingTransfer(_mockRepository.Object, _mockDataMappingRepository.Object, _mockOAuthService.Object, _mockLoggerTransfer.Object, _mockCosmosDocumentReader.Object, _mockMapper.Object);
 
-			// ACT
-			dynamic documents = await documentMap.Get<dynamic>(connectorDocument1, "fakeTransferToken");
+            // ACT
+            dynamic documents = await documentMap.Get<dynamic>(connectorDocument1, "fakeTransferToken");
 
-			// ASSERT
-			Assert.IsNotNull(documents);
-			Assert.AreEqual(2, documents.Count);
-			Assert.AreEqual(3, documents[0].ObjectArray.Count);
-			Assert.AreEqual("testIndex2", documents[0].ObjectArray[1].Name.ToString());
-			Assert.AreEqual("fakeDesc2", documents[0].ObjectArray[1].DescriptionProp.ToString());
-		}
+            // ASSERT
+            Assert.IsNotNull(documents);
+            Assert.AreEqual(2, documents.Count);
+            Assert.AreEqual(3, documents[0].ObjectArray.Count);
+            Assert.AreEqual("testIndex2", documents[0].ObjectArray[1].Name.ToString());
+            Assert.AreEqual("fakeDesc2", documents[0].ObjectArray[1].DescriptionProp.ToString());
+        }
 
 
-		[TestMethod]
-		public async Task VerifyURLFormat()
-		{
-			// ARRANGE
-			string appCode = "TestApp";
+        [TestMethod]
+        public async Task VerifyURLFormat()
+        {
+            // ARRANGE
+            string appCode = "TestApp";
 
-			_mockRepository.Setup(x => x.Get(It.IsAny<ApiInformation>(), It.IsAny<NameValueCollection>())).Returns(Task.FromResult(userInfoJson));
+            _mockRepository.Setup(x => x.Get(It.IsAny<ApiInformation>(), It.IsAny<NameValueCollection>())).Returns(Task.FromResult(userInfoJson));
 
-			ConnectorDocument connectorDocument = new ConnectorDocument()
-			{
-				request = new ConnectorRequest()
-				{ endpointPath = "https://fakeaddress.thomsonreuters.com" }
-			};
-			connectorDocument.cdmMapping = new CDMMapping()
-			{
-				structured = new List<CDMElement>() {
-							{
-								new CDMElement(){ name="Name", responseElement ="name"}
-							},
-							{
-								new CDMElement(){ name="Id", responseElement ="id"}
-							}
-				}
-			};
+            ConnectorDocument connectorDocument = new ConnectorDocument()
+            {
+                request = new ConnectorRequest()
+                { endpointPath = "https://fakeaddress.thomsonreuters.com" }
+            };
+            connectorDocument.cdmMapping = new CDMMapping()
+            {
+                structured = new List<CDMElement>() {
+                                {
+                                    new CDMElement(){ name="Name", responseElement ="name"}
+                                },
+                                {
+                                    new CDMElement(){ name="Id", responseElement ="id"}
+                                }
+                    }
+            };
 
-			DataSourceDocument dataSourceDocument = new DataSourceDocument()
-			{
-				appCode = appCode,
-				securityDefinition = new SecurityDefinition()
-				{
-					defaultSecurityDefinition = new SecurityDefinitionDetails()
-					{
-						authorizationHeader = "differentAuthHeader"
-					}
-				}
-			};
-			connectorDocument.dataSource = dataSourceDocument;
+            DataSourceDocument dataSourceDocument = new DataSourceDocument()
+            {
+                appCode = appCode,
+                securityDefinition = new SecurityDefinition()
+                {
+                    defaultSecurityDefinition = new SecurityDefinitionDetails()
+                    {
+                        authorizationHeader = "differentAuthHeader"
+                    }
+                }
+            };
+            connectorDocument.dataSource = dataSourceDocument;
 
-			_mockCosmosDocumentReader.Setup(x => x.GetConnectorDocument(It.IsAny<string>())).Returns<string>(id =>
-			{
-				return Task.FromResult(connectorDocument);
-			});
-			_mockCosmosDocumentReader.Setup(x => x.GetDataSourceDocument(It.IsAny<string>())).Returns<string>(id =>
-			{
-				return Task.FromResult(dataSourceDocument);
-			});
+            _mockCosmosDocumentReader.Setup(x => x.GetDocument<ConnectorDocument>(CosmosConstants.ConnectorContainerId, It.IsAny<string>(),
+													CosmosConstants.ConnectorPartitionKey)).Returns(Task.FromResult(connectorDocument));
 
-			DataMappingOAuth documentMap = new DataMappingOAuth(_mockRepository.Object, _mockDataMappingRepository.Object, _mockOAuthService.Object, _mockLoggerOAuth.Object, _mockCosmosDocumentReader.Object, _mockMapper.Object);
+            _mockCosmosDocumentReader.Setup(x => x.GetDocument<DataSourceDocument>(CosmosConstants.DataSourceContainerId, It.IsAny<string>(),
+													CosmosConstants.DataSourcePartitionKey)).Returns(Task.FromResult(dataSourceDocument));
 
-			// ACT
-			string newUrl = await documentMap.UpdateUrl("/work/api/v2/customers/{UserInfo.id}/documents", connectorDocument);
+            DataMappingOAuth documentMap = new DataMappingOAuth(_mockRepository.Object, _mockDataMappingRepository.Object, _mockOAuthService.Object, _mockLoggerOAuth.Object, _mockCosmosDocumentReader.Object, _mockMapper.Object);
 
-			// ASSERT
-			Assert.IsNotNull(newUrl);
-			Assert.AreEqual("/work/api/v2/customers/241/documents", newUrl);
-		}
+            // ACT
+            string newUrl = await documentMap.UpdateUrl("/work/api/v2/customers/{UserInfo.id}/documents", connectorDocument);
 
-	}
+            // ASSERT
+            Assert.IsNotNull(newUrl);
+            Assert.AreEqual("/work/api/v2/customers/241/documents", newUrl);
+        }
+
+    }
 }
