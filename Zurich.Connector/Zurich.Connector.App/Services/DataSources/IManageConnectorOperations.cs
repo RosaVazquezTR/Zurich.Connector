@@ -62,7 +62,7 @@ namespace Zurich.Connector.App.Services.DataSources
             switch (itemType)
             {
                 case EntityType.Document:
-                    var docId = item[StructuredCDMProperties.EntityId].Value<string>();
+                    var docId = item.ContainsKey(StructuredCDMProperties.EntityId) ? item[StructuredCDMProperties.EntityId].Value<string>() : "";
                     var builder = new UriBuilder("https", hostName, -1);
                     result = $"{builder.Uri}{DocumentsEndpoint}{docId}";
                 break;

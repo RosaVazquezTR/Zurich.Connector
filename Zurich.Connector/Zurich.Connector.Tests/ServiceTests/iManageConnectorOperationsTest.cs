@@ -13,7 +13,7 @@ namespace Zurich.Connector.Tests.ServiceTests
     //TODO: Create an app tests project and move this there
 
     [TestClass]
-    public class iManageConnectorOperationsTest
+    public class IManageConnectorOperationsTest
     {
         private Mock<ILogger<IManageConnectorOperations>> _mockLogger;
 
