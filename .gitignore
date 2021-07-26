@@ -288,3 +288,4 @@ __pycache__/
 *.xsd.cs
 
 /Zurich.Connector/Zurich.Connector.Web/appsettings.Development.json
+/Zurich.Connector/Zurich.Connector.Web/$(build.artifactStagingDirectory)

@@ -1,7 +1,7 @@
 trigger: none
 
 pool:
-  vmImage: 'windows-latest'
+  name: 'DCO-HighQ-Platform-N'
 
 resources:
   repositories:
@@ -26,6 +26,7 @@ stages:
       steps:
         - checkout: self
         - checkout: ZurichDeploy
-        - template: Templates\ZurichDeploy-BuildWebAPI.yml@ZurichDeploy
+        - template: Templates\V2\ZurichDeploy-BuildWebAPI.yml@ZurichDeploy
           parameters:
             projectName: ${{ variables.projectName }}
+            azureAdClientSecret: $(azureAdClientSecret)

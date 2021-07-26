@@ -44,8 +44,7 @@ namespace Zurich.Connector.Web.Controllers
         public async Task<ActionResult<dynamic>> ConnectorData(string id, [FromQuery] string hostName, [FromQuery] string transferToken,[FromQuery] bool retrievefilters)
         {
             dynamic results;
-            try
-            {
+            try { 
                 // TODO: Eventually hostname and transferToken will be removed 
                 Dictionary<string, string> parameters = HttpContext?.Request.Query.Keys.Cast<string>()
                     .Where(param => !param.Equals("hostname", StringComparison.InvariantCultureIgnoreCase) 
@@ -71,7 +70,6 @@ namespace Zurich.Connector.Web.Controllers
                 return new Exception(e.Message);
             }
 
-            
         }
 
         /// <summary>

@@ -44,7 +44,7 @@ namespace Zurich.Connector.Web
         public IHostEnvironment Environment { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
+        public virtual void ConfigureServices(IServiceCollection services)
         {
             BindConfigurationOptions();
 
@@ -79,7 +79,10 @@ namespace Zurich.Connector.Web
             services.AddDiagnostics();
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Zurich.Connector.Web", Version = "v1" });
+                if(!c.SwaggerGeneratorOptions.SwaggerDocs.Keys.Contains("v1"))
+                { 
+                    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Zurich.Connector.Web", Version = "v1" });
+                }
             });
 
             services.AddAuthenticationServices(Configuration.GetValue<string>("Audience"), authority);
@@ -89,8 +92,13 @@ namespace Zurich.Connector.Web
             services.ConfigureExceptonhandler();
         }
 
+        public virtual void AddAuthServices(IServiceCollection services, string audience, string authority)
+        {
+            services.AddAuthenticationServices(audience, authority);
+        }
+
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public virtual void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             RegisterColumnEncryptionProvider(app);
             if (env.IsDevelopment())
@@ -118,7 +126,7 @@ namespace Zurich.Connector.Web
         /// Initializes the data store for IdentityServer related entities and registers the column encryption key store provider
         /// </summary>
         /// <param name="app">The application request pipeline builder</param>
-        private void RegisterColumnEncryptionProvider(IApplicationBuilder app)
+        protected void RegisterColumnEncryptionProvider(IApplicationBuilder app)
         {
             _clientCredential = new ClientCredential(_azureOptions.ClientId, _azureOptions.ClientSecret);
 

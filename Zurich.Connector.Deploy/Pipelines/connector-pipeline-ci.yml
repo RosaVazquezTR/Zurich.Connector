@@ -36,7 +36,7 @@ stages:
       steps:
         - checkout: self
         - checkout: ZurichDeploy
-        - template: Templates\ZurichDeploy-BuildWebAPI.yml@ZurichDeploy
+        - template: Templates\V2\ZurichDeploy-BuildWebAPI.yml@ZurichDeploy
           parameters:
             projectName: ${{ variables.projectName }}
 - stage: CI

@@ -13,6 +13,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Zurich.Connector.Data", "Zu
 EndProject
 Project("{151D2E53-A2C4-4D7D-83FE-D05416EBD58E}") = "Zurich.Connector.Deploy", "Zurich.Connector.Deploy\Zurich.Connector.Deploy.deployproj", "{21A5E465-ACBF-49AD-8C0E-F6092C6DF426}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zurich.Connector.IntegrationTests", "Zurich.Connector.IntegrationTests\Zurich.Connector.IntegrationTests.csproj", "{77AF84CC-88AA-4F54-BC5D-E9AE2F72E7C0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{21A5E465-ACBF-49AD-8C0E-F6092C6DF426}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{21A5E465-ACBF-49AD-8C0E-F6092C6DF426}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{21A5E465-ACBF-49AD-8C0E-F6092C6DF426}.Release|Any CPU.Build.0 = Release|Any CPU
+		{77AF84CC-88AA-4F54-BC5D-E9AE2F72E7C0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{77AF84CC-88AA-4F54-BC5D-E9AE2F72E7C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{77AF84CC-88AA-4F54-BC5D-E9AE2F72E7C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{77AF84CC-88AA-4F54-BC5D-E9AE2F72E7C0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
