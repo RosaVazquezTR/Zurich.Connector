@@ -84,12 +84,7 @@ namespace Zurich.Connector.Data.Services
             ConnectorDocument connectorDocument = _mapper.Map<ConnectorDocument>(connectorModel);
 
             var data = await service.Get<dynamic>(connectorDocument, transferToken, mappedQueryParameters);
-
-            var dataSourceOperationsService = _dataSourceOperationsFactory.GetDataSourceOperationsService(connectorModel.DataSource.AppCode);
-            if (dataSourceOperationsService != null)
-                data = dataSourceOperationsService.SetItemLink(connectorModel.Info.EntityType, data, connectorModel.HostName);
-            else
-                _logger.LogInformation("No data source operations service found for {appCode}", connectorModel.DataSource.AppCode ?? "");
+            data = EnrichConnectorData(connectorModel, data);
 
             return data;
         }
@@ -176,6 +171,22 @@ namespace Zurich.Connector.Data.Services
                 cdmQueryParameters["Offset"] = (int.Parse(cdmQueryParameters["Offset"]) - 1).ToString();
             }
             return cdmQueryParameters;
+        }
+
+        /// <summary>
+        /// Enriches the connector data using the app's corresponding data source operations service
+        /// </summary>
+        /// <param name="connector">The data connector</param>
+        /// <param name="data">The entity data</param>
+        /// <returns></returns>
+        private dynamic EnrichConnectorData(ConnectorModel connector, dynamic data)
+        {
+            var dataSourceOperationsService = _dataSourceOperationsFactory.GetDataSourceOperationsService(connector?.DataSource?.AppCode);
+            if (dataSourceOperationsService != null)
+                data = dataSourceOperationsService.SetItemLink(connector.Info.EntityType, data, connector.HostName);
+            else
+                _logger.LogInformation("No data source operations service found for {appCode}", connector?.DataSource?.AppCode ?? "");
+            return data;
         }
     }
 }
