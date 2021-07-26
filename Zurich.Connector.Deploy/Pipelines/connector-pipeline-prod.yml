@@ -39,6 +39,7 @@ stages:
         - template: Templates\V2\ZurichDeploy-BuildWebAPI.yml@ZurichDeploy
           parameters:
             projectName: ${{ variables.projectName }}
+            azureAdClientSecret: $(azureAdClientSecret)
 - stage: ServiceNow
   pool: DCO-HighQ-Platform-P
   dependsOn:
