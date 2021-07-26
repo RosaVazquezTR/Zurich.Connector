@@ -30,6 +30,7 @@ variables:
 
 stages:
 - stage: Build
+  pool: DCO-HighQ-Platform-N
   jobs:
     - job: 'Build'
       displayName: 'Connectors Build'
