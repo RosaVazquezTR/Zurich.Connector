@@ -29,6 +29,7 @@ variables:
 
 stages:
 - stage: Build
+  pool: DCO-HighQ-Platform-P
   jobs:
     - job: 'Build'
       displayName: 'Connectors Build'
@@ -38,6 +39,7 @@ stages:
         - template: Templates\V2\ZurichDeploy-BuildWebAPI.yml@ZurichDeploy
           parameters:
             projectName: ${{ variables.projectName }}
+            azureAdClientSecret: $(azureAdClientSecret)
 - stage: ServiceNow
   pool: DCO-HighQ-Platform-P
   dependsOn:
