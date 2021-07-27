@@ -134,6 +134,7 @@ stages:
                 parameters:
                   appInsightsName: ${{ variables.appInsightsName }}
                   connectorCosmosContainerNames: ${{ variables.connectorCosmosContainerNames }}
+                  connectorCosmosExcludedComparisonProperties: ${{ variables.connectorCosmosExcludedComparisonProperties }}
                   connectorCosmosThroughput: ${{ variables.connectorCosmosThroughput }}
                   connectorCosmosMaxThroughput: ${{ variables.connectorCosmosMaxThroughput }}
                   connectorCosmosDatabaseName: ${{ variables.connectorCosmosDatabaseName }}
