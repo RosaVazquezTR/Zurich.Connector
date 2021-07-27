@@ -102,7 +102,6 @@ function  updateCosmosRecords {
 		$fileObject = (Get-Content -Path $currentFilePath | Out-String | ConvertFrom-Json)
 		$fileObjectStr = $fileObject | ConvertTo-Json -Compress -Depth 100 | Out-String
 
-		$dbObject = $jsonResponse.Documents | Where-Object { $_.id -eq $fileObject.id }
 		$dbObjectStr = $jsonResponse.Documents | Where-Object { $_.id -eq $fileObject.id } | Select-Object -Property * -ExcludeProperty $excludedProperties | ConvertTo-Json -Depth 100 -Compress | Out-String
 
 		$contentEquals = $fileObjectStr.Equals($dbObjectStr)
