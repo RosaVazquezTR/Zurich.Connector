@@ -56,7 +56,7 @@ function PostDocument([object]$document, [string]$dbname, [string]$collection, [
 	$headers.Add("x-ms-documentdb-is-upsert", "true")
 	$headers.Add("x-ms-documentdb-partitionkey", '["' + $partitionKey + '"]')
 	$uri = $rootUri + "/" + $collName + "/docs"
-	$jsonDocument = $document | ConvertTo-Json
+	$jsonDocument = $document | ConvertTo-Json -Depth 100
 	$response = Invoke-RestMethod $uri -Method Post -Body $jsonDocument -ContentType 'application/json' -Headers $headers
 	$response
 }
