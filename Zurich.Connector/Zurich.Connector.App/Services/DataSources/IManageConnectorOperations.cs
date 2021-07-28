@@ -1,6 +1,8 @@
 ﻿using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
 using System;
+using System.Collections.Generic;
+using System.Collections.Specialized;
 using Zurich.Connector.Data;
 using Zurich.Connector.Data.Model;
 
@@ -68,6 +70,11 @@ namespace Zurich.Connector.App.Services.DataSources
                 break;
             }
             return result;
+        }
+
+        public NameValueCollection UpdateQueryParams(EntityType entityType, NameValueCollection queryParams)
+        {
+            return queryParams;
         }
     }
 }

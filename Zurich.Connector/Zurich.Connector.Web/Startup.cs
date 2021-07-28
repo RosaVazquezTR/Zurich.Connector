@@ -76,6 +76,7 @@ namespace Zurich.Connector.Web
             services.AddScoped<IDataMappingRepository, DataMappingRepository>();
             services.AddScoped<IRepository, Repository>();
             services.AddScoped<IConnectorDataSourceOperations, IManageConnectorOperations>();
+            services.AddScoped<IConnectorDataSourceOperations, Microsoft365ConnectorOperations>();
             services.AddScoped<IConnectorDataSourceOperationsFactory, ConnectorDataSourceOperationsFactory>();
 
             services.AddServices();

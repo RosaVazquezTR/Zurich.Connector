@@ -160,6 +160,10 @@ namespace Zurich.Connector.Data.Services
                 modifiedQueryParameters.Add(parameter.Key, parameter.Value);
             }
 
+            var dataSourceOperationsService = _dataSourceOperationsFactory.GetDataSourceOperationsService(connectorModel?.DataSource?.AppCode);
+            if (dataSourceOperationsService != null)
+                modifiedQueryParameters = dataSourceOperationsService.UpdateQueryParams(connectorModel.Info.EntityType, modifiedQueryParameters);
+
             return modifiedQueryParameters;
         }
 
@@ -180,6 +184,22 @@ namespace Zurich.Connector.Data.Services
         /// <param name="data">The entity data</param>
         /// <returns></returns>
         private dynamic EnrichConnectorData(ConnectorModel connector, dynamic data)
+        {
+            var dataSourceOperationsService = _dataSourceOperationsFactory.GetDataSourceOperationsService(connector?.DataSource?.AppCode);
+            if (dataSourceOperationsService != null)
+                data = dataSourceOperationsService.SetItemLink(connector.Info.EntityType, data, connector.HostName);
+            else
+                _logger.LogInformation("No data source operations service found for {appCode}", connector?.DataSource?.AppCode ?? "");
+            return data;
+        }
+
+        /// <summary>
+        /// Enriches the connector data using the app's corresponding data source operations service
+        /// </summary>
+        /// <param name="connector">The data connector</param>
+        /// <param name="data">The entity data</param>
+        /// <returns></returns>
+        private dynamic EnrichConnectorRequest(ConnectorModel connector, dynamic data)
         {
             var dataSourceOperationsService = _dataSourceOperationsFactory.GetDataSourceOperationsService(connector?.DataSource?.AppCode);
             if (dataSourceOperationsService != null)

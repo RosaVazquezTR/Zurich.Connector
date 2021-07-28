@@ -16,5 +16,6 @@
     public static class KnownDataSources
     {
         public const string iManage = "iManage";
+        public const string MsGraph = "MsGraph";
     }
 }

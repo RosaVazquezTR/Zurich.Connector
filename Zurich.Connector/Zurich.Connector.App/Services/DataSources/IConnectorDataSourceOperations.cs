@@ -1,4 +1,6 @@
-﻿using Zurich.Connector.Data.Model;
+﻿using System.Collections.Generic;
+using System.Collections.Specialized;
+using Zurich.Connector.Data.Model;
 
 namespace Zurich.Connector.App.Services.DataSources
 {
@@ -21,5 +23,7 @@ namespace Zurich.Connector.App.Services.DataSources
         /// </summary>
         /// <param name="appCode">The third party app code</param>
         bool IsCompatible(string appCode);
+
+        NameValueCollection UpdateQueryParams(EntityType entityType, NameValueCollection queryParams);
     }
 }
