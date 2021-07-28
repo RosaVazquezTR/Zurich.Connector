@@ -66,14 +66,13 @@ function  updateCosmosRecords {
 		[Parameter(Mandatory = $true)] [string] $resourceGroupName,
 		[Parameter(Mandatory = $true)] [string] $collectionName,
 		[Parameter(Mandatory = $true)] [string] $folderPath,
-		[Parameter(Mandatory = $true)] [array] $properties,
+		[Parameter(Mandatory = $true)] [array] $excludedProperties,
 		[Parameter(Mandatory = $true)] [string] $partitionKey,
 		[Parameter(Mandatory = $true)] [string] $accountName,
 		[Parameter(Mandatory = $true)] [string] $databaseName
 	)
 	write-host ("collectionName is " + $collectionName)
         
-		
 	$keys = Get-AzCosmosDBAccountKey -ResourceGroupName $resourceGroupName -Name $accountName 
 	$connectionKey = $keys.PrimaryMasterKey
 
@@ -101,20 +100,25 @@ function  updateCosmosRecords {
 	foreach ($file in $jsonFiles) {
 		$currentFilePath = "$folderPath$($file[0].Name)"
 		$fileObject = (Get-Content -Path $currentFilePath | Out-String | ConvertFrom-Json)
-		$dbObject = $jsonResponse.Documents | Where-Object { $_.id -eq $fileObject.id }
-		
-		if ($dbObject) {
-			write-host ("Connector Object - " + $dbObject)
-			$changes = Compare-Object -referenceobject $fileObject -differenceobject $dbObject -Property $properties
+		$fileObjectStr = $fileObject | ConvertTo-Json -Compress -Depth 100 | Out-String
+
+		$dbObjectStr = $jsonResponse.Documents | Where-Object { $_.id -eq $fileObject.id } | Select-Object -Property * -ExcludeProperty $excludedProperties | ConvertTo-Json -Depth 100 -Compress | Out-String
+
+		$contentEquals = $fileObjectStr.Equals($dbObjectStr)
+
+		# If content doesn't match we need to update cosmos based on what's in Repo
+		if (!$contentEquals) {
+        
+            write-host ("File Json Content - " + $fileObjectStr)
+            write-host ("DB Json Content - " + $dbObjectStr)
+
+			write-host ("Changes need to be posted to DB for $file")
+			PostDocument PostDocument -document $fileObject -dbname $databaseName -collection $collectionName -partitionKey $partitionKey -connectionKey $connectionKey         
+        }
+		else{
+			write-host ("No Change needed for $file")
 		}
-		else {
-			#DB object not there, so assume changes.
-			write-host ("Connector record is empty for $file")
-			$changes = "No doc"
-		}
-		if ($changes) {
-			write-host ("Changes are needed for $file - " + $changes)
-			PostDocument PostDocument -document $fileObject -dbname $databaseName -collection $collectionName -partitionKey $partitionKey -connectionKey $connectionKey
-		}
+
+		write-host ("")
 	}
 }
