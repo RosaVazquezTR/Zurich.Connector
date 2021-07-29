@@ -1,13 +1,14 @@
 {
     "id": "13",
     "partitionkey": "ConnectorList",
-    "info": {
-        "title": "Get Search Practical law documents - US - Child connector for 12",
-        "description": "Pull Practical law documents - US - Child connector for 12",
-        "entityType": "Search",
-        "dataSourceId": "16",
-        "version": "1.0"
-    },
+  "info": {
+    "title": "Get Search Practical law documents - US - Child connector for 12",
+    "description": "Pull Practical law documents - US - Child connector for 12",
+    "entityType": "Search",
+    "dataSourceId": "16",
+    "version": "1.0",
+    "subType": "Child"
+  },
     "request": {},
     "response": {},
     "filters": [],

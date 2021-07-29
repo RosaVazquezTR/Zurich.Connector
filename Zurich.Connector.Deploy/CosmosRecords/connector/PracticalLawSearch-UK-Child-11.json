@@ -1,13 +1,14 @@
 {
     "id": "11",
     "partitionkey": "ConnectorList",
-    "info": {
-        "title": "Get Search Practical law documents - UK - Child connector for 10",
-        "description": "Pull Practical law documents - UK - Child connector for 10",
-        "entityType": "Search",
-        "dataSourceId": "15",
-        "version": "1.0"
-    },
+  "info": {
+    "title": "Get Search Practical law documents - UK - Child connector for 10",
+    "description": "Pull Practical law documents - UK - Child connector for 10",
+    "entityType": "Search",
+    "dataSourceId": "15",
+    "version": "1.0",
+    "subType": "Child"
+  },
     "request": {},
     "response": {},
     "filters": [],
