@@ -18,6 +18,9 @@ namespace Zurich.Connector.Web
             CreateMap<DataSourceModel, DataSourceViewModel>();
             CreateMap<ConnectorRequestModel, ConnectorRequestViewModel>();
             CreateMap<ConnectorRequestParameterModel, ConnectorRequestParameterViewModel>();
+            CreateMap<ConnectorRequestSortingModel, ConnectorRequestSortingViewModel>();
+            CreateMap<ConnectorRequestSortingPropertiesModel, ConnectorRequestSortingPropertiesViewModel>();
+
             CreateMap<ConnectorResponseModel, ConnectorResponseViewModel>();
             CreateMap<ConnectorReponseSchemaModel, ConnectorReponseSchemaViewModel>();
             CreateMap<ConnectorReponsePropertiesModel, ConnectorReponsePropertiesViewModel>();

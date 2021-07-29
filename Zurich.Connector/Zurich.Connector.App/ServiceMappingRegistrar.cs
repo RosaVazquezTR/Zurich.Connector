@@ -29,6 +29,8 @@ namespace Zurich.Connector.App
             CreateMap<CDMElement, CDMElementModel>();
 
             CreateMap<ConnectorRequestParameter, ConnectorRequestParameterModel>();
+            CreateMap<ConnectorRequestSorting, ConnectorRequestSortingModel>();
+            CreateMap<ConnectorRequestSortingProperties, ConnectorRequestSortingPropertiesModel>();
 
             CreateMap<DataSourceDocument, DataSourceModel>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
@@ -86,6 +88,8 @@ namespace Zurich.Connector.App
             CreateMap<PaginationModel, PaginationInfo>();
             CreateMap<ConnectorRequestModel,ConnectorRequest>();
             CreateMap<ConnectorRequestParameterModel, ConnectorRequestParameter>();
+            CreateMap<ConnectorRequestSortingModel, ConnectorRequestSorting>();
+            CreateMap<ConnectorRequestSortingPropertiesModel, ConnectorRequestSortingProperties>();
 
             CreateMap<ConnectorResponseModel, ConnectorResponse>();
             CreateMap<ConnectorReponseSchemaModel, ConnectorReponseSchema>();

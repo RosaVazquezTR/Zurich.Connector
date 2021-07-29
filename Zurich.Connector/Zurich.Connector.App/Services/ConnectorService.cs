@@ -137,6 +137,7 @@ namespace Zurich.Connector.Data.Services
         {
             NameValueCollection modifiedQueryParameters = new NameValueCollection();
             var queryParameters = new Dictionary<string, string>();
+            var sortParameters = new Dictionary<string, string>();
 
             if (cdmQueryParameters.Any())
             {
@@ -149,12 +150,20 @@ namespace Zurich.Connector.Data.Services
                                                   join requestParam in connectorModel.Request?.Parameters
                                                   on param.Key.ToString().ToLower() equals requestParam.CdmName.ToLower()
                                                   select new { name = requestParam.Name, value = param.Value.ToString() }).ToDictionary(c => c.name, c=> c.value);
+
+                sortParameters = (from param in cdmQueryParameters
+                                  join requestParam in connectorModel.Request?.Sorting?.Properties
+                                  on param.Value.ToString().ToLower() equals requestParam.ElementValue.ToLower() 
+                                  select new { name = requestParam.Element, value = requestParam.ElementValue.ToString() })
+                                  .ToDictionary(c => c.name, c => c.value);
             }
-    
+
             // Add default parameters if not present in the request. ex: locale, ResultSize etc
-            var allParameters = connectorModel.Request?.Parameters.Where(t => 
-                                !String.IsNullOrWhiteSpace(t.DefaultValue) && !queryParameters.ContainsKey(t.Name))
-                                .ToDictionary(c => c.Name, c => c.DefaultValue).Concat(queryParameters);
+            var defaultParameters = connectorModel.Request?.Parameters.Where(t =>
+                                 !String.IsNullOrWhiteSpace(t.DefaultValue) && !queryParameters.ContainsKey(t.Name))
+                                .ToDictionary(c => c.Name, c => c.DefaultValue);
+
+            var allParameters = defaultParameters.Concat(queryParameters).Concat(sortParameters);
 
             foreach (var parameter in allParameters)
             {

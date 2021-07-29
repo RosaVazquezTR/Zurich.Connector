@@ -147,6 +147,22 @@ namespace Zurich.Connector.Tests.ServiceTests
 		}
 
 		[TestMethod]
+		public async Task CallMapQueryParametersFromDBUsingSortParameters()
+		{
+			// ARRANGE
+			var cdmQueryParameters = new Dictionary<string, string>() { { "sort", "date" } };
+			var connector = MockConnectorData.SetupConnectorModel().Where(t => t.Id == "3").FirstOrDefault();
+
+			ConnectorService service = new ConnectorService(_mockDataMapping.Object, _mockDataMappingFactory.Object, _mockDataMappingRepo.Object, null, _mapper, _mockCosmosService.Object, _mockdataMappingService.Object);
+
+			// ACT
+			var mappedResult = service.MapQueryParametersFromDB(cdmQueryParameters, connector);
+
+			// ASSERT
+			Assert.AreEqual(mappedResult["sortOrder"], "DATE");
+		}
+
+		[TestMethod]
 		public async Task CallGetConnectorsWithFilters()
 		{
 			// ARRANGE
