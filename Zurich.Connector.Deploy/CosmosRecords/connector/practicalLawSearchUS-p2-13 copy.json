@@ -1,62 +1,115 @@
 {
-    "id": "13",
-    "partitionkey": "ConnectorList",
-    "info": {
-        "title": "Get Search Practical law documents - US - Child connector for 12",
-        "description": "Pull Practical law documents - US - Child connector for 12",
-        "entityType": "Search",
-        "dataSourceId": "16",
-        "version": "1.0"
+  "id": "13",
+  "partitionkey": "ConnectorList",
+  "info": {
+    "title": "Get Search Practical law documents - US - Child connector for 12",
+    "description": "Pull Practical law documents - US - Child connector for 12",
+    "entityType": "Search",
+    "dataSourceId": "16",
+    "version": "1.0"
+  },
+  "request": {},
+  "response": {},
+  "filters": [
+    {
+      "name": "PracticeArea",
+      "description": "",
+      "isMultiselect": "true",
+      "requestParameter": "PracticeArea",
+      "filterlist": [
+        {
+          "name": "Antitrust Litigation",
+          "id": "9-521-5538"
+        },
+        {
+          "name": "Cartels",
+          "id": "1-103-1161"
+        },
+        {
+          "name": "Competition Compliance and Dawn Raids",
+          "id": "2-103-2056"
+        },
+        {
+          "name": "General - Competition",
+          "id": "8-103-1167"
+        }
+      ]
     },
-    "request": {},
-    "response": {},
-    "filters": [],
-    "resultLocation": "document",
-    "cdmMapping": {
-        "structured": [
-            {
-                "name": "Abstract",
-                "type": "String",
-                "responseElement": "abstract",
-                "_comment": ""
-            },
-            {
-                "name": "Title",
-                "type": "string",
-                "responseElement": "title",
-                "_comment": ""
-            },
-            {
-                "name": "PlcReference",
-                "type": "string",
-                "responseElement": "plcReference",
-                "_comment": ""
-            },
-            {
-                "name": "Maintained",
-                "type": "string",
-                "responseElement": "maintained",
-                "_comment": ""
-            },
-            {
-                "name": "ResourceType",
-                "type": "string",
-                "responseElement": "resourceTypeFolderList.resourceTypeFolder",
-                "_comment": ""
-            },
-            {
-                "name": "PublicationDate",
-                "type": "string",
-                "responseElement": "publicationDate",
-                "_comment": ""
-            },
-            {
-                "name": "JurisdictionList",
-                "type": "array",
-                "responseElement": "jurisdictionList",
-                "_comment": ""
-            }
-        ],
-        "unstructured": []
+    {
+      "name": "Commercial",
+      "description": "Commercial",
+      "isMultiselect": "true",
+      "requestParameter": "Commercial",
+      "filterlist": [
+        {
+          "name": "Advertising and Marketing",
+          "id": "0-103-1114"
+        },
+        {
+          "name": "Agency, Distribution & Franchising",
+          "id": "8-321-0007"
+        },
+        {
+          "name": "Bribery and Corruption",
+          "id": "1-520-9254"
+        },
+        {
+          "name": "Confidentiality",
+          "id": "7-103-1304"
+        },
+        {
+          "name": "General Commercial",
+          "id": "7-379-8563"
+        }
+      ]
     }
+  ],
+  "resultLocation": "document",
+  "cdmMapping": {
+    "structured": [
+      {
+        "name": "Abstract",
+        "type": "String",
+        "responseElement": "abstract",
+        "_comment": ""
+      },
+      {
+        "name": "Title",
+        "type": "string",
+        "responseElement": "title",
+        "_comment": ""
+      },
+      {
+        "name": "PlcReference",
+        "type": "string",
+        "responseElement": "plcReference",
+        "_comment": ""
+      },
+      {
+        "name": "Maintained",
+        "type": "string",
+        "responseElement": "maintained",
+        "_comment": ""
+      },
+      {
+        "name": "ResourceType",
+        "type": "string",
+        "responseElement": "resourceTypeFolderList.resourceTypeFolder",
+        "_comment": ""
+      },
+      {
+        "name": "PublicationDate",
+        "type": "string",
+        "responseElement": "publicationDate",
+        "_comment": ""
+      },
+      {
+        "name": "JurisdictionList",
+        "type": "array",
+        "responseElement": "jurisdictionList",
+        "_comment": ""
+      }
+    ],
+    "unstructured": []
+  }
 }
