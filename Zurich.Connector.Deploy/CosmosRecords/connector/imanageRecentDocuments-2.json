@@ -11,7 +11,10 @@
   "request": {
     "endpointPath": "/work/api/v2/customers/{1.customer_id}/recent-documents",
     "method": "GET",
-    "parameters": []
+    "parameters": [],
+    "sorting": {
+      "properties": []
+    }
   },
   "response": {
     "schema": {

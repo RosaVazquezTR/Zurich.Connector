@@ -8,11 +8,14 @@
         "dataSourceId": "12",
         "version": "1.0"
     },
-    "request": {
-        "endpointPath": "/Micro/V4/RecentHistory?pageSize=25",
-        "method": "get",
-        "parameters": []
-    },
+  "request": {
+    "endpointPath": "/Micro/V4/RecentHistory?pageSize=25",
+    "method": "get",
+    "parameters": [],
+    "sorting": {
+      "properties": []
+    }
+  },
     "response": {
         "schema": {
             "properties": {}

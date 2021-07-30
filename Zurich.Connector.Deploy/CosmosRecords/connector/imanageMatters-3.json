@@ -8,11 +8,14 @@
         "dataSourceId": "10",
         "version": "1.0"
     },
-    "request": {
-        "endpointPath": "/work/api/v2/customers/{1.customer_id}/recent-workspaces?limit=5",
-        "method": "GET",
-        "parameters": []
-    },
+  "request": {
+    "endpointPath": "/work/api/v2/customers/{1.customer_id}/recent-workspaces?limit=5",
+    "method": "GET",
+    "parameters": [],
+    "sorting": {
+      "properties": []
+    }
+  },
     "response": {
         "schema": {
             "properties": {}

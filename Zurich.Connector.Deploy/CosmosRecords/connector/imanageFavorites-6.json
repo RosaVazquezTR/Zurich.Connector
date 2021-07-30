@@ -8,11 +8,14 @@
         "dataSourceId": "12",
         "version": "1.0"
     },
-    "request": {
-        "endpointPath": "/Micro/FavoriteAndFrequentlyUsed",
-        "method": "GET",
-        "parameters": []
-    },
+  "request": {
+    "endpointPath": "/Micro/FavoriteAndFrequentlyUsed",
+    "method": "GET",
+    "parameters": [],
+    "sorting": {
+      "properties": []
+    }
+  },
     "response": {
         "schema": {
             "properties": {}
