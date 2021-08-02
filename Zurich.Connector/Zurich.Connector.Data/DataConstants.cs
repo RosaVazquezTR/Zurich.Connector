@@ -6,7 +6,7 @@
     /// </summary>
     public static class StructuredCDMProperties
     {
-        public const string WebLink = "WebLink";
+        public const string WebUrl = "WebUrl";
         public const string EntityId = "Id";
     }
 

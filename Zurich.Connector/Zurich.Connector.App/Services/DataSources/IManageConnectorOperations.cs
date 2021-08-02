@@ -35,8 +35,8 @@ namespace Zurich.Connector.App.Services.DataSources
                         {
                             foreach (JObject doc in (item as JArray))
                             {
-                                if (!doc.ContainsKey(StructuredCDMProperties.WebLink))
-                                    doc[StructuredCDMProperties.WebLink] = BuildLink(entityType, doc, hostName);
+                                if (!doc.ContainsKey(StructuredCDMProperties.WebUrl))
+                                    doc[StructuredCDMProperties.WebUrl] = BuildLink(entityType, doc, hostName);
                             }
                         }
                         break;

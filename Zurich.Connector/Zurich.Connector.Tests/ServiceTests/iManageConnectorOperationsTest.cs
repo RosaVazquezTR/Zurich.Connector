@@ -36,8 +36,8 @@ namespace Zurich.Connector.Tests.ServiceTests
             //Assert
             result.Should().NotBeNullOrEmpty();
             var doc = result[0] as JObject;
-            doc.ContainsKey(StructuredCDMProperties.WebLink).Should().BeTrue();
-            doc[StructuredCDMProperties.WebLink].Value<string>().Should().Be(expectedUrl);
+            doc.ContainsKey(StructuredCDMProperties.WebUrl).Should().BeTrue();
+            doc[StructuredCDMProperties.WebUrl].Value<string>().Should().Be(expectedUrl);
         }
 
         [TestMethod]
@@ -52,7 +52,7 @@ namespace Zurich.Connector.Tests.ServiceTests
             _mockLogger.Verify(ml => ml.Log(LogLevel.Error, It.IsAny<EventId>(), It.Is<It.IsAnyType>((v, _) => v.ToString().StartsWith("Unable to parse")), null, It.IsAny<Func<It.IsAnyType, Exception, string>>()));
             result.Should().NotBeNullOrEmpty();
             var doc = result[0] as JObject;
-            doc.ContainsKey(StructuredCDMProperties.WebLink).Should().BeFalse();
+            doc.ContainsKey(StructuredCDMProperties.WebUrl).Should().BeFalse();
         }
     }
 }
