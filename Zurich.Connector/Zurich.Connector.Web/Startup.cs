@@ -22,6 +22,7 @@ using Zurich.Connector.Data.Services;
 using Zurich.Common.Models.Cosmos;
 using Zurich.Connector.App;
 using Zurich.Connector.App.Services;
+using Zurich.Connector.App.Services.DataSources;
 
 namespace Zurich.Connector.Web
 {
@@ -74,6 +75,8 @@ namespace Zurich.Connector.Web
             services.AddScoped<DataMappingTransfer>();
             services.AddScoped<IDataMappingRepository, DataMappingRepository>();
             services.AddScoped<IRepository, Repository>();
+            services.AddScoped<IConnectorDataSourceOperations, IManageConnectorOperations>();
+            services.AddScoped<IConnectorDataSourceOperationsFactory, ConnectorDataSourceOperationsFactory>();
 
             services.AddServices();
             services.AddDiagnostics();

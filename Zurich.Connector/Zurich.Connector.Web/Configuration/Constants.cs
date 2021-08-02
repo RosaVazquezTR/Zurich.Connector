@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace Zurich.Connector.Web.Configuration
+﻿namespace Zurich.Connector.Web.Configuration
 {
     /// <summary>
     /// Represents a container class for configuration keys
@@ -21,6 +16,9 @@ namespace Zurich.Connector.Web.Configuration
         public const string AccessTokenJwt = "at+jwt";
     }
 
+    /// <summary>
+    /// Represents the supported CORS policy names
+    /// </summary>
     public static class CORSPolicies
     {
         public const string DefaultPolicy = "MainCORS";

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -151,5 +152,24 @@ namespace Zurich.Connector.Tests.Common
                 },
 			};
 		}
+
+        internal static IEnumerable<dynamic> SetupDocumentsModel()
+        {
+            dynamic result;
+
+            result = JArray.Parse(@"[
+                {
+                    ""Id"":""1"",
+                    ""Title"":""Secret cookie recipe 1"",
+                    ""Version"":""1.0""
+                },
+                {
+                    ""Id"":""2"",
+                    ""Title"":""Secret cookie recipe 2"",
+                    ""Version"":""1.0""
+                },
+            ]");
+            return result;
+        }
 	}
 }
