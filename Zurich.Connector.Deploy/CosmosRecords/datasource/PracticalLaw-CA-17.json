@@ -1,0 +1,26 @@
+{
+  "id": "17",
+  "partitionkey": "DataSourceList",
+  "name": "Practical Law CA",
+  "description": "This is connecting to Practical Law CA API ",
+  "infoURL": "",
+  "appCode": "PracticalLaw",
+  "appType": "0",
+  "locale": "CA",
+  "extraRequestContext": "",
+  "securityDefinition": {
+    "type": "oauth2",
+    "flow": "",
+    "defaultSecurityDefinition": {
+      "authorizationURL": "",
+      "authorizationPath": "",
+      "tokenURL": "",
+      "tokenPath": "",
+      "keyVaultClientId": "",
+      "keyVaultSecret": "",
+      "sendCredentialsInBody": true,
+      "grantType": "client_credentials"
+    },
+    "scopes": {}
+  }
+}

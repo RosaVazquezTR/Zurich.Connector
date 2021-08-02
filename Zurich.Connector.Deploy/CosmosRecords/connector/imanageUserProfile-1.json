@@ -8,11 +8,14 @@
         "dataSourceId": "10",
         "version": "1.0"
     },
-    "request": {
-        "endpointPath": "/api",
-        "method": "GET",
-        "parameters": []
-    },
+  "request": {
+    "endpointPath": "/api",
+    "method": "GET",
+    "parameters": [],
+    "sorting": {
+      "properties": []
+    }
+  },
     "response": {
         "schema": {
             "properties": {}

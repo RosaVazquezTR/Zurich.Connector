@@ -19,14 +19,36 @@ namespace Zurich.Connector.Data.Repositories.CosmosDocuments
         /// Description about the filter
         /// </summary>
         public string Description { get; set; }
+
         /// <summary>
-        /// Define the source of filters
+        /// Flag for Selection of filter type
         /// </summary>
-        public FilterSource Source { get; set; }
+        public string IsMultiSelect { get; set; }
+
         /// <summary>
         /// Mapping for request parameter
         /// </summary>
         public string RequestParameter { get; set; }
+
+        /// <summary>
+        /// Define the Sub filters
+        /// </summary>
+        public List<FilterList> FilterList { get; set; }
+    }
+
+        public class FilterList
+        {
+        /// <summary>
+        /// Name of the subfilter
+        /// </summary>
+        public string Name { get; set; }
+        /// <summary>
+        /// Id of the filter
+        /// </summary>
+        public string Id { get; set; }
+       
+
+
     }
     /// <summary>
     /// Define the source of filters. There can be 3 types of sources

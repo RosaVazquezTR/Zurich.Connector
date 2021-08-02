@@ -28,6 +28,10 @@ namespace Zurich.Connector.Data.Repositories.CosmosDocuments
         /// Request parameters
         /// </summary>
         public List<ConnectorRequestParameter> parameters { get; set; }
+        /// <summary>
+        /// Sorting properties
+        /// </summary>
+        public ConnectorRequestSorting sorting { get; set; }
     }
 
     /// <summary>
@@ -63,5 +67,36 @@ namespace Zurich.Connector.Data.Repositories.CosmosDocuments
         /// Tags for the related to the parameter. Ex: pagination/ sort etc.
         /// </summary>
         public List<string> tags { get; set; }
+    }
+
+    /// <summary>
+    /// ConnectorRequestSorting
+    /// </summary>
+    public class ConnectorRequestSorting
+    {
+        public List<ConnectorRequestSortingProperties> properties { get; set; }
+    }
+
+    /// <summary>
+    /// ConnectorRequestSortingProperties
+    /// </summary>
+    public class ConnectorRequestSortingProperties
+    {
+        /// <summary>
+        /// Name
+        /// </summary>
+        public string name { get; set; }
+        /// <summary>
+        /// Type
+        /// </summary>
+        public string type { get; set; }
+        /// <summary>
+        /// Element
+        /// </summary>
+        public string element { get; set; }
+        /// <summary>
+        /// Element Value
+        /// </summary>
+        public string elementValue { get; set; }
     }
 }

@@ -39,7 +39,7 @@ namespace Zurich.Connector.App.Services
         {
 			var connectorDocument = await _cosmosClientStore.GetDocument<ConnectorDocument>
 										(CosmosConstants.ConnectorContainerId, connectorId, CosmosConstants.ConnectorPartitionKey);
-			var connector = _mapper.Map<ConnectorModel>(connectorDocument);
+			 var connector = _mapper.Map<ConnectorModel>(connectorDocument);
             if (includeDataSource && connector != null)
             {
                 connector.DataSource = await GetDataSource(connectorDocument.info.dataSourceId);

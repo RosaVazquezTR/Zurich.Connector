@@ -1,0 +1,196 @@
+{
+  "id": "12",
+  "partitionkey": "ConnectorList",
+  "info": {
+    "title": "Get Search Practical law documents - US",
+    "description": "Pull Practical law documents - US",
+    "entityType": "Search",
+    "dataSourceId": "16",
+    "version": "1.0",
+    "subType": "Parent"
+  },
+  "request": {
+    "endpointPath": "https://api-test.thomsonreuters.com:443/practicallaw/v4/federatedsearch",
+    "method": "get",
+    "responseContentType": "XML",
+    "xmlArrayAttribute": "//searchResults/detail/document",
+    "parameters": [
+      {
+        "cdmName": "Query",
+        "name": "searchTerm",
+        "inClause": "Query",
+        "required": false,
+        "type": "string",
+        "defaultValue": "*"
+      },
+      {
+        "cdmName": "ResourceType",
+        "name": "ResourceType",
+        "inClause": "Query",
+        "required": false,
+        "type": "string",
+        "defaultValue": ""
+      },
+      {
+        "cdmName": "PracticeAreasIds",
+        "name": "PracticeAreasIds",
+        "inClause": "Query",
+        "required": true,
+        "type": "string",
+        "defaultValue": ""
+      },
+      {
+        "cdmName": "JurisdictionIds",
+        "name": "JurisdictionIds",
+        "inClause": "Query",
+        "required": true,
+        "type": "string",
+        "defaultValue": ""
+      },
+      {
+        "cdmName": "Locale",
+        "name": "locale",
+        "inClause": "Query",
+        "required": true,
+        "type": "string",
+        "defaultValue": "US"
+      },
+      {
+        "cdmName": "ResultSize",
+        "name": "resultsCount",
+        "inClause": "Query",
+        "required": true,
+        "type": "string",
+        "defaultValue": "25",
+        "tags": [
+          "pagination"
+        ]
+      },
+      {
+        "cdmName": "Offset",
+        "name": "resultsStartIndex",
+        "in": "body",
+        "required": true,
+        "type": "string",
+        "defaultValue": "1",
+        "tags": [
+          "pagination"
+        ]
+      },
+      {
+        "cdmName": "SortOrder",
+        "name": "SortOrder",
+        "inClause": "Query",
+        "required": true,
+        "type": "string",
+        "defaultValue": ""
+      },
+      {
+        "cdmName": "StartDate",
+        "name": "StartDate",
+        "inClause": "Query",
+        "required": true,
+        "type": "string",
+        "defaultValue": ""
+      }
+    ],
+    "sorting": {
+      "properties": [
+        {
+          "cdmName": "Date",
+          "type": "date",
+          "element": "sortOrder",
+          "elementValue": "DATE"
+        },
+        {
+          "cdmName": "Title",
+          "type": "string",
+          "element": "sortOrder",
+          "elementValue": "ARTICLE"
+        }
+      ]
+    }
+  },
+  "response": {
+    "schema": {
+      "properties": {}
+    }
+  },
+  "filters": [
+    {
+      "name": "PracticeArea",
+      "description": "",
+      "isMultiselect": "true",
+      "requestParameter": "PracticeArea",
+      "filterlist": [
+        {
+          "name": "Antitrust Litigation",
+          "id": "9-521-5538"
+        },
+        {
+          "name": "Cartels",
+          "id": "1-103-1161"
+        },
+        {
+          "name": "Competition Compliance and Dawn Raids",
+          "id": "2-103-2056"
+        },
+        {
+          "name": "General - Competition",
+          "id": "8-103-1167"
+        }
+      ]
+    },
+    {
+      "name": "Commercial",
+      "description": "Commercial",
+      "isMultiselect": "true",
+      "requestParameter": "Commercial",
+      "filterlist": [
+        {
+          "name": "Advertising and Marketing",
+          "id": "0-103-1114"
+        },
+        {
+          "name": "Agency, Distribution & Franchising",
+          "id": "8-321-0007"
+        },
+        {
+          "name": "Bribery and Corruption",
+          "id": "1-520-9254"
+        },
+        {
+          "name": "Confidentiality",
+          "id": "7-103-1304"
+        },
+        {
+          "name": "General Commercial",
+          "id": "7-379-8563"
+        }
+      ]
+    }
+  ],
+  "pagination": {
+    "available": true,
+    "paginationType": "",
+    "isZeroBasedOffset": false
+  },
+  "resultLocation": "searchResults.detail",
+  "cdmMapping": {
+    "structured": [
+      {
+        "name": "Count",
+        "type": "short",
+        "responseElement": "total",
+        "_comment": ""
+      },
+      {
+        "name": "document",
+        "type": "String",
+        "responseElement": "{13}",
+        "_comment": ""
+      }
+    ],
+    "unstructured": []
+  }
+}

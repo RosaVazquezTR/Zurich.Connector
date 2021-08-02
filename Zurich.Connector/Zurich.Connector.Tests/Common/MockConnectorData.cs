@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -39,7 +40,8 @@ namespace Zurich.Connector.Tests.Common
                             new ConnectorRequestParameterModel() { CdmName = "Query", Name = "searchTerm", DefaultValue = "*"},
                             new ConnectorRequestParameterModel() { CdmName = "Offset", Name = "resultsStartIndex", DefaultValue = "1"},
                             new ConnectorRequestParameterModel() { CdmName = "ResultSize", Name = "resultsCount", DefaultValue = "25"},
-                        }
+                        },
+                        Sorting = new ConnectorRequestSortingModel(){Properties = new List<ConnectorRequestSortingPropertiesModel>(){ }}
                     },
                     DataSource = new DataSourceModel()
                     {
@@ -71,7 +73,8 @@ namespace Zurich.Connector.Tests.Common
                             new ConnectorRequestParameterModel() { CdmName = "Query", Name = "searchTerm", DefaultValue = "*"},
                             new ConnectorRequestParameterModel() { CdmName = "Offset", Name = "resultsStartIndex", DefaultValue = "1"},
                             new ConnectorRequestParameterModel() { CdmName = "ResultSize", Name = "resultsCount", DefaultValue = "25"},
-                        }
+                        },
+                        Sorting = new ConnectorRequestSortingModel(){Properties = new List<ConnectorRequestSortingPropertiesModel>(){ }}
                     },
                     DataSource = new DataSourceModel()
                     {
@@ -80,6 +83,50 @@ namespace Zurich.Connector.Tests.Common
                         Description = "DataSource 22 desc"
                     }
                 },
+                new ConnectorModel()
+                {
+                    Id = "3",
+                    Info = new ConnectorInfoModel()
+                    {
+                        Title = "Connector3",
+                        DataSourceId = "33",
+                        Description ="Connector 3 desc",
+                        EntityType = EntityType.Search,
+                        Version = "v1"
+                    },
+                    Pagination = new PaginationModel()
+                    {
+                        Available = true,
+                        IsZeroBasedOffset = true,
+                    },
+                    Request = new ConnectorRequestModel()
+                    {
+                        Parameters = new List<ConnectorRequestParameterModel>()
+                        {
+                            new ConnectorRequestParameterModel() { CdmName = "Query", Name = "searchTerm", DefaultValue = "*"},
+                            new ConnectorRequestParameterModel() { CdmName = "Offset", Name = "resultsStartIndex", DefaultValue = "1"},
+                            new ConnectorRequestParameterModel() { CdmName = "ResultSize", Name = "resultsCount", DefaultValue = "25"},
+                        },
+                        Sorting = new ConnectorRequestSortingModel(){
+                                                                        Properties = new List<ConnectorRequestSortingPropertiesModel>()
+                                                                        { 
+                                                                            new ConnectorRequestSortingPropertiesModel()
+                                                                            {
+                                                                                 Element ="sortOrder",
+                                                                                 ElementValue="DATE",
+                                                                                 Name ="Date",
+                                                                                 Type = "date"
+                                                                            }
+                                                                        }
+                                                                    }
+                    },
+                    DataSource = new DataSourceModel()
+                    {
+                        Id = "33",
+                        Name = "DataSource33",
+                        Description = "DataSource 33 desc"
+                    }
+                }
             };
 		}
 
@@ -105,5 +152,24 @@ namespace Zurich.Connector.Tests.Common
                 },
 			};
 		}
+
+        internal static IEnumerable<dynamic> SetupDocumentsModel()
+        {
+            dynamic result;
+
+            result = JArray.Parse(@"[
+                {
+                    ""Id"":""1"",
+                    ""Title"":""Secret cookie recipe 1"",
+                    ""Version"":""1.0""
+                },
+                {
+                    ""Id"":""2"",
+                    ""Title"":""Secret cookie recipe 2"",
+                    ""Version"":""1.0""
+                },
+            ]");
+            return result;
+        }
 	}
 }

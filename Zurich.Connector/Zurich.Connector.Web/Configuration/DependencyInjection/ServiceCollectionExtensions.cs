@@ -39,16 +39,6 @@ namespace Microsoft.Extensions.DependencyInjection
 		public static void AddPartnerAppAuth(this IServiceCollection services, string tenantConnectionString, string authority, OAuthOptions oAuthOptions, MicroServiceOptions microServiceOptions)
 		{
 			services.AddSingleton(microServiceOptions);
-			//////////////////////TODO: We should check if we can get rid of this section. The AddCommonTenantServices should already be adding these
-			services.AddSingleton(oAuthOptions);
-			services.AddHttpClient(HttpClientNames.OAuth, httpClient =>
-			{
-				httpClient.DefaultRequestHeaders.Add("Accept", "application/json");
-			})
-			.AddTransientHttpErrorPolicy(policy => policy.WaitAndRetryAsync(new[] { TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(10) }));
-			services.AddScoped<IOAuthService, OAuthService>();
-			services.AddScoped<IOAuthStore, OAuthTenantStore>();
-			/////////////////////
 
 			services.AddHttpClient(HttpClientNames.HighQ, httpClient =>
             {

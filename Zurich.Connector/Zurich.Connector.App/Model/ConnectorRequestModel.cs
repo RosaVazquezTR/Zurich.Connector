@@ -32,6 +32,10 @@ namespace Zurich.Connector.App.Model
         /// Request parameters
         /// </summary>
         public List<ConnectorRequestParameterModel> Parameters { get; set; }
+        /// <summary>
+        /// Sorting properties
+        /// </summary>
+        public ConnectorRequestSortingModel Sorting { get; set; }
     }
 
     /// <summary>
@@ -68,5 +72,36 @@ namespace Zurich.Connector.App.Model
         /// </summary>
         public List<string> Tags { get; set; }
 
+    }
+
+    /// <summary>
+    /// ConnectorRequestSortingModel
+    /// </summary>
+    public class ConnectorRequestSortingModel
+    {
+       public List<ConnectorRequestSortingPropertiesModel> Properties { get; set; }
+    }
+
+    /// <summary>
+    /// ConnectorRequestSortingPropertiesModel
+    /// </summary>
+    public class ConnectorRequestSortingPropertiesModel
+    {
+        /// <summary>
+        /// Name
+        /// </summary>
+        public string Name { get; set; }
+        /// <summary>
+        /// Type
+        /// </summary>
+        public string Type { get; set; }
+        /// <summary>
+        /// Element
+        /// </summary>
+        public string Element { get; set; }
+        /// <summary>
+        /// Element Value
+        /// </summary>
+        public string ElementValue { get; set; }
     }
 }

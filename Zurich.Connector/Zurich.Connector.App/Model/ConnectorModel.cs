@@ -35,7 +35,7 @@ namespace Zurich.Connector.App.Model
         /// <summary>
         /// Filter details
         /// </summary>
-        public List<ConnectorFilterModel> Filters { get; set; }
+        public List<ConnectorsFiltersModel> Filters { get; set; }
         /// <summary>
         /// Pagination properties.
         /// </summary>

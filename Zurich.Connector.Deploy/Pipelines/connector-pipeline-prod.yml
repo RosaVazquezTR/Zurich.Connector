@@ -29,15 +29,17 @@ variables:
 
 stages:
 - stage: Build
+  pool: DCO-HighQ-Platform-P
   jobs:
     - job: 'Build'
       displayName: 'Connectors Build'
       steps:
         - checkout: self
         - checkout: ZurichDeploy
-        - template: Templates\ZurichDeploy-BuildWebAPI.yml@ZurichDeploy
+        - template: Templates\V2\ZurichDeploy-BuildWebAPI.yml@ZurichDeploy
           parameters:
             projectName: ${{ variables.projectName }}
+            azureAdClientSecret: $(azureAdClientSecret)
 - stage: ServiceNow
   pool: DCO-HighQ-Platform-P
   dependsOn:
@@ -131,6 +133,7 @@ stages:
                 parameters:
                   appInsightsName: ${{ variables.appInsightsName }}
                   connectorCosmosContainerNames: ${{ variables.connectorCosmosContainerNames }}
+                  connectorCosmosExcludedComparisonProperties: ${{ variables.connectorCosmosExcludedComparisonProperties }}
                   connectorCosmosThroughput: ${{ variables.connectorCosmosThroughput }}
                   connectorCosmosMaxThroughput: ${{ variables.connectorCosmosMaxThroughput }}
                   connectorCosmosDatabaseName: ${{ variables.connectorCosmosDatabaseName }}

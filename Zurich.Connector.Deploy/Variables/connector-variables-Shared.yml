@@ -11,6 +11,8 @@ variables:
     value: '["connector", "datasource","connectorRegistration"]'
   - name: connectorCosmosDatabaseName
     value: "connectordb"
+  - name: connectorCosmosExcludedComparisonProperties
+    value: '["_*", "createdDateTime", "ModifiedDateTime"]'
   - name: connectorCosmosName
     value: "connectorcosmos"
   - name: connectorCosmoskeyVaultPrefix
