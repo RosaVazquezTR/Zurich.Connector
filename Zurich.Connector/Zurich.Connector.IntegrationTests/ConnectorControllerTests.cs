@@ -32,7 +32,7 @@ namespace Zurich.Connector.IntegrationTests
         public async Task TestConnectorsById()
         {
             // Arrange
-            var request = "/Connectors/101";
+            var request = "/Connectors/11";
             //Act
             var response = await _client.GetAsync(request);
 
@@ -45,7 +45,6 @@ namespace Zurich.Connector.IntegrationTests
         {
             // Arrange
             var request = "/Connectors/1123";
-            // var sut = new ConnectorsController();
             //Act
             var response = Assert.ThrowsAsync<ResourceNotFoundException>(async () => await _client.GetAsync(request));
             await Task.Delay(5000);
@@ -59,7 +58,7 @@ namespace Zurich.Connector.IntegrationTests
         public async Task TestConnectorDataById_With_Statucode_OK()
         {
             // Arrange
-            var request = "/Connectors/1234/data";
+            var request = "/Connectors/1302/data";
             //Act
             var response= await _client.GetAsync(request);
 

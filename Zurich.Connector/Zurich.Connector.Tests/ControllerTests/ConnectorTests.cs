@@ -52,6 +52,27 @@ namespace Zurich.Connector.Tests.ControllerTests
 			}
 		]";
 
+		private const string StaticFilterJson = @"
+		[{
+				{
+            ""name"": ""Commercial"",
+            ""description"": ""Commercial"",
+            ""isMultiselect"": ""true"",
+            ""requestParameter"": ""Commercial"",
+            ""filterlist"": [
+                {
+                    ""name"": ""Advertising and Marketing"",
+                    ""id"": ""0-103-1114""
+
+				},
+                {
+                    ""name"": ""Agency, Distribution & Franchising"",
+                    ""id"": ""8-321-0007""
+
+				},
+                         ]
+        }";
+
 		//Intialization of test response data //
 		string connectorid = "101";
 
@@ -111,7 +132,7 @@ namespace Zurich.Connector.Tests.ControllerTests
 					new ConnectorModel()
 					{
 						Id="1",
-						Filters= new List<ConnectorFilterModel>()
+						Filters= new List<ConnectorsFiltersModel>()
 					},
 					new ConnectorModel()
 					{
@@ -154,7 +175,7 @@ namespace Zurich.Connector.Tests.ControllerTests
 								}
 							}
 						},
-						Filters= new List<ConnectorFilterModel>()
+						Filters= new List<ConnectorsFiltersModel>()
 						{
 						}
 						},
@@ -197,7 +218,7 @@ namespace Zurich.Connector.Tests.ControllerTests
 								{ Property=""}
 							}
 						},
-						Filters= new List<ConnectorFilterModel>()
+						Filters= new List<ConnectorsFiltersModel>()
 
 
 					}
@@ -290,6 +311,23 @@ namespace Zurich.Connector.Tests.ControllerTests
 
 			// ASSERT
 			await Assert.ThrowsExceptionAsync<ResourceNotFoundException>(result);
+		}
+
+		[TestMethod]
+		public async Task CallConnectorDatawithStaticFilters()
+		{
+			// ARRANGE
+			_mockConnectorservice.Setup(x => x.GetConnectorData(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<bool>())).Returns(Task.FromResult<dynamic>(StaticFilterJson));
+
+			ConnectorsController connector = CreateConnectorsController();
+
+			// ACT
+			var response = await connector.ConnectorData("fakeId", "fakeHost", null, true);
+
+			// ASSERT
+			_mockConnectorservice.Verify(x => x.GetConnectorData(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<bool>()), Times.Exactly(1));
+			var result = (ContentResult)response.Result;
+			Assert.AreEqual(StatusCodes.Status200OK, result.StatusCode);
 		}
 
 		private ConnectorsController CreateConnectorsController()

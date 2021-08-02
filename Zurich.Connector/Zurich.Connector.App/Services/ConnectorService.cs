@@ -9,10 +9,14 @@ using Zurich.Connector.App.Services;
 using Zurich.Connector.Data.DataMap;
 using Zurich.Connector.Data.Repositories;
 using System.Collections.Specialized;
+using Microsoft.Extensions.Primitives;
+using Newtonsoft.Json;
 using Zurich.Connector.Data.Repositories.CosmosDocuments;
 using System.Linq.Expressions;
 using Zurich.Connector.Data.Model;
 using Zurich.Connector.App.Services.DataSources;
+using Newtonsoft.Json.Linq;
+using Zurich.Connector.App;
 
 namespace Zurich.Connector.Data.Services
 {
@@ -85,7 +89,11 @@ namespace Zurich.Connector.Data.Services
 
             var data = await service.Get<dynamic>(connectorDocument, transferToken, mappedQueryParameters);
             data = EnrichConnectorData(connectorModel, data);
-
+            if (retrievefilters == true)
+            {
+                JToken mappingFilters = JToken.FromObject(connectorDocument.filters);
+                data[Constants.filters] = mappingFilters;
+            }
             return data;
         }
 
