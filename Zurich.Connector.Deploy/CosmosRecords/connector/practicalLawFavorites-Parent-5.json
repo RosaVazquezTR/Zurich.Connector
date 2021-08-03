@@ -4,18 +4,18 @@
     "info": {
         "title": "Get Research Favorites",
         "description": "Pull Research Favorite Groups from PL",
-        "entityType": "History",
+        "entityType": "Favorites",
         "dataSourceId": "12",
         "version": "1.0"
     },
-  "request": {
-    "endpointPath": "/Micro/FavoriteAndFrequentlyUsed",
-    "method": "get",
-    "parameters": [],
-    "sorting": {
-      "properties": []
-    }
-  },
+    "request": {
+        "endpointPath": "/Micro/FavoriteAndFrequentlyUsed",
+        "method": "get",
+        "parameters": [],
+		"sorting": {
+		  "properties": []
+		}
+    },
     "response": {
         "schema": {
             "properties": {}

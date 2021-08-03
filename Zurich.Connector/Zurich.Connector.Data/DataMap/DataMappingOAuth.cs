@@ -41,7 +41,7 @@ namespace Zurich.Connector.Data.DataMap
                 ApiInformation apiInfo = new ApiInformation()
                 {
                     AppCode = connector.dataSource.appCode,
-                    HostName = connector.hostName,
+                    HostName = string.IsNullOrEmpty(connector.hostName) ? connector.dataSource.domain : connector.hostName,
                     UrlPath = connector.request.endpointPath,
                     AuthHeader = connector.dataSource.securityDefinition.defaultSecurityDefinition.authorizationHeader,
                     Token = token

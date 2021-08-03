@@ -4,6 +4,7 @@
     "name": "Microsoft Office 365",
     "description": "This is connecting to Graph API ",
     "appcode": "MsGraph",
+    "domain": "graph.microsoft.com",
     "infoURL": "",
     "extraRequestContext": "",
     "securityDefinition": {

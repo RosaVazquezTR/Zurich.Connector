@@ -29,6 +29,10 @@ namespace Zurich.Connector.App.Model
         /// </summary>
         public string AppCode { get; set; }
         /// <summary>
+        /// The domain of the datasource for API calls
+        /// </summary>
+        public string Domain { get; set; }
+        /// <summary>
         /// Application Type.
         /// </summary>
         public OAuthApplicationType? appType { get; set; }

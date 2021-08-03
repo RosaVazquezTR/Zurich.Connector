@@ -1,0 +1,44 @@
+{
+    "id": "15",
+    "partitionkey": "ConnectorList",
+    "info": {
+        "title": "Get Search",
+        "description": "Get Search Results from MS Graph",
+        "entityType": "Search",
+        "dataSourceId": "13",
+        "version": "1.0"
+    },
+    "request": {},
+    "response": {},
+    "filters": [],
+    "resultLocation": "",
+    "cdmMapping": {
+        "structured": [
+            {
+                "name": "Abstract",
+                "type": "String",
+                "responseElement": "",
+                "_comment": ""
+            },
+            {
+                "name": "Title",
+                "type": "string",
+                "responseElement": "resource.name",
+                "_comment": ""
+            },
+            {
+                "name": "ResourceType",
+                "type": "string",
+                "responseElement": "type",
+                "_comment": ""
+            },
+            {
+                "name": "PublicationDate",
+                "type": "string",
+                "responseElement": "resource.lastModifiedDateTime",
+                "_comment": ""
+            }
+        ],
+        "unstructured": []
+    }
+}
