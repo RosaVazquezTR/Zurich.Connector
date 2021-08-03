@@ -49,6 +49,12 @@ namespace Zurich.Connector.Data.Repositories.CosmosDocuments
         public string appCode { get; set; }
 
         /// <summary>
+        /// The domain for the data sorce
+        /// TODO: eventually this will come from oAuthService
+        /// </summary>
+        public string domain { get; set; }
+
+        /// <summary>
         /// Application Type.
         /// </summary>
         public OAuthApplicationType? appType { get; set; }

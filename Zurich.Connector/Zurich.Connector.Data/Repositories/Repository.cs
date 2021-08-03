@@ -17,26 +17,29 @@ namespace Zurich.Connector.Data.Repositories
 	/// </summary>
 	public interface IRepository
 	{
-		/// <summary>
-		/// Makes a GET call
-		/// </summary>
-		/// <param name="apiInformation">Holds information around how to make the api call</param>
-		/// <returns>a string</returns>
-		Task<string> Get(ApiInformation apiInformation, NameValueCollection query = null);
+        /// <summary>
+        /// Makes a GET call
+        /// </summary>
+        /// <param name="apiInformation">Holds information around how to make the api call</param>
+        /// <param name="parameters">query parameters for the call</param>
+        /// <returns>a string</returns>
+        Task<string> Get(ApiInformation apiInformation, NameValueCollection query = null);
 
 		/// <summary>
 		/// Makes a POST call
 		/// </summary>
 		/// <param name="apiInformation">Holds information around how to make the api call</param>
+        /// <param name="postBody">string post body</param>
+        /// <param name="parameters">query parameters for the call</param>
 		/// <returns>a string</returns>
-		Task<string> Post(ApiInformation apiInformation);
+		Task<string> Post(ApiInformation apiInformation, string postBody, NameValueCollection parameters = null);
 
-		/// <summary>
-		/// Makes a PUT call
-		/// </summary>
-		/// <param name="apiInformation">Holds information around how to make the api call</param>
-		/// <returns>a string</returns>
-		Task<string> Put(ApiInformation apiInformation);
+        /// <summary>
+        /// Makes a PUT call
+        /// </summary>
+        /// <param name="apiInformation">Holds information around how to make the api call</param>
+        /// <returns>a string</returns>
+        Task<string> Put(ApiInformation apiInformation);
 
 		/// <summary>
 		/// Makes a DELETE call
@@ -58,66 +61,89 @@ namespace Zurich.Connector.Data.Repositories
 		}
 
 		public async Task<string> Get(ApiInformation apiInformation, NameValueCollection parameters)
+        {
+            UriBuilder builder = CreateUriBuilder(apiInformation, parameters);
+
+            using (var requestMessage = new HttpRequestMessage(HttpMethod.Get, builder.ToString()))
+            {
+                SetupRequestMessage(apiInformation, requestMessage);
+
+                return await RetrieveResponse(apiInformation, requestMessage);
+            }
+        }
+
+        public async Task<string> Post(ApiInformation apiInformation, string postBody, NameValueCollection parameters)
 		{
 
-			// TODO: We need this to parse a query string from the relative url. 
-			// Eventually the query params should be passed in and this could be removed.
-			var index = apiInformation.UrlPath.IndexOf("?");
-			string relativePath = index > 0 ? apiInformation.UrlPath.Substring(0, index) : apiInformation.UrlPath;
-			string query = index > 0 ? apiInformation.UrlPath.Substring(index) : string.Empty;
-			NameValueCollection paramCollection = HttpUtility.ParseQueryString(query);
-			if (parameters != null)
-				paramCollection.Add(parameters);
-			string scheme = relativePath.Contains("http") ? "" : "https";
+            UriBuilder builder = CreateUriBuilder(apiInformation, parameters);
 
-			UriBuilder builder = new UriBuilder(scheme, apiInformation.HostName, -1, relativePath);
-			builder.Query = paramCollection.ToString();
+            using (var requestMessage = new HttpRequestMessage(HttpMethod.Post, builder.ToString()))
+            {
+                SetupRequestMessage(apiInformation, requestMessage);
 
-			using (var requestMessage = new HttpRequestMessage(HttpMethod.Get, builder.ToString()))
-			{
-				if (!string.IsNullOrWhiteSpace(apiInformation.Token?.access_token))
-				{
-					if (string.IsNullOrEmpty(apiInformation.AuthHeader))
-					{
-						requestMessage.Headers.Authorization = new AuthenticationHeaderValue(apiInformation.Token.token_type, apiInformation.Token.access_token);
-					}
-					else
-					{
-						requestMessage.Headers.Add(apiInformation.AuthHeader, apiInformation.Token.access_token);
-					}
-				}
-                requestMessage.Headers.Add("accept", "application/json");
+                requestMessage.Content = new StringContent(postBody, System.Text.Encoding.UTF8, "application/json");
 
-				var result = await _httpClient.SendAsync(requestMessage);
+                return await RetrieveResponse(apiInformation, requestMessage);
+            }
+        }
 
-				if (result.IsSuccessStatusCode)
-				{
-					var requestContent = await result.Content.ReadAsStringAsync();
-					return requestContent;
-				}
-				else
-				{
-					_logger.LogError($"{result.StatusCode} Non Successful response from {apiInformation.AppCode}: {requestMessage.RequestUri.Host}");
-					throw new ApplicationException($"Non Successful Response from {apiInformation.AppCode}");
-				}
+        public async Task<string> Put(ApiInformation apiInformation)
+        {
+            throw new NotImplementedException("Put not currently implemented");
+        }
 
-				return string.Empty;
+        public async Task<string> Delete(ApiInformation apiInformation)
+        {
+            throw new NotImplementedException("Delete not currently implemented");
+        }
+
+        private static UriBuilder CreateUriBuilder(ApiInformation apiInformation, NameValueCollection parameters)
+        {
+            // TODO: We need this to parse a query string from the relative url. 
+            // Eventually the query params should be passed in and this could be removed.
+            var index = apiInformation.UrlPath.IndexOf("?");
+            string relativePath = index > 0 ? apiInformation.UrlPath.Substring(0, index) : apiInformation.UrlPath;
+            string query = index > 0 ? apiInformation.UrlPath.Substring(index) : string.Empty;
+            NameValueCollection paramCollection = HttpUtility.ParseQueryString(query);
+            if (parameters != null)
+                paramCollection.Add(parameters);
+            string scheme = relativePath.Contains("http") ? "" : "https";
+
+            UriBuilder builder = new UriBuilder(scheme, apiInformation.HostName, -1, relativePath);
+            builder.Query = paramCollection.ToString();
+            return builder;
+        }
+
+        private void SetupRequestMessage(ApiInformation apiInformation, HttpRequestMessage requestMessage)
+        {
+            if (!string.IsNullOrWhiteSpace(apiInformation.Token?.access_token))
+            {
+                if (string.IsNullOrEmpty(apiInformation.AuthHeader))
+                {
+                    requestMessage.Headers.Authorization = new AuthenticationHeaderValue(apiInformation.Token.token_type, apiInformation.Token.access_token);
+                }
+                else
+                {
+                    requestMessage.Headers.Add(apiInformation.AuthHeader, apiInformation.Token.access_token);
+                }
 			}
+			requestMessage.Headers.Add("accept", "application/json");
 		}
 
-		public async Task<string> Post(ApiInformation apiInformation)
-		{
-			throw new NotImplementedException("Post not currently implemented");
-		}
+        private async Task<string> RetrieveResponse(ApiInformation apiInformation, HttpRequestMessage requestMessage)
+        {
+            var result = await _httpClient.SendAsync(requestMessage);
 
-		public async Task<string> Put(ApiInformation apiInformation)
-		{
-			throw new NotImplementedException("Put not currently implemented");
-		}
-
-		public async Task<string> Delete(ApiInformation apiInformation)
-		{
-			throw new NotImplementedException("Delete not currently implemented");
-		}
+            if (result.IsSuccessStatusCode)
+            {
+                var requestContent = await result.Content.ReadAsStringAsync();
+                return requestContent;
+            }
+            else
+            {
+                _logger.LogError($"{result.StatusCode} Non Successful response from {apiInformation.AppCode}: {requestMessage.RequestUri.Host}");
+                throw new ApplicationException($"Non Successful Response from {apiInformation.AppCode}");
+            }
+        }
 	}
 }

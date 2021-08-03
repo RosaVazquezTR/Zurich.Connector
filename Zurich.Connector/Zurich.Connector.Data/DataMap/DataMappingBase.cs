@@ -18,6 +18,7 @@ using Zurich.Connector.Data.Repositories.CosmosDocuments;
 using Zurich.Common;
 using Zurich.Common.Repositories.Cosmos;
 using System.Xml;
+using System.Dynamic;
 
 namespace Zurich.Connector.Data.DataMap
 {
@@ -40,7 +41,18 @@ namespace Zurich.Connector.Data.DataMap
 
 		protected async Task<T> GetFromRepo<T>(ApiInformation apiInfo, ConnectorDocument dataTypeInformation, NameValueCollection query = null)
 		{
-			var response = await _repository.Get(apiInfo, query);
+			string response;
+
+			switch (dataTypeInformation.request.method)
+			{
+				case "POST":
+					string postBody = CreatePostBody(dataTypeInformation, query);
+					response = await _repository.Post(apiInfo, postBody);
+					break;
+				default: //GET
+					response = await _repository.Get(apiInfo, query);
+					break;
+			}
 
 			if (!string.IsNullOrWhiteSpace(response))
 			{
@@ -124,6 +136,11 @@ namespace Zurich.Connector.Data.DataMap
 					string[] resultsLocation = resultLocation.Split(".");
 					foreach (string location in resultsLocation)
 					{
+						if(jsonResponse is JArray)
+                        {
+							// Default to first value in array at the moment if passed in the location
+							jsonResponse = jsonResponse.First();
+						}
 						jsonResponse = jsonResponse[location];
 					}
 				}
@@ -281,5 +298,59 @@ namespace Zurich.Connector.Data.DataMap
 
 			return connectorDocument;
 		}
+
+		public virtual string CreatePostBody(ConnectorDocument connectorDocument, NameValueCollection parameters)
+		{
+			var requestMappingParameters = connectorDocument?.request?.parameters;
+			if (requestMappingParameters == null)
+			{
+				return null;
+			}
+
+			JContainer JsonRequest = new JObject();
+			var settings = new JsonMergeSettings { MergeArrayHandling = MergeArrayHandling.Merge };
+
+			var neededParams = requestMappingParameters.Where(x => parameters.AllKeys.Contains(x.name)).Select(y => new PostRequestParameter(y) { ParamValue = parameters[y.name] });
+			foreach (var parameter in neededParams)
+            {
+				JTokenWriter writer = SetupPostJWriter(parameter);
+				JsonRequest.Merge(writer.Token, settings);
+			}
+			return JsonRequest.ToString(Newtonsoft.Json.Formatting.None);
+		}
+
+		private JTokenWriter SetupPostJWriter(PostRequestParameter param)
+		{
+			JTokenWriter writer = new JTokenWriter();
+			var parts = param.name.Split('.');
+			WriteJsonObject(writer, parts, param.ParamValue);
+			return writer;
+		}
+
+		private void WriteJsonObject(JTokenWriter writer, string[] paramParts, string value)
+        {
+			var paramPart = paramParts.First();
+			var isArray = paramPart == "[]";
+
+			if (isArray)
+			{
+				writer.WriteStartArray();
+			}
+			else
+			{
+				writer.WriteStartObject();
+				writer.WritePropertyName(paramPart);
+			}
+
+			if (paramParts.Count() != 1)
+				WriteJsonObject(writer, paramParts.Skip(1).ToArray(), value);
+			else
+				writer.WriteValue(value);
+
+			if (isArray)
+				writer.WriteEndArray();
+			else
+				writer.WriteEndObject();
+        }
 	}
 }
