@@ -30,6 +30,9 @@ variables:
 - template: ../Variables/connector-variables-Shared.yml   
 - template: ../Variables/connector-variables-QA.yml
 
+# build number in format of Zurich-Connector.dev.20200204.1
+name: $(BuildDefinitionName).$(SourceBranchName).$(Date:yyyyMMdd)$(Rev:.r)
+
 stages:
 - stage: Build
   pool: DCO-HighQ-Platform-N
