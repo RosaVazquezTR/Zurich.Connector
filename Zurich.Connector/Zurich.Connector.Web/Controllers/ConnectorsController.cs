@@ -165,7 +165,7 @@ namespace Zurich.Connector.Web.Controllers
             {
                 return await Task.FromResult(StatusCode((int)HttpStatusCode.BadRequest));
             }
-            await _registrationService.RemoveDataSource(id);
+            await _registrationService.RemoveUserConnector(id);
             return Ok(HttpStatusCode.OK);
         }
 

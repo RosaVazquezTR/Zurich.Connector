@@ -17,7 +17,7 @@ namespace Zurich.Connector.App.Services
         /// <summary>
         /// Remove user from cosmosdb
         /// </summary>
-        Task RemoveDataSource(string id);
+        Task RemoveUserConnector(string connectorId);
     }
 
     public class RegistrationService : IRegistrationService
@@ -45,9 +45,9 @@ namespace Zurich.Connector.App.Services
             await _cosmosService.StoreConnectorRegistration(cosmosDocument);
         }
 
-        public async Task RemoveDataSource(string id)
+        public async Task RemoveUserConnector(string connectorId)
         {
-            await _cosmosService.DeleteConnectorAsync(id, _sessionAccesor.UserId.ToString());
+            await _cosmosService.DeleteConnectorAsync(connectorId, _sessionAccesor.UserId.ToString());
         }
     }
 }
