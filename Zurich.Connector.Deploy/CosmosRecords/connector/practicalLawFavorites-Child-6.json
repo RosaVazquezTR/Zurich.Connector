@@ -24,26 +24,32 @@
     "resultLocation": "list",
     "filters": [],
     "cdmMapping": {
-        "structured": [
-            {
-                "name": "Name",
-                "type": "string",
-                "responseElement": "name",
-                "_comment": ""
-            },
-            {
-                "name": "WebLink",
-                "type": "string",
-                "responseElement": "url",
-                "_comment": ""
-            },
-            {
-                "name": "Valid",
-                "type": "string",
-                "responseElement": "valid",
-                "_comment": ""
-            }
-        ],
+      "structured": [
+        {
+          "name": "Name",
+          "type": "string",
+          "responseElement": "name",
+          "_comment": ""
+        },
+        {
+          "name": "WebLink",
+          "type": "string",
+          "responseElement": "url",
+          "_comment": ""
+        },
+        {
+          "name": "Valid",
+          "type": "string",
+          "responseElement": "valid",
+          "_comment": ""
+        },
+        {
+          "name": "Name",
+          "type": "string",
+          "responseElement": "displayName",
+          "_comment": ""
+        }
+      ],
         "unstructured": []
     }
 }
