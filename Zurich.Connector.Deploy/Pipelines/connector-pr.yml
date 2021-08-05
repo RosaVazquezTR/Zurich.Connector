@@ -18,6 +18,9 @@ variables:
   value: 'Release'
 - template: ../Variables/connector-variables-Shared.yml   
 
+# build number in format of Zurich-Connector.dev.20200204.1
+name: $(BuildDefinitionName).$(SourceBranchName).$(Date:yyyyMMdd)$(Rev:.r)
+
 stages:
 - stage: Build
   jobs:
