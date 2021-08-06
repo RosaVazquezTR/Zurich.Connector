@@ -158,7 +158,7 @@ namespace Zurich.Connector.Web.Controllers
             }
         }
 
-        [HttpDelete("{id}/user")]
+        [HttpDelete("{dataSourceId}")]
         public async Task<ActionResult> DeleteConnectorAsync(string id)
         {
             if (String.IsNullOrEmpty(id))
