@@ -21,7 +21,8 @@ namespace Zurich.Connector.App.Model
         /// RegistrationMode is optional parameter to filter by specific registration mode for the connectors.
         /// e.g. Registered would return all connectors that are registered for the user.
         /// </summary>
-        public List<RegistrationEntityMode> RegistrationModes { get; set; }
+        // TODO - Enable registration mode filter
+        //public List<RegistrationEntityMode> RegistrationModes { get; set; }
 
         /// <summary>
         /// DataSource is optional parameter to filter by specific data source.

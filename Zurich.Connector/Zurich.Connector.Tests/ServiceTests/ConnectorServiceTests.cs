@@ -89,11 +89,13 @@ namespace Zurich.Connector.Tests.ServiceTests
 			// ARRANGE
 			var testConnections = MockConnectorData.SetupConnectorModel();
 			var testConnectionsList = MockConnectorData.SetupConnectorModel().ToList();
+
 			var testDataSourceIds = testConnections.Select(t => t.Info.DataSourceId).Distinct().ToList();
 			var testDataSources = MockConnectorData.SetupDataSourceModel().Where(t => testDataSourceIds.Contains(t.Id));
 			var testDataSourcesList = testDataSources.ToList();
+
 			ConnectorFilterModel filters = new ConnectorFilterModel();
-			_mockCosmosService.Setup(x => x.GetConnectors(true, null)).Returns(Task.FromResult(testConnections));
+			_mockCosmosService.Setup(x => x.GetConnectors(true, It.IsAny<Expression<Func<ConnectorDocument, bool>>>())).Returns(Task.FromResult(testConnections));
 
 			Expression<Func<DataSourceDocument, bool>> dsCondition = dataSources => testDataSourceIds.Contains(dataSources.Id);
 			_mockCosmosService.Setup(x => x.GetDataSources(It.IsAny<Expression<Func<DataSourceDocument, bool>>>())).Returns(Task.FromResult(testDataSources));
@@ -105,7 +107,7 @@ namespace Zurich.Connector.Tests.ServiceTests
 			var connectors = await service.GetConnectors(filters);
 
 			// ASSERT
-			_mockCosmosService.Verify(x => x.GetConnectors(true, null), Times.Once());
+			_mockCosmosService.Verify(x => x.GetConnectors(true, It.IsAny<Expression<Func<ConnectorDocument, bool>>>()), Times.Once());
 			Assert.IsNotNull(connectors);
 			Assert.AreEqual(MockConnectorData.SetupConnectorModel().ToList().Count, connectors.Count);
 			Assert.AreEqual(testConnectionsList[0].Id, connectors[0].Id);

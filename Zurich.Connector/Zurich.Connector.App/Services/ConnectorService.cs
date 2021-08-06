@@ -106,23 +106,28 @@ namespace Zurich.Connector.Data.Services
         {
             try
             {
-                Expression<Func<ConnectorDocument, bool>> condition = null;
-
+                bool isEntityTypeFilter = false;
+                bool isDataSourceFilter = false;
+                IEnumerable<string> entityTypeFilter = Enumerable.Empty<string>();
+                IEnumerable<string> dataSourceFilter = Enumerable.Empty<string>();
                 if (filters?.EntityTypes?.Count > 0)
                 {
-                    var entityTypeFilter = filters.EntityTypes.Select(t => t.ToString());
-                    condition = connector => entityTypeFilter.Contains(connector.info.entityType.ToString());
+                    isEntityTypeFilter = true;
+                    entityTypeFilter = filters.EntityTypes.Select(t => t.ToString());
                 }
 
                 if (filters?.DataSources?.Count > 0)
                 {
-                    condition = connector => filters.DataSources.Contains(connector.info.dataSourceId);
+                    isDataSourceFilter = true;
+                    dataSourceFilter = filters.DataSources;
                 }
+                //TODO: Implement registration mode filtering here.
+                //if (filters?.RegistrationModes?.Count > 0)
+                //{
+                //}
 
-                if (filters?.RegistrationModes?.Count > 0)
-                {
-                    //TODO: Implement registration mode filtering here.
-                }
+                Expression<Func<ConnectorDocument, bool>> condition = connector => (isEntityTypeFilter == false || entityTypeFilter.Contains(connector.info.entityType.ToString())) && 
+                                         (isDataSourceFilter == false || dataSourceFilter.Contains(connector.info.dataSourceId));
 
                 var connectors = await _cosmosService.GetConnectors(true, condition);
 
