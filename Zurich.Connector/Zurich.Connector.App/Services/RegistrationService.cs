@@ -47,7 +47,7 @@ namespace Zurich.Connector.App.Services
 
         public async Task RemoveUserConnector(string connectorId)
         {
-            await _cosmosService.DeleteConnectorAsync(connectorId, _sessionAccesor.UserId.ToString());
+            await _cosmosService.RemoveConnectorRegistration(connectorId, _sessionAccesor.UserId.ToString());
         }
     }
 }

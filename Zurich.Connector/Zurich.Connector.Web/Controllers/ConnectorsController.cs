@@ -159,7 +159,7 @@ namespace Zurich.Connector.Web.Controllers
         }
 
         [HttpDelete("{id}/user")]
-        public async Task<ActionResult<ConnectorRegistrationViewModel>> DeleteConnectorAsync(string id)
+        public async Task<ActionResult> DeleteConnectorAsync(string id)
         {
             if (String.IsNullOrEmpty(id))
             {
