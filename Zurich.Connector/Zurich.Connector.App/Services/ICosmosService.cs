@@ -54,7 +54,7 @@ namespace Zurich.Connector.App.Services
 		/// <summary>
 		/// delete data  from Cosmos by ID
 		/// </summary>
-		public Task DeleteConnectorAsync(string connectorId, string partitionId);
+		public Task DeleteConnectorAsync(string id, string partitionId);
 
 	}
 }
