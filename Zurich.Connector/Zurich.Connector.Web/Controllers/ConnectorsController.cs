@@ -158,14 +158,14 @@ namespace Zurich.Connector.Web.Controllers
             }
         }
 
-        [HttpDelete("{dataSourceId}")]
-        public async Task<ActionResult<ConnectorRegistrationViewModel>> DeleteConnectorAsync(string dataSourceId)
+        [HttpDelete("{id}/user")]
+        public async Task<ActionResult<ConnectorRegistrationViewModel>> DeleteConnectorAsync(string id)
         {
-            if (String.IsNullOrEmpty(dataSourceId))
+            if (String.IsNullOrEmpty(id))
             {
                 return await Task.FromResult(StatusCode((int)HttpStatusCode.BadRequest));
             }
-            await _registrationService.RemoveDataSource(dataSourceId);
+            await _registrationService.RemoveUserConnector(id);
             return Ok(HttpStatusCode.OK);
         }
 

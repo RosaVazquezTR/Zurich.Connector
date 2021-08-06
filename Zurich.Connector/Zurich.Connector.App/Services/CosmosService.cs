@@ -121,9 +121,9 @@ namespace Zurich.Connector.App.Services
 		/// <summary>
 		/// delete data  from Cosmos by ID
 		/// </summary>
-		public async Task DeleteConnectorAsync(string id, string partitionId)
+		public async Task DeleteConnectorAsync(string connectorId, string partitionId)
 		{
-			await _cosmosClientStore.DeleteDocument<ConnectorRegistrationDocument>(CosmosConstants.ConnectorRegistrationContainerId, id, partitionId);
+			await _cosmosClientStore.DeleteDocument<ConnectorRegistrationDocument>(CosmosConstants.ConnectorRegistrationContainerId, connectorId, partitionId);
 		}
 
 	}
