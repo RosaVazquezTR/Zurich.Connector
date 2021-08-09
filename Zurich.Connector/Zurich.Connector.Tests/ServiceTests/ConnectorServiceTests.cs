@@ -195,6 +195,27 @@ namespace Zurich.Connector.Tests.ServiceTests
 		}
 
 		[TestMethod]
+		public async Task CallMapQueryParametersWithODataParams()
+		{
+			// ARRANGE
+			var cdmQueryParameters = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase) { 
+				{ "ResultSize", "5" },
+				{ "doctypes", "video,word,excel" }	
+			};
+			var connector = MockConnectorData.SetupConnectorModel().Where(t => t.Id == "4").FirstOrDefault();
+
+			ConnectorService service = new ConnectorService(_mockDataMapping.Object, _mockDataMappingFactory.Object, _mockDataMappingRepo.Object, null, _mapper, _mockCosmosService.Object, _mockdataMappingService.Object,
+				_mockDataSourceOperationsFactory.Object);
+
+			// ACT
+			var mappedResult = service.MapQueryParametersFromDB(cdmQueryParameters, connector);
+
+			// ASSERT
+			Assert.AreEqual("(resourceVisualization/type eq 'video' or resourceVisualization/type eq 'word' or resourceVisualization/type eq 'excel') and (referenece/type eq 'testValue')", mappedResult["$filter"]);
+			Assert.AreEqual("5", mappedResult["$top"]);
+		}
+
+		[TestMethod]
 		public async Task CallGetConnectorsWithFilters()
 		{
 			// ARRANGE

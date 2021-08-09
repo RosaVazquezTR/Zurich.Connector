@@ -17,6 +17,7 @@ using Zurich.Connector.Data.Model;
 using Zurich.Connector.App.Services.DataSources;
 using Newtonsoft.Json.Linq;
 using Zurich.Connector.App;
+using Zurich.Connector.App.Utils;
 
 namespace Zurich.Connector.Data.Services
 {
@@ -161,6 +162,7 @@ namespace Zurich.Connector.Data.Services
                 queryParameters = (from param in cdmQueryParameters
                                                   join requestParam in connectorModel.Request?.Parameters
                                                   on param.Key.ToString().ToLower() equals requestParam.CdmName.ToLower()
+                                                  where requestParam.InClause != ODataConstants.OData
                                                   select new { name = requestParam.Name, value = param.Value.ToString() }).ToDictionary(c => c.name, c=> c.value);
 
                 sortParameters = (from param in cdmQueryParameters
@@ -169,10 +171,11 @@ namespace Zurich.Connector.Data.Services
                                   select new { name = requestParam.Element, value = requestParam.ElementValue.ToString() })
                                   .ToDictionary(c => c.name, c => c.value);
             }
+            if (ODataHandler.HasODataParams(connectorModel))
+                ODataHandler.BuildQueryParams(cdmQueryParameters, connectorModel).ToList().ForEach(param => queryParameters.Add(param.Key, param.Value));
 
             // Add default parameters if not present in the request. ex: locale, ResultSize etc
-            var defaultParameters = connectorModel.Request?.Parameters.Where(t =>
-                                 !String.IsNullOrWhiteSpace(t.DefaultValue) && !queryParameters.ContainsKey(t.Name))
+            var defaultParameters = connectorModel.Request?.Parameters.Where(t => DefaultParametersCheck(t, queryParameters))
                                 .ToDictionary(c => c.Name, c => c.DefaultValue);
 
             var allParameters = defaultParameters.Concat(queryParameters).Concat(sortParameters);
@@ -183,6 +186,13 @@ namespace Zurich.Connector.Data.Services
             }
 
             return modifiedQueryParameters;
+        }
+
+        private bool DefaultParametersCheck(ConnectorRequestParameterModel request, Dictionary<string, string> queryParameters)
+        {
+            return !String.IsNullOrWhiteSpace(request.DefaultValue) 
+                && !queryParameters.ContainsKey(request.Name) 
+                && request.InClause != ODataConstants.OData;
         }
 
         private Dictionary<string, string> SetupPagination(ConnectorModel connectorModel, Dictionary<string, string> cdmQueryParameters)

@@ -55,9 +55,13 @@ namespace Zurich.Connector.Web.Models
         /// </summary>
         public object DefaultValue { get; set; }
         /// <summary>
-        /// Name of querys tring parameter in request
+        /// Name of querys string parameter in request
         /// </summary>
         public string CdmName { get; set; }
+        /// <summary>
+        /// Key being used in Request param. Currently only used with OData.
+        /// </summary>
+        public string Key { get; set; }
     }
 
     /// <summary>

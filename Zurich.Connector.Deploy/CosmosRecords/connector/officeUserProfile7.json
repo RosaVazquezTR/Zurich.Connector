@@ -1,0 +1,55 @@
+{
+    "id": "7",
+    "partitionkey": "ConnectorList",
+    "info": {
+        "title": "Get user profile from Microsoft Office",
+        "description": "Get user profile from  Microsoft Office",
+        "entityType": "UserProfile",
+        "dataSourceId": "13",
+        "version": "1.0"
+    },
+    "request": {
+        "endpointPath": "/v1.0/me",
+        "method": "GET",
+        "parameters": [],
+        "sorting": {
+            "properties": []
+        }
+    },
+    "response": {
+        "schema": {
+            "properties": {}
+        }
+    },
+    "resultLocation": "",
+    "filters": [],
+    "cdmMapping": {
+        "structured": [
+            {
+                "name": "Name",
+                "type": "string",
+                "responseElement": "displayName",
+                "_comment": ""
+            },
+            {
+                "name": "Id",
+                "type": "string",
+                "responseElement": "id",
+                "_comment": ""
+            },
+            {
+                "name": "UserName",
+                "type": "string",
+                "responseElement": "userPrincipalName",
+                "_comment": ""
+            },
+            {
+                "name": "Email",
+                "type": "string",
+                "responseElement": "mail",
+                "_comment": ""
+            }
+        ],
+        "unstructured": []
+    }
+}
