@@ -46,9 +46,9 @@
         "_comment": ""
       },
       {
-        "name": "PublicationDate",
+        "name": "LastModifiedDateTime",
         "type": "string",
-        "responseElement": "publicationDate",
+        "responseElement": "PublicationDate",
         "_comment": ""
       },
       {
