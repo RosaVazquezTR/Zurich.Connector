@@ -101,6 +101,6 @@ namespace Zurich.Connector.App.Model
         /// <summary>
         /// Offset base. It will be true if the offset base is 0.
         /// </summary>
-        public bool IsZeroBasedOffset { get; set; }
+        public bool? IsZeroBasedOffset { get; set; }
     }
 }

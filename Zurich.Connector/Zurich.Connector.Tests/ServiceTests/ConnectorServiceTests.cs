@@ -135,11 +135,35 @@ namespace Zurich.Connector.Tests.ServiceTests
 		}
 
 		[TestMethod]
-		public async Task CallMapQueryParametersFromDBWithZeroOffsetBasedPagination()
+		public void CallMapQueryParametersFromDBWithZeroOffsetBasedPagination()
+		{
+			TestPagination(pagination => pagination.IsZeroBasedOffset = true, 0);
+		}
+
+		[TestMethod]
+		public void CallMapQueryParametersFromDBWithOneOffsetBasedPagination()
+		{
+			TestPagination(pagination => pagination.IsZeroBasedOffset = false, 1);
+		}
+
+		[TestMethod]
+		public void CallMapQueryParametersFromDBWithNullPagination()
+		{
+			TestPagination(pagination => pagination.IsZeroBasedOffset = null, 0);
+		}
+
+		[TestMethod]
+		public void CallMapQueryParametersFromDBWithDefaultToZeroOffsetBasedPagination()
+		{
+			TestPagination(pagination => pagination = null, 0);
+		}
+
+		private void TestPagination(Action<PaginationModel> arrangePagination, int expectedResult)
 		{
 			// ARRANGE
-			var cdmQueryParameters = new Dictionary<string, string>() { { "Offset", "1" } };
+			var cdmQueryParameters = new Dictionary<string, string>() { { "Offset", "0" } };
 			var connector = MockConnectorData.SetupConnectorModel().Where(t => t.Id == "2").FirstOrDefault();
+			arrangePagination(connector.Pagination);
 
 			ConnectorService service = new ConnectorService(_mockDataMapping.Object, _mockDataMappingFactory.Object, _mockDataMappingRepo.Object, null, _mapper, _mockCosmosService.Object, _mockdataMappingService.Object,
 				_mockDataSourceOperationsFactory.Object);
@@ -149,7 +173,7 @@ namespace Zurich.Connector.Tests.ServiceTests
 
 			// ASSERT
 			Assert.AreEqual(mappedResult["searchTerm"], "*");
-			Assert.AreEqual(mappedResult["resultsStartIndex"], "0");
+			Assert.AreEqual(mappedResult["resultsStartIndex"], expectedResult.ToString());
 			Assert.AreEqual(mappedResult["resultsCount"], "25");
 		}
 

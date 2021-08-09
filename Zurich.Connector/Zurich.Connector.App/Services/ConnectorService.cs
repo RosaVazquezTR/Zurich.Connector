@@ -188,9 +188,11 @@ namespace Zurich.Connector.Data.Services
         private Dictionary<string, string> SetupPagination(ConnectorModel connectorModel, Dictionary<string, string> cdmQueryParameters)
         {
             // Ex: Office 365 uses 0 based offset numbering.
-            if (connectorModel.Pagination?.IsZeroBasedOffset == true && cdmQueryParameters.ContainsKey("Offset"))
+            if (connectorModel.Pagination?.IsZeroBasedOffset.HasValue == true && 
+                connectorModel.Pagination?.IsZeroBasedOffset == false && 
+                cdmQueryParameters.ContainsKey("Offset"))
             {
-                cdmQueryParameters["Offset"] = (int.Parse(cdmQueryParameters["Offset"]) - 1).ToString();
+                cdmQueryParameters["Offset"] = (int.Parse(cdmQueryParameters["Offset"]) + 1).ToString();
             }
             return cdmQueryParameters;
         }
