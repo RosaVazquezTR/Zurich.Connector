@@ -11,13 +11,13 @@
     "request": {},
     "response": {},
     "filters": [],
-    "resultLocation": "",
+    "resultLocation": "hits",
     "cdmMapping": {
         "structured": [
             {
                 "name": "Abstract",
                 "type": "String",
-                "responseElement": "",
+                "responseElement": "summary",
                 "_comment": ""
             },
             {
@@ -36,6 +36,12 @@
                 "name": "PublicationDate",
                 "type": "string",
                 "responseElement": "resource.lastModifiedDateTime",
+                "_comment": ""
+            },
+            {
+                "name": "WebUrl",
+                "type": "string",
+                "responseElement": "resource.webUrl",
                 "_comment": ""
             }
         ],

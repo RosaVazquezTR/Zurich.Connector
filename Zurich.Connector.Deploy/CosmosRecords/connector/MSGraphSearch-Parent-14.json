@@ -9,7 +9,7 @@
         "version": "1.0"
     },
     "request": {
-        "endpointPath": "/v1.0/search/query",
+        "endpointPath": "/beta/search/microsoft.graph.query",
         "method": "POST",
         "parameters": [
             {
@@ -27,6 +27,14 @@
                 "required": false,
                 "type": "string",
                 "defaultValue": "driveItem"
+            },
+            {
+                "cdmName": "Fields",
+                "name": "requests.[].fields.[]",
+                "inClause": "body",
+                "required": false,
+                "type": "string",
+                "defaultValue": "Name,CreatedDateTime,LastModifiedDateTime,LastModifiedBy,WebUrl,ParentReference"
             }
         ],
         "sorting": {
@@ -39,11 +47,17 @@
         }
     },
     "filters": [],
-    "resultLocation": "value.hitsContainers.hits",
+    "resultLocation": "value.hitsContainers",
     "cdmMapping": {
         "structured": [
             {
-                "name": "resource",
+                "name": "Count",
+                "type": "short",
+                "responseElement": "total",
+                "_comment": ""
+            },
+            {
+                "name": "Document",
                 "type": "String",
                 "responseElement": "{15}",
                 "_comment": ""
