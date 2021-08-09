@@ -53,6 +53,11 @@ namespace Zurich.Connector.App.Model
         /// Define security definition
         /// </summary>
         public SecurityDefinitionModel SecurityDefinition { get; set; }
+        /// <summary>
+        /// Locale (ex: US / UK etc).
+        /// </summary>
+        public string Locale { get; set; }
+
         // TODO
         // Define scope here.
     }

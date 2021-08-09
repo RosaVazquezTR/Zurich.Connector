@@ -25,7 +25,7 @@ namespace Zurich.Connector.Web
             CreateMap<ConnectorReponseSchemaModel, ConnectorReponseSchemaViewModel>();
             CreateMap<ConnectorReponsePropertiesModel, ConnectorReponsePropertiesViewModel>();
 
-            CreateMap<ConnectorFilterModel, ConnectorFilterViewModel>();
+            CreateMap<ConnectorFilterModel, FilterViewModel>();
 
             CreateMap<CDMMappingModel, CDMMappingViewModel>();
             CreateMap<CDMElementModel, CDMElementViewModel>();

@@ -79,6 +79,10 @@ namespace Zurich.Connector.App.Model
         /// Version
         /// </summary>
         public string Version { get; set; }
+        /// <summary>
+        /// Flag to indicate if a dynamic filter is available
+        /// </summary>
+        public bool? IsDynamicFilter { get; set; }
     }
 
     /// <summary>

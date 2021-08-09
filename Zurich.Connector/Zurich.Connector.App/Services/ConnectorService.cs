@@ -40,7 +40,7 @@ namespace Zurich.Connector.Data.Services
         /// </summary>
         /// <param name="filters">Filters to get different connections</param>
         /// <returns>List of Data Mapping Connections <see cref="DataMappingConnection"/></returns>
-        Task<List<ConnectorModel>> GetConnectors(ConnectorFilterModel filters);
+        Task<List<ConnectorModel>> GetConnectors(FilterModel filters);
         Task<ConnectorModel> GetConnector(string connectorId);
 
     }
@@ -102,7 +102,7 @@ namespace Zurich.Connector.Data.Services
         /// </summary>
         /// <param name="filters">Filters to get different connections</param>
         /// <returns>List of Data Mapping Connections <see cref="DataMappingConnection"/></returns>
-        public async Task<List<ConnectorModel>> GetConnectors(ConnectorFilterModel filters)
+        public async Task<List<ConnectorModel>> GetConnectors(FilterModel filters)
         {
             try
             {

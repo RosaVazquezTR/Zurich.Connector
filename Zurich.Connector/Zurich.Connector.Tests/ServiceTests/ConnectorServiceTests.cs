@@ -93,8 +93,7 @@ namespace Zurich.Connector.Tests.ServiceTests
 			var testDataSourceIds = testConnections.Select(t => t.Info.DataSourceId).Distinct().ToList();
 			var testDataSources = MockConnectorData.SetupDataSourceModel().Where(t => testDataSourceIds.Contains(t.Id));
 			var testDataSourcesList = testDataSources.ToList();
-
-			ConnectorFilterModel filters = new ConnectorFilterModel();
+			FilterModel filters = new FilterModel();
 			_mockCosmosService.Setup(x => x.GetConnectors(true, It.IsAny<Expression<Func<ConnectorDocument, bool>>>())).Returns(Task.FromResult(testConnections));
 
 			Expression<Func<DataSourceDocument, bool>> dsCondition = dataSources => testDataSourceIds.Contains(dataSources.Id);
@@ -180,7 +179,7 @@ namespace Zurich.Connector.Tests.ServiceTests
 			var testDataSourceIds = new String[] { testDataSourceId };
 			var testConnections = MockConnectorData.SetupConnectorModel().Where(t => testDataSourceIds.Contains(t.Info.DataSourceId));
 			var testDataSources = MockConnectorData.SetupDataSourceModel().Where(t => testDataSourceIds.Contains(t.Id));
-			ConnectorFilterModel filters = new ConnectorFilterModel()
+			FilterModel filters = new FilterModel()
 			{
 				DataSources = new List<string>() { testDataSourceId },
 				EntityTypes = new List<EntityType>() { testEntityType }
@@ -219,7 +218,7 @@ namespace Zurich.Connector.Tests.ServiceTests
 
 			var testConnections = MockConnectorData.SetupConnectorModel().Where(t => testDataSourceIds.Contains(t.Info.DataSourceId));
 			var testDataSources = MockConnectorData.SetupDataSourceModel().Where(t => testDataSourceIds.Contains(t.Id));
-			ConnectorFilterModel filters = new ConnectorFilterModel()
+			FilterModel filters = new FilterModel()
 			{
 				DataSources = new List<string>() { testDataSourceId }
 			};

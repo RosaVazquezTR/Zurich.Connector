@@ -34,7 +34,7 @@ namespace Zurich.Connector.Web.Models
         /// <summary>
         /// Filter details
         /// </summary>
-        public List<ConnectorFilterViewModel> Filters { get; set; }
+        public List<FilterViewModel> Filters { get; set; }
         /// <summary>
         /// CDM Mapping of properties
         /// </summary>

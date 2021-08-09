@@ -5,12 +5,12 @@ using System.Text;
 using System.Threading.Tasks;
 using Zurich.Connector.Data.Model;
 
-namespace Zurich.Connector.Web.Models
+namespace Zurich.Connector.App.Model
 {
     /// <summary>
     /// Class to filter connectors
     /// </summary>
-    public class ConnectorFilterViewModel
+    public class FilterModel
     {
         /// <summary>
         /// EntityType is optional parameter to filter to specific data types of connectors e.g. Document, Search, etc.
@@ -21,7 +21,7 @@ namespace Zurich.Connector.Web.Models
         /// RegistrationMode is optional parameter to filter by specific registration mode for the connectors.
         /// e.g. Registered would return all connectors that are registered for the user.
         /// </summary>
-        public List<RegistrationEntityMode> RegistrationModes { get; set; }
+        //public List<RegistrationEntityMode> RegistrationModes { get; set; }
 
         /// <summary>
         /// DataSource is optional parameter to filter by specific data source.

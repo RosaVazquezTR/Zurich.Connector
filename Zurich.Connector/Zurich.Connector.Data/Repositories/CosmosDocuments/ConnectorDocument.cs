@@ -77,6 +77,10 @@ namespace Zurich.Connector.Data.Repositories.CosmosDocuments
         /// Version
         /// </summary>
         public string version { get; set; }
+        /// <summary>
+        /// Flag to indicate if a dynamic filter is available
+        /// </summary>
+        public bool? isDynamicFilter { get; set; }
     }
 
     /// <summary>
