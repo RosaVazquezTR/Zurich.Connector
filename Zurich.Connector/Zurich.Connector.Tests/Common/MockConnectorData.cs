@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Zurich.Connector.App.Model;
+using Zurich.Connector.App.Utils;
 using Zurich.Connector.Data.Model;
 
 namespace Zurich.Connector.Tests.Common
@@ -125,6 +126,39 @@ namespace Zurich.Connector.Tests.Common
                         Id = "33",
                         Name = "DataSource33",
                         Description = "DataSource 33 desc"
+                    }
+                },
+                new ConnectorModel()
+                {
+                    Id = "4",
+                    Info = new ConnectorInfoModel()
+                    {
+                        Title = "Connector4",
+                        DataSourceId = "22",
+                        Description ="Connector 4 desc",
+                        EntityType = EntityType.Document,
+                        Version = "v1"
+                    },
+                    Pagination = new PaginationModel()
+                    {
+                        Available = true,
+                        IsZeroBasedOffset = true,
+                    },
+                    Request = new ConnectorRequestModel()
+                    {
+                        Parameters = new List<ConnectorRequestParameterModel>()
+                        {
+                            new ConnectorRequestParameterModel() { CdmName = "docTypes", Name = "$filter", Key = "resourceVisualization/type", DefaultValue = "", InClause = ODataConstants.OData},
+                            new ConnectorRequestParameterModel() { CdmName = "referenceType", Name = "$filter", Key = "referenece/type", DefaultValue = "testValue", InClause = ODataConstants.OData},
+                            new ConnectorRequestParameterModel() { CdmName = "resultSize", Name = "$top", DefaultValue = "", InClause = ODataConstants.OData},
+                        },
+                        Sorting = new ConnectorRequestSortingModel(){Properties = new List<ConnectorRequestSortingPropertiesModel>(){ }}
+                    },
+                    DataSource = new DataSourceModel()
+                    {
+                        Id = "22",
+                        Name = "DataSource22",
+                        Description = "DataSource 22 desc"
                     }
                 }
             };

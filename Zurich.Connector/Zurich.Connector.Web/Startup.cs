@@ -23,6 +23,7 @@ using Zurich.Common.Models.Cosmos;
 using Zurich.Connector.App;
 using Zurich.Connector.App.Services;
 using Zurich.Connector.App.Services.DataSources;
+using System.Text.Json.Serialization;
 
 namespace Zurich.Connector.Web
 {
@@ -66,7 +67,8 @@ namespace Zurich.Connector.Web
             })
             .AddTransientHttpErrorPolicy(policy => policy.WaitAndRetryAsync(new[] { TimeSpan.FromSeconds(1) }));
 
-            services.AddControllers();
+            services.AddControllers()
+                    .AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
             services.AddScoped<IDataMappingFactory, DataMappingFactory>();
             services.AddScoped<IDataMapping, DataMapping>();
             services.AddScoped<IDataMappingService, DataMappingService>();
@@ -111,7 +113,6 @@ namespace Zurich.Connector.Web
             app.ConfigureExceptionHandleMiddleware(env);
             app.UseSwagger();
             app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Zurich.Connector.Web v1"));
-
             app.UseHttpsRedirection();
 
             app.UseRouting();

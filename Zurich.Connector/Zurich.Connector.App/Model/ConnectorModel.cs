@@ -79,6 +79,10 @@ namespace Zurich.Connector.App.Model
         /// Version
         /// </summary>
         public string Version { get; set; }
+        /// <summary>
+        /// Flag to indicate if a dynamic filter is available
+        /// </summary>
+        public bool? IsDynamicFilter { get; set; }
     }
 
     /// <summary>
@@ -97,6 +101,6 @@ namespace Zurich.Connector.App.Model
         /// <summary>
         /// Offset base. It will be true if the offset base is 0.
         /// </summary>
-        public bool IsZeroBasedOffset { get; set; }
+        public bool? IsZeroBasedOffset { get; set; }
     }
 }

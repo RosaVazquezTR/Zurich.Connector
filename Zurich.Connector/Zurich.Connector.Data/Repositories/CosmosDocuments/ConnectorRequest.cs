@@ -67,6 +67,10 @@ namespace Zurich.Connector.Data.Repositories.CosmosDocuments
         /// Tags for the related to the parameter. Ex: pagination/ sort etc.
         /// </summary>
         public List<string> tags { get; set; }
+        /// <summary>
+        /// Key being used in Request param. Currently only used with OData.
+        /// </summary>
+        public string key { get; set; }
     }
 
     /// <summary>

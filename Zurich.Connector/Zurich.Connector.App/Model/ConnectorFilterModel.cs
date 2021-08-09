@@ -8,24 +8,87 @@ using Zurich.Connector.Data.Model;
 namespace Zurich.Connector.App.Model
 {
     /// <summary>
-    /// Class to filter connectors
+    /// Filter details associated with the connector.
     /// </summary>
     public class ConnectorFilterModel
     {
         /// <summary>
-        /// EntityType is optional parameter to filter to specific data types of connectors e.g. Document, Search, etc.
+        /// Name of the filter
         /// </summary>
-        public List<EntityType> EntityTypes { get; set; }
-
+        public string Name { get; set; }
         /// <summary>
-        /// RegistrationMode is optional parameter to filter by specific registration mode for the connectors.
-        /// e.g. Registered would return all connectors that are registered for the user.
+        /// Description about the filter
         /// </summary>
-        public List<RegistrationEntityMode> RegistrationModes { get; set; }
-
+        public string Description { get; set; }
         /// <summary>
-        /// DataSource is optional parameter to filter by specific data source.
+        /// Define the source of filters
         /// </summary>
-        public List<string> DataSources { get; set; }
+        public FilterSourceModel Source { get; set; }
+        /// <summary>
+        /// Mapping for request parameter
+        /// </summary>
+        public string RequestParameter { get; set; }
+    }
+
+    /// <summary>
+    /// Define the source of filters. There can be 3 types of sources
+    /// 1- Define the filter options as part of an API response (Not supported currently)
+    /// 2- Get filter sources from an end point (ex: PL UK filters)
+    /// 3- Flat list of key-value pairs (ex: O365 filters)
+    /// </summary>
+    public class FilterSourceModel
+    {
+        public string ResponseElement { get; set; }
+        /// <summary>
+        /// Define the filter options as part of an API response (Not supported currently)
+        ///// </summary>
+        public FilterResponseModel Response { get; set; }
+        ///// <summary>
+        ///// Get filter sources from an end point (ex: PL UK filters)
+        ///// </summary>
+        public string EndPointPath { get; set; }
+        ///// <summary>
+        ///// Flat list of key-value pairs (ex: O365 filters)
+        ///// </summary>
+        public List<KeyValuePair<string, string>> KeyValue { get; set; }
+    }
+
+    /// <summary>
+    /// Mapping of filter options as part of an API response
+    /// </summary>
+    public class FilterResponseModel
+    {
+        /// <summary>
+        /// Response Property
+        /// </summary>
+        public string ResponseProperty { get; set; }
+        /// <summary>
+        /// Filter CDM
+        /// </summary>
+        public string FilterCDM { get; set; }
+    }
+
+    /// <summary>
+    /// Mapping of filter request parameters.
+    /// </summary>
+    public class MappingRequestParameterModel
+    {
+        /// <summary>
+        /// Name of the filter property
+        /// </summary>
+        public string Name { get; set; }
+        /// <summary>
+        /// Specify Query or Header
+        /// </summary>
+        public string InClause { get; set; }
+        /// <summary>
+        /// Type of the filter property
+        /// </summary>
+        public string Type { get; set; }
+        /// <summary>
+        /// Default value of the filter property.
+        /// </summary>
+        public string DefaultValue { get; set; }
+
     }
 }

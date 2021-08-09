@@ -64,13 +64,17 @@ namespace Zurich.Connector.App.Model
         /// </summary>
         public string DefaultValue { get; set; }
         /// <summary>
-        /// Name of querys tring parameter in request
+        /// Name of querys string parameter in request
         /// </summary>
         public string CdmName { get; set; }
         /// <summary>
         /// Tags related to the parameter. Ex: Pagination/ filter etc.
         /// </summary>
         public List<string> Tags { get; set; }
+        /// <summary>
+        /// Key being used in request param. Currently only used with OData.
+        /// </summary>
+        public string Key { get; set; }
 
     }
 

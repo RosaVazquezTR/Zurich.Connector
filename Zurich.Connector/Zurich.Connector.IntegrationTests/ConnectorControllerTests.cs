@@ -76,6 +76,17 @@ namespace Zurich.Connector.IntegrationTests
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         }
+        [Fact]
+        public async Task TestConnectorById_With_SuccessStatus()
+        {
+            // Arrange
+            var request = "/Connectors/17";
+            //Act
+            var response = await _client.GetAsync(request);
+
+            // Assert
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        }
 
     }
 }

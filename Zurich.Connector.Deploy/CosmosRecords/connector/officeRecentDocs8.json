@@ -1,0 +1,130 @@
+{
+    "id": "8",
+    "partitionkey": "ConnectorList",
+    "info": {
+        "title": "Get recent docs from Microsoft Office",
+        "description": "Get recent docs from  Microsoft Office",
+        "entityType": "Document",
+        "dataSourceId": "13",
+        "version": "1.0"
+    },
+    "request": {
+        "endpointPath": "/v1.0/me/insights/used",
+        "method": "GET",
+        "parameters": [
+            {
+                "cdmName": "ReferenceTypes",
+                "name": "$filter",
+                "inClause": "OData",
+                "key": "resourceReference/type",
+                "required": false,
+                "type": "string",
+                "defaultValue": "microsoft.graph.driveItem",
+                "tags": []
+            },
+            {
+                "cdmName": "DocTypes",
+                "name": "$filter",
+                "inClause": "OData",
+                "key": "ResourceVisualization/Type",
+                "required": false,
+                "type": "string",
+                "defaultValue": "",
+                "tags": []
+            },
+            {
+                "cdmName": "OrderBy",
+                "name": "$orderby",
+                "inClause": "OData",
+                "required": false,
+                "type": "string",
+                "defaultValue": "LastUsed/LastAccessedDateTime desc",
+                "tags": []
+            },
+            {
+                "cdmName": "ResultSize",
+                "name": "$top",
+                "inClause": "OData",
+                "required": false,
+                "type": "string",
+                "defaultValue": "25",
+                "tags": [
+                    "pagination"
+                ]
+            },
+            {
+                "cdmName": "Offset",
+                "name": "$skip",
+                "in": "OData",
+                "required": false,
+                "type": "string",
+                "defaultValue": "0",
+                "tags": [
+                    "pagination"
+                ]
+            }
+        ],
+        "sorting": {
+            "properties": []
+        }
+    },
+    "pagination": {
+        "available": true,
+        "paginationType": "",
+        "isZeroBasedOffset": true
+    },
+    "response": {
+        "schema": {
+            "properties": {}
+        }
+    },
+    "resultLocation": "value",
+    "filters": [],
+    "cdmMapping": {
+        "structured": [
+            {
+                "name": "Id",
+                "type": "string",
+                "responseElement": "resourceReference.id",
+                "_comment": ""
+            },
+            {
+                "name": "Title",
+                "type": "string",
+                "responseElement": "resourceVisualization.title",
+                "_comment": ""
+            },
+            {
+                "name": "WebUrl",
+                "type": "string",
+                "responseElement": "resourceReference.webUrl",
+                "_comment": ""
+            },
+            {
+                "name": "ContainerDisplayName",
+                "type": "string",
+                "responseElement": "resourceVisualization.containerDisplayName",
+                "_comment": ""
+            },
+            {
+                "name": "Type",
+                "type": "string",
+                "responseElement": "resourceVisualization.type",
+                "_comment": ""
+            },
+            {
+                "name": "ContainerWebUrl",
+                "type": "string",
+                "responseElement": "resourceVisualization.containerWebUrl",
+                "_comment": ""
+            },
+            {
+                "name": "LastViewedDateTime",
+                "type": "string",
+                "responseElement": "lastUsed.lastAccessedDateTime",
+                "_comment": ""
+            }
+        ],
+        "unstructured": []
+    }
+}

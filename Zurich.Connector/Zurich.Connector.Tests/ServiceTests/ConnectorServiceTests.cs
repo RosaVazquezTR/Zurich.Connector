@@ -89,11 +89,12 @@ namespace Zurich.Connector.Tests.ServiceTests
 			// ARRANGE
 			var testConnections = MockConnectorData.SetupConnectorModel();
 			var testConnectionsList = MockConnectorData.SetupConnectorModel().ToList();
+
 			var testDataSourceIds = testConnections.Select(t => t.Info.DataSourceId).Distinct().ToList();
 			var testDataSources = MockConnectorData.SetupDataSourceModel().Where(t => testDataSourceIds.Contains(t.Id));
 			var testDataSourcesList = testDataSources.ToList();
-			ConnectorFilterModel filters = new ConnectorFilterModel();
-			_mockCosmosService.Setup(x => x.GetConnectors(true, null)).Returns(Task.FromResult(testConnections));
+			FilterModel filters = new FilterModel();
+			_mockCosmosService.Setup(x => x.GetConnectors(true, It.IsAny<Expression<Func<ConnectorDocument, bool>>>())).Returns(Task.FromResult(testConnections));
 
 			Expression<Func<DataSourceDocument, bool>> dsCondition = dataSources => testDataSourceIds.Contains(dataSources.Id);
 			_mockCosmosService.Setup(x => x.GetDataSources(It.IsAny<Expression<Func<DataSourceDocument, bool>>>())).Returns(Task.FromResult(testDataSources));
@@ -105,7 +106,7 @@ namespace Zurich.Connector.Tests.ServiceTests
 			var connectors = await service.GetConnectors(filters);
 
 			// ASSERT
-			_mockCosmosService.Verify(x => x.GetConnectors(true, null), Times.Once());
+			_mockCosmosService.Verify(x => x.GetConnectors(true, It.IsAny<Expression<Func<ConnectorDocument, bool>>>()), Times.Once());
 			Assert.IsNotNull(connectors);
 			Assert.AreEqual(MockConnectorData.SetupConnectorModel().ToList().Count, connectors.Count);
 			Assert.AreEqual(testConnectionsList[0].Id, connectors[0].Id);
@@ -134,11 +135,35 @@ namespace Zurich.Connector.Tests.ServiceTests
 		}
 
 		[TestMethod]
-		public async Task CallMapQueryParametersFromDBWithZeroOffsetBasedPagination()
+		public void CallMapQueryParametersFromDBWithZeroOffsetBasedPagination()
+		{
+			TestPagination(pagination => pagination.IsZeroBasedOffset = true, 0);
+		}
+
+		[TestMethod]
+		public void CallMapQueryParametersFromDBWithOneOffsetBasedPagination()
+		{
+			TestPagination(pagination => pagination.IsZeroBasedOffset = false, 1);
+		}
+
+		[TestMethod]
+		public void CallMapQueryParametersFromDBWithNullPagination()
+		{
+			TestPagination(pagination => pagination.IsZeroBasedOffset = null, 0);
+		}
+
+		[TestMethod]
+		public void CallMapQueryParametersFromDBWithDefaultToZeroOffsetBasedPagination()
+		{
+			TestPagination(pagination => pagination = null, 0);
+		}
+
+		private void TestPagination(Action<PaginationModel> arrangePagination, int expectedResult)
 		{
 			// ARRANGE
-			var cdmQueryParameters = new Dictionary<string, string>() { { "Offset", "1" } };
+			var cdmQueryParameters = new Dictionary<string, string>() { { "Offset", "0" } };
 			var connector = MockConnectorData.SetupConnectorModel().Where(t => t.Id == "2").FirstOrDefault();
+			arrangePagination(connector.Pagination);
 
 			ConnectorService service = new ConnectorService(_mockDataMapping.Object, _mockDataMappingFactory.Object, _mockDataMappingRepo.Object, null, _mapper, _mockCosmosService.Object, _mockdataMappingService.Object,
 				_mockDataSourceOperationsFactory.Object);
@@ -148,7 +173,7 @@ namespace Zurich.Connector.Tests.ServiceTests
 
 			// ASSERT
 			Assert.AreEqual(mappedResult["searchTerm"], "*");
-			Assert.AreEqual(mappedResult["resultsStartIndex"], "0");
+			Assert.AreEqual(mappedResult["resultsStartIndex"], expectedResult.ToString());
 			Assert.AreEqual(mappedResult["resultsCount"], "25");
 		}
 
@@ -170,6 +195,27 @@ namespace Zurich.Connector.Tests.ServiceTests
 		}
 
 		[TestMethod]
+		public async Task CallMapQueryParametersWithODataParams()
+		{
+			// ARRANGE
+			var cdmQueryParameters = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase) { 
+				{ "ResultSize", "5" },
+				{ "doctypes", "video,word,excel" }	
+			};
+			var connector = MockConnectorData.SetupConnectorModel().Where(t => t.Id == "4").FirstOrDefault();
+
+			ConnectorService service = new ConnectorService(_mockDataMapping.Object, _mockDataMappingFactory.Object, _mockDataMappingRepo.Object, null, _mapper, _mockCosmosService.Object, _mockdataMappingService.Object,
+				_mockDataSourceOperationsFactory.Object);
+
+			// ACT
+			var mappedResult = service.MapQueryParametersFromDB(cdmQueryParameters, connector);
+
+			// ASSERT
+			Assert.AreEqual("(resourceVisualization/type eq 'video' or resourceVisualization/type eq 'word' or resourceVisualization/type eq 'excel') and (referenece/type eq 'testValue')", mappedResult["$filter"]);
+			Assert.AreEqual("5", mappedResult["$top"]);
+		}
+
+		[TestMethod]
 		public async Task CallGetConnectorsWithFilters()
 		{
 			// ARRANGE
@@ -178,7 +224,7 @@ namespace Zurich.Connector.Tests.ServiceTests
 			var testDataSourceIds = new String[] { testDataSourceId };
 			var testConnections = MockConnectorData.SetupConnectorModel().Where(t => testDataSourceIds.Contains(t.Info.DataSourceId));
 			var testDataSources = MockConnectorData.SetupDataSourceModel().Where(t => testDataSourceIds.Contains(t.Id));
-			ConnectorFilterModel filters = new ConnectorFilterModel()
+			FilterModel filters = new FilterModel()
 			{
 				DataSources = new List<string>() { testDataSourceId },
 				EntityTypes = new List<EntityType>() { testEntityType }
@@ -217,7 +263,7 @@ namespace Zurich.Connector.Tests.ServiceTests
 
 			var testConnections = MockConnectorData.SetupConnectorModel().Where(t => testDataSourceIds.Contains(t.Info.DataSourceId));
 			var testDataSources = MockConnectorData.SetupDataSourceModel().Where(t => testDataSourceIds.Contains(t.Id));
-			ConnectorFilterModel filters = new ConnectorFilterModel()
+			FilterModel filters = new FilterModel()
 			{
 				DataSources = new List<string>() { testDataSourceId }
 			};

@@ -50,7 +50,7 @@ namespace Zurich.Connector.Web.Controllers
                     .Where(param => !param.Equals("hostname", StringComparison.InvariantCultureIgnoreCase) 
                     && !param.Equals("transferToken", StringComparison.InvariantCultureIgnoreCase) 
                     && !param.Equals("retrievefilters", StringComparison.InvariantCultureIgnoreCase))
-                    .ToDictionary(k => k, v => HttpContext?.Request.Query[v].ToString());
+                    .ToDictionary(k => k, v => HttpContext?.Request.Query[v].ToString(), StringComparer.OrdinalIgnoreCase);
 
                 results = await _connectorService.GetConnectorData(id, hostName, transferToken, parameters, retriveFilter);
                 if (results == null)
@@ -93,7 +93,7 @@ namespace Zurich.Connector.Web.Controllers
         /// <response code="200">A <see cref="ConnectorListViewModel"/> representing the connectors</response>
 
         [HttpGet()]
-        public async Task<ActionResult<List<ConnectorListViewModel>>> Connectors([FromQuery] ConnectorFilterModel filters)
+        public async Task<ActionResult<List<ConnectorListViewModel>>> Connectors([FromQuery] FilterModel filters)
         {
             List<ConnectorModel> connections = await _connectorService.GetConnectors(filters);
             List<ConnectorListViewModel> results = _mapper.Map<List<ConnectorListViewModel>>(connections);
@@ -158,14 +158,14 @@ namespace Zurich.Connector.Web.Controllers
             }
         }
 
-        [HttpDelete("{dataSourceId}")]
-        public async Task<ActionResult<ConnectorRegistrationViewModel>> DeleteConnectorAsync(string dataSourceId)
+        [HttpDelete("{id}/user")]
+        public async Task<ActionResult<ConnectorRegistrationViewModel>> DeleteConnectorAsync(string id)
         {
-            if (String.IsNullOrEmpty(dataSourceId))
+            if (String.IsNullOrEmpty(id))
             {
                 return await Task.FromResult(StatusCode((int)HttpStatusCode.BadRequest));
             }
-            await _registrationService.RemoveDataSource(dataSourceId);
+            await _registrationService.RemoveUserConnector(id);
             return Ok(HttpStatusCode.OK);
         }
 

@@ -345,7 +345,16 @@ namespace Zurich.Connector.Data.DataMap
 			if (paramParts.Count() != 1)
 				WriteJsonObject(writer, paramParts.Skip(1).ToArray(), value);
 			else
-				writer.WriteValue(value);
+			{
+				var requestArray = value?.Split(',');
+				if (requestArray != null)
+				{
+					foreach (var requestValue in requestArray)
+					{
+						writer.WriteValue(requestValue);
+					}
+				}
+			}
 
 			if (isArray)
 				writer.WriteEndArray();

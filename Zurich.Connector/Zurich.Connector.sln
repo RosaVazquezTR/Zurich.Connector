@@ -13,6 +13,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Zurich.Connector.Data", "Zu
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Zurich.Connector.IntegrationTests", "Zurich.Connector.IntegrationTests\Zurich.Connector.IntegrationTests.csproj", "{77AF84CC-88AA-4F54-BC5D-E9AE2F72E7C0}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Zurich.Connector.Durable", "Zurich.Connector.Durable\Zurich.Connector.Durable.csproj", "{7F3C9976-D98C-4E23-A9BF-EE2834347181}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{77AF84CC-88AA-4F54-BC5D-E9AE2F72E7C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{77AF84CC-88AA-4F54-BC5D-E9AE2F72E7C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{77AF84CC-88AA-4F54-BC5D-E9AE2F72E7C0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7F3C9976-D98C-4E23-A9BF-EE2834347181}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7F3C9976-D98C-4E23-A9BF-EE2834347181}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7F3C9976-D98C-4E23-A9BF-EE2834347181}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7F3C9976-D98C-4E23-A9BF-EE2834347181}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
