@@ -12,9 +12,6 @@ namespace Zurich.Connector.Web.Models
         /// </summary>
         public string ConnectorId { get; set; }
 
-        /// <summary>
-        /// data source ID
-        /// </summary>
-        public string DataSourceId { get; set; }
+   
     }
 }

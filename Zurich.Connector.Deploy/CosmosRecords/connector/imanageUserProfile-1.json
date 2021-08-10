@@ -1,13 +1,14 @@
 {
-    "id": "1",
-    "partitionkey": "ConnectorList",
-    "info": {
-        "title": "Get user profile from iManage",
-        "description": "Get user profile from iManage",
-        "entityType": "UserProfile",
-        "dataSourceId": "10",
-        "version": "1.0"
-    },
+  "id": "1",
+  "partitionkey": "ConnectorList",
+  "alias": "imanage.userprofile",
+  "info": {
+    "title": "Get user profile from iManage",
+    "description": "Get user profile from iManage",
+    "entityType": "UserProfile",
+    "dataSourceId": "10",
+    "version": "1.0"
+  },
   "request": {
     "endpointPath": "/api",
     "method": "GET",
@@ -16,46 +17,46 @@
       "properties": []
     }
   },
-    "response": {
-        "schema": {
-            "properties": {}
-        }
-    },
-    "resultLocation": "data.user",
-    "filters": [],
-    "cdmMapping": {
-        "structured": [
-            {
-                "name": "Name",
-                "type": "string",
-                "responseElement": "name",
-                "_comment": ""
-            },
-            {
-                "name": "Id",
-                "type": "string",
-                "responseElement": "customer_id",
-                "_comment": ""
-            },
-            {
-                "name": "UserName",
-                "type": "string",
-                "responseElement": "id",
-                "_comment": ""
-            },
-            {
-                "name": "Email",
-                "type": "string",
-                "responseElement": "email",
-                "_comment": ""
-            },
-            {
-                "name": "UserType",
-                "type": "string",
-                "responseElement": "user_type",
-                "_comment": ""
-            }
-        ],
-        "unstructured": []
+  "response": {
+    "schema": {
+      "properties": {}
     }
+  },
+  "resultLocation": "data.user",
+  "filters": [],
+  "cdmMapping": {
+    "structured": [
+      {
+        "name": "Name",
+        "type": "string",
+        "responseElement": "name",
+        "_comment": ""
+      },
+      {
+        "name": "Id",
+        "type": "string",
+        "responseElement": "customer_id",
+        "_comment": ""
+      },
+      {
+        "name": "UserName",
+        "type": "string",
+        "responseElement": "id",
+        "_comment": ""
+      },
+      {
+        "name": "Email",
+        "type": "string",
+        "responseElement": "email",
+        "_comment": ""
+      },
+      {
+        "name": "UserType",
+        "type": "string",
+        "responseElement": "user_type",
+        "_comment": ""
+      }
+    ],
+    "unstructured": []
+  }
 }

@@ -42,6 +42,7 @@ namespace Zurich.Connector.Tests.ServiceTests
                 new ConnectorDocument()
                 {
                     Id = "1",
+                    Alias = "A.B.C",
                     info = new ConnectorInfo()
                     {
                         title = "title1",
@@ -52,6 +53,7 @@ namespace Zurich.Connector.Tests.ServiceTests
                 new ConnectorDocument()
                 {
                     Id = "2",
+                    Alias = "X.Y.Z",
                     info = new ConnectorInfo()
                     {
                         title = "title2",
@@ -62,6 +64,7 @@ namespace Zurich.Connector.Tests.ServiceTests
                 new ConnectorDocument()
                 {
                     Id = "3",
+                    Alias = "P.Q.R",
                     info = new ConnectorInfo()
                     {
                         title = "title3",
@@ -100,13 +103,13 @@ namespace Zurich.Connector.Tests.ServiceTests
                 {
                     Id = "101",
                     ConnectorId = "1",
-                    DatasourceId = "2",
+                   
                 },
                 new ConnectorRegistrationDocument()
                 {
                     Id = "102",
-                    ConnectorId = "3",
-                    DatasourceId = "4",
+                   ConnectorId = "3",
+                    
                 }
             };
         }
@@ -153,6 +156,26 @@ namespace Zurich.Connector.Tests.ServiceTests
             Assert.IsNotNull(connector);
             Assert.AreEqual(testConnector.Id, connector.Id);
             Assert.AreEqual(testConnector.info.title, connector.Info.Title);
+        }
+
+        [TestMethod]
+        public async Task CallGetConnectorByAlias()
+        {
+            //Arrange
+            var testAlias = "a.b.c";
+            var testConnectors = SetupConnectors();
+
+            _mockCosmosClientStore.Setup(x => x.GetDocuments(CosmosConstants.ConnectorContainerId, CosmosConstants.ConnectorPartitionKey, It.IsAny<Expression<Func<ConnectorDocument, bool>>>()))
+                                    .Returns(testConnectors);
+            
+            var cosmosService = new CosmosService(_mockCosmosClientStore.Object, null, _mapper, null);
+
+            //Act
+            var connector = await cosmosService.GetConnectorByAlias(testAlias);
+
+            //Assert
+            Assert.IsNotNull(connector);
+            Assert.AreEqual(connector.Alias, testAlias, true);
         }
 
         [TestMethod]

@@ -4,7 +4,7 @@
     "name": "Practical Law US",
     "description": "This is connecting to Practical Law US API ",
     "infoURL": "",
-    "appCode": "PracticalLaw",
+    "appCode": "PLCUS",
     "appType": "0",
     "locale": "US",
     "extraRequestContext": "",

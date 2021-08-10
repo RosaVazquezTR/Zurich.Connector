@@ -1,28 +1,19 @@
 {
-  "id": "2",
+  "id": "18",
   "partitionkey": "ConnectorList",
+  "alias": "imanage.document",
   "info": {
-    "title": "Get Recent Documents from iManage",
-    "description": "Get Recent Documents from iManage",
+    "title": "Get Recent Documents from iManage - Child connector for 2",
+    "description": "Get Recent Documents from iManage - Child connector for 2",
     "entityType": "Document",
     "dataSourceId": "10",
-    "version": "1.0"
+    "version": "1.0",
+    "subType": "Child"
   },
-  "request": {
-    "endpointPath": "/work/api/v2/customers/{1.customer_id}/recent-documents",
-    "method": "GET",
-    "parameters": [],
-    "sorting": {
-      "properties": []
-    }
-  },
-  "response": {
-    "schema": {
-      "properties": {}
-    }
-  },
-  "resultLocation": "data.results",
+  "request": {},
+  "response": {},
   "filters": [],
+  "resultLocation": "data.results",
   "cdmMapping": {
     "structured": [
       {

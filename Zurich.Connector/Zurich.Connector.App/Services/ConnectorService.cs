@@ -9,8 +9,6 @@ using Zurich.Connector.App.Services;
 using Zurich.Connector.Data.DataMap;
 using Zurich.Connector.Data.Repositories;
 using System.Collections.Specialized;
-using Microsoft.Extensions.Primitives;
-using Newtonsoft.Json;
 using Zurich.Connector.Data.Repositories.CosmosDocuments;
 using System.Linq.Expressions;
 using Zurich.Connector.Data.Model;
@@ -29,12 +27,12 @@ namespace Zurich.Connector.Data.Services
         /// <summary>
         /// Get the data mapping results for a connector
         /// </summary>
-        /// <param name="connectionId">The id of the connector</param>
+        /// <param name="connectorIdentifier">The id or alias of the connector</param>
         /// <param name="hostname">The domain of the api being called</param>
         /// <param name="transferToken">The transfer token to pass with the api call, if needed</param>
         /// <param name="queryParameters">The query string parameters of request</param>
         /// <returns>Mapped data for the connector</returns>
-        Task<dynamic> GetConnectorData(string connectionId, string hostname, string transferToken, Dictionary<string, string> queryParameters, bool retrievefilters);
+        Task<dynamic> GetConnectorData(string connectorIdentifier, string hostname, string transferToken, Dictionary<string, string> queryParameters, bool retrievefilters);
 
         /// <summary>
         /// Gets all connections from cosmos
@@ -70,9 +68,18 @@ namespace Zurich.Connector.Data.Services
             _dataSourceOperationsFactory = dataSourceOperationsFactory;
         }
 
-        public async Task<dynamic> GetConnectorData(string connectionId, string hostname, string transferToken, Dictionary<string, string> queryParameters, bool retrievefilters)
+        /// <summary>
+        /// Get Connector Data
+        /// </summary>
+        /// <param name="connectionIdentifier">This can be connector id or alias</param>
+        /// <param name="hostname"></param>
+        /// <param name="transferToken"></param>
+        /// <param name="queryParameters"></param>
+        /// <param name="retrievefilters"></param>
+        /// <returns>Connector data</returns>
+        public async Task<dynamic> GetConnectorData(string connectionIdentifier, string hostname, string transferToken, Dictionary<string, string> queryParameters, bool retrievefilters)
         {
-            ConnectorModel connectorModel = await _dataMappingService.RetrieveProductInformationMap(connectionId, hostname, retrievefilters);
+            ConnectorModel connectorModel = await _dataMappingService.RetrieveProductInformationMap(connectionIdentifier, hostname, retrievefilters);
 
             if (connectorModel == null)
             {

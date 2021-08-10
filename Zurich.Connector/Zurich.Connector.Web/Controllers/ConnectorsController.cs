@@ -4,20 +4,14 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
-using System.IO;
 using System.Linq;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Threading.Tasks;
 using Zurich.Connector.App.Model;
 using Zurich.Connector.Data.Services;
 using Zurich.Connector.Web.Models;
-using Microsoft.Extensions.Primitives;
-using Microsoft.Extensions.Configuration;
 using Zurich.Connector.App.Services;
-using Zurich.Connector.Data.Repositories.CosmosDocuments;
 using Zurich.Connector.App.Enum;
-using Microsoft.OpenApi.Extensions;
 using Zurich.Common.Exceptions;
 using System.Net;
 
@@ -148,7 +142,7 @@ namespace Zurich.Connector.Web.Controllers
         {
             try
             {
-                await _registrationService.RegisterDataSource(registrationModel.DataSourceId, registrationModel.ConnectorId);
+                await _registrationService.RegisterDataSource(registrationModel.ConnectorId);
                 return Ok(RegistrationStatus.register);
             }
             catch(Exception ex)
@@ -159,11 +153,11 @@ namespace Zurich.Connector.Web.Controllers
         }
 
         [HttpDelete("{id}/user")]
-        public async Task<ActionResult<ConnectorRegistrationViewModel>> DeleteConnectorAsync(string id)
+        public async Task<ActionResult> RemoveConnectorRegistration(string id)
         {
             if (String.IsNullOrEmpty(id))
             {
-                return await Task.FromResult(StatusCode((int)HttpStatusCode.BadRequest));
+                return BadRequest("Invalid Connector ID");
             }
             await _registrationService.RemoveUserConnector(id);
             return Ok(HttpStatusCode.OK);

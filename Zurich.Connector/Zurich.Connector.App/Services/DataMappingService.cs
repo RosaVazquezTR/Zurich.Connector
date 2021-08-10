@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Zurich.Connector.Data.Model;
+﻿using System.Threading.Tasks;
 using Zurich.Connector.App.Model;
 using AutoMapper;
 
@@ -17,10 +12,10 @@ namespace Zurich.Connector.App.Services
         /// <summary>
         /// Gets data from cosmo db using Cosmo service and reorganizes the data
         /// </summary>
-        /// <param name="connectionId">Connection Id</param>
+        /// <param name="connectionIdentifier">Connection Id</param>
         /// <param name="hostname">Host name</param>
         /// <returns> Returns ConnectorModel</returns>
-        public Task<ConnectorModel> RetrieveProductInformationMap(string connectionId, string hostname, bool retrievefilters);
+        public Task<ConnectorModel> RetrieveProductInformationMap(string connectionIdentifier, string hostname, bool retrievefilters);
     }
 
     /// <summary>
@@ -42,30 +37,30 @@ namespace Zurich.Connector.App.Services
         /// <summary>
         /// Gets data from cosmo db using Cosmo service and reorganizes the data
         /// </summary>
-        /// <param name="connectionId">Connection Id</param>
+        /// <param name="connectionIdentifier">Connection Id or Alias</param>
         /// <param name="hostname">Host name</param>
         /// <returns> Returns ConnectorModel</returns>
-        public async virtual Task<ConnectorModel> RetrieveProductInformationMap(string connectionId, string hostname, bool retrievefilters)
+        public async virtual Task<ConnectorModel> RetrieveProductInformationMap(string connectionIdentifier, string hostname, bool retrievefilters)
         {
-            ConnectorModel connectorModel = await _cosmosService.GetConnector(connectionId);
+            ConnectorModel connector;
 
-            string dataSourceId = connectorModel?.Info?.DataSourceId;
-
-            DataSourceModel dataSourceModel = null;
-
-            if (!string.IsNullOrEmpty(dataSourceId))
+            if (int.TryParse(connectionIdentifier, out var _))
             {
-                dataSourceModel = await _cosmosService.GetDataSource(dataSourceId);
+                // This means we passed connector id
+                connector = await _cosmosService.GetConnector(connectionIdentifier, true);
+            }
+            else 
+            {
+                // This means we passed connector alias
+                connector = await _cosmosService.GetConnectorByAlias(connectionIdentifier, true); ;
             }
 
-            connectorModel.DataSource = dataSourceModel;
-
-            if (connectorModel != null)
+            if (connector != null)
             {
-                connectorModel.HostName = hostname;
+                connector.HostName = hostname;
             }
 
-            return connectorModel;
+            return connector;
         }
 
     }

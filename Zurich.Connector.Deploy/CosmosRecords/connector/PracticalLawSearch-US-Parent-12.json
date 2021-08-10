@@ -1,6 +1,7 @@
 {
   "id": "12",
   "partitionkey": "ConnectorList",
+  "alias": "plcus.search",
   "info": {
     "title": "Get Search Practical law documents - US",
     "description": "Pull Practical law documents - US",

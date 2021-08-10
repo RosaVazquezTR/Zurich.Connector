@@ -68,7 +68,6 @@ namespace Zurich.Connector.App
                 .ForMember(dest => dest.ConnectorId, opt => opt.MapFrom(src => src.ConnectorId))
                 .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId))
                 .ForMember(dest => dest.TenantId, opt => opt.MapFrom(src => src.TenantId))
-                .ForMember(dest => dest.DataSourceId, opt => opt.MapFrom(src => src.DatasourceId))
                 .ForMember(dest => dest.AppName, opt => opt.MapFrom(src => src.AppName))
                 .ForAllOtherMembers(opt => opt.Ignore());
 
