@@ -22,11 +22,6 @@ namespace Zurich.Connector.Web.Models
         public string Tenantid { get; set; }
 
         /// <summary>
-        /// Data source ID
-        /// </summary>
-        public string DataSourceid { get; set; }
-
-        /// <summary>
         /// Use For appname
         /// </summary>
         public string AppName { get; set; }

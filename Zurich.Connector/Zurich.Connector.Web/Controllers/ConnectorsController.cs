@@ -142,7 +142,7 @@ namespace Zurich.Connector.Web.Controllers
         {
             try
             {
-                await _registrationService.RegisterDataSource(registrationModel.DataSourceId, registrationModel.ConnectorId);
+                await _registrationService.RegisterDataSource(registrationModel.ConnectorId);
                 return Ok(RegistrationStatus.register);
             }
             catch(Exception ex)
@@ -153,11 +153,11 @@ namespace Zurich.Connector.Web.Controllers
         }
 
         [HttpDelete("{id}/user")]
-        public async Task<ActionResult<ConnectorRegistrationViewModel>> DeleteConnectorAsync(string id)
+        public async Task<ActionResult> RemoveConnectorRegistration(string id)
         {
             if (String.IsNullOrEmpty(id))
             {
-                return await Task.FromResult(StatusCode((int)HttpStatusCode.BadRequest));
+                return BadRequest("Invalid Connector ID");
             }
             await _registrationService.RemoveUserConnector(id);
             return Ok(HttpStatusCode.OK);

@@ -103,13 +103,13 @@ namespace Zurich.Connector.Tests.ServiceTests
                 {
                     Id = "101",
                     ConnectorId = "1",
-                    DatasourceId = "2",
+                   
                 },
                 new ConnectorRegistrationDocument()
                 {
                     Id = "102",
-                    ConnectorId = "3",
-                    DatasourceId = "4",
+                   ConnectorId = "3",
+                    
                 }
             };
         }
