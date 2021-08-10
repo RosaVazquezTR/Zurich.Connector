@@ -1,6 +1,7 @@
 {
     "id": "9",
     "partitionkey": "ConnectorList",
+	"alias": "msgraph.document.recommended",
     "info": {
         "title": "Get recommended docs from Microsoft Office",
         "description": "Get recommended docs from  Microsoft Office",

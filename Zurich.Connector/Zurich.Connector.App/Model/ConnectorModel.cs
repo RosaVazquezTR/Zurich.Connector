@@ -17,6 +17,10 @@ namespace Zurich.Connector.App.Model
         /// </summary>
         public string Id { get; set; }
         /// <summary>
+        /// Connector Alias in the format of [appcode].[entitytype].[subtype?] for e.g. msgraph.document.recent, plcca.search
+        /// </summary>
+        public string Alias { get; set; }
+        /// <summary>
         /// Connector Info like title, description etc.
         /// </summary>
         public ConnectorInfoModel Info { get; set; }

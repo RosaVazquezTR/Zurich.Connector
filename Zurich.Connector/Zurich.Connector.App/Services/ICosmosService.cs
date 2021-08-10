@@ -26,6 +26,12 @@ namespace Zurich.Connector.App.Services
 		public Task<ConnectorModel> GetConnector(string connectorId, bool includeDataSource = false);
 
 		/// <summary>
+		/// Fetch connector from Cosmos by Alias
+		/// </summary>
+		/// <returns>Connector document.</returns> 
+		Task<ConnectorModel> GetConnectorByAlias(string alias, bool includeDataSource = false);
+
+		/// <summary>
 		/// Fetch all data sources from Cosmos
 		/// </summary>
 		/// <returns>List of data sources.</returns> 

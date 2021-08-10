@@ -1,6 +1,7 @@
 {
     "id": "7",
     "partitionkey": "ConnectorList",
+	"alias": "msgraph.userprofile",
     "info": {
         "title": "Get user profile from Microsoft Office",
         "description": "Get user profile from  Microsoft Office",

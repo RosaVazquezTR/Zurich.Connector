@@ -1,10 +1,10 @@
 {
     "id": "12",
     "partitionkey": "DataSourceList",
-    "name": "Practical Law",
+    "name": "Practical Law Connect",
     "description": "This is connecting to Practical Law API ",
     "infoURL": "",
-    "appCode": "PracticalLaw",
+    "appCode": "CBTPRACPT",
     "extraRequestContext": "",
     "securityDefinition": {
         "type": "transferToken",

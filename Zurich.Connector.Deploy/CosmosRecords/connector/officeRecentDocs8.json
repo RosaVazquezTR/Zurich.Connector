@@ -1,6 +1,7 @@
 {
     "id": "8",
     "partitionkey": "ConnectorList",
+	"alias": "msgraph.document.recent",
     "info": {
         "title": "Get recent docs from Microsoft Office",
         "description": "Get recent docs from  Microsoft Office",

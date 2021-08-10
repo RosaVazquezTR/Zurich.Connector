@@ -39,12 +39,34 @@ namespace Zurich.Connector.App.Services
         {
 			var connectorDocument = await _cosmosClientStore.GetDocument<ConnectorDocument>
 										(CosmosConstants.ConnectorContainerId, connectorId, CosmosConstants.ConnectorPartitionKey);
-			 var connector = _mapper.Map<ConnectorModel>(connectorDocument);
+			var connector = _mapper.Map<ConnectorModel>(connectorDocument);
             if (includeDataSource && connector != null)
             {
                 connector.DataSource = await GetDataSource(connectorDocument.info.dataSourceId);
             }
             return connector;
+		}
+
+		/// <summary>
+		/// Get connector from Cosmos by Alias
+		/// </summary>
+		/// <returns>Connector document.</returns> 
+		public async Task<ConnectorModel> GetConnectorByAlias(string alias, bool includeDataSource = false)
+		{
+			var connectorDocuments = _cosmosClientStore.GetDocuments<ConnectorDocument>(
+					 CosmosConstants.ConnectorContainerId 
+					,CosmosConstants.ConnectorPartitionKey 
+					,null
+				);
+			var connectorDocument = connectorDocuments?.Where(connectorDocument => !string.IsNullOrEmpty(connectorDocument.Alias) && connectorDocument.Alias.Equals(alias, StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
+			var connector = _mapper.Map<ConnectorModel>(connectorDocument);
+			
+			if (includeDataSource && connector != null)
+			{
+				connector.DataSource = await GetDataSource(connectorDocument.info.dataSourceId);
+			}
+
+			return connector;
 		}
 
 		/// <summary>

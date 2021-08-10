@@ -16,6 +16,13 @@ namespace Zurich.Connector.Data.Repositories.CosmosDocuments
         /// Connector ID
         /// </summary>
         public override string Id { get; set; }
+        /// <summary>
+        /// Connector Alias in the format of [appcode].[entitytype].[subtype?] for e.g. msgraph.document.recent, plcca.search
+        /// </summary>
+        public string Alias { get; set; }
+        /// <summary>
+        /// Connector partition key
+        /// </summary>
         public string partitionkey { get { return CosmosConstants.ConnectorPartitionKey; } }
         /// <summary>
         /// Connector Info like title, description etc.
