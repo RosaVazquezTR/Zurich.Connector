@@ -15,7 +15,7 @@ namespace Zurich.Connector.App.Services
         /// <param name="connectionIdentifier">Connection Id</param>
         /// <param name="hostname">Host name</param>
         /// <returns> Returns ConnectorModel</returns>
-        public Task<ConnectorModel> RetrieveProductInformationMap(string connectionIdentifier, string hostname, bool retrievefilters);
+        public Task<ConnectorModel> RetrieveProductInformationMap(string connectionIdentifier, string hostname, bool retrieveFilters);
     }
 
     /// <summary>
@@ -40,7 +40,7 @@ namespace Zurich.Connector.App.Services
         /// <param name="connectionIdentifier">Connection Id or Alias</param>
         /// <param name="hostname">Host name</param>
         /// <returns> Returns ConnectorModel</returns>
-        public async virtual Task<ConnectorModel> RetrieveProductInformationMap(string connectionIdentifier, string hostname, bool retrievefilters)
+        public async virtual Task<ConnectorModel> RetrieveProductInformationMap(string connectionIdentifier, string hostname, bool retrieveFilters)
         {
             ConnectorModel connector;
 
