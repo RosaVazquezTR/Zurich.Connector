@@ -77,9 +77,9 @@ namespace Zurich.Connector.Data.Services
         /// <param name="queryParameters"></param>
         /// <param name="retrievefilters"></param>
         /// <returns>Connector data</returns>
-        public async Task<dynamic> GetConnectorData(string connectionIdentifier, string hostname, string transferToken, Dictionary<string, string> queryParameters, bool retrievefilters)
+        public async Task<dynamic> GetConnectorData(string connectionIdentifier, string hostname, string transferToken, Dictionary<string, string> queryParameters, bool retrieveFilters)
         {
-            ConnectorModel connectorModel = await _dataMappingService.RetrieveProductInformationMap(connectionIdentifier, hostname, retrievefilters);
+            ConnectorModel connectorModel = await _dataMappingService.RetrieveProductInformationMap(connectionIdentifier, hostname, retrieveFilters);
 
             if (connectorModel == null)
             {
@@ -97,7 +97,7 @@ namespace Zurich.Connector.Data.Services
 
             var data = await service.Get<dynamic>(connectorDocument, transferToken, mappedQueryParameters);
             data = EnrichConnectorData(connectorModel, data);
-            if (retrievefilters == true)
+            if (retrieveFilters == true)
             {
                 JToken mappingFilters = JToken.FromObject(connectorDocument.filters);
                 data[Constants.filters] = mappingFilters;
