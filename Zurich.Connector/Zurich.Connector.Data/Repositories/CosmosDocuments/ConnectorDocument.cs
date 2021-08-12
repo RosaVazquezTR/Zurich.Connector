@@ -88,6 +88,10 @@ namespace Zurich.Connector.Data.Repositories.CosmosDocuments
         /// Flag to indicate if a dynamic filter is available
         /// </summary>
         public bool? isDynamicFilter { get; set; }
+        /// <summary>
+        /// Used to determine if a child or Parent
+        /// </summary>
+        public string subType { get; set; }
     }
 
     /// <summary>
