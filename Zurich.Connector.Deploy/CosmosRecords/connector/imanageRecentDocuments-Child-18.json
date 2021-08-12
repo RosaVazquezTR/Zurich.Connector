@@ -1,7 +1,6 @@
 {
   "id": "18",
   "partitionkey": "ConnectorList",
-  "alias": "imanage.document",
   "info": {
     "title": "Get Recent Documents from iManage - Child connector for 2",
     "description": "Get Recent Documents from iManage - Child connector for 2",
