@@ -46,6 +46,7 @@ stages:
           parameters:
             projectName: ${{ variables.projectName }}
             azureAdClientSecret: $(azureAdClientSecret)
+            environmentName: qa
 - stage: Send_Email
   pool: DCO-HighQ-Platform-N
   dependsOn:

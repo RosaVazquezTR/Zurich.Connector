@@ -33,3 +33,4 @@ stages:
           parameters:
             projectName: ${{ variables.projectName }}
             azureAdClientSecret: $(azureAdClientSecret)
+            environmentName: ci

@@ -1,0 +1,10 @@
+{
+  "TokenIssuer": "https://login.legalplatform.thomsonreuters.com/is/",
+  "KeyVault": {
+    "Endpoint": "https://connectorsKeyVaultPROD.vault.azure.net/"
+  },
+  "AzureAd": {
+    "ClientId": "3e1c6d20-9663-41bb-84fd-669fa96a1dc3",
+    "ClientSecret": "DoNotSetHere"
+  }
+}
