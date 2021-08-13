@@ -1,13 +1,4 @@
 {
-  "ASPNETCORE_ENVIRONMENT": "Development",
-  "TokenIssuer": "https://ci.login.legalplatform.thomsonreuters.com/is/",
-  "KeyVault": {
-    "Endpoint": "https://connectorsKeyVaultCI.vault.azure.net/"
-  },
-  "AzureAd": {
-    "ClientId": "b4a0d298-06dd-4738-83be-9b57653980b1",
-    "ClientSecret": "DoNotSetHere"
-  },
   "Audience": "legalhome",
   "AllowedCORSOrigins": [ "http://localhost:4200" ],
   "PartnerOAuthApps": {

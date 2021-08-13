@@ -1,0 +1,92 @@
+{
+    "id": "9",
+    "partitionkey": "ConnectorList",
+	"alias": "msgraph.document.recommended",
+    "info": {
+        "title": "Get recommended docs from Microsoft Office",
+        "description": "Get recommended docs from  Microsoft Office",
+        "entityType": "Document",
+        "dataSourceId": "13",
+        "version": "1.0"
+    },
+    "request": {
+        "endpointPath": "/v1.0/me/insights/shared",
+        "method": "GET",
+        "parameters": [
+            {
+                "cdmName": "referenceTypes",
+                "name": "$filter",
+                "inClause": "OData",
+                "key": "resourceReference/type",
+                "required": false,
+                "type": "string",
+                "defaultValue": "microsoft.graph.driveItem",
+                "tags": []
+            },
+            {
+                "cdmName": "docTypes",
+                "name": "$filter",
+                "inClause": "OData",
+                "key": "ResourceVisualization/Type",
+                "required": false,
+                "type": "string",
+                "defaultValue": "",
+                "tags": []
+            },
+            {
+                "cdmName": "resultSize",
+                "name": "$top",
+                "inClause": "OData",
+                "required": false,
+                "type": "string",
+                "defaultValue": "25",
+                "tags": [
+                    "pagination"
+                ]
+            },
+            {
+                "cdmName": "offset",
+                "name": "$skip",
+                "in": "OData",
+                "required": false,
+                "type": "string",
+                "defaultValue": "0",
+                "tags": [
+                    "pagination"
+                ]
+            }
+        ],
+        "sorting": {
+            "properties": []
+        }
+    },
+    "pagination": {
+        "available": true,
+        "paginationType": "",
+        "isZeroBasedOffset": true
+    },
+    "response": {
+        "schema": {
+            "properties": {}
+        }
+    },
+    "resultLocation": "",
+    "filters": [],
+    "cdmMapping": {
+        "structured": [
+            {
+                "name": "TotalCount",
+                "type": "int",
+                "responseElement": "",
+                "_comment": ""
+            },
+            {
+                "name": "Items",
+                "type": "String",
+                "responseElement": "{20}",
+                "_comment": ""
+            }
+        ],
+        "unstructured": []
+    }
+}

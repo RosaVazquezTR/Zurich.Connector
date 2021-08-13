@@ -1,0 +1,67 @@
+{
+    "id": "19",
+    "partitionkey": "ConnectorList",
+    "info": {
+        "title": "Get recent docs from Microsoft Office - Child connector for 8",
+        "description": "Get recent docs from  Microsoft Office - Child connector for 8",
+        "entityType": "Document",
+        "dataSourceId": "13",
+        "version": "1.0"
+    },
+    "request": {},
+    "pagination": {},
+    "response": {
+        "schema": {
+            "properties": {}
+        }
+    },
+    "resultLocation": "value",
+    "filters": [],
+    "cdmMapping": {
+        "structured": [
+            {
+                "name": "Id",
+                "type": "string",
+                "responseElement": "resourceReference.id",
+                "_comment": ""
+            },
+            {
+                "name": "Title",
+                "type": "string",
+                "responseElement": "resourceVisualization.title",
+                "_comment": ""
+            },
+            {
+                "name": "WebUrl",
+                "type": "string",
+                "responseElement": "resourceReference.webUrl",
+                "_comment": ""
+            },
+            {
+                "name": "ContainerDisplayName",
+                "type": "string",
+                "responseElement": "resourceVisualization.containerDisplayName",
+                "_comment": ""
+            },
+            {
+                "name": "Type",
+                "type": "string",
+                "responseElement": "resourceVisualization.type",
+                "_comment": ""
+            },
+            {
+                "name": "ContainerWebUrl",
+                "type": "string",
+                "responseElement": "resourceVisualization.containerWebUrl",
+                "_comment": ""
+            },
+            {
+                "name": "LastViewedDateTime",
+                "type": "string",
+                "responseElement": "lastUsed.lastAccessedDateTime",
+                "_comment": ""
+            }
+        ],
+        "unstructured": []
+    }
+}

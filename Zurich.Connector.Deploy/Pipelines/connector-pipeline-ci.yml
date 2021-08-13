@@ -44,11 +44,13 @@ stages:
           parameters:
             projectName: ${{ variables.projectName }}
             azureAdClientSecret: $(azureAdClientSecret)
+            environmentName: ci
             publishToNuget: true
 - stage: CI
   pool: DCO-HighQ-Platform-N
   dependsOn:
     - Build
+  condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'master'))
   jobs:
     - deployment: Prereqs
       environment: CI
