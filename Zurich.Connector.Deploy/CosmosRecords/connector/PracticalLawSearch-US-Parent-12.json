@@ -186,7 +186,7 @@
         "_comment": ""
       },
       {
-        "name": "document",
+        "name": "Documents",
         "type": "object",
         "responseElement": "{13}",
         "_comment": ""

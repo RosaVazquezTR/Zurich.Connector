@@ -31,12 +31,15 @@ namespace Zurich.Connector.App.Services.DataSources
                 switch (entityType)
                 {
                     case EntityType.Document:
-                        if (item is JArray)
+                        if (item is JObject result && result.ContainsKey("Items"))
                         {
-                            foreach (JObject doc in (item as JArray))
+                            if (result["Items"] is JArray)
                             {
-                                if (!doc.ContainsKey(StructuredCDMProperties.WebUrl))
-                                    doc[StructuredCDMProperties.WebUrl] = BuildLink(entityType, doc, hostName);
+                                foreach (JObject doc in (result["Items"] as JArray))
+                                {
+                                    if (!doc.ContainsKey(StructuredCDMProperties.WebUrl))
+                                        doc[StructuredCDMProperties.WebUrl] = BuildLink(entityType, doc, hostName);
+                                }
                             }
                         }
                         break;

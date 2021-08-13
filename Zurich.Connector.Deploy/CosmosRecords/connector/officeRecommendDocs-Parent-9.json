@@ -34,15 +34,6 @@
                 "tags": []
             },
             {
-                "cdmName": "OrderBy",
-                "name": "$orderby",
-                "inClause": "OData",
-                "required": false,
-                "type": "string",
-                "defaultValue": "LastUsed/LastAccessedDateTime desc",
-                "tags": []
-            },
-            {
                 "cdmName": "resultSize",
                 "name": "$top",
                 "inClause": "OData",
@@ -79,62 +70,20 @@
             "properties": {}
         }
     },
-    "resultLocation": "value",
+    "resultLocation": "",
     "filters": [],
     "cdmMapping": {
         "structured": [
             {
-                "name": "Id",
-                "type": "string",
-                "responseElement": "resourceReference.id",
+                "name": "TotalCount",
+                "type": "int",
+                "responseElement": "",
                 "_comment": ""
             },
             {
-                "name": "Title",
-                "type": "string",
-                "responseElement": "resourceVisualization.title",
-                "_comment": ""
-            },
-            {
-                "name": "AuthorName",
-                "type": "string",
-                "responseElement": "lastShared.sharedBy.displayName",
-                "_comment": ""
-            },
-            {
-                "name": "WebUrl",
-                "type": "string",
-                "responseElement": "resourceReference.webUrl",
-                "_comment": ""
-            },
-            {
-                "name": "ContainerDisplayName",
-                "type": "string",
-                "responseElement": "resourceVisualization.containerDisplayName",
-                "_comment": ""
-            },
-            {
-                "name": "Type",
-                "type": "string",
-                "responseElement": "resourceVisualization.type",
-                "_comment": ""
-            },
-            {
-                "name": "ContainerWebUrl",
-                "type": "string",
-                "responseElement": "resourceVisualization.containerWebUrl",
-                "_comment": ""
-            },
-            {
-                "name": "ThumbnailUrl",
-                "type": "string",
-                "responseElement": "resourceVisualization.previewImageUrl",
-                "_comment": ""
-            },
-            {
-                "name": "LastModifiedDateTime",
-                "type": "string",
-                "responseElement": "lastShared.sharedDateTime",
+                "name": "Items",
+                "type": "String",
+                "responseElement": "{20}",
                 "_comment": ""
             }
         ],

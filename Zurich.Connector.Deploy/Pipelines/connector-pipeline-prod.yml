@@ -43,6 +43,7 @@ stages:
           parameters:
             projectName: ${{ variables.projectName }}
             azureAdClientSecret: $(azureAdClientSecret)
+            environmentName: prod
 - stage: ServiceNow
   pool: DCO-HighQ-Platform-P
   dependsOn:

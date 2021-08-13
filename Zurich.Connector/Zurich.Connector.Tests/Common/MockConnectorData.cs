@@ -191,18 +191,21 @@ namespace Zurich.Connector.Tests.Common
         {
             dynamic result;
 
-            result = JArray.Parse(@"[
-                {
-                    ""Id"":""1"",
-                    ""Title"":""Secret cookie recipe 1"",
-                    ""Version"":""1.0""
-                },
-                {
-                    ""Id"":""2"",
-                    ""Title"":""Secret cookie recipe 2"",
-                    ""Version"":""1.0""
-                },
-            ]");
+            result = JObject.Parse(@"{
+                ""TotalCount"": 2,
+                ""Items"": [
+                    {
+                        ""Id"":""1"",
+                        ""Title"":""Secret cookie recipe 1"",
+                        ""Version"":""1.0""
+                    },
+                    {
+                        ""Id"":""2"",
+                        ""Title"":""Secret cookie recipe 2"",
+                        ""Version"":""1.0""
+                    }
+                ]
+            }");
             return result;
         }
 	}

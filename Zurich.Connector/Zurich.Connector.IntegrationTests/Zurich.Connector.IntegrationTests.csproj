@@ -8,6 +8,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="integrationsettings.development.json.template" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="integrationsettings.development.json.template" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="FluentAssertions" Version="5.10.3" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="5.0.7" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.7.1" />

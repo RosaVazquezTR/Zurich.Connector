@@ -59,7 +59,7 @@
         "_comment": ""
       },
       {
-        "name": "Document",
+        "name": "Documents",
         "type": "object",
         "responseElement": "{15}",
         "_comment": ""

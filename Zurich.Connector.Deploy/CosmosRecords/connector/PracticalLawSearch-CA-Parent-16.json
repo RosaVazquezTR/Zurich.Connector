@@ -133,7 +133,7 @@
         "_comment": ""
       },
       {
-        "name": "document",
+        "name": "Documents",
         "type": "object",
         "responseElement": "{17}",
         "_comment": ""
