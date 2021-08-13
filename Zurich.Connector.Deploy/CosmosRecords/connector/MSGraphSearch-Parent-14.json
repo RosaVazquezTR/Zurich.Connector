@@ -58,7 +58,7 @@
         "_comment": ""
       },
       {
-        "name": "Document",
+        "name": "Documents",
         "type": "String",
         "responseElement": "{15}",
         "_comment": ""
