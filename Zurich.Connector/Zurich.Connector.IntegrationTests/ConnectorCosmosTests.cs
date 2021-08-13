@@ -1,3 +1,4 @@
+using FluentAssertions;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.IO;
@@ -14,7 +15,7 @@ namespace Zurich.Connector.IntegrationTests
     {
         private const string folderLocation = @"..\..\..\..\..\Zurich.Connector.Deploy\CosmosRecords";
         private List<string> dataSourceTypes = new List<string>() { "oauth2", "transferToken" };
-        private List<string> parameterTypes = new List<string>() { "array", "date", "int", "string" };
+        private List<string> parameterTypes = new List<string>() { "array", "date", "int", "string", "short" };
 
         public ConnectorCosmosTests(CustomWebApplicationFactory fixture) : base(fixture)
         {
@@ -78,7 +79,7 @@ namespace Zurich.Connector.IntegrationTests
             return testCases;
         }
 
-        public static IEnumerable<object[]> GetConnectorsAndDataSources()
+        public static IEnumerable<object[]> GetConnectorsAndDataSourcesTestCases()
         {
             var dataSources = GetDataSources();
             var connectors = GetConnectors(string.Empty);
@@ -96,17 +97,17 @@ namespace Zurich.Connector.IntegrationTests
         public async Task VerifyDataSources(DataSourceDocument dataSource)
         {
             // Assert
-            Assert.NotNull(dataSource);
+            dataSource.Should().NotBeNull();
+            
+            dataSource.Id.Should().NotBeNull();
+            dataSource.partitionkey.Should().Be("DataSourceList");
+            
+            dataSource.appCode.Should().NotBeNull();
+            dataSource.description.Should().NotBeNull();
+            dataSource.name.Should().NotBeNull();
 
-            Assert.NotNull(dataSource.Id);
-            Assert.Equal("DataSourceList", dataSource.partitionkey);
-            Assert.NotNull(dataSource.appCode);
-            Assert.NotNull(dataSource.description);
-            Assert.NotNull(dataSource.name);
-
-            Assert.NotNull(dataSource.securityDefinition);
-            // Note the below contains is a tad strange because the expected is actually the actual
-            Assert.Contains(dataSource.securityDefinition.type, dataSourceTypes);
+            dataSource.securityDefinition.Should().NotBeNull();
+            dataSource.securityDefinition.type.Should().ContainAny(dataSourceTypes);
         }
 
         [Theory]
@@ -114,47 +115,53 @@ namespace Zurich.Connector.IntegrationTests
         public async Task VerifyConnectors(ConnectorDocument connector)
         {
             // Assert
-            Assert.NotNull(connector);
+            connector.Should().NotBeNull();
 
-            Assert.NotNull(connector.Id);
-            Assert.Equal("ConnectorList", connector.partitionkey);
-            Assert.NotNull(connector.info);
-            Assert.NotNull(connector.info.title);
-            Assert.NotNull(connector.info.description);
-            Assert.NotNull(connector.info.entityType.ToString());
-            Assert.NotNull(connector.info.dataSourceId);
-            Assert.NotNull(connector.info.version);
+            connector.Id.Should().NotBeNull();
+            connector.partitionkey.Should().Be("ConnectorList");
+            connector.info.Should().NotBeNull();
+            connector.info.title.Should().NotBeNull();
+            connector.info.description.Should().NotBeNull();
+            connector.info.entityType.ToString().Should().NotBeNull();
+            connector.info.dataSourceId.Should().NotBeNull();
+            connector.info.version.Should().NotBeNull();
             if (string.IsNullOrEmpty(connector.info.subType) || connector.info.subType.Equals("Parent"))
             {
-                Assert.NotNull(connector.Alias);
+                connector.Alias.Should().NotBeNull();
             }
             else
             {
-                Assert.Null(connector.request);
-                Assert.Null(connector.response);
-                Assert.Null(connector.filters);
+                connector.request.endpointPath.Should().BeNull();
+                connector.request.method.Should().BeNull();
+                connector.request.parameters.Should().BeNull();
+                connector.request.responseContentType.Should().BeNull();
+                connector.request.sorting.Should().BeNull();
+                connector.request.xmlArrayAttribute.Should().BeNull();
+                connector.response.schema.Should().BeNull();
+                connector.filters.Should().BeEmpty();
             }
 
-            Assert.NotNull(connector.cdmMapping);
-            Assert.NotNull(connector.cdmMapping.structured);
-            foreach(var param in connector.cdmMapping.structured)
+            connector.cdmMapping.Should().NotBeNull();
+            connector.cdmMapping.structured.Should().NotBeNull();
+            foreach (var param in connector.cdmMapping.structured)
             {
-                Assert.NotNull(param.name);
+                param.name.Should().NotBeNull();
                 // Note the below contains is a tad strange because the expected is actually the actual
-                Assert.Contains(param.type, parameterTypes);
-                Assert.NotNull(param.responseElement);
+                //Assert.Contains(param.type, parameterTypes);
+                param.type.Should().ContainAny(parameterTypes);
+                param.responseElement.Should().NotBeNull();
             }
 
         }
 
         [Theory]
-        [MemberData(nameof(GetConnectorsAndDataSources))]
+        [MemberData(nameof(GetConnectorsAndDataSourcesTestCases))]
         public async Task VerifyConnectorsAndDataSources(ConnectorDocument connector, DataSourceDocument dataSource)
         {
             // Assert
             if (string.IsNullOrEmpty(connector.info.subType) || connector.info.subType.Equals("Parent"))
             {
-                Assert.StartsWith($"{dataSource.appCode}.{connector.info.entityType}".ToLower(), connector.Alias);
+                connector.Alias.Should().StartWith($"{dataSource.appCode}.{connector.info.entityType}".ToLower());
             }
 
         }
