@@ -48,5 +48,10 @@ namespace Zurich.Connector.App.Services
         {
             await _cosmosService.RemoveConnectorRegistration(connectorId, _sessionAccesor.UserId.ToString());
         }
+
+        public async Task GetUserConnections()
+        {
+            return _cosmosService.GetConnectorRegistrations(_sessionAccesor.UserId.ToString());
+        }
     }
 }

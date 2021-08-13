@@ -140,6 +140,18 @@ namespace Zurich.Connector.App.Services
 			await _cosmosClientStore.UpsertDocument(connectorRegistrationDocument, CosmosConstants.ConnectorRegistrationContainerId);
 		  
 		}
+
+		/// <summary>
+		/// Write connector registration document to cosmos
+		/// </summary>
+		public IEnumerable<ConnectorRegistrationDocument> GetConnectorRegistrations(string userId, Expression<Func<DataSourceDocument, bool>> condition = null)
+		{
+
+			var dataSourceDocuments = _cosmosClientStore.GetDocuments(CosmosConstants.DataSourceContainerId, userId, condition);
+			List<ConnectorRegistrationDocument> dataSources = _mapper.Map<List<ConnectorRegistrationDocument>>(dataSourceDocuments);
+			return dataSources;
+
+		}
 		/// <summary>
 		/// delete data  from Cosmos by ID
 		/// </summary>

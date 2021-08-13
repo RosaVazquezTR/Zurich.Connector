@@ -58,6 +58,11 @@ namespace Zurich.Connector.App.Services
 		public Task StoreConnectorRegistration(ConnectorRegistrationDocument connectorRegistrationDocument);
 
 		/// <summary>
+		/// Get connection registrations by user id
+		/// </summary>
+		public IEnumerable<ConnectorRegistrationDocument> GetConnectorRegistrations(string userId, Expression<Func<DataSourceDocument, bool>> condition = null);
+
+		/// <summary>
 		/// delete data  from Cosmos by ID
 		/// </summary>
 		public Task RemoveConnectorRegistration(string connectorId, string userId);
