@@ -1,6 +1,7 @@
 {
   "id": "2",
   "partitionkey": "ConnectorList",
+  "alias": "imanage.document",
   "info": {
     "title": "Get Recent Documents from iManage",
     "description": "Get Recent Documents from iManage",
@@ -70,7 +71,7 @@
       },
       {
         "name": "Items",
-        "type": "String",
+        "type": "object",
         "responseElement": "{18}",
         "_comment": ""
       }

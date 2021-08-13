@@ -7,7 +7,8 @@
     "description": "Get Search Results from MS Graph",
     "entityType": "Search",
     "dataSourceId": "13",
-    "version": "1.0"
+    "version": "1.0",
+    "subType": "Parent"
   },
   "request": {
     "endpointPath": "/beta/search/microsoft.graph.query",
@@ -16,7 +17,7 @@
       {
         "cdmName": "Query",
         "name": "requests.[].query.queryString",
-        "inClause": "body",
+        "inClause": "Body",
         "required": true,
         "type": "string",
         "defaultValue": ""
@@ -24,7 +25,7 @@
       {
         "cdmName": "EntityType",
         "name": "requests.[].entityTypes.[]",
-        "inClause": "body",
+        "inClause": "Body",
         "required": false,
         "type": "string",
         "defaultValue": "driveItem"
@@ -32,7 +33,7 @@
       {
         "cdmName": "Fields",
         "name": "requests.[].fields.[]",
-        "inClause": "body",
+        "inClause": "Body",
         "required": false,
         "type": "string",
         "defaultValue": "Name,CreatedDateTime,LastModifiedDateTime,LastModifiedBy,WebUrl,ParentReference"
@@ -59,7 +60,7 @@
       },
       {
         "name": "Document",
-        "type": "String",
+        "type": "object",
         "responseElement": "{15}",
         "_comment": ""
       }

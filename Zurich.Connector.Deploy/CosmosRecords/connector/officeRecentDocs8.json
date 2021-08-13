@@ -56,7 +56,7 @@
             {
                 "cdmName": "Offset",
                 "name": "$skip",
-                "in": "OData",
+                "inClause": "OData",
                 "required": false,
                 "type": "string",
                 "defaultValue": "0",

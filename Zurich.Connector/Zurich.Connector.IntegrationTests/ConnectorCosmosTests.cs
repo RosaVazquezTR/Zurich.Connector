@@ -10,12 +10,16 @@ using Zurich.Connector.Data.Repositories.CosmosDocuments;
 namespace Zurich.Connector.IntegrationTests
 {
 
-
+    /// <summary>
+    /// Not really integration tests but will pull the json files and verify things look appropriate.
+    /// </summary>
     public class ConnectorCosmosTests : IntegrationTest
     {
         private const string folderLocation = @"..\..\..\..\..\Zurich.Connector.Deploy\CosmosRecords";
         private List<string> dataSourceTypes = new List<string>() { "oauth2", "transferToken" };
-        private List<string> parameterTypes = new List<string>() { "array", "date", "int", "string", "short" };
+        private List<string> parameterTypes = new List<string>() { "array", "date", "int", "object", "short", "string" };
+        private List<string> requestMethodTypes = new List<string>() { "GET", "POST" };
+        private List<string> requestInClauseTypes = new List<string>() { "Body", "OData", "Query" };
 
         public ConnectorCosmosTests(CustomWebApplicationFactory fixture) : base(fixture)
         {
@@ -86,7 +90,7 @@ namespace Zurich.Connector.IntegrationTests
 
             var testCases = from connector in connectors
                             join dataSource in dataSources
-                            on connector.dataSource.Id equals dataSource.Id
+                            on connector.info.dataSourceId equals dataSource.Id
                             select new object[] { connector, dataSource };
 
             return testCases;
@@ -99,12 +103,12 @@ namespace Zurich.Connector.IntegrationTests
             // Assert
             dataSource.Should().NotBeNull();
             
-            dataSource.Id.Should().NotBeNull();
+            dataSource.Id.Should().NotBeNullOrWhiteSpace();
             dataSource.partitionkey.Should().Be("DataSourceList");
             
-            dataSource.appCode.Should().NotBeNull();
-            dataSource.description.Should().NotBeNull();
-            dataSource.name.Should().NotBeNull();
+            dataSource.appCode.Should().NotBeNullOrWhiteSpace();
+            dataSource.description.Should().NotBeNullOrWhiteSpace();
+            dataSource.name.Should().NotBeNullOrWhiteSpace();
 
             dataSource.securityDefinition.Should().NotBeNull();
             dataSource.securityDefinition.type.Should().ContainAny(dataSourceTypes);
@@ -120,17 +124,50 @@ namespace Zurich.Connector.IntegrationTests
             connector.Id.Should().NotBeNull();
             connector.partitionkey.Should().Be("ConnectorList");
             connector.info.Should().NotBeNull();
-            connector.info.title.Should().NotBeNull();
-            connector.info.description.Should().NotBeNull();
-            connector.info.entityType.ToString().Should().NotBeNull();
-            connector.info.dataSourceId.Should().NotBeNull();
+            connector.info.title.Should().NotBeNullOrWhiteSpace();
+            connector.info.description.Should().NotBeNullOrWhiteSpace();
+            connector.info.entityType.ToString().Should().NotBeNullOrWhiteSpace();
+            connector.info.dataSourceId.Should().NotBeNullOrWhiteSpace();
             connector.info.version.Should().NotBeNull();
             if (string.IsNullOrEmpty(connector.info.subType) || connector.info.subType.Equals("Parent"))
             {
                 connector.Alias.Should().NotBeNull();
+                connector.request.Should().NotBeNull();
+                connector.request.endpointPath.Should().NotBeNull();
+                connector.request.method.Should().ContainAny(requestMethodTypes);
+                foreach (var param in connector.request.parameters)
+                {
+                    param.cdmname.Should().NotBeNullOrWhiteSpace();
+                    param.name.Should().NotBeNullOrWhiteSpace();
+                    param.inClause.Should().ContainAny(requestInClauseTypes);
+                    param.type.Should().ContainAny(parameterTypes);
+                }
+                foreach (var sortParam in connector.request.sorting?.properties)
+                {
+                    sortParam.name.Should().NotBeNullOrWhiteSpace();
+                    sortParam.element.Should().NotBeNull();
+                    sortParam.elementValue.Should().NotBeNull();
+                    sortParam.type.Should().ContainAny(parameterTypes);
+                }
+                if (connector.request.responseContentType == Data.Model.ResponseContentType.XML)
+                {
+                    connector.request.xmlArrayAttribute.Should().NotBeNull();
+                }
+                foreach (var filterValue in connector.filters)
+                {
+                    filterValue.Name.Should().NotBeNullOrWhiteSpace();
+                    filterValue.Description.Should().NotBeNullOrWhiteSpace();
+                    filterValue.RequestParameter.Should().NotBeNull();
+                    foreach(var filter in filterValue.FilterList)
+                    {
+                        filter.Name.Should().NotBeNullOrWhiteSpace();
+                        filter.Id.Should().NotBeNullOrWhiteSpace();
+                    }
+                }
             }
             else
             {
+                connector.Alias.Should().BeNull();
                 connector.request.endpointPath.Should().BeNull();
                 connector.request.method.Should().BeNull();
                 connector.request.parameters.Should().BeNull();
@@ -146,8 +183,6 @@ namespace Zurich.Connector.IntegrationTests
             foreach (var param in connector.cdmMapping.structured)
             {
                 param.name.Should().NotBeNull();
-                // Note the below contains is a tad strange because the expected is actually the actual
-                //Assert.Contains(param.type, parameterTypes);
                 param.type.Should().ContainAny(parameterTypes);
                 param.responseElement.Should().NotBeNull();
             }
@@ -158,6 +193,7 @@ namespace Zurich.Connector.IntegrationTests
         [MemberData(nameof(GetConnectorsAndDataSourcesTestCases))]
         public async Task VerifyConnectorsAndDataSources(ConnectorDocument connector, DataSourceDocument dataSource)
         {
+            dataSource.Should().NotBeNull();
             // Assert
             if (string.IsNullOrEmpty(connector.info.subType) || connector.info.subType.Equals("Parent"))
             {
