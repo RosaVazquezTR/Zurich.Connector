@@ -96,6 +96,9 @@ namespace Zurich.Connector.IntegrationTests
             return testCases;
         }
 
+        /// <summary>
+        /// Will check specific things related to just the datasource
+        /// </summary>
         [Theory]
         [MemberData(nameof(GetDataSourcesTestCases))]
         public async Task VerifyDataSources(DataSourceDocument dataSource)
@@ -114,6 +117,9 @@ namespace Zurich.Connector.IntegrationTests
             dataSource.securityDefinition.type.Should().ContainAny(dataSourceTypes);
         }
 
+        /// <summary>
+        /// Will check specific things related to just the connectors
+        /// </summary>
         [Theory]
         [MemberData(nameof(GetConnectorsTestCases), parameters: "")]
         public async Task VerifyConnectors(ConnectorDocument connector)
@@ -189,6 +195,9 @@ namespace Zurich.Connector.IntegrationTests
 
         }
 
+        /// <summary>
+        /// Will check specific things related to the datasource and the connector
+        /// </summary>
         [Theory]
         [MemberData(nameof(GetConnectorsAndDataSourcesTestCases))]
         public async Task VerifyConnectorsAndDataSources(ConnectorDocument connector, DataSourceDocument dataSource)
