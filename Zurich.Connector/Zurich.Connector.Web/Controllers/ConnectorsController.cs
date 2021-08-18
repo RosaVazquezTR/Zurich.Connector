@@ -13,7 +13,9 @@ using Zurich.Connector.Web.Models;
 using Zurich.Connector.App.Services;
 using Zurich.Connector.App.Enum;
 using Zurich.Common.Exceptions;
+using Zurich.Connector.Data.Repositories.CosmosDocuments;
 using System.Net;
+using Zurich.Common.Repositories.Cosmos;
 
 namespace Zurich.Connector.Web.Controllers
 {
@@ -25,31 +27,35 @@ namespace Zurich.Connector.Web.Controllers
         private readonly IRegistrationService _registrationService;
         private readonly IMapper _mapper;
         private readonly ILogger<ConnectorsController> _logger;
-
-        public ConnectorsController(IConnectorService connectorService, ILogger<ConnectorsController> logger, IMapper mapper,  IRegistrationService registrationService)
+        public ConnectorsController(IConnectorService connectorService, ILogger<ConnectorsController> logger, IMapper mapper, IRegistrationService registrationService)
         {
             _connectorService = connectorService;
             _registrationService = registrationService;
             _logger = logger;
             _mapper = mapper;
+
         }
 
         [HttpGet("{id}/data")]
         public async Task<ActionResult<dynamic>> ConnectorData(string id, [FromQuery] string hostName, [FromQuery] string transferToken, bool retrieveFilters)
         {
             dynamic results;
-            try { 
+            try
+            {
                 // TODO: Eventually hostname and transferToken will be removed 
                 Dictionary<string, string> parameters = HttpContext?.Request.Query.Keys.Cast<string>()
-                    .Where(param => !param.Equals("hostname", StringComparison.InvariantCultureIgnoreCase) 
-                    && !param.Equals("transferToken", StringComparison.InvariantCultureIgnoreCase) 
+                    .Where(param => !param.Equals("hostname", StringComparison.InvariantCultureIgnoreCase)
+                    && !param.Equals("transferToken", StringComparison.InvariantCultureIgnoreCase)
+                    && !param.Equals("retrievefilters", StringComparison.InvariantCultureIgnoreCase))
+                    .Where(param => !param.Equals("hostname", StringComparison.InvariantCultureIgnoreCase)
+                    && !param.Equals("transferToken", StringComparison.InvariantCultureIgnoreCase)
                     && !param.Equals("retrieveFilters", StringComparison.InvariantCultureIgnoreCase))
                     .ToDictionary(k => k, v => HttpContext?.Request.Query[v].ToString(), StringComparer.OrdinalIgnoreCase);
 
                 results = await _connectorService.GetConnectorData(id, hostName, transferToken, parameters, retrieveFilters);
                 if (results == null)
                 {
-                    throw  new ResourceNotFoundException("Connector or data not found");
+                    throw new ResourceNotFoundException("Connector or data not found");
                 }
                 var jsonResults = JsonConvert.SerializeObject(results);
                 return new ContentResult
@@ -92,7 +98,7 @@ namespace Zurich.Connector.Web.Controllers
             List<ConnectorModel> connections = await _connectorService.GetConnectors(filters);
             List<ConnectorListViewModel> results = _mapper.Map<List<ConnectorListViewModel>>(connections);
 
-            if(results.Count == 0)
+            if (results.Count == 0)
             {
                 throw new ResourceNotFoundException("Connector or data not found");
             }
@@ -131,25 +137,31 @@ namespace Zurich.Connector.Web.Controllers
             var results = await _connectorService.GetConnector(id);
             if (results == null)
             {
-                throw new  ResourceNotFoundException($"Connector 'id' not found");
+                throw new ResourceNotFoundException($"Connector 'id' not found");
             }
             var responsedata = _mapper.Map<ConnectorViewModel>(results);
             return Ok(responsedata);
         }
 
         [HttpPost]
-        public async Task<ActionResult<ConnectorRegistrationViewModel>>ConnectorRegistration([FromBody] ConnectorRegistrationModel registrationModel)
+        public async Task<ActionResult<ConnectorRegistrationViewModel>> ConnectorRegistration([FromBody] ConnectorRegistrationModel registrationModel)
         {
-            try
+
+            if (string.IsNullOrEmpty(registrationModel.ConnectorId))
             {
-                await _registrationService.RegisterDataSource(registrationModel.ConnectorId);
-                return Ok(RegistrationStatus.register);
+
+                return BadRequest();
             }
-            catch(Exception ex)
+            var registered = await _registrationService.RegisterDataSource(registrationModel.ConnectorId);
+            if (!registered)
             {
-                return BadRequest(RegistrationStatus.notRegister);
-                
+
+                return BadRequest();
+
             }
+            return Ok(RegistrationStatus.registered);
+
+
         }
 
         [HttpDelete("{id}/user")]

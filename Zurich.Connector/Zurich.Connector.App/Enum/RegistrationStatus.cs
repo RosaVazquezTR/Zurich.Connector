@@ -11,7 +11,7 @@ namespace Zurich.Connector.App.Enum
     /// </summary>
     public enum RegistrationStatus
     {
-        register =1,
+        registered = 1,
         notRegister =2
     }
 }
