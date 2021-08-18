@@ -12,20 +12,21 @@ using Zurich.Connector.App;
 using Zurich.Connector.App.Services;
 using Zurich.Connector.Data.Repositories;
 using Zurich.Connector.Data.Repositories.CosmosDocuments;
+using Zurich.Connector.Data.Services;
 
 namespace Zurich.Connector.Tests.ServiceTests
 {
     [TestClass]
     public class CosmosServiceTests
     {
-        private Mock<ICosmosClientStore> _mockCosmosClientStore;
+        private Mock<ConnectorCosmosContext> _mockCosmosClientStore;
         private IMapper _mapper;
        
 
         [TestInitialize]
         public void TestInitialize()
         {
-            _mockCosmosClientStore = new Mock<ICosmosClientStore>();
+            _mockCosmosClientStore = new Mock<ConnectorCosmosContext>(null, null);
             var mapConfig = new MapperConfiguration(cfg =>
             {
                 cfg.AddProfile(new ServiceMappingRegistrar());
@@ -124,7 +125,7 @@ namespace Zurich.Connector.Tests.ServiceTests
             var testConnectorsList = testConnectors.ToList();
             _mockCosmosClientStore.Setup(x => x.GetDocuments<ConnectorDocument>(CosmosConstants.ConnectorContainerId, CosmosConstants.ConnectorPartitionKey, null))
                                     .Returns((testConnectors));
-            var cosmostService = new CosmosService(_mockCosmosClientStore.Object, null, _mapper, null);
+            var cosmostService = new CosmosService(_mockCosmosClientStore.Object, _mapper, null);
 
             //Act
             var connectors = (await cosmostService.GetConnectors()).ToList();
@@ -145,7 +146,7 @@ namespace Zurich.Connector.Tests.ServiceTests
             var testConnector = SetupConnectors().Where(x => x.Id == testId).FirstOrDefault();
             _mockCosmosClientStore.Setup(x => x.GetDocument<ConnectorDocument>(CosmosConstants.ConnectorContainerId, testId, CosmosConstants.ConnectorPartitionKey))
                                         .Returns(Task.FromResult(testConnector));
-            var cosmostService = new CosmosService(_mockCosmosClientStore.Object, null, _mapper, null);
+            var cosmostService = new CosmosService(_mockCosmosClientStore.Object, _mapper, null);
 
             //Act
             var connector = await cosmostService.GetConnector(testId);
@@ -168,7 +169,7 @@ namespace Zurich.Connector.Tests.ServiceTests
             _mockCosmosClientStore.Setup(x => x.GetDocuments(CosmosConstants.ConnectorContainerId, CosmosConstants.ConnectorPartitionKey, It.IsAny<Expression<Func<ConnectorDocument, bool>>>()))
                                     .Returns(testConnectors);
             
-            var cosmosService = new CosmosService(_mockCosmosClientStore.Object, null, _mapper, null);
+            var cosmosService = new CosmosService(_mockCosmosClientStore.Object, _mapper, null);
 
             //Act
             var connector = await cosmosService.GetConnectorByAlias(testAlias);
@@ -187,7 +188,7 @@ namespace Zurich.Connector.Tests.ServiceTests
             Expression<Func<ConnectorDocument, bool>> condition = connectors => testIds.Contains(connectors.Id);
             _mockCosmosClientStore.Setup(x => x.GetDocuments(CosmosConstants.ConnectorContainerId, CosmosConstants.ConnectorPartitionKey, condition))
                                     .Returns(testConnectors);
-            var cosmostService = new CosmosService(_mockCosmosClientStore.Object, null, _mapper, null);
+            var cosmostService = new CosmosService(_mockCosmosClientStore.Object, _mapper, null);
 
             //Act
             var connectors = (await cosmostService.GetConnectors(false, condition)).ToList();
@@ -208,7 +209,7 @@ namespace Zurich.Connector.Tests.ServiceTests
             var testDataSourcesList = SetupDataSources().ToList();
             _mockCosmosClientStore.Setup(x => x.GetDocuments<DataSourceDocument>(CosmosConstants.DataSourceContainerId, CosmosConstants.DataSourcePartitionKey, null))
                                 .Returns(testDataSources);
-            var cosmostService = new CosmosService(_mockCosmosClientStore.Object, null, _mapper, null);
+            var cosmostService = new CosmosService(_mockCosmosClientStore.Object, _mapper, null);
 
             //Act
             var dataSources = (await cosmostService.GetDataSources()).ToList();
@@ -230,7 +231,7 @@ namespace Zurich.Connector.Tests.ServiceTests
             _mockCosmosClientStore.Setup(x => x.GetDocument<DataSourceDocument>
                                         (CosmosConstants.DataSourceContainerId, testId, CosmosConstants.DataSourcePartitionKey))
                                         .Returns(Task.FromResult(testDataSource));
-            var cosmostService = new CosmosService(_mockCosmosClientStore.Object, null, _mapper, null);
+            var cosmostService = new CosmosService(_mockCosmosClientStore.Object, _mapper, null);
 
             //Act
             var dataSource = await cosmostService.GetDataSource(testId);
@@ -250,7 +251,7 @@ namespace Zurich.Connector.Tests.ServiceTests
             //Arrange
             var testId = "1";
             var testConnector = SetupConnectors().Where(p => p.Id == testId).FirstOrDefault();
-            var cosmostService = new CosmosService(_mockCosmosClientStore.Object, null, _mapper, null);
+            var cosmostService = new CosmosService(_mockCosmosClientStore.Object, _mapper, null);
 
             //Act
             await cosmostService.StoreConnector(testConnector);
@@ -265,7 +266,7 @@ namespace Zurich.Connector.Tests.ServiceTests
             //Arrange
             var testId = "101";
             var testDataSource = SetupDataSources().Where(p => p.Id == testId).FirstOrDefault();
-            var cosmostService = new CosmosService(_mockCosmosClientStore.Object, null, _mapper, null);
+            var cosmostService = new CosmosService(_mockCosmosClientStore.Object, _mapper, null);
 
             //Act
             await cosmostService.StoreDataSource(testDataSource);
@@ -280,7 +281,7 @@ namespace Zurich.Connector.Tests.ServiceTests
             //Arrange
             var testId = "101";
             var testDataSource = SetupConnectorRegistration().Where(p => p.Id == testId).FirstOrDefault();
-            var cosmostService = new CosmosService(_mockCosmosClientStore.Object, null, _mapper, null);
+            var cosmostService = new CosmosService(_mockCosmosClientStore.Object, _mapper, null);
 
             //Act
             await cosmostService.StoreConnectorRegistration(testDataSource);

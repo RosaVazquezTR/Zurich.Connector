@@ -38,7 +38,7 @@ namespace Zurich.Connector.Tests
         private Mock<IOAuthService> _mockOAuthService;
         private Mock<ILogger<DataMappingOAuth>> _mockLoggerOAuth;
         private Mock<ILogger<DataMappingTransfer>> _mockLoggerTransfer;
-        private Mock<ICosmosClientStore> _mockCosmosDocumentReader;
+        private Mock<ConnectorCosmosContext> _mockCosmosDocumentReader;
         private Mock<IMapper> _mockMapper;
 
         [TestInitialize]
@@ -53,7 +53,7 @@ namespace Zurich.Connector.Tests
             // feels like this won't change
             AppToken token = new AppToken() { access_token = "fakeToken" };
             _mockOAuthService.Setup(x => x.GetToken(It.IsAny<string>(), It.IsAny<OAuthApplicationType>(), It.IsAny<bool>(), It.IsAny<string>(), It.IsAny<ProductType>())).Returns(Task.FromResult(token));
-            _mockCosmosDocumentReader = new Mock<ICosmosClientStore>();
+            _mockCosmosDocumentReader = new Mock<ConnectorCosmosContext>(null, null);
             _mockMapper = new Mock<IMapper>();
         }
 
