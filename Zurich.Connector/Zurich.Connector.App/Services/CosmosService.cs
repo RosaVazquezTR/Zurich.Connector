@@ -5,28 +5,21 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using Zurich.Common.Repositories.Cosmos;
-using Zurich.Common.Models.Cosmos;
 using Zurich.Connector.App.Model;
 using Zurich.Connector.Data.Repositories.CosmosDocuments;
-using Zurich.TenantData;
+using Zurich.Connector.Data.Services;
 
 namespace Zurich.Connector.App.Services
 {
     public class CosmosService: ICosmosService
 	{
-		private readonly ICosmosClientStore _cosmosClientStore;
-		private readonly CosmosClientSettings _cosmosClientSettings;
+		private readonly ConnectorCosmosContext _cosmosContext;
 		private readonly ILogger _logger;
 		private readonly IMapper _mapper;
 
-		public CosmosService(ICosmosClientStore cosmosClientStore,
-							 CosmosClientSettings cosmosClientSettings,
-							 IMapper mapper,
-							 ILogger<CosmosService> logger)
+		public CosmosService(ConnectorCosmosContext connectorCosmosContext, IMapper mapper, ILogger<CosmosService> logger)
 		{
-			_cosmosClientStore = cosmosClientStore;
-			_cosmosClientSettings = cosmosClientSettings;
+			_cosmosContext = connectorCosmosContext;
 			_logger = logger;
 			_mapper = mapper;
 		}
@@ -37,7 +30,7 @@ namespace Zurich.Connector.App.Services
 		/// <returns>Connector document.</returns> 
 		public async Task<ConnectorModel> GetConnector(string connectorId, bool includeDataSource = false)
         {
-			var connectorDocument = await _cosmosClientStore.GetDocument<ConnectorDocument>
+			var connectorDocument = await _cosmosContext.GetDocument<ConnectorDocument>
 										(CosmosConstants.ConnectorContainerId, connectorId, CosmosConstants.ConnectorPartitionKey);
 			var connector = _mapper.Map<ConnectorModel>(connectorDocument);
             if (includeDataSource && connector != null)
@@ -53,7 +46,7 @@ namespace Zurich.Connector.App.Services
 		/// <returns>Connector document.</returns> 
 		public async Task<ConnectorModel> GetConnectorByAlias(string alias, bool includeDataSource = false)
 		{
-			var connectorDocuments = _cosmosClientStore.GetDocuments<ConnectorDocument>(
+			var connectorDocuments = _cosmosContext.GetDocuments<ConnectorDocument>(
 					 CosmosConstants.ConnectorContainerId 
 					,CosmosConstants.ConnectorPartitionKey 
 					,null
@@ -75,7 +68,7 @@ namespace Zurich.Connector.App.Services
 		/// <returns>Connector document list.</returns> 
 		public async Task<IEnumerable<ConnectorModel>> GetConnectors(bool includeDataSource = false, Expression<Func<ConnectorDocument, bool>> condition = null)
         {
-			var connectorDocuments = _cosmosClientStore.GetDocuments(CosmosConstants.ConnectorContainerId, CosmosConstants.ConnectorPartitionKey, condition);
+			var connectorDocuments = _cosmosContext.GetDocuments(CosmosConstants.ConnectorContainerId, CosmosConstants.ConnectorPartitionKey, condition);
 			var connectors = _mapper.Map<List<ConnectorModel>>(connectorDocuments);
 
             if (includeDataSource && connectors != null)
@@ -99,7 +92,7 @@ namespace Zurich.Connector.App.Services
 		/// <returns>data source.</returns> 
 		public async Task<DataSourceModel> GetDataSource(string dataSourceId)
         {
-			var dataSourceDocument = await _cosmosClientStore.GetDocument<DataSourceDocument>
+			var dataSourceDocument = await _cosmosContext.GetDocument<DataSourceDocument>
 										(CosmosConstants.DataSourceContainerId, dataSourceId, CosmosConstants.DataSourcePartitionKey);
 			return _mapper.Map<DataSourceModel>(dataSourceDocument);
         }
@@ -110,7 +103,7 @@ namespace Zurich.Connector.App.Services
 		/// <returns>List of data sources.</returns> 
 		public async Task<IEnumerable<DataSourceModel>> GetDataSources(Expression<Func<DataSourceDocument, bool>> condition = null)
         {
-            var dataSourceDocuments = _cosmosClientStore.GetDocuments(CosmosConstants.DataSourceContainerId, CosmosConstants.DataSourcePartitionKey, condition);
+            var dataSourceDocuments = _cosmosContext.GetDocuments(CosmosConstants.DataSourceContainerId, CosmosConstants.DataSourcePartitionKey, condition);
             List<DataSourceModel> dataSources = _mapper.Map<List<DataSourceModel>>(dataSourceDocuments);
             return dataSources;
         }
@@ -120,7 +113,7 @@ namespace Zurich.Connector.App.Services
 		/// </summary>
 		public async Task StoreConnector(ConnectorDocument connectorDocument)
         {
-			await _cosmosClientStore.UpsertDocument(connectorDocument, CosmosConstants.ConnectorContainerId);
+			await _cosmosContext.UpsertDocument(connectorDocument, CosmosConstants.ConnectorContainerId);
 		}
 
 		/// <summary>
@@ -128,7 +121,7 @@ namespace Zurich.Connector.App.Services
 		/// </summary>
 		public async Task StoreDataSource(DataSourceDocument dataSourceDocument)
 		{
-			await _cosmosClientStore.UpsertDocument(dataSourceDocument, CosmosConstants.DataSourceContainerId);
+			await _cosmosContext.UpsertDocument(dataSourceDocument, CosmosConstants.DataSourceContainerId);
 		}
 
 		/// <summary>
@@ -137,27 +130,27 @@ namespace Zurich.Connector.App.Services
 		public async Task StoreConnectorRegistration(ConnectorRegistrationDocument connectorRegistrationDocument)
         {
 			
-			await _cosmosClientStore.UpsertDocument(connectorRegistrationDocument, CosmosConstants.ConnectorRegistrationContainerId);
+			await _cosmosContext.UpsertDocument(connectorRegistrationDocument, CosmosConstants.ConnectorRegistrationContainerId);
 		  
 		}
 
 		/// <summary>
-		/// Write connector registration document to cosmos
+		/// Get a list of Connector Registration Documents by user id
 		/// </summary>
-		public IEnumerable<ConnectorRegistrationDocument> GetConnectorRegistrations(string userId, Expression<Func<DataSourceDocument, bool>> condition = null)
+		public IEnumerable<ConnectorRegistration> GetConnectorRegistrations(string userId, Expression<Func<ConnectorRegistrationDocument, bool>> condition = null)
 		{
+            var registeredConnectorDocuments = _cosmosContext.GetDocuments(CosmosConstants.ConnectorRegistrationContainerId, userId, condition);
+            List<ConnectorRegistration> connectorRegistrations = _mapper.Map<List<ConnectorRegistration>>(registeredConnectorDocuments);
 
-			var dataSourceDocuments = _cosmosClientStore.GetDocuments(CosmosConstants.DataSourceContainerId, userId, condition);
-			List<ConnectorRegistrationDocument> dataSources = _mapper.Map<List<ConnectorRegistrationDocument>>(dataSourceDocuments);
-			return dataSources;
-
+			return connectorRegistrations;
 		}
+
 		/// <summary>
 		/// delete data  from Cosmos by ID
 		/// </summary>
 		public async Task RemoveConnectorRegistration(string connectorId, string userId)
 		{
-			await _cosmosClientStore.DeleteDocument<ConnectorRegistrationDocument>(CosmosConstants.ConnectorRegistrationContainerId, connectorId, userId);
+			await _cosmosContext.DeleteDocument<ConnectorRegistrationDocument>(CosmosConstants.ConnectorRegistrationContainerId, connectorId, userId);
 		}
 
 	}

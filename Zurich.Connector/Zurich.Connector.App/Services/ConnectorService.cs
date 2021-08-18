@@ -16,6 +16,7 @@ using Zurich.Connector.App.Services.DataSources;
 using Newtonsoft.Json.Linq;
 using Zurich.Connector.App;
 using Zurich.Connector.App.Utils;
+using Zurich.Connector.App.Enum;
 
 namespace Zurich.Connector.Data.Services
 {
@@ -39,7 +40,7 @@ namespace Zurich.Connector.Data.Services
         /// </summary>
         /// <param name="filters">Filters to get different connections</param>
         /// <returns>List of Data Mapping Connections <see cref="DataMappingConnection"/></returns>
-        Task<List<ConnectorModel>> GetConnectors(FilterModel filters);
+        Task<List<ConnectorModel>> GetConnectors(Common.Models.Connectors.ConnectorFilterModel filters);
         Task<ConnectorModel> GetConnector(string connectorId);
 
     }
@@ -119,7 +120,7 @@ namespace Zurich.Connector.Data.Services
         /// </summary>
         /// <param name="filters">Filters to get different connections</param>
         /// <returns>List of Data Mapping Connections <see cref="DataMappingConnection"/></returns>
-        public async Task<List<ConnectorModel>> GetConnectors(FilterModel filters)
+        public async Task<List<ConnectorModel>> GetConnectors(Common.Models.Connectors.ConnectorFilterModel filters)
         {
             try
             {
@@ -127,6 +128,7 @@ namespace Zurich.Connector.Data.Services
                 bool isDataSourceFilter = false;
                 IEnumerable<string> entityTypeFilter = Enumerable.Empty<string>();
                 IEnumerable<string> dataSourceFilter = Enumerable.Empty<string>();
+                IEnumerable<string> registeredConnectors = Enumerable.Empty<string>();
                 if (filters?.EntityTypes?.Count > 0)
                 {
                     isEntityTypeFilter = true;
@@ -138,15 +140,18 @@ namespace Zurich.Connector.Data.Services
                     isDataSourceFilter = true;
                     dataSourceFilter = filters.DataSources;
                 }
-                //TODO: Implement registration mode filtering here.
-                //if (filters?.RegistrationModes?.Count > 0)
-                //{
-                //}
 
-                Expression<Func<ConnectorDocument, bool>> condition = connector => (isEntityTypeFilter == false || entityTypeFilter.Contains(connector.info.entityType.ToString())) && 
-                                         (isDataSourceFilter == false || dataSourceFilter.Contains(connector.info.dataSourceId));
+                registeredConnectors = _registrationService.GetUserConnections(filters.RegistrationModes);
 
+                Expression<Func<ConnectorDocument, bool>> condition = connector => (isEntityTypeFilter == false || entityTypeFilter.Contains(connector.info.entityType.ToString())) 
+                                        && (isDataSourceFilter == false || dataSourceFilter.Contains(connector.info.dataSourceId))
+                                        && (filters.IsRegistered == false || registeredConnectors.Contains(connector.Id));
                 var connectors = await _cosmosService.GetConnectors(true, condition);
+
+                foreach (var connector in connectors.Where(connector => registeredConnectors.Contains(connector.Id)))
+                {
+                    connector.RegistrationStatus = RegistrationStatus.Registered;
+                }
 
                 return connectors.ToList();
             } catch(Exception ex)

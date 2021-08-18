@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using Zurich.Common.Models.Connectors;
 using Zurich.Connector.Data.Repositories.CosmosDocuments;
 using Zurich.TenantData;
 
@@ -17,6 +20,13 @@ namespace Zurich.Connector.App.Services
         /// Remove user from cosmosdb
         /// </summary>
         Task RemoveUserConnector(string connectorId);
+
+        /// <summary>
+        /// Gets list of user's registered connector ids
+        /// </summary>
+        /// <param name="registrationModes">List of registration modes to provide additional filtering</param>
+        /// <returns>List of connector ids</returns>
+        IEnumerable<string> GetUserConnections(IEnumerable<RegistrationEntityMode> registrationModes);
     }
 
     public class RegistrationService : IRegistrationService
@@ -37,8 +47,8 @@ namespace Zurich.Connector.App.Services
                
                 ConnectorId = connectorId,
                 partitionkey = _sessionAccesor.UserId.ToString(),
-                UserId = _sessionAccesor.UserId,
-                TenantId = _sessionAccesor.TenantId,
+                UserId = _sessionAccesor.UserId.ToString(),
+                TenantId = _sessionAccesor.TenantId.ToString(),
                 Id = connectorId
             };
             await _cosmosService.StoreConnectorRegistration(cosmosDocument);
@@ -49,9 +59,15 @@ namespace Zurich.Connector.App.Services
             await _cosmosService.RemoveConnectorRegistration(connectorId, _sessionAccesor.UserId.ToString());
         }
 
-        public async Task GetUserConnections()
+        public IEnumerable<string> GetUserConnections(IEnumerable<RegistrationEntityMode> registrationModes)
         {
-            return _cosmosService.GetConnectorRegistrations(_sessionAccesor.UserId.ToString());
+            var partitionKey = _sessionAccesor.UserId.ToString();
+
+            // TODO: Add filtering by registration modes
+            var connections = _cosmosService.GetConnectorRegistrations(partitionKey, null);
+            var connectionIds = connections.Select(connection => connection.ConnectorId);
+
+            return connectionIds;
         }
     }
 }

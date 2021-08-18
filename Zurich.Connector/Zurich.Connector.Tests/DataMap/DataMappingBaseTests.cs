@@ -13,18 +13,19 @@ using Zurich.ProductData.Models;
 using AutoMapper;
 using Zurich.Connector.Data.Repositories.CosmosDocuments;
 using Zurich.Common.Repositories.Cosmos;
+using Zurich.Connector.Data.Services;
 
 namespace Zurich.Connector.Tests
 {
 	public class TestDataMapping: DataMappingBase
     {
-		public TestDataMapping(IRepository repository, IDataMappingRepository dataMappingRepository, IOAuthService oAuthService, ILogger<DataMappingOAuth> logger, ICosmosClientStore cosmosClientStore, IMapper mapper)
+		public TestDataMapping(IRepository repository, IDataMappingRepository dataMappingRepository, IOAuthService oAuthService, ILogger<DataMappingOAuth> logger, ConnectorCosmosContext connectorCosmosContext, IMapper mapper)
 		{
 			this._repository = repository;
 			this._dataMappingRepository = dataMappingRepository;
 			this._oAuthService = oAuthService;
 			this._logger = logger;
-			this._cosmosClientStore = cosmosClientStore;
+			this._cosmosContext = connectorCosmosContext;
 			this._mapper = mapper;
 		}
 	}

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Zurich.Connector.App.Enum;
 using Zurich.Connector.Data.Model;
 
 namespace Zurich.Connector.App.Model
@@ -56,6 +57,12 @@ namespace Zurich.Connector.App.Model
         /// Result Location
         /// </summary>
         public string ResultLocation { get; set; }
+
+        /// <summary>
+        /// Registration status
+        /// </summary>
+        public RegistrationStatus RegistrationStatus { get; set; }
+
     }
 
     /// <summary>

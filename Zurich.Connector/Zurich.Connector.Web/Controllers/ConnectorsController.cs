@@ -87,13 +87,14 @@ namespace Zurich.Connector.Web.Controllers
         /// <response code="200">A <see cref="ConnectorListViewModel"/> representing the connectors</response>
 
         [HttpGet()]
-        public async Task<ActionResult<List<ConnectorListViewModel>>> Connectors([FromQuery] FilterModel filters)
+        public async Task<ActionResult<List<ConnectorListViewModel>>> Connectors([FromQuery] Common.Models.Connectors.ConnectorFilterModel filters)
         {
             List<ConnectorModel> connections = await _connectorService.GetConnectors(filters);
             List<ConnectorListViewModel> results = _mapper.Map<List<ConnectorListViewModel>>(connections);
 
             if(results.Count == 0)
             {
+                // Probably don't want to throw an error here. A user could easily have zero registered connectors
                 throw new ResourceNotFoundException("Connector or data not found");
             }
 
@@ -143,11 +144,11 @@ namespace Zurich.Connector.Web.Controllers
             try
             {
                 await _registrationService.RegisterDataSource(registrationModel.ConnectorId);
-                return Ok(RegistrationStatus.register);
+                return Ok(RegistrationStatus.Registered);
             }
             catch(Exception ex)
             {
-                return BadRequest(RegistrationStatus.notRegister);
+                return BadRequest(RegistrationStatus.NotRegistered);
                 
             }
         }

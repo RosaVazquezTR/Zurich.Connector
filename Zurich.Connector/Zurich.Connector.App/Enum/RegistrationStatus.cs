@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 namespace Zurich.Connector.App.Enum
 {
     /// <summary>
-    /// Reprsent's deiffrent RegistrationStatus
+    /// Represent's different registration statuses
     /// </summary>
     public enum RegistrationStatus
     {
-        register =1,
-        notRegister =2
+        NotRegistered = 0,
+        Registered = 1
     }
 }

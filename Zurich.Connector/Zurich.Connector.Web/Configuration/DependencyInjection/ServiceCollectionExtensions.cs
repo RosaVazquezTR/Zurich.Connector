@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using AutoMapper;
 using IdentityModel;
@@ -20,6 +21,7 @@ using Zurich.Common.Services;
 using Zurich.Common.Services.Security;
 using Zurich.Connector.App.Services;
 using Zurich.Connector.Data.Repositories;
+using Zurich.Connector.Data.Services;
 using Zurich.Connector.Web.Configuration;
 using Zurich.TenantData;
 namespace Microsoft.Extensions.DependencyInjection
@@ -102,6 +104,7 @@ namespace Microsoft.Extensions.DependencyInjection
 		/// <param name="clientOptions"> cosmos client options</param>
 		public static void AddConnectorCosmosServices(this IServiceCollection services, CosmosDbOptions dbOptions, CosmosClientSettings clientOptions)
         {
+			List<CosmosClient> clients = new List<CosmosClient>();
 			var clientSettings = new CosmosClientOptions()
 			{
 				AllowBulkExecution = clientOptions.AllowBulkExecution,
@@ -112,15 +115,22 @@ namespace Microsoft.Extensions.DependencyInjection
                 SerializerOptions = new CosmosSerializationOptions() { PropertyNamingPolicy = CosmosPropertyNamingPolicy.CamelCase }
             };
 
-			services.AddCosmosClientStore(dbOptions, clientSettings);
-			services.AddTransient<ICosmosService>(serviceProvider =>
-			{
-				var cosmosStore = serviceProvider.GetRequiredService<ICosmosClientStore>();
-				var logger = serviceProvider.GetRequiredService<ILogger<CosmosService>>();
-				var mapper = serviceProvider.GetRequiredService<IMapper>();
-				return new CosmosService(cosmosStore, clientOptions, mapper, logger);
-			});
-		}
+            //services.AddCosmosClientStore(dbOptions, clientSettings);
+            //services.AddTransient<ICosmosService>(serviceProvider =>
+            //{
+            //    var cosmosStore = serviceProvider.GetRequiredService<ICosmosClientStore>();
+            //    var logger = serviceProvider.GetRequiredService<ILogger<CosmosService>>();
+            //    var mapper = serviceProvider.GetRequiredService<IMapper>();
+            //    return new CosmosService(cosmosStore, clientOptions, mapper, logger);
+            //});
+
+            clients.Add(new CosmosClient(dbOptions.Endpoint, dbOptions.PrimaryKey, clientSettings));
+            services.AddSingleton<IEnumerable<CosmosClient>>(clients);
+            services.AddSingleton<ICosmosClientFactory, CosmosClientFactory>();
+            //services.AddSingleton<ICosmosClientFactory>(new CosmosClientFactory(clients));
+            services.AddScoped(sp => new ConnectorCosmosContext(sp.GetRequiredService<ICosmosClientFactory>(), dbOptions));
+			services.AddTransient<ICosmosService, CosmosService>();
+        }
 
 		/// <summary>
 		/// Configuring the ExceptionHandling Middleware.

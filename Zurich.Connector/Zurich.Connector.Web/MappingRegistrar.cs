@@ -35,6 +35,7 @@ namespace Zurich.Connector.Web
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.EntityType, opt => opt.MapFrom(src => src.Info.EntityType))
                 .ForMember(dest => dest.DataSource, opt => opt.MapFrom(src => src.DataSource))
+                .ForMember(dest => dest.RegistrationStatus, opt => opt.MapFrom(src => src.RegistrationStatus))
                 .ForAllOtherMembers(opt => opt.Ignore());
 
             
@@ -47,7 +48,6 @@ namespace Zurich.Connector.Web
                 .ForMember(dest => dest.Userid, opt => opt.MapFrom(src => src.UserId))
                 .ForMember(dest => dest.Tenantid, opt => opt.MapFrom(src => src.TenantId))
                 .ForMember(dest => dest.AppName, opt => opt.MapFrom(src => src.AppName))
-                //.ForMember(dest => dest.RegistrationStatus, opt => opt.MapFrom(src => src.RegistrationStatus))
                 .ForAllOtherMembers(opt => opt.Ignore());
 
         }

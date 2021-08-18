@@ -60,7 +60,7 @@ namespace Zurich.Connector.App.Services
 		/// <summary>
 		/// Get connection registrations by user id
 		/// </summary>
-		public IEnumerable<ConnectorRegistrationDocument> GetConnectorRegistrations(string userId, Expression<Func<DataSourceDocument, bool>> condition = null);
+		public IEnumerable<ConnectorRegistration> GetConnectorRegistrations(string userId, Expression<Func<ConnectorRegistrationDocument, bool>> condition = null);
 
 		/// <summary>
 		/// delete data  from Cosmos by ID
