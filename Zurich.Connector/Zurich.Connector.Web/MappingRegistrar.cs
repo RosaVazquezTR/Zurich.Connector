@@ -25,7 +25,8 @@ namespace Zurich.Connector.Web
             CreateMap<ConnectorReponseSchemaModel, ConnectorReponseSchemaViewModel>();
             CreateMap<ConnectorReponsePropertiesModel, ConnectorReponsePropertiesViewModel>();
 
-            CreateMap<ConnectorFilterModel, FilterViewModel>();
+            CreateMap<ConnectorsFiltersModel, FilterViewModel>();
+            CreateMap<FilterListModel, FilterListViewModel>();
 
             CreateMap<CDMMappingModel, CDMMappingViewModel>();
             CreateMap<CDMElementModel, CDMElementViewModel>();
@@ -46,7 +47,7 @@ namespace Zurich.Connector.Web
                 .ForMember(dest => dest.Userid, opt => opt.MapFrom(src => src.UserId))
                 .ForMember(dest => dest.Tenantid, opt => opt.MapFrom(src => src.TenantId))
                 .ForMember(dest => dest.AppName, opt => opt.MapFrom(src => src.AppName))
-                .ForMember(dest => dest.RegistrationStatus, opt => opt.MapFrom(src => src.RegistrationStatus))
+                //.ForMember(dest => dest.RegistrationStatus, opt => opt.MapFrom(src => src.RegistrationStatus))
                 .ForAllOtherMembers(opt => opt.Ignore());
 
         }

@@ -36,7 +36,7 @@ namespace Zurich.Connector.Data.Repositories.CosmosDocuments
         public List<FilterList> FilterList { get; set; }
     }
 
-        public class FilterList
+    public class FilterList
         {
         /// <summary>
         /// Name of the subfilter
@@ -46,10 +46,10 @@ namespace Zurich.Connector.Data.Repositories.CosmosDocuments
         /// Id of the filter
         /// </summary>
         public string Id { get; set; }
-       
-
-
     }
+
+    // TODO: Can the models below be cleaned up if they are not being used?
+
     /// <summary>
     /// Define the source of filters. There can be 3 types of sources
     /// 1- Define the filter options as part of an API response (Not supported currently)

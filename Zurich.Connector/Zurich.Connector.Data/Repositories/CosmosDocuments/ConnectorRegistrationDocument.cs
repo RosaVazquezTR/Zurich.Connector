@@ -25,12 +25,12 @@ namespace Zurich.Connector.Data.Repositories.CosmosDocuments
         /// <summary>
         /// userID        
         /// </summary>
-        public Guid UserId { get; set; }
+        public string UserId { get; set; }
 
         /// <summary>
         /// tenantid ID
         /// </summary>
-        public Guid TenantId { get; set; }
+        public string TenantId { get; set; }
 
         /// <summary>
         /// data source ID
@@ -42,14 +42,5 @@ namespace Zurich.Connector.Data.Repositories.CosmosDocuments
         /// Use For App Name... TODO: Is this needed?
         /// </summary>
         public string AppName { get; set; }
-    }
-
-    /// <summary>
-    /// Reprsent's deiffrent RegistrationStatus
-    /// </summary>
-    public enum Status
-    {
-        register = 1,
-        notRegister = 2
     }
 }

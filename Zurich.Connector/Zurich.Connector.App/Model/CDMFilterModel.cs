@@ -7,10 +7,12 @@ using Zurich.Connector.Data.Model;
 
 namespace Zurich.Connector.App.Model
 {
+    // TODO: Determine if this is being used. Looks like ConnectorsFiltersModel is being used instead
+
     /// <summary>
     /// Filter details associated with the connector.
     /// </summary>
-    public class ConnectorFilterModel
+    public class CDMFilterModel
     {
         /// <summary>
         /// Name of the filter
