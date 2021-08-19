@@ -53,8 +53,8 @@ namespace Zurich.Connector.App.Services
             {
                 ConnectorId = connectorId,
                 partitionkey = _sessionAccesor.UserId.ToString(),
-                UserId = _sessionAccesor.UserId.ToString(),
-                TenantId = _sessionAccesor.TenantId.ToString(),
+                UserId = _sessionAccesor.UserId,
+                TenantId = _sessionAccesor.TenantId,
                 Id = $"{_sessionAccesor.UserId}-{connectorId}"
             };
 

@@ -25,12 +25,12 @@ namespace Zurich.Connector.Data.Repositories.CosmosDocuments
         /// <summary>
         /// userID        
         /// </summary>
-        public string UserId { get; set; }
+        public Guid UserId { get; set; }
 
         /// <summary>
         /// tenantid ID
         /// </summary>
-        public string TenantId { get; set; }
+        public Guid TenantId { get; set; }
 
         /// <summary>
         /// Use For App Name... TODO: Is this needed?
