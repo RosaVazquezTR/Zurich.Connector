@@ -150,19 +150,22 @@ namespace Zurich.Connector.Web.Controllers
 
             if (string.IsNullOrEmpty(registrationModel.ConnectorId))
             {
-
-                return BadRequest();
+                return BadRequest("Connector Id must be defined");
             }
-            var registered = await _registrationService.RegisterDataSource(registrationModel.ConnectorId);
+
+            var connector = await _connectorService.GetConnector(registrationModel.ConnectorId);
+            if (connector == null)
+            {
+                return BadRequest("Connector Id must point to a valid connector");
+            }
+
+            var registered = await _registrationService.RegisterDataSource(connector.Id);
             if (!registered)
             {
-
                 return BadRequest();
-
             }
+
             return Ok(RegistrationStatus.Registered);
-
-
         }
 
         [HttpDelete("{id}/user")]
@@ -173,7 +176,7 @@ namespace Zurich.Connector.Web.Controllers
                 return BadRequest("Invalid Connector ID");
             }
             await _registrationService.RemoveUserConnector(id);
-            return Ok(HttpStatusCode.OK);
+            return Ok(HttpStatusCode.NoContent);
         }
 
     }

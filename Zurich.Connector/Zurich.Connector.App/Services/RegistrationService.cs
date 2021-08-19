@@ -15,8 +15,9 @@ namespace Zurich.Connector.App.Services
         /// Registers a datasource to a given user
         /// </summary>
         /// <param name="connectorId">The connector id</param>
-        /// <returns>Empty Task</returns>
+        /// <returns>Boolean indicating success</returns>
         Task<bool> RegisterDataSource(string connectorId);
+
         /// <summary>
         /// Remove user from cosmosdb
         /// </summary>
@@ -34,30 +35,29 @@ namespace Zurich.Connector.App.Services
     {
         private readonly ICosmosService _cosmosService;
         private readonly ISessionAccessor _sessionAccesor;
-        private readonly IConnectorService _connectorService;
-        public RegistrationService(ICosmosService cosmosService, ISessionAccessor sessionAccesor, IConnectorService connectorService)
+
+        public RegistrationService(ICosmosService cosmosService, ISessionAccessor sessionAccesor)
         {
             _cosmosService = cosmosService;
             _sessionAccesor = sessionAccesor;
-            _connectorService = connectorService;
         }
 
         public async Task<bool> RegisterDataSource(string connectorId)
         {
-            var connector = await _connectorService.GetConnector(connectorId);
-            if(connector==null)
+            if (string.IsNullOrEmpty(connectorId))
             {
                 return false;
             }
+
             ConnectorRegistrationDocument cosmosDocument = new ConnectorRegistrationDocument()
             {
-
                 ConnectorId = connectorId,
                 partitionkey = _sessionAccesor.UserId.ToString(),
                 UserId = _sessionAccesor.UserId.ToString(),
                 TenantId = _sessionAccesor.TenantId.ToString(),
                 Id = $"{_sessionAccesor.UserId}-{connectorId}"
             };
+
             await _cosmosService.StoreConnectorRegistration(cosmosDocument);
             return true;
         }
