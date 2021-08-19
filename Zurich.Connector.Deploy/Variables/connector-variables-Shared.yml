@@ -41,5 +41,9 @@ variables:
     value: "legalApis"
   - name: projectName
     value: 'Zurich.Connector'
+  - name: regressionTestTags
+    value: "ConnectorsSmokeTest"
+  - name: regressionTestTimeout
+    value: 30
   - name: tenantDbConnStringKey
     value: "ConnectionStrings--LegalHomeDB"
