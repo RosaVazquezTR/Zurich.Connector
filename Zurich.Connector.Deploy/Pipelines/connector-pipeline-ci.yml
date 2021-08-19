@@ -15,10 +15,10 @@ resources:
     - repository: ZurichDeploy
       type: git
       name: Zurich.Deploy
+      ref: RD-PublishNuGetToCommon
     - repository: ZurichTesting
       type: git
       name: Zurich.Testing
-      ref: RD-PublishNuGetToCommon
       
 variables:
 - name: solution
