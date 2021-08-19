@@ -100,8 +100,7 @@ namespace Zurich.Connector.Web.Controllers
 
             if (results.Count == 0)
             {
-                // Probably don't want to throw an error here. A user could easily have zero registered connectors
-                throw new ResourceNotFoundException("Connector or data not found");
+                return Ok(HttpStatusCode.NoContent);
             }
 
             var jsonSettings = new JsonSerializerSettings
