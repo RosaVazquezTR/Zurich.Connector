@@ -290,3 +290,4 @@ __pycache__/
 /Zurich.Connector/Zurich.Connector.Web/appsettings.Development.json
 /Zurich.Connector/Zurich.Connector.Web/$(build.artifactStagingDirectory)
 /Zurich.Connector/Zurich.Connector.Durable/appsettings.development.json
+/Zurich.Connector/Zurich.Connector.IntegrationTests/integrationsettings.development.json

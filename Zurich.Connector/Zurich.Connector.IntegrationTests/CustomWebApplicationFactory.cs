@@ -28,11 +28,17 @@ namespace Zurich.Connector.IntegrationTests
             Host.CreateDefaultBuilder()
                 .ConfigureAppConfiguration((HostBuilderContext context, IConfigurationBuilder configBuilder) =>
                 {
-                    _configuration = new ConfigurationBuilder()
-                      .AddJsonFile("integrationsettings.json")
-                      .AddUserSecrets(Assembly.GetExecutingAssembly())
-                        .Build();
 
+                    string env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+
+                    string json = "integrationsettings.json";
+                    string envJson = $"integrationsettings.{env}.json";
+
+                    _configuration = new ConfigurationBuilder()
+                        .AddJsonFile(json, optional: true)
+                        .AddJsonFile(envJson, optional: true)
+                        .AddUserSecrets(Assembly.GetExecutingAssembly())
+                        .Build();
 
                     configBuilder.AddAzureKeyVault(
                         _configuration["KeyVault:Endpoint"],

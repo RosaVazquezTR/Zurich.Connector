@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Zurich.Common.Models.Connectors;
 using Zurich.Connector.Data.Repositories.CosmosDocuments;
+using Zurich.Connector.Data.Services;
 using Zurich.TenantData;
 
 namespace Zurich.Connector.App.Services
@@ -15,7 +16,7 @@ namespace Zurich.Connector.App.Services
         /// </summary>
         /// <param name="connectorId">The connector id</param>
         /// <returns>Empty Task</returns>
-        Task RegisterDataSource(string connectorId);
+        Task<bool> RegisterDataSource(string connectorId);
         /// <summary>
         /// Remove user from cosmosdb
         /// </summary>
@@ -33,25 +34,32 @@ namespace Zurich.Connector.App.Services
     {
         private readonly ICosmosService _cosmosService;
         private readonly ISessionAccessor _sessionAccesor;
-
-        public RegistrationService(ICosmosService cosmosService, ISessionAccessor sessionAccesor)
+        private readonly IConnectorService _connectorService;
+        public RegistrationService(ICosmosService cosmosService, ISessionAccessor sessionAccesor, IConnectorService connectorService)
         {
             _cosmosService = cosmosService;
             _sessionAccesor = sessionAccesor;
+            _connectorService = connectorService;
         }
 
-        public async Task RegisterDataSource(string connectorId)
+        public async Task<bool> RegisterDataSource(string connectorId)
         {
+            var connector = await _connectorService.GetConnector(connectorId);
+            if(connector==null)
+            {
+                return false;
+            }
             ConnectorRegistrationDocument cosmosDocument = new ConnectorRegistrationDocument()
             {
-               
+
                 ConnectorId = connectorId,
                 partitionkey = _sessionAccesor.UserId.ToString(),
                 UserId = _sessionAccesor.UserId.ToString(),
                 TenantId = _sessionAccesor.TenantId.ToString(),
-                Id = connectorId
+                Id = $"{_sessionAccesor.UserId}-{connectorId}"
             };
             await _cosmosService.StoreConnectorRegistration(cosmosDocument);
+            return true;
         }
 
         public async Task RemoveUserConnector(string connectorId)

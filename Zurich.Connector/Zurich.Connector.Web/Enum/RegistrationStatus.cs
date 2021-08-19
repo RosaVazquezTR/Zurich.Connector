@@ -10,7 +10,7 @@ namespace Zurich.Connector.Web.Enum
     /// </summary>
     public enum RegistrationStatus
     {
-        Register = 1,
+        registered = 1,
         NotRegister = 2
     }
 }

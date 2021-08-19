@@ -15,6 +15,9 @@ resources:
     - repository: ZurichDeploy
       type: git
       name: Zurich.Deploy
+    - repository: ZurichTesting
+      type: git
+      name: Zurich.Testing
       
 variables:
 - name: solution
@@ -44,11 +47,13 @@ stages:
           parameters:
             projectName: ${{ variables.projectName }}
             azureAdClientSecret: $(azureAdClientSecret)
+            environmentName: ci
             publishToNuget: true
 - stage: CI
   pool: DCO-HighQ-Platform-N
   dependsOn:
     - Build
+  condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'master'))
   jobs:
     - deployment: Prereqs
       environment: CI
@@ -184,3 +189,18 @@ stages:
           serviceName: ${{ variables.connectorServiceName }}
           subscriptionName: ${{ variables.subscriptionName }}
           swaggerEndpoint: ${{ variables.swaggerEndpoint }}
+- stage: Testing
+  pool: AutomationTestAgentPool
+  dependsOn: Swap_Slots
+  condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'master'))
+  jobs:
+  - job: 'RegressionTests'
+    timeoutInMinutes: ${{ variables.regressionTestTimeout }} # how long to run the job before automatically cancelling
+    displayName: 'Regression Tests (Smoke Tests)'
+    steps: 
+      - checkout: ZurichTesting
+      - template: pipelines\Templates\legal-home-regression-tests.yml@ZurichTesting
+        parameters:
+          environment: ${{ variables.environmentStorageName }}
+          azureAdClientSecret: $(azureAdClientSecret)
+          testTags: ${{ variables.regressionTestTags }}

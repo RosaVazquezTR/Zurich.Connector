@@ -33,12 +33,6 @@ namespace Zurich.Connector.Data.Repositories.CosmosDocuments
         public string TenantId { get; set; }
 
         /// <summary>
-        /// data source ID
-        /// </summary>
-        public string DatasourceId { get; set; }
-
-       
-        /// <summary>
         /// Use For App Name... TODO: Is this needed?
         /// </summary>
         public string AppName { get; set; }

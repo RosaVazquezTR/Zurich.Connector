@@ -1,0 +1,51 @@
+{
+    "id": "21",
+    "partitionkey": "ConnectorList",
+	"alias": "msgraph.document.url",
+    "info": {
+        "title": "Get drive web url from Microsoft Office",
+        "description": "Get drive web url from Microsoft Office",
+        "entityType": "Document",
+        "dataSourceId": "13",
+        "version": "1.0"
+    },
+    "request": {
+        "endpointPath": "/v1.0/me/drive",
+        "method": "GET",
+        "parameters": [
+            {
+                "cdmName": "select",
+                "name": "$select",
+                "inClause": "OData",
+                "required": false,
+                "type": "string",
+                "defaultValue": "WebUrl",
+                "tags": []
+            }
+        ],
+        "sorting": {
+            "properties": []
+        }
+    },
+    "pagination": {
+        "available": false
+    },
+    "response": {
+        "schema": {
+            "properties": {}
+        }
+    },
+    "resultLocation": "",
+    "filters": [],
+    "cdmMapping": {
+        "structured": [
+            {
+                "name": "Url",
+                "type": "string",
+                "responseElement": "webUrl",
+                "_comment": ""
+            }
+        ],
+        "unstructured": []
+    }
+}

@@ -114,6 +114,22 @@ namespace Zurich.Connector.Tests.ServiceTests
                 }
             };
         }
+        private IEnumerable<ConnectorRegistrationDocument> SetupGetUserRegistration()
+        {
+            return new List<ConnectorRegistrationDocument>()
+            {
+                new ConnectorRegistrationDocument()
+                {
+                    Id = "140",
+                    ConnectorId = "140",
+                },
+                new ConnectorRegistrationDocument()
+                {
+                    Id = "141",
+                   ConnectorId = "141",
+                }
+            };
+        }
         #endregion
 
 
@@ -288,6 +304,24 @@ namespace Zurich.Connector.Tests.ServiceTests
 
             //Assert
             _mockCosmosClientStore.Verify(x => x.UpsertDocument(testDataSource, CosmosConstants.ConnectorRegistrationContainerId), Times.Once());
+        }
+        [TestMethod]
+        public async Task callGetUserRegistration()
+        {
+            //Arrange
+            var testId = "140";
+            string UserId = "55e7a5d2-2134-4828-a2cd-2c4284ec11b9";
+            var testConnectors = SetupGetUserRegistration();
+            _mockCosmosClientStore.Setup(x => x.GetDocument<ConnectorRegistrationDocument>(CosmosConstants.ConnectorRegistrationContainerId, testId, UserId));
+                                    
+            var cosmosService = new CosmosService(_mockCosmosClientStore.Object, null, _mapper, null);
+
+            //Act
+            var connectors = await cosmosService.GetUserRegistration(testId, UserId);
+            //Assert
+            _mockCosmosClientStore.Verify(x => x.GetDocument<ConnectorRegistrationDocument>(CosmosConstants.ConnectorRegistrationContainerId, testId, UserId),
+                                            Times.Once());
+            
         }
     }
 }
