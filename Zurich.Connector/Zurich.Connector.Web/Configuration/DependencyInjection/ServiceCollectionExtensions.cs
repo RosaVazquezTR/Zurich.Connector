@@ -115,19 +115,9 @@ namespace Microsoft.Extensions.DependencyInjection
                 SerializerOptions = new CosmosSerializationOptions() { PropertyNamingPolicy = CosmosPropertyNamingPolicy.CamelCase }
             };
 
-            //services.AddCosmosClientStore(dbOptions, clientSettings);
-            //services.AddTransient<ICosmosService>(serviceProvider =>
-            //{
-            //    var cosmosStore = serviceProvider.GetRequiredService<ICosmosClientStore>();
-            //    var logger = serviceProvider.GetRequiredService<ILogger<CosmosService>>();
-            //    var mapper = serviceProvider.GetRequiredService<IMapper>();
-            //    return new CosmosService(cosmosStore, clientOptions, mapper, logger);
-            //});
-
             clients.Add(new CosmosClient(dbOptions.Endpoint, dbOptions.PrimaryKey, clientSettings));
             services.AddSingleton<IEnumerable<CosmosClient>>(clients);
             services.AddSingleton<ICosmosClientFactory, CosmosClientFactory>();
-            //services.AddSingleton<ICosmosClientFactory>(new CosmosClientFactory(clients));
             services.AddScoped(sp => new ConnectorCosmosContext(sp.GetRequiredService<ICosmosClientFactory>(), dbOptions));
 			services.AddTransient<ICosmosService, CosmosService>();
         }
