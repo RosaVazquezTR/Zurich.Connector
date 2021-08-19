@@ -15,7 +15,7 @@ resources:
     - repository: ZurichDeploy
       type: git
       name: Zurich.Deploy
-      ref: RD-PublishNuGetToCommon
+      ref: RD-UpdateSendEmailToUseDistro
     - repository: ZurichTesting
       type: git
       name: Zurich.Testing
