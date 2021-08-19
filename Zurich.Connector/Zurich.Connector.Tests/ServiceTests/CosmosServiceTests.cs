@@ -314,7 +314,7 @@ namespace Zurich.Connector.Tests.ServiceTests
             var testConnectors = SetupGetUserRegistration();
             _mockCosmosClientStore.Setup(x => x.GetDocument<ConnectorRegistrationDocument>(CosmosConstants.ConnectorRegistrationContainerId, testId, UserId));
                                     
-            var cosmosService = new CosmosService(_mockCosmosClientStore.Object, null, _mapper, null);
+            var cosmosService = new CosmosService(_mockCosmosClientStore.Object, _mapper, null);
 
             //Act
             var connectors = await cosmosService.GetUserRegistration(testId, UserId);

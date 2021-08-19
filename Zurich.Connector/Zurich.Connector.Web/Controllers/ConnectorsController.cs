@@ -160,7 +160,7 @@ namespace Zurich.Connector.Web.Controllers
                 return BadRequest();
 
             }
-            return Ok(RegistrationStatus.registered);
+            return Ok(RegistrationStatus.Registered);
 
 
         }
