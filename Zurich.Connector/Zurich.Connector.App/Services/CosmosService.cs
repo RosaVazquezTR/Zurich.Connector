@@ -47,9 +47,9 @@ namespace Zurich.Connector.App.Services
         public async Task<ConnectorModel> GetConnectorByAlias(string alias, bool includeDataSource = false)
         {
             var connectorDocuments = _cosmosContext.GetDocuments<ConnectorDocument>(
-                     CosmosConstants.ConnectorContainerId
-                    , CosmosConstants.ConnectorPartitionKey
-                    , null
+                    CosmosConstants.ConnectorContainerId,
+                    CosmosConstants.ConnectorPartitionKey,
+                    null
                 );
             var connectorDocument = connectorDocuments?.Where(connectorDocument => !string.IsNullOrEmpty(connectorDocument.Alias) && connectorDocument.Alias.Equals(alias, StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
             var connector = _mapper.Map<ConnectorModel>(connectorDocument);

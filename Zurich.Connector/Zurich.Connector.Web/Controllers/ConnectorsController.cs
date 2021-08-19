@@ -47,9 +47,6 @@ namespace Zurich.Connector.Web.Controllers
                     .Where(param => !param.Equals("hostname", StringComparison.InvariantCultureIgnoreCase)
                     && !param.Equals("transferToken", StringComparison.InvariantCultureIgnoreCase)
                     && !param.Equals("retrievefilters", StringComparison.InvariantCultureIgnoreCase))
-                    .Where(param => !param.Equals("hostname", StringComparison.InvariantCultureIgnoreCase)
-                    && !param.Equals("transferToken", StringComparison.InvariantCultureIgnoreCase)
-                    && !param.Equals("retrieveFilters", StringComparison.InvariantCultureIgnoreCase))
                     .ToDictionary(k => k, v => HttpContext?.Request.Query[v].ToString(), StringComparer.OrdinalIgnoreCase);
 
                 results = await _connectorService.GetConnectorData(id, hostName, transferToken, parameters, retrieveFilters);
