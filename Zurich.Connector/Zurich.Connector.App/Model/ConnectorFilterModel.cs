@@ -10,6 +10,7 @@ namespace Zurich.Connector.App.Model
     /// <summary>
     /// Filter details associated with the connector.
     /// </summary>
+    /// TODO: Should this be removed ?
     public class ConnectorFilterModel
     {
         /// <summary>
