@@ -28,10 +28,5 @@ namespace Zurich.Connector.App.Model
         /// Use For appname
         /// </summary>
         public string AppName { get; set; }
-
-        /// <summary>
-        /// use for registrationStatus
-        /// </summary>
-        public RegistrationStatus RegistrationStatus { get; set; }
     }
 }

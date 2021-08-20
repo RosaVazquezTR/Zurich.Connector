@@ -26,12 +26,6 @@ namespace Zurich.Connector.App
             CreateMap<ConnectorFilter, ConnectorsFiltersModel>();
             CreateMap<FilterList, FilterListModel>();
             CreateMap<FilterListModel, FilterList>();
-            CreateMap<FilterSource, FilterSourceModel>();
-            CreateMap<FilterSourceModel, FilterSource>();
-            CreateMap<FilterResponse, FilterResponseModel>();
-            CreateMap<FilterResponseModel, FilterResponse>();
-            CreateMap<MappingRequestParameter, MappingRequestParameterModel>();
-            CreateMap<MappingRequestParameterModel, MappingRequestParameter>();
 
             CreateMap<CDMMapping, CDMMappingModel>();
             CreateMap<CDMElement, CDMElementModel>();
