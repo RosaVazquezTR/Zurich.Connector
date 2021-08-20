@@ -32,7 +32,7 @@ namespace Zurich.Connector.Tests.ServiceTests
             var expectedUrl = $"https://{hostName}/work/link/d/1";
             //Act
             var service = new IManageConnectorOperations(_mockLogger.Object);
-            var result = (service.SetItemLink(Data.Model.EntityType.Document, mockDocuments, hostName) as JObject);
+            var result = (service.SetItemLink(Data.Model.ConnectorEntityType.Document, mockDocuments, hostName) as JObject);
             //Assert
             result.Should().NotBeNull();
             var doc = result["Items"][0] as JObject;
@@ -47,7 +47,7 @@ namespace Zurich.Connector.Tests.ServiceTests
             var mockDocuments = MockConnectorData.SetupDocumentsModel();
             //Act
             var service = new IManageConnectorOperations(_mockLogger.Object);
-            var result = (service.SetItemLink(Data.Model.EntityType.Document, mockDocuments, null) as JObject);
+            var result = (service.SetItemLink(Data.Model.ConnectorEntityType.Document, mockDocuments, null) as JObject);
             //Assert
             _mockLogger.Verify(ml => ml.Log(LogLevel.Error, It.IsAny<EventId>(), It.Is<It.IsAnyType>((v, _) => v.ToString().StartsWith("Unable to parse")), null, It.IsAny<Func<It.IsAnyType, Exception, string>>()));
             result.Should().NotBeNull();

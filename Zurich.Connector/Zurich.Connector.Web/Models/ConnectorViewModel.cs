@@ -61,7 +61,7 @@ namespace Zurich.Connector.Web.Models
         /// <summary>
         /// Entity type like Document, Search etc.
         /// </summary>
-        public EntityType EntityType { get; set; }
+        public ConnectorEntityType EntityType { get; set; }
         /// <summary>
         /// Data Source ID
         /// </summary>

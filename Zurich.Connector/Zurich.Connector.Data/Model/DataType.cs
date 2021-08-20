@@ -33,7 +33,7 @@ namespace Zurich.Connector.Data.Model
     /// <summary>
     /// Used to describe the available Entity Types from the DataMapping Repo
     /// </summary>
-    public enum EntityType
+    public enum ConnectorEntityType
     {
         Document,
         History,

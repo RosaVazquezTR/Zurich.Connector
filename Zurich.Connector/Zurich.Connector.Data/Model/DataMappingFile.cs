@@ -26,7 +26,7 @@ namespace Zurich.Connector.Data.Model
         /// <summary>
         /// The type of connector
         /// </summary>
-        public EntityType EntityType { get; set; }
+        public ConnectorEntityType EntityType { get; set; }
         /// <summary>
         /// The app code that should be used for the product
         /// </summary>

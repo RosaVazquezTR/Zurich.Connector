@@ -75,7 +75,7 @@ namespace Zurich.Connector.Data.Repositories.CosmosDocuments
         /// <summary>
         /// Entity type like Document, Search etc.
         /// </summary>
-        public EntityType entityType { get; set; }
+        public ConnectorEntityType entityType { get; set; }
         /// <summary>
         /// Data Source ID
         /// </summary>
