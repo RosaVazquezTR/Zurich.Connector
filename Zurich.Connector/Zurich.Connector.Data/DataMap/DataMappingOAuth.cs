@@ -31,10 +31,17 @@ namespace Zurich.Connector.Data.DataMap
         public async override Task<T> Get<T>(ConnectorDocument connector, string transferToken = null, NameValueCollection query = null)
         {
             var token = await this.RetrieveToken(connector?.dataSource?.appCode,
-                                                 connector?.dataSource?.appType,
-                                                 connector?.dataSource?.locale,
-                                                 connector?.dataSource?.securityDefinition?.defaultSecurityDefinition?.grantType,
-                                                 connector?.dataSource?.securityDefinition?.defaultSecurityDefinition?.sendCredentialsInBody);
+                                                  connector?.dataSource?.appType,
+                                                  connector?.dataSource?.locale,
+                                                  connector?.dataSource?.securityDefinition?.defaultSecurityDefinition?.grantType,
+                                                  connector?.dataSource?.securityDefinition?.defaultSecurityDefinition?.sendCredentialsInBody);
+           /* AppToken token = new AppToken()
+            {
+                access_token = "Yblws4SqUzAIkIsa8WWjbRVBPcnPZFwAaBxFjHFGZHwlfWnkqriS/68KH/+20Acj",
+                expires_in = 18000,
+                expires_on = 1629403347
+
+            };*/
 
             if (!string.IsNullOrEmpty(token?.access_token))
             {

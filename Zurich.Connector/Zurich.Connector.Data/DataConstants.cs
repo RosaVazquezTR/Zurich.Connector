@@ -8,6 +8,17 @@
     {
         public const string WebUrl = "WebUrl";
         public const string EntityId = "Id";
+        public const string DownloadUrl = "DownloadUrl";
+
+    }
+    /// <summary>
+    /// Represents a container class for CDM unstructured property names
+    /// </summary>
+    public static class UnstructuredCDMProperties
+    {
+        public const string UserId = "UserId";
+        public const string Library = "database";
+
     }
 
     /// <summary>

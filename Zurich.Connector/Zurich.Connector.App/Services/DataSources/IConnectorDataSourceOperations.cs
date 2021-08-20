@@ -1,4 +1,5 @@
-﻿using Zurich.Connector.Data.Model;
+﻿using System.Threading.Tasks;
+using Zurich.Connector.Data.Model;
 
 namespace Zurich.Connector.App.Services.DataSources
 {
@@ -14,7 +15,7 @@ namespace Zurich.Connector.App.Services.DataSources
         /// <param name="item">The target data item</param>
         /// <param name="hostName">The data source app host name</param>
         /// <returns></returns>
-        dynamic SetItemLink(EntityType entityType, dynamic item, string hostName);
+        Task<dynamic> SetItemLink(EntityType entityType, dynamic item, string hostName);
 
         /// <summary>
         /// Checks if the service implementation is compatible with the third party app
