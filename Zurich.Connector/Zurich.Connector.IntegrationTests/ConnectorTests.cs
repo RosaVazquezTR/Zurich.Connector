@@ -1,12 +1,16 @@
 using FluentAssertions;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Xunit;
+using Zurich.Common.Models.CommonDataModels;
 using Zurich.Connector.Data.Repositories.CosmosDocuments;
+using Zurich.Connector.IntegrationTests.Models;
 
 namespace Zurich.Connector.IntegrationTests
 {
@@ -57,22 +61,36 @@ namespace Zurich.Connector.IntegrationTests
             return testCases;
         }
 
-        [Theory]
-        [MemberData(nameof(GetConnectorsTestCases), parameters: new object[] { "Document", true })]
-        public async Task MakeDocumentCalls(ConnectorDocument connector)
+        private static async Task CheckResponse<T>(HttpResponseMessage response)
         {
-            // Arrange
-            var request = $"/Connectors/{connector.Id}";
-            //Act
-            var response = await _client.GetAsync(request);
-
-            // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.NotNull(response.Content);
 
             var responseContent = await response.Content.ReadAsStringAsync();
             Assert.NotEmpty(responseContent);
-            //var document = JsonConvert.DeserializeObject<Document>(responseContent);
+            var jToken = JToken.Parse(responseContent);
+            if (jToken["hResult"] != null)
+            {
+                var errorResponse = JsonConvert.DeserializeObject<DataError>(responseContent);
+                errorResponse.Message.Should().BeNullOrWhiteSpace();
+            }
+            else
+            {
+                var jsonResponse = JsonConvert.DeserializeObject<T>(responseContent);
+            }
+        }
+
+        [Theory]
+        [MemberData(nameof(GetConnectorsTestCases), parameters: new object[] { "Document", true })]
+        public async Task MakeDocumentCalls(ConnectorDocument connector)
+        {
+            // Arrange
+            var request = $"/Connectors/{connector.Id}/Data";
+            //Act
+            var response = await _client.GetAsync(request);
+
+            // Assert
+            await CheckResponse<List<DocumentEntity>>(response);
         }
 
         [Theory]
@@ -80,16 +98,12 @@ namespace Zurich.Connector.IntegrationTests
         public async Task MakeFavoriteCalls(ConnectorDocument connector)
         {
             // Arrange
-            var request = $"/Connectors/{connector.Id}";
+            var request = $"/Connectors/{connector.Id}/Data";
             //Act
             var response = await _client.GetAsync(request);
 
             // Assert
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.NotNull(response.Content);
-
-            var responseContent = await response.Content.ReadAsStringAsync();
-            Assert.NotEmpty(responseContent);
+            await CheckResponse<List<FavoritiesEntity>>(response);
         }
 
         [Theory]
@@ -97,16 +111,12 @@ namespace Zurich.Connector.IntegrationTests
         public async Task MakeHistoryCalls(ConnectorDocument connector)
         {
             // Arrange
-            var request = $"/Connectors/{connector.Id}";
+            var request = $"/Connectors/{connector.Id}/Data";
             //Act
             var response = await _client.GetAsync(request);
 
             // Assert
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.NotNull(response.Content);
-
-            var responseContent = await response.Content.ReadAsStringAsync();
-            Assert.NotEmpty(responseContent);
+            await CheckResponse<List<HistoryEntity>>(response);
         }
 
         [Theory]
@@ -114,16 +124,12 @@ namespace Zurich.Connector.IntegrationTests
         public async Task MakeSearchCalls(ConnectorDocument connector)
         {
             // Arrange
-            var request = $"/Connectors/{connector.Id}";
+            var request = $"/Connectors/{connector.Id}/Data";
             //Act
             var response = await _client.GetAsync(request);
 
             // Assert
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.NotNull(response.Content);
-
-            var responseContent = await response.Content.ReadAsStringAsync();
-            Assert.NotEmpty(responseContent);
+            await CheckResponse<List<SearchEntity>>(response);
         }
 
         [Theory]
@@ -131,16 +137,12 @@ namespace Zurich.Connector.IntegrationTests
         public async Task MakeUserProfileCalls(ConnectorDocument connector)
         {
             // Arrange
-            var request = $"/Connectors/{connector.Id}";
+            var request = $"/Connectors/{connector.Id}/Data";
             //Act
             var response = await _client.GetAsync(request);
 
             // Assert
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.NotNull(response.Content);
-
-            var responseContent = await response.Content.ReadAsStringAsync();
-            Assert.NotEmpty(responseContent);
+            await CheckResponse<UserProfileEntity>(response);
         }
     }
 }

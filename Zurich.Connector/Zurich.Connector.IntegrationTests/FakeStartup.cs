@@ -10,7 +10,9 @@ using Zurich.Common.Models;
 using Zurich.Common.Models.Cosmos;
 using Zurich.Common.Models.HighQ;
 using Zurich.Common.Models.OAuth;
+using Zurich.Common.Services;
 using Zurich.Connector.Web;
+using Zurich.TenantData;
 
 namespace Zurich.Connector.IntegrationTests
 {
@@ -34,6 +36,7 @@ namespace Zurich.Connector.IntegrationTests
                   "IntegrationTest",
                   options => { }
                 );
+            services.AddScoped<ISessionAccessor, IntegrationTestSessionAccessor>();
         }
 
         public override void Configure(IApplicationBuilder app, IWebHostEnvironment env)
