@@ -97,7 +97,7 @@ namespace Zurich.Connector.Web.Controllers
 
             if (results.Count == 0)
             {
-                return Ok(HttpStatusCode.NoContent);
+                return NoContent();
             }
 
             var jsonSettings = new JsonSerializerSettings
@@ -172,7 +172,7 @@ namespace Zurich.Connector.Web.Controllers
                 return BadRequest("Invalid Connector ID");
             }
             await _registrationService.RemoveUserConnector(id);
-            return Ok(HttpStatusCode.NoContent);
+            return NoContent();
         }
 
     }
