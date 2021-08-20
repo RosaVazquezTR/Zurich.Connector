@@ -13,18 +13,19 @@ using AutoMapper;
 using Zurich.Connector.Data.Repositories.CosmosDocuments;
 using Zurich.Common.Repositories.Cosmos;
 using System.Security.Authentication;
+using Zurich.Connector.Data.Services;
 
 namespace Zurich.Connector.Data.DataMap
 {
     public class DataMappingOAuth : DataMappingBase, IDataMapping
     {
-        public DataMappingOAuth(IRepository repository, IDataMappingRepository dataMappingRepository, IOAuthService oAuthService, ILogger<DataMappingOAuth> logger, ICosmosClientStore cosmosClientStore, IMapper mapper)
+        public DataMappingOAuth(IRepository repository, IDataMappingRepository dataMappingRepository, IOAuthService oAuthService, ILogger<DataMappingOAuth> logger, ConnectorCosmosContext cosmosContext, IMapper mapper)
         {
             this._repository = repository;
             this._dataMappingRepository = dataMappingRepository;
             this._oAuthService = oAuthService;
             this._logger = logger;
-            this._cosmosClientStore = cosmosClientStore;
+            this._cosmosContext = cosmosContext;
             this._mapper = mapper;
         }
 

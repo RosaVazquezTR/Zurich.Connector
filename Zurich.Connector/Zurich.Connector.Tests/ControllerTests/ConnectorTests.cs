@@ -266,8 +266,8 @@ namespace Zurich.Connector.Tests.ControllerTests
 		{
 			// ARRANGE
 			var connections = MockConnectorData.SetupConnectorModel();
-			FilterModel filters = new FilterModel();
-			_mockConnectorservice.Setup(x => x.GetConnectors(It.IsAny<FilterModel>())).Returns(Task.FromResult(connections.ToList()));
+            Zurich.Common.Models.Connectors.ConnectorFilterModel filters = new Zurich.Common.Models.Connectors.ConnectorFilterModel();
+			_mockConnectorservice.Setup(x => x.GetConnectors(It.IsAny<Zurich.Common.Models.Connectors.ConnectorFilterModel>())).Returns(Task.FromResult(connections.ToList()));
 
             ConnectorsController connector = new ConnectorsController(_mockConnectorservice.Object, null, _mapper,null);
 
@@ -275,7 +275,7 @@ namespace Zurich.Connector.Tests.ControllerTests
 			var response = await connector.Connectors(filters);
 
 			// ASSERT
-			_mockConnectorservice.Verify(x => x.GetConnectors(It.IsAny<FilterModel>()), Times.Exactly(1));
+			_mockConnectorservice.Verify(x => x.GetConnectors(It.IsAny<Zurich.Common.Models.Connectors.ConnectorFilterModel>()), Times.Exactly(1));
 			var result = (ContentResult)response.Result;
 			Assert.AreEqual(StatusCodes.Status200OK, result.StatusCode);
 		}

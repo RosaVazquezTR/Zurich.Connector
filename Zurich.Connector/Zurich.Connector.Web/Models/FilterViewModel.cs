@@ -8,24 +8,44 @@ using Zurich.Connector.Data.Model;
 namespace Zurich.Connector.Web.Models
 {
     /// <summary>
-    /// Class to filter connectors
+    /// Class that represents the Filters defined in the connector document
     /// </summary>
     public class FilterViewModel
     {
         /// <summary>
-        /// EntityType is optional parameter to filter to specific data types of connectors e.g. Document, Search, etc.
+        /// Name of the filter
         /// </summary>
-        public List<EntityType> EntityTypes { get; set; }
+        public string Name { get; set; }
+        /// <summary>
+        /// Description about the filter
+        /// </summary>
+        public string Description { get; set; }
 
         /// <summary>
-        /// RegistrationMode is optional parameter to filter by specific registration mode for the connectors.
-        /// e.g. Registered would return all connectors that are registered for the user.
+        /// Flag for Selection of filter type
         /// </summary>
-        //public List<RegistrationEntityMode> RegistrationModes { get; set; }
+        public string IsMultiSelect { get; set; }
 
         /// <summary>
-        /// DataSource is optional parameter to filter by specific data source.
+        /// Mapping for request parameter
         /// </summary>
-        public List<string> DataSources { get; set; }
+        public string RequestParameter { get; set; }
+
+        /// <summary>
+        /// Define the source of filters
+        /// </summary>
+        public List<FilterListViewModel> FilterList { get; set; }
+    }
+
+    public class FilterListViewModel
+    {
+        /// <summary>
+        /// Name of the Sub filter
+        /// </summary>
+        public string Name { get; set; }
+        /// <summary>
+        /// Id of the filter
+        /// </summary>
+        public string Id { get; set; }
     }
 }

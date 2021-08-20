@@ -37,13 +37,4 @@ namespace Zurich.Connector.Data.Repositories.CosmosDocuments
         /// </summary>
         public string AppName { get; set; }
     }
-
-    /// <summary>
-    /// Reprsent's deiffrent RegistrationStatus
-    /// </summary>
-    public enum Status
-    {
-        registered = 1,
-        notRegister = 2
-    }
 }
