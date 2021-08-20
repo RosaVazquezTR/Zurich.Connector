@@ -124,11 +124,11 @@ steps:
       scriptType: ps
       scriptLocation: inlineScript
       inlineScript: |
-        Import-Module  -Name "$(Build.SourcesDirectory)/Zurich.Deploy/Scripts/AddSubnetandNSG.psm1"
+        Import-Module  -Name "$(Build.SourcesDirectory)/Zurich.Deploy/Scripts/V2/AddSubnetandNSG.psm1"
 
         $subnets = @(${{ parameters.subnetConnectorBackend }})
 
-        Add-SubNets -ResourceGroup "${{ parameters.vnetResourceGroup }}" -subnetPreFix "${{ parameters.subnetPreFix }}" -env "${{ parameters.environmentName }}" -Location "${{ parameters.resourceLocation }}" -RouteTableName "${{ parameters.routeTableName }}" -VirtualNetworkName "${{ parameters.vnetName }}" -subNets $subNets -armTemplateFolderLocation "$(Build.SourcesDirectory)/Zurich.Deploy/ArmTemplates"
+        Add-SubNets -removeDelegations $true -CleanupOldNsgs $true -ResourceGroup "${{ parameters.vnetResourceGroup }}" -nsgResourceGroup "${{ parameters.resourceGroup }}" -subnetPreFix "${{ parameters.subnetPreFix }}" -env "${{ parameters.environmentName }}" -Location "${{ parameters.resourceLocation }}" -RouteTableName "${{ parameters.routeTableName }}" -VirtualNetworkName "${{ parameters.vnetName }}" -subNets $subNets -armTemplateFolderLocation "$(Build.SourcesDirectory)/Zurich.Deploy/ArmTemplates"
   - task: AzurePowerShell@5
     displayName: 'Get Apim IP'
     inputs:
