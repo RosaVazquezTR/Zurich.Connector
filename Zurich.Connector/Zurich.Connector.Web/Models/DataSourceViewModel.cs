@@ -12,6 +12,10 @@ namespace Zurich.Connector.Web.Models
         /// </summary>
         public string Id { get; set; }
         /// <summary>
+        /// App code
+        /// </summary>
+        public string AppCode { get; set; }
+        /// <summary>
         /// Data source name
         /// </summary>
         public string Name { get; set; }

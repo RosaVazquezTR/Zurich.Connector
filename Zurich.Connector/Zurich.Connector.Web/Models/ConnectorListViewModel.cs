@@ -18,6 +18,11 @@ namespace Zurich.Connector.Web.Models
         public string Id { get; set; }
 
         /// <summary>
+        /// The connector alias
+        /// </summary>
+        public string Alias { get; set; }
+
+        /// <summary>
         /// The type of connector
         /// </summary>
         public string EntityType { get; set; }
