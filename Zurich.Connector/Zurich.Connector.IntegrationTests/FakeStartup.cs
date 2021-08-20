@@ -27,7 +27,7 @@ namespace Zurich.Connector.IntegrationTests
         {
         }
 
-        public override void AddAuthServices(IServiceCollection services, string audience, string authority)
+        public override void AddAuthServices(IServiceCollection services, string authority)
         {
             JwtSecurityTokenHandler.DefaultMapInboundClaims = false;
 
@@ -36,7 +36,7 @@ namespace Zurich.Connector.IntegrationTests
                   "IntegrationTest",
                   options => { }
                 );
-            services.AddScoped<ISessionAccessor, IntegrationTestSessionAccessor>();
+            //services.AddScoped<ISessionAccessor, IntegrationTestSessionAccessor>();
         }
 
         public override void Configure(IApplicationBuilder app, IWebHostEnvironment env)

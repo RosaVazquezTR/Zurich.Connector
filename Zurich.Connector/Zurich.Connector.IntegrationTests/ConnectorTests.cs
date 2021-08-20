@@ -93,7 +93,8 @@ namespace Zurich.Connector.IntegrationTests
             await CheckResponse<List<DocumentEntity>>(response);
         }
 
-        [Theory]
+        // Will need to create transfer token so these can't be turned on yet.
+        /*[Theory]
         [MemberData(nameof(GetConnectorsTestCases), parameters: new object[] { "Favorites", true })]
         public async Task MakeFavoriteCalls(ConnectorDocument connector)
         {
@@ -117,7 +118,7 @@ namespace Zurich.Connector.IntegrationTests
 
             // Assert
             await CheckResponse<List<HistoryEntity>>(response);
-        }
+        }*/
 
         [Theory]
         [MemberData(nameof(GetConnectorsTestCases), parameters: new object[] { "Search", true })]
