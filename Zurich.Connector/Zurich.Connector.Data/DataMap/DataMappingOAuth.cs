@@ -34,15 +34,8 @@ namespace Zurich.Connector.Data.DataMap
                                                   connector?.dataSource?.appType,
                                                   connector?.dataSource?.locale,
                                                   connector?.dataSource?.securityDefinition?.defaultSecurityDefinition?.grantType,
-                                                  connector?.dataSource?.securityDefinition?.defaultSecurityDefinition?.sendCredentialsInBody);
-           /* AppToken token = new AppToken()
-            {
-                access_token = "Yblws4SqUzAIkIsa8WWjbRVBPcnPZFwAaBxFjHFGZHwlfWnkqriS/68KH/+20Acj",
-                expires_in = 18000,
-                expires_on = 1629403347
-
-            };*/
-
+                                                  connector?.dataSource?.securityDefinition?.defaultSecurityDefinition?.sendCredentialsInBody);         
+            
             if (!string.IsNullOrEmpty(token?.access_token))
             {
                 ApiInformation apiInfo = new ApiInformation()

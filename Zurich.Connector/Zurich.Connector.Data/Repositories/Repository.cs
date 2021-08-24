@@ -111,7 +111,7 @@ namespace Zurich.Connector.Data.Repositories
 
             UriBuilder builder = new UriBuilder(scheme, apiInformation.HostName, -1, relativePath);
             builder.Query = paramCollection.ToString();
-            return builder; // {htt://2fdb2-dmobility.imanage.work:443/work/api/v2/customers/1/recent-documents?total=true&offset=0&limit=25}
+            return builder;
         }
 
         private void SetupRequestMessage(ApiInformation apiInformation, HttpRequestMessage requestMessage)

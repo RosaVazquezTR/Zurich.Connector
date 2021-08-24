@@ -110,7 +110,7 @@ namespace Zurich.Connector.App.Services.DataSources
                 case EntityType.Document:
                     var docId = item.ContainsKey(StructuredCDMProperties.EntityId) ? item[StructuredCDMProperties.EntityId].Value<string>() : "";
                     var builder = new UriBuilder("https", hostName, -1);
-                    result = $"{builder.Uri}{DocumentsEndpoint}{docId}"; //"http//2fdb2-dmobility.imanage.work/work/link/d/Active!119.1"
+                    result = $"{builder.Uri}{DocumentsEndpoint}{docId}";
                     break;
             }
             return result;
