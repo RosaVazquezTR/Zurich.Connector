@@ -83,19 +83,6 @@
       }
     ],
     "unstructured": 
-    [
-      {
-        "name": "library",
-        "type": "string",
-        "responseElement": "library",
-        "_comment": ""
-      },
-      {
-        "name": "customer_id",
-        "type": "string",
-        "responseElement": "customer_id",
-        "_comment": ""
-      }
-    ]
+    []
   }
 }
