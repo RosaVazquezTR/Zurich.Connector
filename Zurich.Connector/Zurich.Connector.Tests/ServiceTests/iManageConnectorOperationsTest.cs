@@ -7,6 +7,10 @@ using Newtonsoft.Json.Linq;
 using Zurich.Connector.Tests.Common;
 using Zurich.Connector.Data;
 using System;
+using System.Threading.Tasks;
+using Zurich.Connector.Data.DataMap;
+using Zurich.Common.Models.Connectors;
+using Zurich.Connector.Data.Services;
 
 namespace Zurich.Connector.Tests.ServiceTests
 {
@@ -16,23 +20,25 @@ namespace Zurich.Connector.Tests.ServiceTests
     public class IManageConnectorOperationsTest
     {
         private Mock<ILogger<IManageConnectorOperations>> _mockLogger;
+        private Mock<IDataMappingFactory> _mockDataMappingFactory;
 
         [TestInitialize]
         public void Init()
         {
             _mockLogger = new Mock<ILogger<IManageConnectorOperations>>();
+            _mockDataMappingFactory = new Mock<IDataMappingFactory>();
         }
 
         [TestMethod]
-        public void SetItemLinkTest_Should_SetWebUrl()
+        public async Task SetItemLinkTest_Should_SetWebUrl()
         {
             //Arrange
             var mockDocuments = MockConnectorData.SetupDocumentsModel();
             var hostName = "my.cookieapp.com";
             var expectedUrl = $"https://{hostName}/work/link/d/1";
             //Act
-            var service = new IManageConnectorOperations(_mockLogger.Object);
-            var result = (service.SetItemLink(Data.Model.ConnectorEntityType.Document, mockDocuments, hostName) as JObject);
+            var service = new IManageConnectorOperations(_mockLogger.Object, _mockDataMappingFactory.Object);
+            var result = (await service.SetItemLink(Data.Model.ConnectorEntityType.Document, mockDocuments, hostName) as JObject);
             //Assert
             result.Should().NotBeNull();
             var doc = result["Items"][0] as JObject;
@@ -41,13 +47,13 @@ namespace Zurich.Connector.Tests.ServiceTests
         }
 
         [TestMethod]
-        public void SetItemLinkTest_Should_Log_Error_And_Return_Original_Entities_If_Hostname_Is_Invalid()
+        public async Task SetItemLinkTest_Should_Log_Error_And_Return_Original_Entities_If_Hostname_Is_Invalid()
         {
             //Arrange
             var mockDocuments = MockConnectorData.SetupDocumentsModel();
             //Act
-            var service = new IManageConnectorOperations(_mockLogger.Object);
-            var result = (service.SetItemLink(Data.Model.ConnectorEntityType.Document, mockDocuments, null) as JObject);
+            var service = new IManageConnectorOperations(_mockLogger.Object, _mockDataMappingFactory.Object);
+            var result =  (await service.SetItemLink(Data.Model.ConnectorEntityType.Document, mockDocuments, null) as JObject);
             //Assert
             _mockLogger.Verify(ml => ml.Log(LogLevel.Error, It.IsAny<EventId>(), It.Is<It.IsAnyType>((v, _) => v.ToString().StartsWith("Unable to parse")), null, It.IsAny<Func<It.IsAnyType, Exception, string>>()));
             result.Should().NotBeNull();
