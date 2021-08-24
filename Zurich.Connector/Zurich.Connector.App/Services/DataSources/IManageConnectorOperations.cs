@@ -81,7 +81,7 @@ namespace Zurich.Connector.App.Services.DataSources
            
             switch (itemType)
             {
-                case EntityType.Document:
+                case ConnectorEntityType.Document:
                     // Fetching LibraryId from DesktopUrl = "iwl:dms=2fdb2-dmobility.imanage.work&&lib=Active&&num=118&&ver=1",
                     string desktopUrl = item.ContainsKey(StructuredCDMProperties.DesktopUrl) ? item[StructuredCDMProperties.DesktopUrl].Value<string>() : "";
                     Uri uri = new Uri(desktopUrl);
