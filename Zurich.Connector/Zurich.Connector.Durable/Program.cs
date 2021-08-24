@@ -54,7 +54,7 @@ namespace Zurich.Connector.Durable
 
                     services.AddLogging();
                     services.AddAutoMapper(typeof(CommonMappingsProfile), typeof(MappingRegistrar), typeof(ServiceMappingRegistrar));
-                    services.AddDbContext<TenantContext>(options => options.UseSqlServer(configurationOptions.OAuthDbConnString));
+                    services.AddDbContext<TenantContext>(options => options.UseSqlServer(configurationOptions.OAuthDbConnString), ServiceLifetime.Transient);
                     services.AddPartnerAppAuth(configurationOptions.OAuthOptions, configurationOptions.MicroServOptions);
                     services.AddSingleton<IOIDCAuthorityRepo, OIDCAuthorityRepo>();
                     services.AddSingleton<ITokenAuthorityDiscoveryService, TokenAuthorityDiscoveryService>(s => new TokenAuthorityDiscoveryService(

@@ -6,8 +6,11 @@
     /// </summary>
     public static class StructuredCDMProperties
     {
+        public const string Title = "Title";
         public const string WebUrl = "WebUrl";
         public const string EntityId = "Id";
+        public const string DownloadUrl = "DownloadUrl";
+        public const string DesktopUrl = "DesktopUrl";
     }
 
     /// <summary>

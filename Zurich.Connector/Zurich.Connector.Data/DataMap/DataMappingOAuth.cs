@@ -1,17 +1,12 @@
 ﻿using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Collections.Specialized;
 using System.Threading.Tasks;
-using Zurich.Common.Models.OAuth;
 using Zurich.Common.Services.Security;
 using Zurich.Connector.Data.Model;
 using Zurich.Connector.Data.Repositories;
 using AutoMapper;
 using Zurich.Connector.Data.Repositories.CosmosDocuments;
-using Zurich.Common.Repositories.Cosmos;
 using System.Security.Authentication;
 using Zurich.Connector.Data.Services;
 
@@ -32,11 +27,11 @@ namespace Zurich.Connector.Data.DataMap
         public async override Task<T> Get<T>(ConnectorDocument connector, string transferToken = null, NameValueCollection query = null)
         {
             var token = await this.RetrieveToken(connector?.dataSource?.appCode,
-                                                 connector?.dataSource?.appType,
-                                                 connector?.dataSource?.locale,
-                                                 connector?.dataSource?.securityDefinition?.defaultSecurityDefinition?.grantType,
-                                                 connector?.dataSource?.securityDefinition?.defaultSecurityDefinition?.sendCredentialsInBody);
-
+                                                  connector?.dataSource?.appType,
+                                                  connector?.dataSource?.locale,
+                                                  connector?.dataSource?.securityDefinition?.defaultSecurityDefinition?.grantType,
+                                                  connector?.dataSource?.securityDefinition?.defaultSecurityDefinition?.sendCredentialsInBody);         
+            
             if (!string.IsNullOrEmpty(token?.access_token))
             {
                 ApiInformation apiInfo = new ApiInformation()
