@@ -2,6 +2,7 @@
 using Newtonsoft.Json.Linq;
 using System;
 using System.Threading.Tasks;
+using System.Web;
 using Zurich.Connector.Data;
 using Zurich.Connector.Data.DataMap;
 using Zurich.Connector.Data.Model;
@@ -14,11 +15,9 @@ namespace Zurich.Connector.App.Services.DataSources
         private readonly ILogger _logger;
         private readonly IDataMapping _dataMapping;
 
-        ///		/customers/{customerId}/libraries/{libraryId}/documents/{docId}/download/{fileName}
-        ///		htts://2fdb2-dmobility.imanage.work/work/web/api/v2/customers/1/libraries/ACTIVE/documents/ACTIVE!119.1/download/CommonDataModel.xlsx?activity=export
         #region Endpoints
         private const string DocumentsEndpoint = "work/link/d/";
-        private const string DocumentsDowloadEndpoint = "work/web/";
+        private const string DocumentsDowloadEndpoint = "work/web/api/v2";
         private string customerId;
         #endregion
 
@@ -39,7 +38,6 @@ namespace Zurich.Connector.App.Services.DataSources
             {
                 switch (entityType)
                 {
-
                     case EntityType.Document:
                         if (item is JObject result && result.ContainsKey("Items"))
                         {
@@ -55,9 +53,8 @@ namespace Zurich.Connector.App.Services.DataSources
                                 {
                                     if (!doc.ContainsKey(StructuredCDMProperties.WebUrl))
                                         doc[StructuredCDMProperties.WebUrl] = BuildLink(entityType, doc, hostName);
-                                   if (!doc.ContainsKey(StructuredCDMProperties.DownloadUrl))
+                                    if (!doc.ContainsKey(StructuredCDMProperties.DownloadUrl))
                                         doc[StructuredCDMProperties.DownloadUrl] = await BuildDownloadLink(entityType, doc, hostName);
-
                                 }
                             }
                         }
@@ -78,27 +75,21 @@ namespace Zurich.Connector.App.Services.DataSources
         /// <param name="item">The target item</param>
         /// <param name="hostName">The data source host name</param>
         /// <returns></returns>
-        /// ///		/customers/{customerId}/libraries/{libraryId}/documents/{docId}/download/{fileName}
-        ///		htts://2fdb2-dmobility.imanage.work/work/web/api/v2/customers/1/libraries/ACTIVE/documents/ACTIVE!119.1/download/CommonDataModel.xlsx?activity=export
         private async Task<string> BuildDownloadLink(EntityType itemType, JObject item, string hostName)
         {
             string result = null;
-
+           
             switch (itemType)
             {
                 case EntityType.Document:
-                    
-               
-                   
-
-                    // Replace the url variable inside { }
-                   // string value = result.Value<string>();
-                    ///		/customers/{customerId}/libraries/{libraryId}/documents/{docId}/download/{fileName}
-                   // var customerId = item.ContainsKey(UnstructuredCDMProperties.UserId) ? item[UnstructuredCDMProperties.UserId].Value<string>() : "";
-                    var libraryId = item.ContainsKey(UnstructuredCDMProperties.Library) ? item[UnstructuredCDMProperties.Library].Value<string>() : "";
+                    // Fetching LibraryId from DesktopUrl = "iwl:dms=2fdb2-dmobility.imanage.work&&lib=Active&&num=118&&ver=1",
+                    string desktopUrl = item.ContainsKey(StructuredCDMProperties.DesktopUrl) ? item[StructuredCDMProperties.DesktopUrl].Value<string>() : "";
+                    Uri uri = new Uri(desktopUrl);
+                    var libraryId = HttpUtility.ParseQueryString(uri.AbsoluteUri).Get("lib");
                     var docId = item.ContainsKey(StructuredCDMProperties.EntityId) ? item[StructuredCDMProperties.EntityId].Value<string>() : "";
+                    var fileName = item.ContainsKey(StructuredCDMProperties.Title) ? item[StructuredCDMProperties.Title].Value<string>() : "";
                     var builder = new UriBuilder("https", hostName, -1);
-                    result = $"{builder.Uri}{DocumentsDowloadEndpoint}/customers/{customerId}/libraries{libraryId}/documents{docId}/download"; 
+                    result = $"{builder.Uri}{DocumentsDowloadEndpoint}/customers/{customerId}/libraries/{libraryId}/documents/{docId}/download/{fileName}?activity=export"; 
                     break;
             }
             return result;
