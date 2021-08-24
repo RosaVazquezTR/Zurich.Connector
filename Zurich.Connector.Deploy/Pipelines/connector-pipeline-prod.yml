@@ -32,7 +32,7 @@ name: $(BuildDefinitionName).$(SourceBranchName).$(Date:yyyyMMdd)$(Rev:.r)
 
 stages:
 - stage: Build
-  pool: DCO-HighQ-Platform-P
+  pool: DCO-HighQ-Platform-N
   jobs:
     - job: 'Build'
       displayName: 'Connectors Build'
