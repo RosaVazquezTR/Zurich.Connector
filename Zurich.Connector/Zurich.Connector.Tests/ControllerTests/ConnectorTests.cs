@@ -103,7 +103,7 @@ namespace Zurich.Connector.Tests.ControllerTests
 					{
 						AppCode = "testApp1",
 						Auth = new DataMappingAuth() { Type = AuthType.OAuth2 },
-						EntityType = Data.Model.EntityType.History
+						EntityType = Data.Model.ConnectorEntityType.History
 					}
 				},
 				{
@@ -111,7 +111,7 @@ namespace Zurich.Connector.Tests.ControllerTests
 					{
 						AppCode = "testApp2",
 						Auth = new DataMappingAuth() { Type = AuthType.TransferToken },
-						EntityType = Data.Model.EntityType.History
+						EntityType = Data.Model.ConnectorEntityType.History
 					}
 				},
 				{
@@ -119,7 +119,7 @@ namespace Zurich.Connector.Tests.ControllerTests
 					{
 						AppCode = "testApp2",
 						Auth = new DataMappingAuth() { Type = AuthType.OAuth2 },
-						EntityType = Data.Model.EntityType.History
+						EntityType = Data.Model.ConnectorEntityType.History
 					}
 				}
 

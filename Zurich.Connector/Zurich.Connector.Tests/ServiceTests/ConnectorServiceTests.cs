@@ -64,7 +64,7 @@ namespace Zurich.Connector.Tests.ServiceTests
 					{
 						AppCode = "testApp1",
 						Auth = new DataMappingAuth() { Type = Data.Model.AuthType.OAuth2 },
-						EntityType = Data.Model.EntityType.History
+						EntityType = Data.Model.ConnectorEntityType.History
 					}
 				},
 				{
@@ -72,7 +72,7 @@ namespace Zurich.Connector.Tests.ServiceTests
 					{
 						AppCode = "testApp2",
 						Auth = new DataMappingAuth() { Type = Data.Model.AuthType.TransferToken },
-						EntityType = Data.Model.EntityType.Document
+						EntityType = Data.Model.ConnectorEntityType.Document
 					}
 				},
 				{
@@ -80,7 +80,7 @@ namespace Zurich.Connector.Tests.ServiceTests
 					{
 						AppCode = "testApp2",
 						Auth = new DataMappingAuth() { Type = Data.Model.AuthType.OAuth2 },
-						EntityType = Data.Model.EntityType.History
+						EntityType = Data.Model.ConnectorEntityType.History
 					}
 				}
 			};
@@ -227,7 +227,7 @@ namespace Zurich.Connector.Tests.ServiceTests
 		{
 			// ARRANGE
 			var testDataSourceId = "11";
-			var testEntityType = Data.Model.EntityType.Search;
+			var testEntityType = Data.Model.ConnectorEntityType.Search;
 			var testDataSourceIds = new String[] { testDataSourceId };
 			var testConnections = MockConnectorData.SetupConnectorModel().Where(t => testDataSourceIds.Contains(t.Info.DataSourceId));
 			var testDataSources = MockConnectorData.SetupDataSourceModel().Where(t => testDataSourceIds.Contains(t.Id));

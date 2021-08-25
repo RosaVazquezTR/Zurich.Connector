@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Zurich.Connector.Web.Enum;
+using Zurich.Connector.App.Enum;
 namespace Zurich.Connector.Web.Models
 {
     public class ConnectorRegistrationViewModel

@@ -31,7 +31,7 @@ namespace Zurich.Connector.Tests.Common
                         Title = "Connector1",
                         DataSourceId = "11",
                         Description ="Connector 1 desc",
-                        EntityType = EntityType.Search,
+                        EntityType = ConnectorEntityType.Search,
                         Version = "v1"
                     },
                     Request = new ConnectorRequestModel()
@@ -59,7 +59,7 @@ namespace Zurich.Connector.Tests.Common
                         Title = "Connector2",
                         DataSourceId = "22",
                         Description ="Connector 2 desc",
-                        EntityType = EntityType.Search,
+                        EntityType = ConnectorEntityType.Search,
                         Version = "v1"
                     },
                     Pagination = new PaginationModel()
@@ -92,7 +92,7 @@ namespace Zurich.Connector.Tests.Common
                         Title = "Connector3",
                         DataSourceId = "33",
                         Description ="Connector 3 desc",
-                        EntityType = EntityType.Search,
+                        EntityType = ConnectorEntityType.Search,
                         Version = "v1"
                     },
                     Pagination = new PaginationModel()
@@ -136,7 +136,7 @@ namespace Zurich.Connector.Tests.Common
                         Title = "Connector4",
                         DataSourceId = "22",
                         Description ="Connector 4 desc",
-                        EntityType = EntityType.Document,
+                        EntityType = ConnectorEntityType.Document,
                         Version = "v1"
                     },
                     Pagination = new PaginationModel()

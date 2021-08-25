@@ -24,13 +24,13 @@ namespace Zurich.Connector.App.Services.DataSources
             return appCode == KnownDataSources.iManage;
         }
 
-        public dynamic SetItemLink(EntityType entityType, dynamic item, string hostName)
+        public dynamic SetItemLink(ConnectorEntityType entityType, dynamic item, string hostName)
         {
             try
             {
                 switch (entityType)
                 {
-                    case EntityType.Document:
+                    case ConnectorEntityType.Document:
                         if (item is JObject result && result.ContainsKey("Items"))
                         {
                             if (result["Items"] is JArray)
@@ -59,12 +59,12 @@ namespace Zurich.Connector.App.Services.DataSources
         /// <param name="item">The target item</param>
         /// <param name="hostName">The data source host name</param>
         /// <returns></returns>
-        private string BuildLink(EntityType itemType, JObject item, string hostName)
+        private string BuildLink(ConnectorEntityType itemType, JObject item, string hostName)
         {
             string result = null;
             switch (itemType)
             {
-                case EntityType.Document:
+                case ConnectorEntityType.Document:
                     var docId = item.ContainsKey(StructuredCDMProperties.EntityId) ? item[StructuredCDMProperties.EntityId].Value<string>() : "";
                     var builder = new UriBuilder("https", hostName, -1);
                     result = $"{builder.Uri}{DocumentsEndpoint}{docId}";
