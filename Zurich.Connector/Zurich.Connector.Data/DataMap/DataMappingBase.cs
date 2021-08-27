@@ -141,7 +141,10 @@ namespace Zurich.Connector.Data.DataMap
 							// Default to first value in array at the moment if passed in the location
 							jsonResponse = jsonResponse.First();
 						}
-						jsonResponse = jsonResponse[location];
+						if (location != "[]")
+						{
+							jsonResponse = jsonResponse[location];
+						}
 					}
 				}
 				// Needed so we can prefetch api results that are needed in the original api call

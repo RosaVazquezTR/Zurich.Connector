@@ -49,7 +49,7 @@
     }
   },
   "filters": [],
-  "resultLocation": "value.hitsContainers",
+  "resultLocation": "value.hitsContainers.[]",
   "cdmMapping": {
     "structured": [
       {

@@ -90,11 +90,11 @@ namespace Zurich.Connector.Web
                 }
             });
 
-            this.AddAuthServices(services, authority);
             services.AddPartnerAppAuth(tenantConnectionString, authority, _oAuthOptions, _microServOptions);
             services.AddAutoMapper(typeof(Startup), typeof(CommonMappingsProfile), typeof(ServiceMappingRegistrar), typeof(MappingRegistrar));
             services.AddConnectorCosmosServices(_connectorCosmosDbOptions, _connectorCosmosClientOptions);
             services.ConfigureExceptonhandler();
+            this.AddAuthServices(services, authority);
         }
 
         public virtual void AddAuthServices(IServiceCollection services, string authority)

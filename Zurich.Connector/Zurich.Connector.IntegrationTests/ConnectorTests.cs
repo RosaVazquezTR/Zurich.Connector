@@ -69,14 +69,14 @@ namespace Zurich.Connector.IntegrationTests
             var responseContent = await response.Content.ReadAsStringAsync();
             Assert.NotEmpty(responseContent);
             var jToken = JToken.Parse(responseContent);
-            if (jToken["hResult"] != null)
+            if (!(jToken is JArray) || ((JObject)jToken).ContainsKey("hResult"))
             {
                 var errorResponse = JsonConvert.DeserializeObject<DataError>(responseContent);
                 errorResponse.Message.Should().BeNullOrWhiteSpace();
             }
             else
             {
-                var jsonResponse = JsonConvert.DeserializeObject<T>(responseContent);
+                var jsonResponse = JsonConvert.DeserializeObject<T>(jToken.ToString());
             }
         }
 
@@ -86,6 +86,11 @@ namespace Zurich.Connector.IntegrationTests
         {
             // Arrange
             var request = $"/Connectors/{connector.Id}/Data";
+            // TODO: remove when we can find host and dont have to pass in
+            if (connector.info.dataSourceId == "10")
+            {
+                request = $"/Connectors/{connector.Id}/Data?Hostname=2fdb2-dmobility.imanage.work";
+            }
             //Act
             var response = await _client.GetAsync(request);
 
@@ -125,12 +130,13 @@ namespace Zurich.Connector.IntegrationTests
         public async Task MakeSearchCalls(ConnectorDocument connector)
         {
             // Arrange
-            var request = $"/Connectors/{connector.Id}/Data";
+            var request = $"/Connectors/{connector.Id}/Data?Query=*";
+
             //Act
             var response = await _client.GetAsync(request);
 
             // Assert
-            await CheckResponse<List<SearchEntity>>(response);
+            await CheckResponse<SearchObject>(response);
         }
 
         [Theory]
@@ -139,6 +145,12 @@ namespace Zurich.Connector.IntegrationTests
         {
             // Arrange
             var request = $"/Connectors/{connector.Id}/Data";
+            // TODO: remove when we can find host and dont have to pass in
+            if (connector.info.dataSourceId == "10")
+            {
+                request = $"/Connectors/{connector.Id}/Data?Hostname=2fdb2-dmobility.imanage.work";
+            }
+
             //Act
             var response = await _client.GetAsync(request);
 
