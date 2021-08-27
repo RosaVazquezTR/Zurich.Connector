@@ -28,10 +28,15 @@ namespace Zurich.Connector.IntegrationTests
             Host.CreateDefaultBuilder()
                 .ConfigureAppConfiguration((HostBuilderContext context, IConfigurationBuilder configBuilder) =>
                 {
-
-                    string env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-
                     string json = "integrationsettings.json";
+
+                    _configuration = new ConfigurationBuilder()
+                       .AddJsonFile(json, optional: true)
+                       .AddUserSecrets(Assembly.GetExecutingAssembly())
+                       .Build();
+
+                    string env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? _configuration["ASPNETCORE_ENVIRONMENT"];
+
                     string envJson = $"integrationsettings.{env}.json";
 
                     _configuration = new ConfigurationBuilder()

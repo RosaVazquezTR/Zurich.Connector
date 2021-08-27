@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
 using System;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web;
 using Zurich.Connector.Data;
@@ -87,7 +88,8 @@ namespace Zurich.Connector.App.Services.DataSources
                     Uri uri = new Uri(desktopUrl);
                     var libraryId = HttpUtility.ParseQueryString(uri.AbsoluteUri).Get("lib");
                     var docId = item.ContainsKey(StructuredCDMProperties.EntityId) ? item[StructuredCDMProperties.EntityId].Value<string>() : "";
-                    var fileName = item.ContainsKey(StructuredCDMProperties.Title) ? item[StructuredCDMProperties.Title].Value<string>() : "";
+                    var title = item.ContainsKey(StructuredCDMProperties.Title) ? item[StructuredCDMProperties.Title].Value<string>() : "";
+                    var fileName = Regex.Replace(title, @"\s+", ""); //Replaces all(+) space characters (\s) with empty("")
                     var builder = new UriBuilder("https", hostName, -1);
                     result = $"{builder.Uri}{DocumentsDowloadEndpoint}/customers/{customerId}/libraries/{libraryId}/documents/{docId}/download/{fileName}?activity=export"; 
                     break;

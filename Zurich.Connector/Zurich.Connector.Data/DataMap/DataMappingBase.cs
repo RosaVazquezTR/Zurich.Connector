@@ -236,61 +236,52 @@ namespace Zurich.Connector.Data.DataMap
             dynamic cdmResult = new JObject();
             List<CDMElement> properties = connector?.cdmMapping?.structured;
 
-            await UpdateProperties(apiResult, cdmResult, properties);
+			foreach (var property in properties)
+			{
+				if (cdmResult[property.name] != null)
+					continue;
 
-			List<CDMElement> unstructuredProperties = connector?.cdmMapping?.unstructured;
+				// Get the correct json property when not on the same level
+				string[] resultsLocation = property.responseElement.Split('.');
 
-			await UpdateProperties(apiResult, cdmResult, unstructuredProperties);
+				var tempResult = apiResult;
+				foreach (string location in resultsLocation)
+				{
+					// Perform new mapping recursively of array results
+					if (location.Contains('{'))
+					{
+						var match = Regex.Match(location, @"{(.*?)}");
+						var connectionId = match.Groups[1].ToString();
+						// TODO: Cache this datamapping so we don't have to call the DB for every result
+						var childConnector = await GetConnector(connectionId);
+
+						tempResult = await MapToCDM<dynamic>(JsonConvert.SerializeObject(tempResult),
+																childConnector.resultLocation,
+																childConnector);
+					}
+					// Flatten array results instead 
+					else if (location.Contains('['))
+					{
+						var match = Regex.Match(location, @"\[(.*?):(.*?)\]");
+						string propertyName = match.Groups[1].ToString();
+						string valueToFind = match.Groups[2].ToString();
+						JArray resultArray = (JArray)tempResult;
+						tempResult = resultArray.FirstOrDefault(x => x[propertyName].ToString() == valueToFind);
+					}
+					else
+					{
+						tempResult = tempResult[location];
+					}
+					if (tempResult == null)
+						break;
+				}
+
+				cdmResult[property.name] = tempResult;
+			}
 			return cdmResult;
-        }
+		}
 
-        private async Task UpdateProperties(dynamic apiResult, dynamic cdmResult, List<CDMElement> properties)
-        {
-            foreach (var property in properties)
-            {
-                if (cdmResult[property.name] != null)
-                    continue;
-
-                // Get the correct json property when not on the same level
-                string[] resultsLocation = property.responseElement.Split('.');
-
-                var tempResult = apiResult;
-                foreach (string location in resultsLocation)
-                {
-                    // Perform new mapping recursively of array results
-                    if (location.Contains('{'))
-                    {
-                        var match = Regex.Match(location, @"{(.*?)}");
-                        var connectionId = match.Groups[1].ToString();
-                        // TODO: Cache this datamapping so we don't have to call the DB for every result
-                        var childConnector = await GetConnector(connectionId);
-
-                        tempResult = await MapToCDM<dynamic>(JsonConvert.SerializeObject(tempResult),
-                                                                childConnector.resultLocation,
-                                                                childConnector);
-                    }
-                    // Flatten array results instead 
-                    else if (location.Contains('['))
-                    {
-                        var match = Regex.Match(location, @"\[(.*?):(.*?)\]");
-                        string propertyName = match.Groups[1].ToString();
-                        string valueToFind = match.Groups[2].ToString();
-                        JArray resultArray = (JArray)tempResult;
-                        tempResult = resultArray.FirstOrDefault(x => x[propertyName].ToString() == valueToFind);
-                    }
-                    else
-                    {
-                        tempResult = tempResult[location];
-                    }
-                    if (tempResult == null)
-                        break;
-                }
-
-                cdmResult[property.name] = tempResult;
-            }
-        }
-
-        private async Task<ConnectorDocument> GetConnector(string connectionId)
+		private async Task<ConnectorDocument> GetConnector(string connectionId)
 		{
 			var connectorDocument = await _cosmosContext.GetDocument<ConnectorDocument>
 										(CosmosConstants.ConnectorContainerId, connectionId, CosmosConstants.ConnectorPartitionKey);

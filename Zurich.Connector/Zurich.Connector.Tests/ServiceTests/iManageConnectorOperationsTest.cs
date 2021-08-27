@@ -9,8 +9,8 @@ using Zurich.Connector.Data;
 using System;
 using System.Threading.Tasks;
 using Zurich.Connector.Data.DataMap;
-using Zurich.Common.Models.Connectors;
 using Zurich.Connector.Data.Services;
+using Zurich.Connector.Data.Repositories.CosmosDocuments;
 
 namespace Zurich.Connector.Tests.ServiceTests
 {
@@ -20,6 +20,7 @@ namespace Zurich.Connector.Tests.ServiceTests
     public class IManageConnectorOperationsTest
     {
         private Mock<ILogger<IManageConnectorOperations>> _mockLogger;
+        private Mock<IDataMapping> _mockDataMapping;
         private Mock<IDataMappingFactory> _mockDataMappingFactory;
 
         [TestInitialize]
@@ -27,6 +28,7 @@ namespace Zurich.Connector.Tests.ServiceTests
         {
             _mockLogger = new Mock<ILogger<IManageConnectorOperations>>();
             _mockDataMappingFactory = new Mock<IDataMappingFactory>();
+            _mockDataMapping = new Mock<IDataMapping>();
         }
 
         [TestMethod]
@@ -36,7 +38,12 @@ namespace Zurich.Connector.Tests.ServiceTests
             var mockDocuments = MockConnectorData.SetupDocumentsModel();
             var hostName = "my.cookieapp.com";
             var expectedUrl = $"https://{hostName}/work/link/d/1";
+            var customerId = "1";
             //Act
+            var token = new JObject();
+            token["customer_id"] = customerId;
+            _mockDataMapping.Setup(x => x.Get<JToken>(It.IsAny<ConnectorDocument>(), string.Empty, null)).Returns(Task.FromResult((JToken)token));
+            _mockDataMappingFactory.Setup(x => x.GetMapper(Data.Model.AuthType.OAuth2)).Returns(_mockDataMapping.Object);
             var service = new IManageConnectorOperations(_mockLogger.Object, _mockDataMappingFactory.Object);
             var result = (await service.SetItemLink(Data.Model.ConnectorEntityType.Document, mockDocuments, hostName) as JObject);
             //Assert
@@ -51,7 +58,12 @@ namespace Zurich.Connector.Tests.ServiceTests
         {
             //Arrange
             var mockDocuments = MockConnectorData.SetupDocumentsModel();
+            var customerId = "2";
             //Act
+            var token = new JObject();
+            token["customer_id"] = customerId;
+            _mockDataMapping.Setup(x => x.Get<JToken>(It.IsAny<ConnectorDocument>(), string.Empty, null)).Returns(Task.FromResult((JToken)token));
+            _mockDataMappingFactory.Setup(x => x.GetMapper(Data.Model.AuthType.OAuth2)).Returns(_mockDataMapping.Object);
             var service = new IManageConnectorOperations(_mockLogger.Object, _mockDataMappingFactory.Object);
             var result =  (await service.SetItemLink(Data.Model.ConnectorEntityType.Document, mockDocuments, null) as JObject);
             //Assert
@@ -59,6 +71,31 @@ namespace Zurich.Connector.Tests.ServiceTests
             result.Should().NotBeNull();
             var doc = result["Items"][0] as JObject;
             doc.ContainsKey(StructuredCDMProperties.WebUrl).Should().BeFalse();
+        }
+
+        [TestMethod]
+        public async Task SetItemLinkTest_Should_SetDownloadUrl()
+        {
+            //Arrange
+            var mockDocuments = MockConnectorData.SetupDocumentsModel();
+            var hostName = "my.cookieapp.com";
+            var customerId = "3";
+            var libraryId = "TestLibrary";
+            var docId = "1";
+            var fileName = "Secret cookie recipe 1";
+            var expectedUrl = $"https://{hostName}/work/web/api/v2/customers/{customerId}/libraries/{libraryId}/documents/{docId}/download/{fileName}?activity=export";
+            //Act
+            var token = new JObject();
+            token["customer_id"] = customerId;
+            _mockDataMapping.Setup(x => x.Get<JToken>(It.IsAny<ConnectorDocument>(), string.Empty, null)).Returns(Task.FromResult((JToken)token));
+            _mockDataMappingFactory.Setup(x => x.GetMapper(Data.Model.AuthType.OAuth2)).Returns(_mockDataMapping.Object);           
+            var service = new IManageConnectorOperations(_mockLogger.Object, _mockDataMappingFactory.Object);
+            var result = (await service.SetItemLink(Data.Model.ConnectorEntityType.Document, mockDocuments, hostName) as JObject);            
+            //Assert
+            result.Should().NotBeNull();
+            var doc = result["Items"][0] as JObject;
+            doc.ContainsKey(StructuredCDMProperties.DownloadUrl).Should().BeTrue();
+            doc[StructuredCDMProperties.DownloadUrl].Value<string>().Should().Be(expectedUrl);
         }
     }
 }
