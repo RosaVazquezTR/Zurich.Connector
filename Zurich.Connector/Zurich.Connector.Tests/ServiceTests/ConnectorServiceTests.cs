@@ -118,8 +118,8 @@ namespace Zurich.Connector.Tests.ServiceTests
 			Assert.AreEqual(testConnectionsList[1].Info.Title, connectors[1].Info.Title);
 			var testName = testDataSourcesList.Where(t => t.Id == connectors[0].Info.DataSourceId).Select(t => t.Name).First();
 			Assert.AreEqual(testName, connectors[0].DataSource.Name);
-			Assert.AreEqual(RegistrationStatus.Registered, connectors.Find(x => x.Id == registeredConnectorIds.First()).RegistrationStatus);
-			Assert.AreEqual(RegistrationStatus.NotRegistered, connectors.Find(x => !registeredConnectorIds.Contains(x.Id)).RegistrationStatus);
+			Assert.AreEqual(App.Enum.RegistrationStatus.Registered, connectors.Find(x => x.Id == registeredConnectorIds.First()).RegistrationStatus);
+			Assert.AreEqual(App.Enum.RegistrationStatus.NotRegistered, connectors.Find(x => !registeredConnectorIds.Contains(x.Id)).RegistrationStatus);
 		}
 
 		[TestMethod]
@@ -323,7 +323,7 @@ namespace Zurich.Connector.Tests.ServiceTests
 			Assert.AreEqual(registeredConnectorIds.First(), connectors[0].Id);
 			connectors.ForEach(connector =>
 			{
-				Assert.AreEqual(RegistrationStatus.Registered, connector.RegistrationStatus);
+				Assert.AreEqual(App.Enum.RegistrationStatus.Registered, connector.RegistrationStatus);
 			});
 		}
 

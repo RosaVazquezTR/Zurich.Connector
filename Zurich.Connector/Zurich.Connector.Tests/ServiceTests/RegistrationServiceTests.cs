@@ -26,6 +26,7 @@ namespace Zurich.Connector.Tests.ServiceTests
             {
                 new ConnectorRegistration()
                 {
+                    Id = "abc-1",
                     ConnectorId = "1",
                     UserId = "userId1",
                     TenantId = "tenantid1",
@@ -35,6 +36,7 @@ namespace Zurich.Connector.Tests.ServiceTests
             {
                 new ConnectorRegistration()
                 {
+                    Id = "abc-2",
                     ConnectorId = "2",
                     UserId = "userId2",
                     TenantId = "tenantid2",
@@ -44,6 +46,7 @@ namespace Zurich.Connector.Tests.ServiceTests
             {
                 new ConnectorRegistration()
                 {
+                    Id = "abc-3",
                     ConnectorId = "3",
                     UserId = "userId3",
                     TenantId = "tenantid3",
@@ -115,6 +118,44 @@ namespace Zurich.Connector.Tests.ServiceTests
             //Assert
             _mockCosmosService.Verify(x => x.GetConnectorRegistrations(It.IsAny<string>(), It.IsAny<Expression<Func<ConnectorRegistrationDocument, bool>>>()), times: Times.Once());
             CollectionAssert.AreEqual(testIds, registerIds);
+        }
+
+        [TestMethod]
+        public async Task CallRemoveUserConnectorWithValidRegistration()
+        {
+            //Arrange
+            var userId = new Guid("55e7a5d2-2134-4828-a2cd-2c4284ec11b9");
+            _mockSessionAccessor.Setup(x => x.UserId).Returns(userId);
+            _mockCosmosService.Setup(x => x.GetConnectorRegistrations(It.IsAny<string>(), It.IsAny<Expression<Func<ConnectorRegistrationDocument, bool>>>())).Returns(registrations);
+            _mockCosmosService.Setup(x => x.RemoveConnectorRegistration(It.IsAny<string>(), It.IsAny<string>()));
+
+            var registrationService = new RegistrationService(_mockCosmosService.Object, _mockSessionAccessor.Object);
+
+            //Act
+            var success = await registrationService.RemoveUserConnector("1");
+
+            //Assert
+            _mockCosmosService.Verify(x => x.RemoveConnectorRegistration(It.IsAny<string>(), It.IsAny<string>()), times: Times.Exactly(3));
+            Assert.AreEqual(true, success);
+        }
+
+        [TestMethod]
+        public async Task CallRemoveUserConnectorWithInvalidRegistration()
+        {
+            //Arrange
+            var userId = new Guid("55e7a5d2-2134-4828-a2cd-2c4284ec11b9");
+            _mockSessionAccessor.Setup(x => x.UserId).Returns(userId);
+            _mockCosmosService.Setup(x => x.GetConnectorRegistrations(It.IsAny<string>(), It.IsAny<Expression<Func<ConnectorRegistrationDocument, bool>>>())).Returns(new List<ConnectorRegistration>());
+            _mockCosmosService.Setup(x => x.RemoveConnectorRegistration(It.IsAny<string>(), It.IsAny<string>()));
+
+            var registrationService = new RegistrationService(_mockCosmosService.Object, _mockSessionAccessor.Object);
+
+            //Act
+            var success = await registrationService.RemoveUserConnector("1");
+
+            //Assert
+            _mockCosmosService.Verify(x => x.RemoveConnectorRegistration(It.IsAny<string>(), It.IsAny<string>()), times: Times.Never());
+            Assert.AreEqual(false, success);
         }
     }
     

@@ -9,11 +9,16 @@ namespace Zurich.Connector.App.Model
 {
     public class ConnectorRegistration
     {
+        /// <summary>
+        /// Unique Id for Registration
+        /// </summary>
+        public string Id { get; set; }
 
         /// <summary>
         /// use for ConnectorId
         /// </summary>
         public string ConnectorId { get; set; }
+
         /// <summary>
         /// UserID        
         /// </summary>
