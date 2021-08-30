@@ -106,7 +106,7 @@ namespace Zurich.Connector.Data.Services
             ConnectorDocument connectorDocument = _mapper.Map<ConnectorDocument>(connectorModel);
 
             var data = await service.Get<dynamic>(connectorDocument, transferToken, mappedQueryParameters);
-            data = EnrichConnectorData(connectorModel, data);
+            data = await EnrichConnectorData(connectorModel, data);
             if (retrieveFilters == true)
             {
                 JToken mappingFilters = JToken.FromObject(connectorDocument.filters);
@@ -234,11 +234,11 @@ namespace Zurich.Connector.Data.Services
         /// <param name="connector">The data connector</param>
         /// <param name="data">The entity data</param>
         /// <returns></returns>
-        private dynamic EnrichConnectorData(ConnectorModel connector, dynamic data)
+        private async Task<dynamic> EnrichConnectorData(ConnectorModel connector, dynamic data)
         {
             var dataSourceOperationsService = _dataSourceOperationsFactory.GetDataSourceOperationsService(connector?.DataSource?.AppCode);
             if (dataSourceOperationsService != null)
-                data = dataSourceOperationsService.SetItemLink(connector.Info.EntityType, data, connector.HostName);
+                data = await dataSourceOperationsService.SetItemLink(connector.Info.EntityType, data, connector.HostName);
             else
                 _logger.LogInformation("No data source operations service found for {appCode}", connector?.DataSource?.AppCode ?? "");
             return data;

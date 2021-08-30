@@ -197,12 +197,18 @@ namespace Zurich.Connector.Tests.Common
                     {
                         ""Id"":""1"",
                         ""Title"":""Secret cookie recipe 1"",
-                        ""Version"":""1.0""
+                        ""Version"":""1.0"",
+                        ""DesktopUrl"":""iwl:dms=2fdb2-dmobility.imanage.work&&lib=TestLibrary&&num=118&&ver=1"",
+                        ""lib"":""TestLibrary"",
+
                     },
                     {
                         ""Id"":""2"",
                         ""Title"":""Secret cookie recipe 2"",
-                        ""Version"":""1.0""
+                        ""Version"":""1.0"",
+                        ""DesktopUrl"":""iwl:dms=3fdb2-dmobility.imanage.work&&lib=TestLibrary1&&num=119&&ver=1"",
+                        ""lib"":""TestLibrary1"",
+
                     }
                 ]
             }");

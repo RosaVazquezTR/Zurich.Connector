@@ -232,9 +232,9 @@ namespace Zurich.Connector.Data.DataMap
 		}
 
 		private async Task<dynamic> MapResult(dynamic apiResult, ConnectorDocument connector)
-		{
-			dynamic cdmResult = new JObject();
-			List<CDMElement> properties = connector?.cdmMapping?.structured;
+        {
+            dynamic cdmResult = new JObject();
+            List<CDMElement> properties = connector?.cdmMapping?.structured;
 
 			foreach (var property in properties)
 			{
