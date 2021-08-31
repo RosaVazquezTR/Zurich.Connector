@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Zurich.Common.Models.Connectors;
 using Zurich.Connector.Data.Repositories.CosmosDocuments;
@@ -21,7 +22,9 @@ namespace Zurich.Connector.App.Services
         /// <summary>
         /// Remove user from cosmosdb
         /// </summary>
-        Task RemoveUserConnector(string connectorId);
+        /// <param name="connectorId">The connector id</param>
+        /// <returns>Boolean indicating success</returns>
+        Task<bool> RemoveUserConnector(string connectorId);
 
         /// <summary>
         /// Gets list of user's registered connector ids
@@ -62,9 +65,22 @@ namespace Zurich.Connector.App.Services
             return true;
         }
 
-        public async Task RemoveUserConnector(string connectorId)
+        public async Task<bool> RemoveUserConnector(string connectorId)
         {
-            await _cosmosService.RemoveConnectorRegistration(connectorId, _sessionAccesor.UserId.ToString());
+            var userId = _sessionAccesor.UserId.ToString();
+
+            Expression<Func<ConnectorRegistrationDocument, bool>> condition = registration => registration.ConnectorId == connectorId;
+            var registrations = _cosmosService.GetConnectorRegistrations(userId, condition);
+            if (registrations.Count() < 1)
+            {
+                return false;
+            }
+
+            foreach (var registration in registrations)
+            {
+                await _cosmosService.RemoveConnectorRegistration(registration.Id, userId);
+            }
+            return true;
         }
 
         public IEnumerable<string> GetUserConnections(IEnumerable<RegistrationEntityMode> registrationModes)

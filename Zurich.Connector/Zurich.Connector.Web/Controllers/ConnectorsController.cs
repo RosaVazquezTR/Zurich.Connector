@@ -171,8 +171,16 @@ namespace Zurich.Connector.Web.Controllers
             {
                 return BadRequest("Invalid Connector ID");
             }
-            await _registrationService.RemoveUserConnector(id);
-            return NoContent();
+
+            var status = await _registrationService.RemoveUserConnector(id);
+            if (status == true)
+            {
+                return NoContent();
+            }
+            else
+            {
+                return NotFound($"User registration with connector id {id} was not found");
+            }
         }
 
     }
