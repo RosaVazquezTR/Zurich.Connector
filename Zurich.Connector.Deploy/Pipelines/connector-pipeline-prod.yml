@@ -207,17 +207,17 @@ stages:
           serviceName: ${{ variables.connectorServiceName }}
           subscriptionName: ${{ variables.subscriptionName }}
           swaggerEndpoint: ${{ variables.swaggerEndpoint }}
-- stage: Testing
-  pool: AutomationTestAgentPool
-  dependsOn: Swap_Slots
-  jobs:
-  - job: 'RegressionTests'
-    timeoutInMinutes: ${{ variables.regressionTestTimeout }} # how long to run the job before automatically cancelling
-    displayName: 'Regression Tests (Smoke Tests)'
-    steps: 
-      - checkout: ZurichTesting
-      - template: pipelines\Templates\legal-home-regression-tests.yml@ZurichTesting
-        parameters:
-          environment: ${{ variables.environmentStorageName }}
-          azureAdClientSecret: $(azureAdClientSecret)
-          testTags: ${{ variables.regressionTestTags }}
+# - stage: Testing
+#   pool: AutomationTestAgentPool
+#   dependsOn: Swap_Slots
+#   jobs:
+#   - job: 'RegressionTests'
+#     timeoutInMinutes: ${{ variables.regressionTestTimeout }} # how long to run the job before automatically cancelling
+#     displayName: 'Regression Tests (Smoke Tests)'
+#     steps: 
+#       - checkout: ZurichTesting
+#       - template: pipelines\Templates\legal-home-regression-tests.yml@ZurichTesting
+#         parameters:
+#           environment: ${{ variables.environmentStorageName }}
+#           azureAdClientSecret: $(azureAdClientSecret)
+#           testTags: ${{ variables.regressionTestTags }}
