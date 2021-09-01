@@ -35,7 +35,9 @@ name: $(BuildDefinitionName).$(SourceBranchName).$(Date:yyyyMMdd)$(Rev:.r)
 
 stages:
 - stage: Build
-  pool: DCO-HighQ-Platform-P
+  # Change pool back to DCO-HighQ-Platform-P once build machines are fixed
+  pool: 
+    vmImage: 'windows-latest'
   jobs:
     - job: 'Build'
       displayName: 'Connectors Build'
