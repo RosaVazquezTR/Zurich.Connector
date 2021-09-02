@@ -1,12 +1,12 @@
 {
-  "id": "4",
+  "id": "34",
   "partitionkey": "ConnectorList",
-  "alias": "cbtpracpt.history",
+  "alias": "plcca.history",
   "info": {
     "title": "Get Research History",
-    "description": "Pull Research History from PL",
+    "description": "Pull Research History from Practical Law Canada",
     "entityType": "History",
-    "dataSourceId": "12",
+    "dataSourceId": "22",
     "version": "1.0"
   },
   "request": {

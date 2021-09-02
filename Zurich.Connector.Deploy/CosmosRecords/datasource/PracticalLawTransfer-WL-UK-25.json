@@ -1,0 +1,22 @@
+{
+    "id": "25",
+    "partitionkey": "DataSourceList",
+    "name": "Westlaw UK",
+    "description": "This is connecting to Westlaw UK API ",
+    "infoURL": "",
+    "appCode": "UKWL",
+    "extraRequestContext": "",
+    "securityDefinition": {
+        "type": "transferToken",
+        "flow": "",
+        "defaultSecurityDefinition": {
+            "authorizationURL": "",
+            "authorizationPath": "",
+            "tokenURL": "",
+            "tokenPath": "",
+            "keyVaultClientId": "",
+            "keyVaultSecret": ""
+        },
+        "scopes": {}
+    }
+}

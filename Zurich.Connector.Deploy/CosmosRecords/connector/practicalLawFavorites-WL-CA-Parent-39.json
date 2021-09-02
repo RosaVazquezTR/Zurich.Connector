@@ -1,0 +1,44 @@
+{
+  "id": "39",
+  "partitionkey": "ConnectorList",
+  "alias": "crsw.favorites",
+  "info": {
+    "title": "Get Research Favorites",
+    "description": "Pull Research Favorite Groups from Westlaw Next Canada",
+    "entityType": "Favorites",
+    "dataSourceId": "24",
+    "version": "1.0"
+  },
+  "request": {
+    "endpointPath": "/Micro/FavoriteAndFrequentlyUsed",
+    "method": "get",
+    "parameters": [],
+    "sorting": {
+      "properties": []
+    }
+  },
+  "response": {
+    "schema": {
+      "properties": {}
+    }
+  },
+  "resultLocation": "FavoritesAndFrequentlyUsed",
+  "filters": [],
+  "cdmMapping": {
+    "structured": [
+      {
+        "name": "GroupName",
+        "type": "string",
+        "responseElement": "group",
+        "_comment": ""
+      },
+      {
+        "name": "Items",
+        "type": "string",
+        "responseElement": "{6}",
+        "_comment": ""
+      }
+    ],
+    "unstructured": []
+  }
+}
