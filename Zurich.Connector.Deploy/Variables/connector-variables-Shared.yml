@@ -5,8 +5,6 @@ variables:
     value: 'ConnectorsAppInsights'
   - name: applicationName
     value: 'Connectors'
-  - name: connectorServiceName
-    value: 'connectorsWebApi'
   - name: connectorCosmosContainerNames
     value: '["connector", "datasource","connectorRegistration"]'
   - name: connectorCosmosDatabaseName
