@@ -11,7 +11,7 @@
   },
   "request": {
     "endpointPath": "/Micro/FavoriteAndFrequentlyUsed",
-    "method": "get",
+    "method": "GET",
     "parameters": [],
     "sorting": {
       "properties": []

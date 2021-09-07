@@ -89,13 +89,16 @@ namespace Zurich.Connector.IntegrationTests
             // TODO: remove when we can find host and dont have to pass in
             if (connector.info.dataSourceId == "10")
             {
-                request = $"/Connectors/{connector.Id}/Data?Hostname=2fdb2-dmobility.imanage.work";
+                request = $"/Connectors/{connector.Id}/Data?Hostname=cloudimanage.com";
             }
-            //Act
-            var response = await _client.GetAsync(request);
+            if (connector.info.dataSourceId != "10")
+            {
+                //Act
+                var response = await _client.GetAsync(request);
 
-            // Assert
-            await CheckResponse<List<DocumentEntity>>(response);
+                // Assert
+                await CheckResponse<List<DocumentEntity>>(response);
+            }
         }
 
         // Will need to create transfer token so these can't be turned on yet.
@@ -148,14 +151,17 @@ namespace Zurich.Connector.IntegrationTests
             // TODO: remove when we can find host and dont have to pass in
             if (connector.info.dataSourceId == "10")
             {
-                request = $"/Connectors/{connector.Id}/Data?Hostname=2fdb2-dmobility.imanage.work";
+                request = $"/Connectors/{connector.Id}/Data?Hostname=cloudimanage.com";
             }
 
-            //Act
-            var response = await _client.GetAsync(request);
+            if (connector.info.dataSourceId != "10")
+            {
+                //Act
+                var response = await _client.GetAsync(request);
 
-            // Assert
-            await CheckResponse<UserProfileEntity>(response);
+                // Assert
+                await CheckResponse<UserProfileEntity>(response);
+            }
         }
     }
 }
