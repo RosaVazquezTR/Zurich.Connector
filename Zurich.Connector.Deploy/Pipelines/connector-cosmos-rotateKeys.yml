@@ -1,0 +1,129 @@
+trigger:
+  - none
+
+pool:
+  vmImage: 'windows-latest'
+
+resources:
+  repositories:
+    - repository: ZurichDeploy
+      type: git
+      name: Zurich.Deploy
+      
+variables:
+- template: Variables\ZurichDeploy-variables-Shared.yml@ZurichDeploy
+- template: ../Variables/connector-variables-Shared.yml
+
+stages:
+- stage: CI
+  pool: DCO-HighQ-Platform-N
+  condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'master'))
+  jobs:
+    - deployment: Rotate_ConnectorsCosmos
+      environment: CI
+      variables:
+        - template: Variables\ZurichDeploy-variables-CI.yml@ZurichDeploy
+        - template: ../Variables/connector-variables-CI.yml
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+              - checkout: ZurichDeploy
+                path: Zurich.Deploy
+              - template: Templates\ZurichDeploy-RotateCosmosKeys.yml@ZurichDeploy
+                parameters: 
+                  cosmosName: ${{ variables.connectorCosmosName }}
+                  deployScriptFolder: '\Scripts'
+                  environmentName: ${{ variables.environmentName }}
+                  functionList: '@()'
+                  keyVaultName: ${{ variables.keyVault }}
+                  keyVaultPropertyPrefix: ${{ variables.connectorCosmoskeyVaultPrefix }}
+                  resourceGroup: ${{ variables.resourceGroup }}
+                  restartFunctions: false
+                  restartWebApps: true
+                  subscriptionName: ${{ variables.subscriptionName }}
+                  webAppList: '@("${{ variables.connectorServiceName }}")'
+- stage: QA
+  dependsOn:
+  - CI
+  pool: DCO-HighQ-Platform-N
+  jobs:
+    - deployment: Rotate_ConnectorsCosmos
+      environment: QA
+      variables:
+        - template: Variables\ZurichDeploy-variables-QA.yml@ZurichDeploy
+        - template: ../Variables/connector-variables-QA.yml
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+              - checkout: ZurichDeploy
+                path: Zurich.Deploy
+              - template: Templates\ZurichDeploy-RotateCosmosKeys.yml@ZurichDeploy
+                parameters: 
+                  cosmosName: ${{ variables.connectorCosmosName }}
+                  deployScriptFolder: '\Scripts'
+                  environmentName: ${{ variables.environmentName }}
+                  functionList: '@()'
+                  keyVaultName: ${{ variables.keyVault }}
+                  keyVaultPropertyPrefix: ${{ variables.connectorCosmoskeyVaultPrefix }}
+                  resourceGroup: ${{ variables.resourceGroup }}
+                  restartFunctions: false
+                  restartWebApps: true
+                  subscriptionName: ${{ variables.subscriptionName }}
+                  webAppList: '@("${{ variables.connectorServiceName }}")'
+- stage: ServiceNow
+  pool: DCO-HighQ-Platform-P
+  dependsOn:
+  - QA
+  jobs:
+  - deployment: ServiceNow
+    environment: Prod_L2
+    variables:
+      - template: Variables\ZurichDeploy-variables-Prod.yml@ZurichDeploy
+      - template: ../Variables/connector-variables-Prod.yml
+    strategy:
+     runOnce:
+       deploy:
+         steps:
+         - download: none
+         - checkout: self
+         - checkout: ZurichDeploy
+         - template: Templates/ZurichDeploy-NotifyBuildOwners.yml@ZurichDeploy
+           parameters:
+             additionalEmails: ${{ variables.additionalEmailsForServiceNowRequest }}
+             applicationName: ${{ variables.applicationName }}
+             assignmentGroup: "${{ variables.assignmentGroup }}"
+             environmentName: ${{ variables.environmentName }}
+             serviceNowUserName: ${{ variables.serviceNowUserName }}
+             serviceNowPassword: "$(serviceNowPassword)"
+             subscriptionName: ${{ variables.subscriptionName }}
+- stage: Prod
+  dependsOn:
+  - ServiceNow
+  pool: DCO-HighQ-Platform-P
+  jobs:
+    - deployment: Rotate_ConnectorsCosmos
+      environment: Prod
+      variables:
+        - template: Variables\ZurichDeploy-variables-Prod.yml@ZurichDeploy
+        - template: ../Variables/connector-variables-Prod.yml
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+              - checkout: ZurichDeploy
+                path: Zurich.Deploy
+              - template: Templates\ZurichDeploy-RotateCosmosKeys.yml@ZurichDeploy
+                parameters: 
+                  cosmosName: ${{ variables.connectorCosmosName }}
+                  deployScriptFolder: '\Scripts'
+                  environmentName: ${{ variables.environmentName }}
+                  functionList: '@()'
+                  keyVaultName: ${{ variables.keyVault }}
+                  keyVaultPropertyPrefix: ${{ variables.connectorCosmoskeyVaultPrefix }}
+                  resourceGroup: ${{ variables.resourceGroup }}
+                  restartFunctions: false
+                  restartWebApps: true
+                  subscriptionName: ${{ variables.subscriptionName }}
+                  webAppList: '@("${{ variables.connectorServiceName }}")'

@@ -1,0 +1,22 @@
+{
+    "id": "24",
+    "partitionkey": "DataSourceList",
+    "name": "Westlaw Next Canada",
+    "description": "This is connecting to Westlaw CA API ",
+    "infoURL": "",
+    "appCode": "CRSW",
+    "extraRequestContext": "",
+    "securityDefinition": {
+        "type": "transferToken",
+        "flow": "",
+        "defaultSecurityDefinition": {
+            "authorizationURL": "",
+            "authorizationPath": "",
+            "tokenURL": "",
+            "tokenPath": "",
+            "keyVaultClientId": "",
+            "keyVaultSecret": ""
+        },
+        "scopes": {}
+    }
+}
