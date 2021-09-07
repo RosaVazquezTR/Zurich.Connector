@@ -16,6 +16,10 @@ namespace Zurich.Connector.Web.Models
         /// </summary>
         public string Id { get; set; }
         /// <summary>
+        /// The connector alias
+        /// </summary>
+        public string Alias { get; set; }
+        /// <summary>
         /// Connector Info like title, description etc.
         /// </summary>
         public ConnectorDetailsInfoViewModel Info { get; set; }
@@ -57,7 +61,7 @@ namespace Zurich.Connector.Web.Models
         /// <summary>
         /// Entity type like Document, Search etc.
         /// </summary>
-        public EntityType EntityType { get; set; }
+        public ConnectorEntityType EntityType { get; set; }
         /// <summary>
         /// Data Source ID
         /// </summary>

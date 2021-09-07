@@ -13,7 +13,7 @@ namespace Zurich.Connector.Data.Model
         /// <summary>
         /// EntityType is optional parameter to filter to specific data types of connectors e.g. Document, Search, etc.
         /// </summary>
-        public List<EntityType> EntityTypes { get; set; }
+        public List<ConnectorEntityType> EntityTypes { get; set; }
 
         /// <summary>
         /// RegistrationMode is optional parameter to filter by specific registration mode for the connectors.

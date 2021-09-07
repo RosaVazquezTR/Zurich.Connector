@@ -16,8 +16,8 @@
     "cdmMapping": {
         "structured": [
             {
-                "name": "Abstract",
-                "type": "string",
+                "name": "Snippet",
+                "type": "String",
                 "responseElement": "summary",
                 "_comment": ""
             },

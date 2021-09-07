@@ -11,14 +11,11 @@ using Zurich.Common.Models.OAuth;
 using Zurich.Common.Services.Security;
 using Zurich.Connector.Data.Model;
 using Zurich.Connector.Data.Repositories;
-using Zurich.Connector.Data.Serializer;
 using System.Collections.Specialized;
 using AutoMapper;
 using Zurich.Connector.Data.Repositories.CosmosDocuments;
-using Zurich.Common;
-using Zurich.Common.Repositories.Cosmos;
 using System.Xml;
-using System.Dynamic;
+using Zurich.Connector.Data.Services;
 
 namespace Zurich.Connector.Data.DataMap
 {
@@ -29,7 +26,7 @@ namespace Zurich.Connector.Data.DataMap
 		protected Type _objectType;
 		protected IOAuthService _oAuthService;
 		protected ILogger<DataMappingBase> _logger;
-		protected ICosmosClientStore _cosmosClientStore;
+		protected ConnectorCosmosContext _cosmosContext;
 		protected IMapper _mapper;
 
 		public async virtual Task<T> Get<T>(ConnectorDocument dataTypeInformation, string transferToken = null, NameValueCollection query = null)
@@ -238,9 +235,9 @@ namespace Zurich.Connector.Data.DataMap
 		}
 
 		private async Task<dynamic> MapResult(dynamic apiResult, ConnectorDocument connector)
-		{
-			dynamic cdmResult = new JObject();
-			List<CDMElement> properties = connector?.cdmMapping?.structured;
+        {
+            dynamic cdmResult = new JObject();
+            List<CDMElement> properties = connector?.cdmMapping?.structured;
 
 			foreach (var property in properties)
 			{
@@ -289,12 +286,12 @@ namespace Zurich.Connector.Data.DataMap
 
 		private async Task<ConnectorDocument> GetConnector(string connectionId)
 		{
-			var connectorDocument = await _cosmosClientStore.GetDocument<ConnectorDocument>
+			var connectorDocument = await _cosmosContext.GetDocument<ConnectorDocument>
 										(CosmosConstants.ConnectorContainerId, connectionId, CosmosConstants.ConnectorPartitionKey);
 
 			string dataSourceId = connectorDocument?.info?.dataSourceId;
 
-			var connectorDataSourceDocument = await _cosmosClientStore.GetDocument<DataSourceDocument>
+			var connectorDataSourceDocument = await _cosmosContext.GetDocument<DataSourceDocument>
 										(CosmosConstants.DataSourceContainerId, dataSourceId, CosmosConstants.DataSourcePartitionKey);
 
 			connectorDocument.dataSource = connectorDataSourceDocument;

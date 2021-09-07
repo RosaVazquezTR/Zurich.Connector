@@ -26,6 +26,16 @@
         ]
       },
       {
+        "cdmName": "docTypes",
+        "name": "type",
+        "inClause": "Query",
+        "required": false,
+        "type": "string",
+        "defaultValue": "",
+        "tags": [
+        ]
+      },
+      {
         "cdmName": "Offset",
         "name": "offset",
         "inClause": "Query",

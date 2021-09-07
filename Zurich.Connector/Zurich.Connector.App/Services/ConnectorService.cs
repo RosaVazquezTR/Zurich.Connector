@@ -16,6 +16,7 @@ using Zurich.Connector.App.Services.DataSources;
 using Newtonsoft.Json.Linq;
 using Zurich.Connector.App;
 using Zurich.Connector.App.Utils;
+using Zurich.Connector.App.Enum;
 
 namespace Zurich.Connector.Data.Services
 {
@@ -39,7 +40,7 @@ namespace Zurich.Connector.Data.Services
         /// </summary>
         /// <param name="filters">Filters to get different connections</param>
         /// <returns>List of Data Mapping Connections <see cref="DataMappingConnection"/></returns>
-        Task<List<ConnectorModel>> GetConnectors(FilterModel filters);
+        Task<List<ConnectorModel>> GetConnectors(Common.Models.Connectors.ConnectorFilterModel filters);
         Task<ConnectorModel> GetConnector(string connectorId);
 
     }
@@ -54,9 +55,17 @@ namespace Zurich.Connector.Data.Services
         private readonly IMapper _mapper;
         private readonly IDataMappingService _dataMappingService;
         private readonly IConnectorDataSourceOperationsFactory _dataSourceOperationsFactory;
+        private readonly IRegistrationService _registrationService;
 
-        public ConnectorService(IDataMapping dataMapping, IDataMappingFactory dataMappingFactory, IDataMappingRepository dataMappingRepo, 
-                                ILogger<ConnectorService> logger, IMapper mapper, ICosmosService cosmosService, IDataMappingService dataMappingService, IConnectorDataSourceOperationsFactory dataSourceOperationsFactory)
+        public ConnectorService(
+            IDataMapping dataMapping,
+            IDataMappingFactory dataMappingFactory,
+            IDataMappingRepository dataMappingRepo,
+            ILogger<ConnectorService> logger,
+            IMapper mapper, ICosmosService cosmosService,
+            IDataMappingService dataMappingService,
+            IConnectorDataSourceOperationsFactory dataSourceOperationsFactory,
+            IRegistrationService registrationService)
         {
             _dataMapping = dataMapping;
             _dataMappingFactory = dataMappingFactory;
@@ -66,6 +75,7 @@ namespace Zurich.Connector.Data.Services
             _mapper = mapper;
             _dataMappingService = dataMappingService;
             _dataSourceOperationsFactory = dataSourceOperationsFactory;
+            _registrationService = registrationService;
         }
 
         /// <summary>
@@ -96,7 +106,7 @@ namespace Zurich.Connector.Data.Services
             ConnectorDocument connectorDocument = _mapper.Map<ConnectorDocument>(connectorModel);
 
             var data = await service.Get<dynamic>(connectorDocument, transferToken, mappedQueryParameters);
-            data = EnrichConnectorData(connectorModel, data);
+            data = await EnrichConnectorData(connectorModel, data);
             if (retrieveFilters == true)
             {
                 JToken mappingFilters = JToken.FromObject(connectorDocument.filters);
@@ -110,7 +120,7 @@ namespace Zurich.Connector.Data.Services
         /// </summary>
         /// <param name="filters">Filters to get different connections</param>
         /// <returns>List of Data Mapping Connections <see cref="DataMappingConnection"/></returns>
-        public async Task<List<ConnectorModel>> GetConnectors(FilterModel filters)
+        public async Task<List<ConnectorModel>> GetConnectors(Common.Models.Connectors.ConnectorFilterModel filters)
         {
             try
             {
@@ -118,6 +128,7 @@ namespace Zurich.Connector.Data.Services
                 bool isDataSourceFilter = false;
                 IEnumerable<string> entityTypeFilter = Enumerable.Empty<string>();
                 IEnumerable<string> dataSourceFilter = Enumerable.Empty<string>();
+                IEnumerable<string> registeredConnectors = Enumerable.Empty<string>();
                 if (filters?.EntityTypes?.Count > 0)
                 {
                     isEntityTypeFilter = true;
@@ -129,15 +140,18 @@ namespace Zurich.Connector.Data.Services
                     isDataSourceFilter = true;
                     dataSourceFilter = filters.DataSources;
                 }
-                //TODO: Implement registration mode filtering here.
-                //if (filters?.RegistrationModes?.Count > 0)
-                //{
-                //}
 
-                Expression<Func<ConnectorDocument, bool>> condition = connector => (isEntityTypeFilter == false || entityTypeFilter.Contains(connector.info.entityType.ToString())) && 
-                                         (isDataSourceFilter == false || dataSourceFilter.Contains(connector.info.dataSourceId));
+                registeredConnectors = _registrationService.GetUserConnections(filters.RegistrationModes);
 
+                Expression<Func<ConnectorDocument, bool>> condition = connector => (isEntityTypeFilter == false || entityTypeFilter.Contains(connector.info.entityType.ToString())) 
+                                        && (isDataSourceFilter == false || dataSourceFilter.Contains(connector.info.dataSourceId))
+                                        && (filters.IsRegistered == false || registeredConnectors.Contains(connector.Id));
                 var connectors = await _cosmosService.GetConnectors(true, condition);
+
+                foreach (var connector in connectors.Where(connector => registeredConnectors.Contains(connector.Id)))
+                {
+                    connector.RegistrationStatus = RegistrationStatus.Registered;
+                }
 
                 return connectors.ToList();
             } catch(Exception ex)
@@ -220,11 +234,11 @@ namespace Zurich.Connector.Data.Services
         /// <param name="connector">The data connector</param>
         /// <param name="data">The entity data</param>
         /// <returns></returns>
-        private dynamic EnrichConnectorData(ConnectorModel connector, dynamic data)
+        private async Task<dynamic> EnrichConnectorData(ConnectorModel connector, dynamic data)
         {
             var dataSourceOperationsService = _dataSourceOperationsFactory.GetDataSourceOperationsService(connector?.DataSource?.AppCode);
             if (dataSourceOperationsService != null)
-                data = dataSourceOperationsService.SetItemLink(connector.Info.EntityType, data, connector.HostName);
+                data = await dataSourceOperationsService.SetItemLink(connector.Info.EntityType, data, connector.HostName);
             else
                 _logger.LogInformation("No data source operations service found for {appCode}", connector?.DataSource?.AppCode ?? "");
             return data;

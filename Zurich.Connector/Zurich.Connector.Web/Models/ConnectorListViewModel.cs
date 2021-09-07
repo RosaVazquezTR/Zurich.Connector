@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Zurich.Connector.App.Enum;
 using Zurich.Connector.Data.Model;
 
 namespace Zurich.Connector.Web.Models
@@ -15,6 +16,11 @@ namespace Zurich.Connector.Web.Models
         /// The connector id
         /// </summary>
         public string Id { get; set; }
+
+        /// <summary>
+        /// The connector alias
+        /// </summary>
+        public string Alias { get; set; }
 
         /// <summary>
         /// The type of connector
@@ -35,5 +41,10 @@ namespace Zurich.Connector.Web.Models
         /// Domain of the api endpoint
         /// </summary>
         public string? Domain { get; set; }
+
+        /// <summary>
+        /// Registration status
+        /// </summary>
+        public RegistrationStatus RegistrationStatus { get; set; }
     }
 }

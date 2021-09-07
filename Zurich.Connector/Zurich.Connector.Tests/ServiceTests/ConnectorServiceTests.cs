@@ -17,6 +17,8 @@ using System.Linq.Expressions;
 using Zurich.Connector.App.Model;
 using Zurich.Connector.Tests.Common;
 using Zurich.Connector.App.Services.DataSources;
+using Zurich.Common.Models.Connectors;
+using Zurich.Connector.App.Enum;
 
 namespace Zurich.Connector.Tests.ServiceTests
 {
@@ -31,6 +33,7 @@ namespace Zurich.Connector.Tests.ServiceTests
 		private IMapper _mapper;
 		private Mock<IDataMappingService> _mockdataMappingService;
 		private Mock<IConnectorDataSourceOperationsFactory> _mockDataSourceOperationsFactory;
+		private Mock<IRegistrationService> _mockRegistrationService;
 
 		[TestInitialize]
 		public void TestInitialize()
@@ -48,6 +51,7 @@ namespace Zurich.Connector.Tests.ServiceTests
 			_mockCosmosService = new Mock<ICosmosService>();
 			_mockdataMappingService = new Mock<IDataMappingService>();
 			_mockDataSourceOperationsFactory = new Mock<IConnectorDataSourceOperationsFactory>();
+			_mockRegistrationService = new Mock<IRegistrationService>();
 		}
 
 		#region Data Setup
@@ -59,24 +63,24 @@ namespace Zurich.Connector.Tests.ServiceTests
 					new DataMappingConnection()
 					{
 						AppCode = "testApp1",
-						Auth = new DataMappingAuth() { Type = AuthType.OAuth2 },
-						EntityType = Data.Model.EntityType.History
+						Auth = new DataMappingAuth() { Type = Data.Model.AuthType.OAuth2 },
+						EntityType = Data.Model.ConnectorEntityType.History
 					}
 				},
 				{
 					new DataMappingConnection()
 					{
 						AppCode = "testApp2",
-						Auth = new DataMappingAuth() { Type = AuthType.TransferToken },
-						EntityType = Data.Model.EntityType.Document
+						Auth = new DataMappingAuth() { Type = Data.Model.AuthType.TransferToken },
+						EntityType = Data.Model.ConnectorEntityType.Document
 					}
 				},
 				{
 					new DataMappingConnection()
 					{
 						AppCode = "testApp2",
-						Auth = new DataMappingAuth() { Type = AuthType.OAuth2 },
-						EntityType = Data.Model.EntityType.History
+						Auth = new DataMappingAuth() { Type = Data.Model.AuthType.OAuth2 },
+						EntityType = Data.Model.ConnectorEntityType.History
 					}
 				}
 			};
@@ -87,20 +91,21 @@ namespace Zurich.Connector.Tests.ServiceTests
 		public async Task CallGetConnectors()
 		{
 			// ARRANGE
+			var registeredConnectorIds = new List<string>() { "2", "4" };
 			var testConnections = MockConnectorData.SetupConnectorModel();
 			var testConnectionsList = MockConnectorData.SetupConnectorModel().ToList();
 
 			var testDataSourceIds = testConnections.Select(t => t.Info.DataSourceId).Distinct().ToList();
 			var testDataSources = MockConnectorData.SetupDataSourceModel().Where(t => testDataSourceIds.Contains(t.Id));
 			var testDataSourcesList = testDataSources.ToList();
-			FilterModel filters = new FilterModel();
-			_mockCosmosService.Setup(x => x.GetConnectors(true, It.IsAny<Expression<Func<ConnectorDocument, bool>>>())).Returns(Task.FromResult(testConnections));
+			ConnectorFilterModel filters = new ConnectorFilterModel();
 
-			Expression<Func<DataSourceDocument, bool>> dsCondition = dataSources => testDataSourceIds.Contains(dataSources.Id);
+			_mockCosmosService.Setup(x => x.GetConnectors(true, It.IsAny<Expression<Func<ConnectorDocument, bool>>>())).Returns(Task.FromResult(testConnections));
+			_mockRegistrationService.Setup(x => x.GetUserConnections(It.IsAny<IEnumerable<Zurich.Common.Models.Connectors.RegistrationEntityMode>>())).Returns(registeredConnectorIds);
 			_mockCosmosService.Setup(x => x.GetDataSources(It.IsAny<Expression<Func<DataSourceDocument, bool>>>())).Returns(Task.FromResult(testDataSources));
 
 			ConnectorService service = new ConnectorService(_mockDataMapping.Object, _mockDataMappingFactory.Object, _mockDataMappingRepo.Object, null, _mapper, _mockCosmosService.Object, _mockdataMappingService.Object,
-				_mockDataSourceOperationsFactory.Object);
+				_mockDataSourceOperationsFactory.Object, _mockRegistrationService.Object);
 
 			// ACT
 			var connectors = await service.GetConnectors(filters);
@@ -113,6 +118,8 @@ namespace Zurich.Connector.Tests.ServiceTests
 			Assert.AreEqual(testConnectionsList[1].Info.Title, connectors[1].Info.Title);
 			var testName = testDataSourcesList.Where(t => t.Id == connectors[0].Info.DataSourceId).Select(t => t.Name).First();
 			Assert.AreEqual(testName, connectors[0].DataSource.Name);
+			Assert.AreEqual(App.Enum.RegistrationStatus.Registered, connectors.Find(x => x.Id == registeredConnectorIds.First()).RegistrationStatus);
+			Assert.AreEqual(App.Enum.RegistrationStatus.NotRegistered, connectors.Find(x => !registeredConnectorIds.Contains(x.Id)).RegistrationStatus);
 		}
 
 		[TestMethod]
@@ -123,7 +130,7 @@ namespace Zurich.Connector.Tests.ServiceTests
 			var connector = MockConnectorData.SetupConnectorModel().Where(t => t.Id == "1").FirstOrDefault();
 
 			ConnectorService service = new ConnectorService(_mockDataMapping.Object, _mockDataMappingFactory.Object, _mockDataMappingRepo.Object, null, _mapper, _mockCosmosService.Object, _mockdataMappingService.Object,
-				_mockDataSourceOperationsFactory.Object);
+				_mockDataSourceOperationsFactory.Object, _mockRegistrationService.Object);
 
 			// ACT
 			var mappedResult = service.MapQueryParametersFromDB(cdmQueryParameters, connector);
@@ -166,7 +173,7 @@ namespace Zurich.Connector.Tests.ServiceTests
 			arrangePagination(connector.Pagination);
 
 			ConnectorService service = new ConnectorService(_mockDataMapping.Object, _mockDataMappingFactory.Object, _mockDataMappingRepo.Object, null, _mapper, _mockCosmosService.Object, _mockdataMappingService.Object,
-				_mockDataSourceOperationsFactory.Object);
+				_mockDataSourceOperationsFactory.Object, _mockRegistrationService.Object);
 
 			// ACT
 			var mappedResult = service.MapQueryParametersFromDB(cdmQueryParameters, connector);
@@ -185,7 +192,7 @@ namespace Zurich.Connector.Tests.ServiceTests
 			var connector = MockConnectorData.SetupConnectorModel().Where(t => t.Id == "3").FirstOrDefault();
 
 			ConnectorService service = new ConnectorService(_mockDataMapping.Object, _mockDataMappingFactory.Object, _mockDataMappingRepo.Object, null, _mapper, _mockCosmosService.Object, _mockdataMappingService.Object,
-				_mockDataSourceOperationsFactory.Object);
+				_mockDataSourceOperationsFactory.Object, _mockRegistrationService.Object);
 
 			// ACT
 			var mappedResult = service.MapQueryParametersFromDB(cdmQueryParameters, connector);
@@ -205,7 +212,7 @@ namespace Zurich.Connector.Tests.ServiceTests
 			var connector = MockConnectorData.SetupConnectorModel().Where(t => t.Id == "4").FirstOrDefault();
 
 			ConnectorService service = new ConnectorService(_mockDataMapping.Object, _mockDataMappingFactory.Object, _mockDataMappingRepo.Object, null, _mapper, _mockCosmosService.Object, _mockdataMappingService.Object,
-				_mockDataSourceOperationsFactory.Object);
+				_mockDataSourceOperationsFactory.Object, _mockRegistrationService.Object);
 
 			// ACT
 			var mappedResult = service.MapQueryParametersFromDB(cdmQueryParameters, connector);
@@ -220,14 +227,14 @@ namespace Zurich.Connector.Tests.ServiceTests
 		{
 			// ARRANGE
 			var testDataSourceId = "11";
-			var testEntityType = EntityType.Search;
+			var testEntityType = Data.Model.ConnectorEntityType.Search;
 			var testDataSourceIds = new String[] { testDataSourceId };
 			var testConnections = MockConnectorData.SetupConnectorModel().Where(t => testDataSourceIds.Contains(t.Info.DataSourceId));
 			var testDataSources = MockConnectorData.SetupDataSourceModel().Where(t => testDataSourceIds.Contains(t.Id));
-			FilterModel filters = new FilterModel()
+			ConnectorFilterModel filters = new ConnectorFilterModel()
 			{
 				DataSources = new List<string>() { testDataSourceId },
-				EntityTypes = new List<EntityType>() { testEntityType }
+				EntityTypes = new List<Zurich.Common.Models.Connectors.EntityType>() { (Zurich.Common.Models.Connectors.EntityType)testEntityType }
 			};
 
 			var entityTypeFilter = filters.EntityTypes.Select(t => t.ToString());
@@ -241,7 +248,7 @@ namespace Zurich.Connector.Tests.ServiceTests
 			_mockCosmosService.Setup(x => x.GetDataSources(It.IsAny<Expression<Func<DataSourceDocument, bool>>>())).Returns(Task.FromResult(testDataSources));
 
 			ConnectorService service = new ConnectorService(_mockDataMapping.Object, _mockDataMappingFactory.Object, _mockDataMappingRepo.Object, null, _mapper, _mockCosmosService.Object, _mockdataMappingService.Object,
-				_mockDataSourceOperationsFactory.Object);
+				_mockDataSourceOperationsFactory.Object, _mockRegistrationService.Object);
 
 			// ACT
 			var connectors = await service.GetConnectors(filters);
@@ -263,7 +270,7 @@ namespace Zurich.Connector.Tests.ServiceTests
 
 			var testConnections = MockConnectorData.SetupConnectorModel().Where(t => testDataSourceIds.Contains(t.Info.DataSourceId));
 			var testDataSources = MockConnectorData.SetupDataSourceModel().Where(t => testDataSourceIds.Contains(t.Id));
-			FilterModel filters = new FilterModel()
+			ConnectorFilterModel filters = new ConnectorFilterModel()
 			{
 				DataSources = new List<string>() { testDataSourceId }
 			};
@@ -275,7 +282,7 @@ namespace Zurich.Connector.Tests.ServiceTests
 			_mockCosmosService.Setup(x => x.GetDataSources(It.IsAny<Expression<Func<DataSourceDocument, bool>>>())).Returns(Task.FromResult(testDataSources));
 
 			ConnectorService service = new ConnectorService(_mockDataMapping.Object, _mockDataMappingFactory.Object, _mockDataMappingRepo.Object, null, _mapper, _mockCosmosService.Object, _mockdataMappingService.Object,
-				_mockDataSourceOperationsFactory.Object);
+				_mockDataSourceOperationsFactory.Object, _mockRegistrationService.Object);
 
 			// ACT
 			var connectors = await service.GetConnectors(filters);
@@ -285,6 +292,39 @@ namespace Zurich.Connector.Tests.ServiceTests
 			Assert.IsNotNull(connectors);
 			Assert.AreEqual(1, connectors.Count);
 			Assert.AreEqual(connectors[0].Info.DataSourceId, testDataSourceId);
+		}
+
+		[TestMethod]
+		public async Task CallGetConnectorsWithIsRegisteredFilter()
+		{
+			// ARRANGE
+			var registeredConnectorIds = new List<string>() { "2", "4" };
+			var testConnections = MockConnectorData.SetupConnectorModel().Where(t => registeredConnectorIds.Contains(t.Id));
+
+			ConnectorFilterModel filters = new ConnectorFilterModel()
+			{
+				IsRegistered = true
+			};
+
+
+			_mockCosmosService.Setup(x => x.GetConnectors(true, It.IsAny<Expression<Func<ConnectorDocument, bool>>>())).Returns(Task.FromResult(testConnections));
+			_mockRegistrationService.Setup(x => x.GetUserConnections(It.IsAny<IEnumerable<Zurich.Common.Models.Connectors.RegistrationEntityMode>>())).Returns(registeredConnectorIds);
+
+			ConnectorService service = new ConnectorService(_mockDataMapping.Object, _mockDataMappingFactory.Object, _mockDataMappingRepo.Object, null, _mapper, _mockCosmosService.Object, _mockdataMappingService.Object,
+				_mockDataSourceOperationsFactory.Object, _mockRegistrationService.Object);
+
+			// ACT
+			var connectors = await service.GetConnectors(filters);
+
+			// ASSERT
+			_mockCosmosService.Verify(x => x.GetConnectors(true, It.IsAny<Expression<Func<ConnectorDocument, bool>>>()), Times.Once());
+			Assert.IsNotNull(connectors);
+			Assert.AreEqual(2, connectors.Count);
+			Assert.AreEqual(registeredConnectorIds.First(), connectors[0].Id);
+			connectors.ForEach(connector =>
+			{
+				Assert.AreEqual(App.Enum.RegistrationStatus.Registered, connector.RegistrationStatus);
+			});
 		}
 
 	}

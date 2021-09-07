@@ -49,6 +49,7 @@ stages:
             azureAdClientSecret: $(azureAdClientSecret)
             environmentName: ci
             publishToNuget: true
+            sandboxName: 'Connector-CI'
 - stage: CI
   pool: DCO-HighQ-Platform-N
   dependsOn:

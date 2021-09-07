@@ -27,13 +27,13 @@ namespace Zurich.Connector.Web.Controllers
         private readonly IRegistrationService _registrationService;
         private readonly IMapper _mapper;
         private readonly ILogger<ConnectorsController> _logger;
+
         public ConnectorsController(IConnectorService connectorService, ILogger<ConnectorsController> logger, IMapper mapper, IRegistrationService registrationService)
         {
             _connectorService = connectorService;
             _registrationService = registrationService;
             _logger = logger;
             _mapper = mapper;
-
         }
 
         [HttpGet("{id}/data")]
@@ -47,9 +47,6 @@ namespace Zurich.Connector.Web.Controllers
                     .Where(param => !param.Equals("hostname", StringComparison.InvariantCultureIgnoreCase)
                     && !param.Equals("transferToken", StringComparison.InvariantCultureIgnoreCase)
                     && !param.Equals("retrievefilters", StringComparison.InvariantCultureIgnoreCase))
-                    .Where(param => !param.Equals("hostname", StringComparison.InvariantCultureIgnoreCase)
-                    && !param.Equals("transferToken", StringComparison.InvariantCultureIgnoreCase)
-                    && !param.Equals("retrieveFilters", StringComparison.InvariantCultureIgnoreCase))
                     .ToDictionary(k => k, v => HttpContext?.Request.Query[v].ToString(), StringComparer.OrdinalIgnoreCase);
 
                 results = await _connectorService.GetConnectorData(id, hostName, transferToken, parameters, retrieveFilters);
@@ -93,14 +90,14 @@ namespace Zurich.Connector.Web.Controllers
         /// <response code="200">A <see cref="ConnectorListViewModel"/> representing the connectors</response>
 
         [HttpGet()]
-        public async Task<ActionResult<List<ConnectorListViewModel>>> Connectors([FromQuery] FilterModel filters)
+        public async Task<ActionResult<List<ConnectorListViewModel>>> Connectors([FromQuery] Common.Models.Connectors.ConnectorFilterModel filters)
         {
             List<ConnectorModel> connections = await _connectorService.GetConnectors(filters);
             List<ConnectorListViewModel> results = _mapper.Map<List<ConnectorListViewModel>>(connections);
 
             if (results.Count == 0)
             {
-                throw new ResourceNotFoundException("Connector or data not found");
+                return NoContent();
             }
 
             var jsonSettings = new JsonSerializerSettings
@@ -149,19 +146,22 @@ namespace Zurich.Connector.Web.Controllers
 
             if (string.IsNullOrEmpty(registrationModel.ConnectorId))
             {
-
-                return BadRequest();
+                return BadRequest("Connector Id must be defined");
             }
-            var registered = await _registrationService.RegisterDataSource(registrationModel.ConnectorId);
+
+            var connector = await _connectorService.GetConnector(registrationModel.ConnectorId);
+            if (connector == null)
+            {
+                return BadRequest("Connector Id must point to a valid connector");
+            }
+
+            var registered = await _registrationService.RegisterDataSource(connector.Id);
             if (!registered)
             {
-
                 return BadRequest();
-
             }
-            return Ok(RegistrationStatus.registered);
 
-
+            return Ok(RegistrationStatus.Registered);
         }
 
         [HttpDelete("{id}/user")]
@@ -171,8 +171,16 @@ namespace Zurich.Connector.Web.Controllers
             {
                 return BadRequest("Invalid Connector ID");
             }
-            await _registrationService.RemoveUserConnector(id);
-            return Ok(HttpStatusCode.OK);
+
+            var status = await _registrationService.RemoveUserConnector(id);
+            if (status == true)
+            {
+                return NoContent();
+            }
+            else
+            {
+                return NotFound($"User registration with connector id {id} was not found");
+            }
         }
 
     }

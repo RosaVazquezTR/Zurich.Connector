@@ -9,11 +9,16 @@ namespace Zurich.Connector.App.Model
 {
     public class ConnectorRegistration
     {
+        /// <summary>
+        /// Unique Id for Registration
+        /// </summary>
+        public string Id { get; set; }
 
         /// <summary>
         /// use for ConnectorId
         /// </summary>
         public string ConnectorId { get; set; }
+
         /// <summary>
         /// UserID        
         /// </summary>
@@ -28,10 +33,5 @@ namespace Zurich.Connector.App.Model
         /// Use For appname
         /// </summary>
         public string AppName { get; set; }
-
-        /// <summary>
-        /// use for registrationStatus
-        /// </summary>
-        public RegistrationStatus RegistrationStatus { get; set; }
     }
 }

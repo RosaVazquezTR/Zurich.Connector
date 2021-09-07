@@ -1,18 +1,17 @@
 {
-  "id": "5",
+  "id": "35",
   "partitionkey": "ConnectorList",
-  "alias": "cbtpracpt.favorites",
+  "alias": "plcca.favorites",
   "info": {
     "title": "Get Research Favorites",
-    "description": "Pull Research Favorite Groups from PL",
+    "description": "Pull Research Favorite Groups from Practical Law Canada",
     "entityType": "Favorites",
-    "dataSourceId": "12",
-    "version": "1.0",
-    "subType": "Parent"
+    "dataSourceId": "22",
+    "version": "1.0"
   },
   "request": {
     "endpointPath": "/Micro/FavoriteAndFrequentlyUsed",
-    "method": "GET",
+    "method": "get",
     "parameters": [],
     "sorting": {
       "properties": []
