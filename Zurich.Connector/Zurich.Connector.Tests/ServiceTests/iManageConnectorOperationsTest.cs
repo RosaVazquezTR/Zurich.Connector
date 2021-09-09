@@ -83,7 +83,7 @@ namespace Zurich.Connector.Tests.ServiceTests
             var libraryId = "TestLibrary";
             var docId = "1";
             var fileName = "Secret cookie recipe 1";
-            var expectedUrl = $"https://{hostName}/work/web/api/v2/customers/{customerId}/libraries/{libraryId}/documents/{docId}/download/{fileName}?activity=export";
+            var expectedUrl = $"https://{hostName}/work/web/api/v2/customers/{customerId}/libraries/{libraryId}/documents/{docId}/download";
             //Act
             var token = new JObject();
             token["customer_id"] = customerId;
