@@ -91,7 +91,7 @@ namespace Zurich.Connector.App.Services.DataSources
                     var title = item.ContainsKey(StructuredCDMProperties.Title) ? item[StructuredCDMProperties.Title].Value<string>() : "";
                     var fileName = Regex.Replace(title, @"\s+", ""); //Replaces all(+) space characters (\s) with empty("")
                     var builder = new UriBuilder("https", hostName, -1);
-                    result = $"{builder.Uri}{DocumentsDowloadEndpoint}/customers/{customerId}/libraries/{libraryId}/documents/{docId}/download/{fileName}?activity=export"; 
+                    result = $"{builder.Uri}{DocumentsDowloadEndpoint}/customers/{customerId}/libraries/{libraryId}/documents/{docId}/download"; 
                     break;
             }
             return result;
