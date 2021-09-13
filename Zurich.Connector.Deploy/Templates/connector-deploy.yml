@@ -135,8 +135,9 @@ steps:
       updateCosmosRecords -ResourceGroupName '${{ parameters.resourceGroup }}' -AccountName '${{ parameters.connectorCosmosName }}${{ lower(parameters.environmentName) }}' -DatabaseName '${{ parameters.connectorCosmosDatabaseName}}' -CollectionName 'datasource' -FolderPath "$(Build.SourcesDirectory)/Zurich.Connector/Zurich.Connector.Deploy/CosmosRecords/datasource/" -ExcludedProperties '${{ parameters.connectorCosmosExcludedComparisonProperties }}' -PartitionKey 'DataSourceList'
 - task: AzureCLI@2
   displayName: 'Create Metric Alerts'
+  condition: and(succeeded(), ne('${{ parameters.environmentName }}', 'CI'))
   inputs:
     azureSubscription: ${{ parameters.subscriptionName }}
-    scriptPath: '$(Build.SourcesDirectory)/Zurich.Connector/Zurich.Connector.Deploy/Scripts/CreateMetricAlerts.ps1'
-    arguments: '-subscription ${{ parameters.subscriptionName }} -subscriptionId ${{ parameters.subscriptionId }} -resourceGroup ${{ parameters.resourceGroup }} -env ${{ parameters.environmentName }} -alertPrefix ${{ parameters.monitorAlertPrefix }} -monitorGroups ${{ parameters.monitorAlertGroups }}'
+    scriptPath: '$(Build.SourcesDirectory)/${{ parameters.deployScriptFolder }}/CreateMetricAlertsShared.ps1'
+    arguments: '-subscription ${{ parameters.subscriptionName }} -subscriptionId ${{ parameters.subscriptionId }} -resourceGroup ${{ parameters.resourceGroup }} -env ${{ parameters.environmentName }} -alertPrefix ${{ parameters.monitorAlertPrefix }} -monitorGroups ${{ parameters.monitorAlertGroups }} -appServiceNames @("${{ parameters.connectorServiceName }}") -appServicePlanNames @("AppServicePlan-${{ parameters.connectorServiceName }}")'
     scriptType: 'ps'
