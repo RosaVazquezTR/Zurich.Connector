@@ -214,5 +214,33 @@ namespace Zurich.Connector.Tests.Common
             }");
             return result;
         }
-	}
+
+        internal static IEnumerable<dynamic> SetupSearchDocumentsModel()
+        {
+            dynamic result;
+
+            result = JObject.Parse(@"{
+                ""TotalCount"": 2,
+                ""Documents"": [
+                    {
+                        ""Id"":""1"",
+                        ""Title"":""Secret cookie recipe 1"",
+                        ""WebUrl"":"""",
+                        ""Snippet"":""abc"",
+                        ""PlcReference"":""4-000-4131"",
+
+                    },
+                    {
+                        ""Id"":""2"",
+                        ""Title"":""Secret cookie recipe 2"",
+                        ""WebUrl"":"""",
+                        ""Snippet"":""xyc"",
+                        ""PlcReference"":""4-000-4121"",
+
+                    }
+                ]
+            }");
+            return result;
+        }
+    }
 }
