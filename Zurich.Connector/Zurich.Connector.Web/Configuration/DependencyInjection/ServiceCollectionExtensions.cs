@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using AutoMapper;
 using IdentityModel;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -61,6 +63,8 @@ namespace Microsoft.Extensions.DependencyInjection
 		public static void AddServices(this IServiceCollection services)
 		{
 			services.AddScoped<IRegistrationService, RegistrationService>();
+			services.AddScoped<IOAuthServices, OAuthServices>();
+			services.AddScoped<IOAuthRepository, OAuthRepository>();
 		}
 
 		/// <summary>
@@ -137,6 +141,30 @@ namespace Microsoft.Extensions.DependencyInjection
         {
 			services.AddSingleton<IExceptionHandler, ExceptionHandler>();
 		}
+
+		#region OAuth
+		/// <summary>
+		/// Adds the Http Client needed for accessing OAuth API
+		/// </summary>
+		/// <param name="OAuthUrl">The OAuth domain</param>
+		public static void AddOAuthHttpClient(this IServiceCollection services, string OAuthUrl)
+		{
+			services.AddHttpClient(HttpClientNames.OAuth, httpClient =>
+			{
+				var serviceProvider = services.BuildServiceProvider();
+				var httpContextAccessor = serviceProvider.GetService<IHttpContextAccessor>();
+				var bearerToken = httpContextAccessor.HttpContext.Request
+									  .Headers["Authorization"]
+									  .FirstOrDefault(h => h.StartsWith("bearer ", StringComparison.InvariantCultureIgnoreCase));
+
+				if (bearerToken != null)
+					httpClient.DefaultRequestHeaders.Add("Authorization", bearerToken);
+
+				httpClient.BaseAddress = new Uri(OAuthUrl);
+				httpClient.DefaultRequestHeaders.Add("Accept", "application/json");
+			});
 		}
+		#endregion
+	}
 
 }

@@ -1,4 +1,11 @@
 {
+  "AzureAd": {
+    "ClientId": "b4a0d298-06dd-4738-83be-9b57653980b1",
+    "ClientSecret": "wSL.8nz-NCW5_9O8fJztPCa21GU~se~.CZ"
+  },
+  "KeyVault": {
+    "Endpoint": "https://connectorsKeyVaultCI.vault.azure.net/"
+  },
   "Audience": "legalhome",
   "AllowedCORSOrigins": [ "http://localhost:4200" ],
   "PartnerOAuthApps": {
@@ -19,5 +26,6 @@
     "Database": "connectordb",
     "AuditApplicationId": "ConnectorService",
     "OfferThroughput": "400"
-  }
+  },
+  "OAuthBaseUrl": "https://ci.api.legalplatform.thomsonreuters.com/"
 }

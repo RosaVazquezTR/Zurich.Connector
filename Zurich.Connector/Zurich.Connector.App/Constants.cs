@@ -9,5 +9,6 @@ namespace Zurich.Connector.App
     public static class Constants
     {
         public const string filters = "filters";
+        public const string AutoregistrationMode = "Automatic";
     }
 }

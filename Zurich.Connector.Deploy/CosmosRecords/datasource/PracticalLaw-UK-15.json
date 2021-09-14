@@ -1,26 +1,27 @@
 {
-    "id": "15",
-    "partitionkey": "DataSourceList",
-    "name": "Practical Law UK",
-    "description": "This is connecting to Practical Law UK API ",
-    "infoURL": "",
-    "appCode": "PLCUK",
-    "appType": "0",
-    "locale": "UK",
-    "extraRequestContext": "",
-    "securityDefinition": {
-        "type": "oauth2",
-        "flow": "",
-        "defaultSecurityDefinition": {
-            "authorizationURL": "",
-            "authorizationPath": "",
-            "tokenURL": "",
-            "tokenPath": "",
-            "keyVaultClientId": "",
-            "keyVaultSecret": "",
-            "sendCredentialsInBody": true,
-            "grantType": "client_credentials"
-        },
-        "scopes": {}
-    }
+  "id": "15",
+  "partitionkey": "DataSourceList",
+  "name": "Practical Law UK",
+  "description": "This is connecting to Practical Law UK API ",
+  "infoURL": "",
+  "appCode": "PLCUK",
+  "appType": "0",
+  "locale": "UK",
+  "registrationMode ": "Automatic",
+  "extraRequestContext": "",
+  "securityDefinition": {
+    "type": "oauth2",
+    "flow": "",
+    "defaultSecurityDefinition": {
+      "authorizationURL": "",
+      "authorizationPath": "",
+      "tokenURL": "",
+      "tokenPath": "",
+      "keyVaultClientId": "",
+      "keyVaultSecret": "",
+      "sendCredentialsInBody": true,
+      "grantType": "client_credentials"
+    },
+    "scopes": {}
+  }
 }
