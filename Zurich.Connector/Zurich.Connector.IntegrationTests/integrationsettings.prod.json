@@ -6,5 +6,6 @@
   "AzureAd": {
     "ClientId": "3e1c6d20-9663-41bb-84fd-669fa96a1dc3",
     "ClientSecret": "DoNotSetHere"
-  }
+  },
+  "OAuthBaseUrl": "https://prod.api.legalplatform.thomsonreuters.com/"
 }

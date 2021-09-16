@@ -78,6 +78,7 @@ namespace Zurich.Connector.Web
             services.AddScoped<IDataMappingRepository, DataMappingRepository>();
             services.AddScoped<IRepository, Repository>();
             services.AddScoped<IConnectorDataSourceOperations, IManageConnectorOperations>();
+            services.AddScoped<IConnectorDataSourceOperations, PracticalLawConnectorOperation>();
             services.AddScoped<IConnectorDataSourceOperationsFactory, ConnectorDataSourceOperationsFactory>();
 
             services.AddServices();
@@ -95,6 +96,7 @@ namespace Zurich.Connector.Web
             services.AddAutoMapper(typeof(Startup), typeof(CommonMappingsProfile), typeof(ServiceMappingRegistrar), typeof(MappingRegistrar));
             services.AddConnectorCosmosServices(_connectorCosmosDbOptions, _connectorCosmosClientOptions);
             services.ConfigureExceptonhandler();
+            services.AddOAuthHttpClient(Configuration.GetValue<string>("OAuthBaseUrl"));
         }
 
         public virtual void AddAuthServices(IServiceCollection services, string audience, string authority)

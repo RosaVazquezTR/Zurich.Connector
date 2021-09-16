@@ -17,7 +17,7 @@ namespace Zurich.Connector.App.Services
         /// </summary>
         /// <param name="connectorId">The connector id</param>
         /// <returns>Boolean indicating success</returns>
-        Task<bool> RegisterDataSource(string connectorId);
+        Task<bool> RegisterDataSource(string connectorId, string applicationCode, string registrationMode);
 
         /// <summary>
         /// Remove user from cosmosdb
@@ -38,14 +38,16 @@ namespace Zurich.Connector.App.Services
     {
         private readonly ICosmosService _cosmosService;
         private readonly ISessionAccessor _sessionAccesor;
+        private readonly IOAuthServices _OAuthService;
 
-        public RegistrationService(ICosmosService cosmosService, ISessionAccessor sessionAccesor)
+        public RegistrationService(ICosmosService cosmosService, ISessionAccessor sessionAccesor, IOAuthServices OAuthService)
         {
             _cosmosService = cosmosService;
             _sessionAccesor = sessionAccesor;
+            _OAuthService = OAuthService;
         }
 
-        public async Task<bool> RegisterDataSource(string connectorId)
+        public async Task<bool> RegisterDataSource(string connectorId, string applicationCode, string registrationMode)
         {
             if (string.IsNullOrEmpty(connectorId))
             {
@@ -62,6 +64,11 @@ namespace Zurich.Connector.App.Services
             };
 
             await _cosmosService.StoreConnectorRegistration(cosmosDocument);
+            if (registrationMode == Constants.AutoregistrationMode)
+            {
+                bool result = await _OAuthService.AutomaticRegistration(applicationCode);
+                return result;
+            }
             return true;
         }
 

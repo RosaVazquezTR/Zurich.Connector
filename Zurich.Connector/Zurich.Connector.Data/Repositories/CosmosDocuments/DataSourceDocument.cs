@@ -36,6 +36,10 @@ namespace Zurich.Connector.Data.Repositories.CosmosDocuments
         /// </summary>
         public string extraRequestContext { get; set; }
         /// <summary>
+        /// Flag for registrationMode. ex:"Automatic"
+        /// </summary>
+        public string registrationMode { get; set; }
+        /// <summary>
         /// Define security definition
         /// </summary>
         public SecurityDefinition securityDefinition { get; set; }
