@@ -1,0 +1,26 @@
+{
+    "id": "19",
+    "partitionkey": "DataSourceList",
+    "name": "Practical Law Connect",
+    "description": "This is connecting to Practical Law Connect API ",
+    "infoURL": "",
+    "appCode": "PracticalLawConnect",
+    "appType": "0",
+    "locale": "US",
+    "extraRequestContext": "",
+    "securityDefinition": {
+        "type": "oauth2",
+        "flow": "",
+        "defaultSecurityDefinition": {
+            "authorizationURL": "",
+            "authorizationPath": "",
+            "tokenURL": "",
+            "tokenPath": "",
+            "keyVaultClientId": "",
+            "keyVaultSecret": "",
+            "sendCredentialsInBody": true,
+            "grantType": "client_credentials"
+        },
+        "scopes": {}
+    }
+}

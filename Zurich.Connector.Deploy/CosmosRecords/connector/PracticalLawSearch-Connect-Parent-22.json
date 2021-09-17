@@ -1,0 +1,205 @@
+{
+    "id": "22",
+    "partitionkey": "ConnectorList",
+    "alias": "plcus.search",
+    "info": {
+        "title": "Get Search Practical law documents - Connect",
+        "description": "Pull Practical law documents - Connect",
+        "entityType": "Search",
+        "dataSourceId": "19",
+        "version": "1.0",
+        "subType": "Parent"
+    },
+    "request": {
+        "endpointPath": "https://api-test.thomsonreuters.com:443/practicallaw/v4/federatedsearch",
+        "method": "get",
+        "responseContentType": "XML",
+        "xmlArrayAttribute": "//searchResults/detail/document",
+        "parameters": [
+            {
+                "cdmName": "Query",
+                "name": "searchTerm",
+                "inClause": "Query",
+                "required": false,
+                "type": "string",
+                "defaultValue": "*"
+            },
+            {
+                "cdmName": "ResourceType",
+                "name": "ResourceType",
+                "inClause": "Query",
+                "required": false,
+                "type": "string",
+                "defaultValue": ""
+            },
+            {
+                "cdmName": "PracticeAreasIds",
+                "name": "PracticeAreasIds",
+                "inClause": "Query",
+                "required": true,
+                "type": "string",
+                "defaultValue": "3-504-6510,6-382-1328,9-523-0906,1-523-0910,7-504-6508,5-523-0908,1-504-6506,8-380-8566,3-504-6505,6-504-6504,9-504-6512,w-000-2647"
+            },
+            {
+                "cdmName": "JurisdictionIds",
+                "name": "JurisdictionIds",
+                "inClause": "Query",
+                "required": true,
+                "type": "string",
+                "defaultValue": ""
+            },
+            {
+                "cdmName": "Locale",
+                "name": "locale",
+                "inClause": "Query",
+                "required": true,
+                "type": "string",
+                "defaultValue": "US"
+            },
+            {
+                "cdmName": "ResultSize",
+                "name": "resultsCount",
+                "inClause": "Query",
+                "required": true,
+                "type": "string",
+                "defaultValue": "25",
+                "tags": [
+                    "pagination"
+                ]
+            },
+            {
+                "cdmName": "Offset",
+                "name": "resultsStartIndex",
+                "in": "body",
+                "required": true,
+                "type": "string",
+                "defaultValue": "1",
+                "tags": [
+                    "pagination"
+                ]
+            },
+            {
+                "cdmName": "SortOrder",
+                "name": "SortOrder",
+                "inClause": "Query",
+                "required": true,
+                "type": "string",
+                "defaultValue": ""
+            },
+            {
+                "cdmName": "StartDate",
+                "name": "StartDate",
+                "inClause": "Query",
+                "required": true,
+                "type": "string",
+                "defaultValue": ""
+            }
+        ],
+        "sorting": {
+            "properties": [
+                {
+                    "cdmName": "Date",
+                    "type": "date",
+                    "element": "sortOrder",
+                    "elementValue": "DATE"
+                },
+                {
+                    "cdmName": "Title",
+                    "type": "string",
+                    "element": "sortOrder",
+                    "elementValue": "ARTICLE"
+                }
+            ]
+        }
+    },
+    "response": {
+        "schema": {
+            "properties": {}
+        }
+    },
+    "filters": [
+        {
+            "name": "PracticeArea",
+            "description": "",
+            "isMultiselect": "true",
+            "requestParameter": "PracticeArea",
+            "filterlist": [
+                {
+                    "id": "3-504-6510",
+                    "name": "Antitrust"
+                },
+                {
+                    "id": "6-382-1328",
+                    "name": "Arbitration"
+                },
+                {
+                    "id": "9-523-0906",
+                    "name": "Bankruptcy & Restructuring"
+                },
+                {
+                    "id": "1-523-0910",
+                    "name": "Capital Markets & Corporate Governance"
+                },
+                {
+                    "id": "7-504-6508",
+                    "name": "Commercial Transactions"
+                },
+                {
+                    "id": "5-523-0908",
+                    "name": "Corporate and M&A"
+                },
+                {
+                    "id": "1-504-6506",
+                    "name":"Employee Benefits & Executive Compensation"
+                },
+                {
+                    "id": "8-380-8566",
+                    "name": "Finance"
+                },
+                {
+                    "id": "3-504-6505",
+                    "name": "Intellectual Property & Technology"
+                },
+                {
+                    "id": "6-504-6504",
+                    "name": "Labor & Employment"
+                },
+                {
+                    "id": "6-504-6504",
+                    "name": "Litigation"
+                },
+                {
+                    "id": "9-504-6512",
+                    "name": "Real Estate"
+                },
+                {
+                    "id": "w-000-2647",
+                    "name": "Trusts & Estates"
+                }
+            ]
+        }
+    ],
+    "pagination": {
+        "available": true,
+        "paginationType": "",
+        "isZeroBasedOffset": false
+    },
+    "resultLocation": "searchResults.detail",
+    "cdmMapping": {
+        "structured": [
+            {
+                "name": "Count",
+                "type": "short",
+                "responseElement": "total",
+                "_comment": ""
+            },
+            {
+                "name": "Documents",
+                "type": "String",
+                "responseElement": "{23}",
+                "_comment": ""
+            }
+        ],
+        "unstructured": []
+    }
+}

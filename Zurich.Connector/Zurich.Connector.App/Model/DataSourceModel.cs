@@ -49,6 +49,9 @@ namespace Zurich.Connector.App.Model
         /// Extra request context. Ex: "iManageCustomerId"
         /// </summary>
         public string ExtraRequestContext { get; set; }
+        /// Flag for registrationMode. ex:"Automatic"
+        /// </summary>
+        public string RegistrationMode { get; set; }
         /// <summary>
         /// Define security definition
         /// </summary>

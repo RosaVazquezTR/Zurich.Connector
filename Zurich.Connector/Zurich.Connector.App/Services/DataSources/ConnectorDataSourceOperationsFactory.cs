@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Linq;
+using Zurich.Connector.Data;
 
 namespace Zurich.Connector.App.Services.DataSources
 {

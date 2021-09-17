@@ -19,5 +19,11 @@
     public static class KnownDataSources
     {
         public const string iManage = "iManage";
+        public const string practicalLawConnect = "PracticalLawConnect";
+
+    }
+    public static class DataConstants
+    {
+        public const string OAuthUrl = "oauth";
     }
 }

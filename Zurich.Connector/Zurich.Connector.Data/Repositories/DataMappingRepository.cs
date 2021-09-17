@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Zurich.Common;
 using Zurich.Connector.Data.Model;
+using System.Net.Http;
 
 namespace Zurich.Connector.Data.Repositories
 {
@@ -39,6 +40,7 @@ namespace Zurich.Connector.Data.Repositories
         /// <param name="connectorid">Holds id of connector</param>
         /// <returns>a string</returns>
         Task<ConnectorsConfigResponseEntity> GetConnectorConfiguration(string ConnectorId);
+
     }
 
     public class DataMappingRepository : IDataMappingRepository
@@ -46,10 +48,12 @@ namespace Zurich.Connector.Data.Repositories
         private readonly ILogger<DataMappingRepository> _logger;
         private readonly IConfiguration _configuration;
 
+
         public DataMappingRepository(ILogger<DataMappingRepository> logger, IConfiguration configuration)
         {
             this._logger = logger;
             _configuration = configuration;
+ 
         }
 
         public async Task<DataMappingClass> GetMap(string connectionId)

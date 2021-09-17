@@ -41,6 +41,7 @@ namespace Zurich.Connector.App
                 .ForMember(dest => dest.InfoUrl, opt => opt.MapFrom(src => src.infoUrl))
                 .ForMember(dest => dest.ExtraRequestContext, opt => opt.MapFrom(src => src.extraRequestContext))
                 .ForMember(dest => dest.SecurityDefinition, opt => opt.MapFrom(src => src.securityDefinition))
+                .ForMember(dest => dest.RegistrationMode, opt => opt.MapFrom(src => src.registrationMode))
                 .ForAllOtherMembers(opt => opt.Ignore());
 
             CreateMap<SecurityDefinition, SecurityDefinitionModel>()

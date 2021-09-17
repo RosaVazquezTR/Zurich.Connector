@@ -19,6 +19,7 @@ namespace Zurich.Connector.Tests.ServiceTests
     {
         private Mock<ISessionAccessor> _mockSessionAccessor;
         private Mock<ICosmosService> _mockCosmosService;
+        private Mock<IOAuthServices> _mockOAuthService;
 
         #region Data Model
         List<ConnectorRegistration> registrations = new List<ConnectorRegistration>()
@@ -62,6 +63,7 @@ namespace Zurich.Connector.Tests.ServiceTests
         {
             _mockSessionAccessor = new Mock<ISessionAccessor>();
             _mockCosmosService = new Mock<ICosmosService>();
+            _mockOAuthService = new Mock<IOAuthServices>();
         }
 
 
@@ -70,14 +72,16 @@ namespace Zurich.Connector.Tests.ServiceTests
         {
             //Arrange
             var testId = "";
+            var appCode = "";
+            var registraionMode = "";
             var userId = new Guid("55e7a5d2-2134-4828-a2cd-2c4284ec11b9");
             var tenantId = new Guid("d564ff78-bdab-4bf4-c9ae-08d83232798c");
             _mockSessionAccessor.Setup(x => x.UserId).Returns(userId);
             _mockSessionAccessor.Setup(x => x.TenantId).Returns(tenantId);
 
-            var registrationService = new RegistrationService(_mockCosmosService.Object, _mockSessionAccessor.Object);
+            var registrationService = new RegistrationService(_mockCosmosService.Object, _mockSessionAccessor.Object, _mockOAuthService.Object);
             //Act
-            bool register = await registrationService.RegisterDataSource(testId);
+            bool register = await registrationService.RegisterDataSource(testId, appCode, registraionMode);
             //Assert
             _mockCosmosService.Verify(x => x.StoreConnectorRegistration(It.IsAny<ConnectorRegistrationDocument>()), times: Times.Never());
             Assert.IsFalse(register);
@@ -88,14 +92,16 @@ namespace Zurich.Connector.Tests.ServiceTests
         {
             //Arrange
             var testId = "140";
+            var appCode = "";
+            var registraionMode = "";
             var userId = new Guid("55e7a5d2-2134-4828-a2cd-2c4284ec11b9");
             var tenantId = new Guid("d564ff78-bdab-4bf4-c9ae-08d83232798c");
             _mockSessionAccessor.Setup(x => x.UserId).Returns(userId);
             _mockSessionAccessor.Setup(x => x.TenantId).Returns(tenantId);
 
-            var registrationService = new RegistrationService(_mockCosmosService.Object, _mockSessionAccessor.Object);
+            var registrationService = new RegistrationService(_mockCosmosService.Object, _mockSessionAccessor.Object, _mockOAuthService.Object);
             //Act
-            bool register = await registrationService.RegisterDataSource(testId);
+            bool register = await registrationService.RegisterDataSource(testId, appCode, registraionMode);
             //Assert
             _mockCosmosService.Verify(x => x.StoreConnectorRegistration(It.IsAny<ConnectorRegistrationDocument>()), times: Times.Once());
             Assert.IsTrue(register);
@@ -110,7 +116,7 @@ namespace Zurich.Connector.Tests.ServiceTests
             _mockSessionAccessor.Setup(x => x.UserId).Returns(userId);
             _mockCosmosService.Setup(x => x.GetConnectorRegistrations(It.IsAny<string>(), It.IsAny<Expression<Func<ConnectorRegistrationDocument, bool>>>())).Returns(registrations);
 
-            var registrationService = new RegistrationService(_mockCosmosService.Object, _mockSessionAccessor.Object);
+            var registrationService = new RegistrationService(_mockCosmosService.Object, _mockSessionAccessor.Object, _mockOAuthService.Object);
 
             //Act
             var registerIds = registrationService.GetUserConnections(null).ToList();
@@ -129,7 +135,7 @@ namespace Zurich.Connector.Tests.ServiceTests
             _mockCosmosService.Setup(x => x.GetConnectorRegistrations(It.IsAny<string>(), It.IsAny<Expression<Func<ConnectorRegistrationDocument, bool>>>())).Returns(registrations);
             _mockCosmosService.Setup(x => x.RemoveConnectorRegistration(It.IsAny<string>(), It.IsAny<string>()));
 
-            var registrationService = new RegistrationService(_mockCosmosService.Object, _mockSessionAccessor.Object);
+            var registrationService = new RegistrationService(_mockCosmosService.Object, _mockSessionAccessor.Object, _mockOAuthService.Object);
 
             //Act
             var success = await registrationService.RemoveUserConnector("1");
@@ -148,7 +154,7 @@ namespace Zurich.Connector.Tests.ServiceTests
             _mockCosmosService.Setup(x => x.GetConnectorRegistrations(It.IsAny<string>(), It.IsAny<Expression<Func<ConnectorRegistrationDocument, bool>>>())).Returns(new List<ConnectorRegistration>());
             _mockCosmosService.Setup(x => x.RemoveConnectorRegistration(It.IsAny<string>(), It.IsAny<string>()));
 
-            var registrationService = new RegistrationService(_mockCosmosService.Object, _mockSessionAccessor.Object);
+            var registrationService = new RegistrationService(_mockCosmosService.Object, _mockSessionAccessor.Object, _mockOAuthService.Object);
 
             //Act
             var success = await registrationService.RemoveUserConnector("1");
@@ -157,7 +163,50 @@ namespace Zurich.Connector.Tests.ServiceTests
             _mockCosmosService.Verify(x => x.RemoveConnectorRegistration(It.IsAny<string>(), It.IsAny<string>()), times: Times.Never());
             Assert.AreEqual(false, success);
         }
+
+        [TestMethod]
+        public async Task RegisterValidConnectorwithAutomaticregistration()
+        {
+            //Arrange
+            var testId = "140";
+            var appCode = "PLCUS";
+            var registraionMode = "Automatic";
+            var userId = new Guid("55e7a5d2-2134-4828-a2cd-2c4284ec11b9");
+            var tenantId = new Guid("d564ff78-bdab-4bf4-c9ae-08d83232798c");
+            _mockSessionAccessor.Setup(x => x.UserId).Returns(userId);
+            _mockSessionAccessor.Setup(x => x.TenantId).Returns(tenantId);
+            _mockOAuthService.Setup(x => x.AutomaticRegistration(appCode)).Returns(Task.FromResult<bool>(true));
+
+            var registrationService = new RegistrationService(_mockCosmosService.Object, _mockSessionAccessor.Object, _mockOAuthService.Object);
+            //Act
+            bool register = await registrationService.RegisterDataSource(testId, appCode, registraionMode);
+            //Assert
+            _mockCosmosService.Verify(x => x.StoreConnectorRegistration(It.IsAny<ConnectorRegistrationDocument>()), times: Times.Once());
+            _mockOAuthService.Verify(x => x.AutomaticRegistration(appCode), times: Times.Once());
+            Assert.IsTrue(register);
+        }
+        [TestMethod]
+        public async Task AutoRegister_validConnector_With_InvalidAppcode()
+        {
+            //Arrange
+            var testId = "14";
+            var appCode = "PLCUK";
+            var registraionMode = "Automatic";
+            var userId = new Guid("55e7a5d2-2134-4828-a2cd-2c4284ec11b9");
+            var tenantId = new Guid("d564ff78-bdab-4bf4-c9ae-08d83232798c");
+            _mockSessionAccessor.Setup(x => x.UserId).Returns(userId);
+            _mockSessionAccessor.Setup(x => x.TenantId).Returns(tenantId);
+            _mockOAuthService.Setup(x => x.AutomaticRegistration(appCode)).Returns(Task.FromResult<bool>(false));
+
+            var registrationService = new RegistrationService(_mockCosmosService.Object, _mockSessionAccessor.Object, _mockOAuthService.Object);
+            //Act
+            bool register = await registrationService.RegisterDataSource(testId, appCode, registraionMode);
+            //Assert
+            _mockCosmosService.Verify(x => x.StoreConnectorRegistration(It.IsAny<ConnectorRegistrationDocument>()), times: Times.Once());
+            _mockOAuthService.Verify(x => x.AutomaticRegistration(It.IsAny<String>()), times: Times.Once());
+            Assert.IsFalse(register);
+        }
     }
-    
-   
+
+
 }
