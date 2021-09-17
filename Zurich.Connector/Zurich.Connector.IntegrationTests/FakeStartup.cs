@@ -9,10 +9,13 @@ using Zurich.TenantData;
 
 namespace Zurich.Connector.IntegrationTests
 {
+    public class TestInformation
+    {
+        public static bool columnEncryptionRan;
+    }
+
     public class FakeStartup : Startup
     {
-        private bool _columnEncryptionRan;
-
         public FakeStartup(IConfiguration configuration, IHostEnvironment environment) : base(configuration, environment)
         {
         }
@@ -26,10 +29,10 @@ namespace Zurich.Connector.IntegrationTests
 
         public override void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (!_columnEncryptionRan)
+            if (!TestInformation.columnEncryptionRan)
             {
+                TestInformation.columnEncryptionRan = true;
                 RegisterColumnEncryptionProvider(app);
-                _columnEncryptionRan = true;
             }
             app.UseHttpsRedirection();
 

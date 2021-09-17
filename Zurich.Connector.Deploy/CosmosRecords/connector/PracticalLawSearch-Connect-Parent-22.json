@@ -1,7 +1,7 @@
 {
     "id": "22",
     "partitionkey": "ConnectorList",
-    "alias": "plcus.search",
+    "alias": "practicallawconnect.search",
     "info": {
         "title": "Get Search Practical law documents - Connect",
         "description": "Pull Practical law documents - Connect",
@@ -12,7 +12,7 @@
     },
     "request": {
         "endpointPath": "https://api-test.thomsonreuters.com:443/practicallaw/v4/federatedsearch",
-        "method": "get",
+        "method": "GET",
         "responseContentType": "XML",
         "xmlArrayAttribute": "//searchResults/detail/document",
         "parameters": [
@@ -70,7 +70,7 @@
             {
                 "cdmName": "Offset",
                 "name": "resultsStartIndex",
-                "in": "body",
+                "inClause": "Body",
                 "required": true,
                 "type": "string",
                 "defaultValue": "1",
@@ -98,13 +98,13 @@
         "sorting": {
             "properties": [
                 {
-                    "cdmName": "Date",
+                    "name": "Date",
                     "type": "date",
                     "element": "sortOrder",
                     "elementValue": "DATE"
                 },
                 {
-                    "cdmName": "Title",
+                    "name": "Title",
                     "type": "string",
                     "element": "sortOrder",
                     "elementValue": "ARTICLE"
@@ -120,7 +120,7 @@
     "filters": [
         {
             "name": "PracticeArea",
-            "description": "",
+            "description": "Allows for the selection of practice areas for Practical law connect",
             "isMultiselect": "true",
             "requestParameter": "PracticeArea",
             "filterlist": [
@@ -195,7 +195,7 @@
             },
             {
                 "name": "Documents",
-                "type": "String",
+                "type": "object",
                 "responseElement": "{23}",
                 "_comment": ""
             }
