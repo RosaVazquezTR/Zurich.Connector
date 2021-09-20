@@ -180,18 +180,23 @@ namespace Zurich.Connector.Data.Services
                     cdmQueryParameters = SetupPagination(connectorModel, cdmQueryParameters);
                 }
 
-                queryParameters = (from param in cdmQueryParameters
+                if (connectorModel.Request?.Parameters != null)
+                    queryParameters = (from param in cdmQueryParameters
                                                   join requestParam in connectorModel.Request?.Parameters
                                                   on param.Key.ToString().ToLower() equals requestParam.CdmName.ToLower()
                                                   where requestParam.InClause != ODataConstants.OData
                                                   select new { name = requestParam.Name, value = param.Value.ToString() }).ToDictionary(c => c.name, c=> c.value);
 
-                sortParameters = (from param in cdmQueryParameters
+                
+                if(connectorModel.Request?.Sorting !=null)
+                    sortParameters = (from param in cdmQueryParameters
                                   join requestParam in connectorModel.Request?.Sorting?.Properties
-                                  on param.Value.ToString().ToLower() equals requestParam.ElementValue.ToLower() 
+                                  on param.Value.ToString().ToLower() equals requestParam.ElementValue.ToLower()
                                   select new { name = requestParam.Element, value = requestParam.ElementValue.ToString() })
                                   .ToDictionary(c => c.name, c => c.value);
+               
             }
+
             if (ODataHandler.HasODataParams(connectorModel))
                 ODataHandler.BuildQueryParams(cdmQueryParameters, connectorModel).ToList().ForEach(param => queryParameters.Add(param.Key, param.Value));
 
@@ -199,12 +204,19 @@ namespace Zurich.Connector.Data.Services
             var defaultParameters = connectorModel.Request?.Parameters.Where(t => DefaultParametersCheck(t, queryParameters))
                                 .ToDictionary(c => c.Name, c => c.DefaultValue);
 
-            var allParameters = defaultParameters.Concat(queryParameters).Concat(sortParameters);
+            if(queryParameters.Count >0)
+                defaultParameters.Concat(queryParameters);
 
-            foreach (var parameter in allParameters)
-            {
-                modifiedQueryParameters.Add(parameter.Key, parameter.Value);
-            }
+            if (sortParameters.Count > 0)
+                defaultParameters.Concat(sortParameters);
+
+            IEnumerable<KeyValuePair<string, string>> allParameters = defaultParameters;
+
+            if(allParameters != null)
+                foreach (var parameter in allParameters)
+                {
+                    modifiedQueryParameters.Add(parameter.Key, parameter.Value);
+                }
 
             return modifiedQueryParameters;
         }
