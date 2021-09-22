@@ -38,7 +38,8 @@ name: $(BuildDefinitionName).$(SourceBranchName).$(Date:yyyyMMdd)$(Rev:.r)
 
 stages:
 - stage: Build
-  pool: DCO-HighQ-Platform-N
+  pool: 
+    vmImage: 'windows-latest'
   jobs:
     - job: 'Build'
       displayName: 'Connectors Build'
