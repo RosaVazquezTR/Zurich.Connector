@@ -38,9 +38,11 @@ namespace Zurich.Connector.IntegrationTests
 
                     string envJson = $"integrationsettings.{env}.json";
 
-                    configBuilder.AddJsonFile(envJson, optional: true);
-
-                    _configuration = configBuilder.Build();
+                    _configuration = new ConfigurationBuilder()
+                        .AddJsonFile(json, optional: true)
+                        .AddJsonFile(envJson, optional: true)
+                        .AddUserSecrets(Assembly.GetExecutingAssembly())
+                        .Build();
 
                     configBuilder.AddAzureKeyVault(
                         _configuration["KeyVault:Endpoint"],
