@@ -196,15 +196,23 @@ stages:
       - template: Templates\ZurichDeploy-SetupApimProduct.yml@ZurichDeploy
         parameters:
           apiId: ${{ variables.apiId }}
+          apimAppInsightsName: ${{ variables.apimAppInsightsName }}
           apimName: ${{ variables.apimName }}
           apimProductPolicyFilePath: $(Build.SourcesDirectory)/Zurich.Connector.Deploy/Config/${{variables.environmentName}}/ConnectorAPIMPolicy.xml
           apimResourceGroup: ${{ variables.apimResourceGroup }}
+          apimResourceLocation: ${{ variables.apimResourceLocation }}
           apiVersion: ${{ variables.apiVersion }}
           appGatewayName: ${{ variables.appGatewayName }}
           appGatewayResourceGroup: ${{ variables.coreResourceGroup }}
+          availabilityAlertDescription: ${{ variables.availabilityAlert_Description }}
+          availabilityAlertGroups: ${{ variables.availabilityAlertGroups}}
+          availabilityAlertName: ${{ variables.availabilityAlert_Name }}
+          availabilityAlertPingFrequency: ${{ variables.availabilityAlert_PingFrequency }}
+          availabilityAlertWindowSize: ${{ variables.availabilityAlert_WindowSize }}
           environmentName: ${{ variables.environmentName }}
           fullyQualifiedDomainName: ${{ variables.connectorServiceFQND }}
           groups: ${{ variables.groups }}
+          healthEndpoint: ${{ variables.healthEndpoint }}
           productDescription: ${{ variables.productDescription }}
           productName: ${{ variables.productName }}
           resourceGroup: ${{ variables.resourceGroup }}
