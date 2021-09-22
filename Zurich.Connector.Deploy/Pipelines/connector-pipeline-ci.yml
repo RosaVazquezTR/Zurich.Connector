@@ -35,25 +35,25 @@ variables:
 name: $(BuildDefinitionName).$(SourceBranchName).$(Date:yyyyMMdd)$(Rev:.r)
 
 stages:
-- stage: Build
-  pool: DCO-HighQ-Platform-N
-  jobs:
-    - job: 'Build'
-      displayName: 'Connectors Build'
-      steps:
-        - checkout: self
-        - checkout: ZurichDeploy
-        - template: Templates\V2\ZurichDeploy-BuildWebAPI.yml@ZurichDeploy
-          parameters:
-            projectName: ${{ variables.projectName }}
-            azureAdClientSecret: $(azureAdClientSecret)
-            environmentName: ci
-            publishToNuget: true
-            sandboxName: 'Connector-CI'
+# - stage: Build
+#   pool: DCO-HighQ-Platform-N
+#   jobs:
+#     - job: 'Build'
+#       displayName: 'Connectors Build'
+#       steps:
+#         - checkout: self
+#         - checkout: ZurichDeploy
+#         - template: Templates\V2\ZurichDeploy-BuildWebAPI.yml@ZurichDeploy
+#           parameters:
+#             projectName: ${{ variables.projectName }}
+#             azureAdClientSecret: $(azureAdClientSecret)
+#             environmentName: ci
+#             publishToNuget: true
+#             sandboxName: 'Connector-CI'
 - stage: CI
   pool: DCO-HighQ-Platform-N
-  dependsOn:
-    - Build
+  # dependsOn:
+  #   - Build
   # condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'master'))
   jobs:
     - deployment: Prereqs
