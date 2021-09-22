@@ -149,7 +149,7 @@ namespace Microsoft.Extensions.DependencyInjection
 		/// <param name="OAuthUrl">The OAuth domain</param>
 		public static void AddOAuthHttpClient(this IServiceCollection services, string OAuthUrl)
 		{
-			services.AddHttpClient(HttpClientNames.OAuth, httpClient =>
+			services.AddHttpClient(HttpClientNames.OAuthAPI, httpClient =>
 			{
 				var serviceProvider = services.BuildServiceProvider();
 				var httpContextAccessor = serviceProvider.GetService<IHttpContextAccessor>();
