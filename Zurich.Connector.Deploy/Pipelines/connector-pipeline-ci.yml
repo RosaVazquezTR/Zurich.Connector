@@ -92,6 +92,7 @@ stages:
                   ltioL2EmailAddress: ${{variables.ltioL2EmailAddress}}
                   ltioL2EmailName: ${{variables.ltioL2EmailName}}
                   notificationEmailGroup: ${{ variables.notificationEmailGroup }}
+                  practicalLawSecret: $(practicalLawSecret)
                   resourceGroup: ${{ variables.resourceGroup }}
                   resourceLocation: ${{ variables.resourceLocation }}
                   resourceOwner: ${{ variables.resourceOwner }}

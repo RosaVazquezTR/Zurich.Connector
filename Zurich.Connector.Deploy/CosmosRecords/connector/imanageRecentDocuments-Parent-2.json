@@ -81,7 +81,7 @@
       },
       {
         "name": "Items",
-        "type": "String",
+        "type": "object",
         "responseElement": "{18}",
         "_comment": ""
       }

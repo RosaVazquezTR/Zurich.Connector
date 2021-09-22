@@ -6,15 +6,12 @@
         "description": "Get recent docs from  Microsoft Office - Child connector for 8",
         "entityType": "Document",
         "dataSourceId": "13",
-        "version": "1.0"
+        "version": "1.0",
+		"subType": "Child"
     },
     "request": {},
     "pagination": {},
-    "response": {
-        "schema": {
-            "properties": {}
-        }
-    },
+	"response": {},
     "resultLocation": "value",
     "filters": [],
     "cdmMapping": {

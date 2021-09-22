@@ -6,7 +6,8 @@
         "description": "Get Search Results from MS Graph",
         "entityType": "Search",
         "dataSourceId": "13",
-        "version": "1.0"
+        "version": "1.0",
+		"subType": "Child"
     },
     "request": {},
     "response": {},
@@ -16,7 +17,7 @@
         "structured": [
             {
                 "name": "Snippet",
-                "type": "String",
+                "type": "string",
                 "responseElement": "summary",
                 "_comment": ""
             },

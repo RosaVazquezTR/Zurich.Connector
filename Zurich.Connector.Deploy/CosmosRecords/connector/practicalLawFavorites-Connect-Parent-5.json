@@ -7,11 +7,12 @@
     "description": "Pull Research Favorite Groups from Practical Law Connect",
     "entityType": "Favorites",
     "dataSourceId": "12",
-    "version": "1.0"
+    "version": "1.0",
+    "subType": "Parent"
   },
   "request": {
     "endpointPath": "/Micro/FavoriteAndFrequentlyUsed",
-    "method": "get",
+    "method": "GET",
     "parameters": [],
     "sorting": {
       "properties": []

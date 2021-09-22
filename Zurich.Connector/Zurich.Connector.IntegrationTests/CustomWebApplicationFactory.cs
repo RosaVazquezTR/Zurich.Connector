@@ -30,15 +30,15 @@ namespace Zurich.Connector.IntegrationTests
                 {
                     string json = "integrationsettings.json";
 
-                    _configuration = new ConfigurationBuilder()
-                       .AddJsonFile(json, optional: true)
-                       .AddUserSecrets(Assembly.GetExecutingAssembly())
-                       .Build();
+                    configBuilder = configBuilder.AddJsonFile(json, optional: true);
+                    
+                    _configuration = configBuilder.Build();
 
                     string env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? _configuration["ASPNETCORE_ENVIRONMENT"];
 
                     string envJson = $"integrationsettings.{env}.json";
 
+                    // TODO: arguably we should be able to use the same builder as above but the tests seem to break when running on hte build machine
                     _configuration = new ConfigurationBuilder()
                         .AddJsonFile(json, optional: true)
                         .AddJsonFile(envJson, optional: true)

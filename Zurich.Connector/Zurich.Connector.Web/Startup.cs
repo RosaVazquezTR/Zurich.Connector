@@ -91,17 +91,17 @@ namespace Zurich.Connector.Web
                 }
             });
 
-            services.AddAuthenticationServices(Configuration.GetValue<string>("Audience"), authority);
             services.AddPartnerAppAuth(tenantConnectionString, authority, _oAuthOptions, _microServOptions);
             services.AddAutoMapper(typeof(Startup), typeof(CommonMappingsProfile), typeof(ServiceMappingRegistrar), typeof(MappingRegistrar));
             services.AddConnectorCosmosServices(_connectorCosmosDbOptions, _connectorCosmosClientOptions);
             services.ConfigureExceptonhandler();
             services.AddOAuthHttpClient(Configuration.GetValue<string>("OAuthBaseUrl"));
+            this.AddAuthServices(services, authority);
         }
 
-        public virtual void AddAuthServices(IServiceCollection services, string audience, string authority)
+        public virtual void AddAuthServices(IServiceCollection services, string authority)
         {
-            services.AddAuthenticationServices(audience, authority);
+            services.AddAuthenticationServices(Configuration.GetValue<string>("Audience"), authority);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
