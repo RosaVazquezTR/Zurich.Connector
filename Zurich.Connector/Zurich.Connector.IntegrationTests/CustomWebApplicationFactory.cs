@@ -30,20 +30,17 @@ namespace Zurich.Connector.IntegrationTests
                 {
                     string json = "integrationsettings.json";
 
-                    _configuration = new ConfigurationBuilder()
-                       .AddJsonFile(json, optional: true)
-                       .AddUserSecrets(Assembly.GetExecutingAssembly())
-                       .Build();
+                    configBuilder = configBuilder.AddJsonFile(json, optional: true);
+                    
+                    _configuration = configBuilder.Build();
 
                     string env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? _configuration["ASPNETCORE_ENVIRONMENT"];
 
                     string envJson = $"integrationsettings.{env}.json";
 
-                    _configuration = new ConfigurationBuilder()
-                        .AddJsonFile(json, optional: true)
-                        .AddJsonFile(envJson, optional: true)
-                        .AddUserSecrets(Assembly.GetExecutingAssembly())
-                        .Build();
+                    configBuilder.AddJsonFile(envJson, optional: true);
+
+                    _configuration = configBuilder.Build();
 
                     configBuilder.AddAzureKeyVault(
                         _configuration["KeyVault:Endpoint"],
