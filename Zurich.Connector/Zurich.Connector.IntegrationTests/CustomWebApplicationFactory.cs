@@ -38,6 +38,7 @@ namespace Zurich.Connector.IntegrationTests
 
                     string envJson = $"integrationsettings.{env}.json";
 
+                    // TODO: arguably we should be able to use the same builder as above but the tests seem to break when running on hte build machine
                     _configuration = new ConfigurationBuilder()
                         .AddJsonFile(json, optional: true)
                         .AddJsonFile(envJson, optional: true)

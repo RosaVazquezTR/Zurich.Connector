@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Xunit;
 using Zurich.Connector.Data.Repositories.CosmosDocuments;
@@ -46,7 +47,7 @@ namespace Zurich.Connector.IntegrationTests
             return dataSources;
         }
 
-        public static List<ConnectorDocument> GetConnectors(string entityType)
+        public static List<ConnectorDocument> GetConnectors(string entityType, string subType)
         {
             List<ConnectorDocument> connectors = new List<ConnectorDocument>();
             string[] fileEntries = Directory.GetFiles($"{folderLocation}\\connector");
@@ -63,7 +64,10 @@ namespace Zurich.Connector.IntegrationTests
                 {
                     if (string.IsNullOrEmpty(entityType) || connector.info.entityType.ToString() == entityType)
                     {
-                        connectors.Add(connector);
+                        if (string.IsNullOrEmpty(subType) || string.IsNullOrEmpty(connector.info.subType) || connector.info.subType == subType)
+                        {
+                            connectors.Add(connector);
+                        }
                     }
                 }
             }
@@ -78,7 +82,7 @@ namespace Zurich.Connector.IntegrationTests
         }
         public static IEnumerable<object[]> GetConnectorsTestCases(string entityType)
         {
-            var connectors = GetConnectors(entityType);
+            var connectors = GetConnectors(entityType, string.Empty);
             IEnumerable<object[]> testCases = connectors.Select(x => new object[] { x });
             return testCases;
         }
@@ -86,7 +90,7 @@ namespace Zurich.Connector.IntegrationTests
         public static IEnumerable<object[]> GetConnectorsAndDataSourcesTestCases()
         {
             var dataSources = GetDataSources();
-            var connectors = GetConnectors(string.Empty);
+            var connectors = GetConnectors(string.Empty, string.Empty);
 
             var testCases = from connector in connectors
                             join dataSource in dataSources
@@ -191,6 +195,16 @@ namespace Zurich.Connector.IntegrationTests
                 param.name.Should().NotBeNull();
                 param.type.Should().ContainAny(parameterTypes);
                 param.responseElement.Should().NotBeNull();
+
+                // Verify child connector exists
+                if (param.type == "object")
+                {
+                    var allEntityChildrenRecords = GetConnectors(connector.info.entityType.ToString(), "Child");
+                    var match = Regex.Match(param.responseElement, @"{(.*?)}");
+                    var connectionId = match.Groups[1].ToString();
+                    var childConnector = allEntityChildrenRecords.SingleOrDefault(x => x.Id == connectionId);
+                    childConnector.Should().NotBeNull();
+                }
             }
 
         }
