@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using Zurich.Common;
 
 namespace Zurich.Connector.Data.Repositories
 {
@@ -29,7 +30,7 @@ namespace Zurich.Connector.Data.Repositories
         private readonly ILogger<OAuthRepository> _logger;
         public OAuthRepository(IHttpClientFactory httpClientFactory, ILogger<OAuthRepository> logger)
         {
-            _httpClient = httpClientFactory.CreateClient(DataConstants.OAuthUrl);
+            _httpClient = httpClientFactory.CreateClient(HttpClientNames.OAuthAPI);
             _logger = logger;
         }
         public async Task<bool> AutomaticRegistration(string appCode)
