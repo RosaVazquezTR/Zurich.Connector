@@ -21,8 +21,6 @@ namespace Zurich.Connector.Web.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    [Route("api/v{version:apiVersion}/[controller]")]
-    [ApiVersion("1.0")]
     public class ConnectorsController : ControllerBase
     {
         private readonly IConnectorService _connectorService;
