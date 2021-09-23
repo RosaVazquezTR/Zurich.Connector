@@ -9,7 +9,6 @@ using Zurich.TenantData;
 
 namespace Zurich.Connector.Web.Controllers
 {
-    [ApiVersionNeutral]
     [Route("[controller]")]
     [AllowAnonymous]
     [ApiController]
