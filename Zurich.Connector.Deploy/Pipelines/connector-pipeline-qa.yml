@@ -220,20 +220,21 @@ stages:
           serviceName: ${{ variables.connectorServiceName }}
           subscriptionName: ${{ variables.subscriptionName }}
           swaggerEndpoint: ${{ variables.swaggerEndpoint }}
-- stage: Testing
-  pool: AutomationTestAgentPool
-  dependsOn: Swap_Slots
-  jobs:
-  - job: 'RegressionTests'
-    timeoutInMinutes: ${{ variables.regressionTestTimeout }} # how long to run the job before automatically cancelling
-    displayName: 'Regression Tests (Smoke Tests)'
-    steps: 
-      - checkout: ZurichTesting
-      - template: pipelines\Templates\legal-home-regression-tests.yml@ZurichTesting
-        parameters:
-          environment: ${{ variables.environmentStorageName }}
-          azureAdClientSecret: $(azureAdClientSecret)
-          testTags: ${{ variables.regressionTestTags }}
+# The testing stage is blocked until Bug 45808 is fixed
+# - stage: Testing
+#   pool: AutomationTestAgentPool
+#   dependsOn: Swap_Slots
+#   jobs:
+#   - job: 'RegressionTests'
+#     timeoutInMinutes: ${{ variables.regressionTestTimeout }} # how long to run the job before automatically cancelling
+#     displayName: 'Regression Tests (Smoke Tests)'
+#     steps: 
+#       - checkout: ZurichTesting
+#       - template: pipelines\Templates\legal-home-regression-tests.yml@ZurichTesting
+#         parameters:
+#           environment: ${{ variables.environmentStorageName }}
+#           azureAdClientSecret: $(azureAdClientSecret)
+#           testTags: ${{ variables.regressionTestTags }}
 # This will probably end up being dev signoff.
 # - stage: QaApproval
 #   dependsOn: 
