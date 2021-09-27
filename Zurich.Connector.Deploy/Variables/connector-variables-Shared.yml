@@ -27,6 +27,8 @@ variables:
     value: "Zurich.Deploy/ArmTemplates"
   - name: deployScriptFolder
     value: "Zurich.Deploy/Scripts"
+  - name: healthEndpoint
+    value: "connector/Health"
   - name: keyVault
     value: 'connectorsKeyVault'
   - name: legalHomeDbUser

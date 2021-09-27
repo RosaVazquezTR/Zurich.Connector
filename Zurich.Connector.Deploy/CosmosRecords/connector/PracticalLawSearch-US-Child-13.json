@@ -17,7 +17,7 @@
     "structured": [
       {
         "name": "Snippet",
-        "type": "String",
+        "type": "string",
         "responseElement": "abstract",
         "_comment": ""
       },

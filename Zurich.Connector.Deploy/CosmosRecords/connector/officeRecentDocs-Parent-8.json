@@ -7,7 +7,8 @@
         "description": "Get recent docs from  Microsoft Office",
         "entityType": "Document",
         "dataSourceId": "13",
-        "version": "1.0"
+        "version": "1.0",
+		"subType": "Parent"
     },
     "request": {
         "endpointPath": "/v1.0/me/insights/used",
@@ -56,7 +57,7 @@
             {
                 "cdmName": "Offset",
                 "name": "$skip",
-                "in": "OData",
+                "inClause": "OData",
                 "required": false,
                 "type": "string",
                 "defaultValue": "0",
@@ -91,7 +92,7 @@
             },
             {
                 "name": "Items",
-                "type": "String",
+                "type": "object",
                 "responseElement": "{19}",
                 "_comment": ""
             }

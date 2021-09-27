@@ -38,7 +38,8 @@ name: $(BuildDefinitionName).$(SourceBranchName).$(Date:yyyyMMdd)$(Rev:.r)
 
 stages:
 - stage: Build
-  pool: DCO-HighQ-Platform-N
+  pool: 
+    vmImage: 'windows-latest'
   jobs:
     - job: 'Build'
       displayName: 'Connectors Build'
@@ -114,6 +115,7 @@ stages:
                   ltioL2EmailAddress: ${{variables.ltioL2EmailAddress}}
                   ltioL2EmailName: ${{variables.ltioL2EmailName}}
                   notificationEmailGroup: ${{ variables.notificationEmailGroup }}
+                  practicalLawSecret: $(practicalLawSecret)
                   resourceGroup: ${{ variables.resourceGroup }}
                   resourceLocation: ${{ variables.resourceLocation }}
                   resourceOwner: ${{ variables.resourceOwner }}
@@ -195,35 +197,44 @@ stages:
       - template: Templates\ZurichDeploy-SetupApimProduct.yml@ZurichDeploy
         parameters:
           apiId: ${{ variables.apiId }}
+          apimAppInsightsName: ${{ variables.apimAppInsightsName }}
           apimName: ${{ variables.apimName }}
           apimProductPolicyFilePath: $(Build.SourcesDirectory)/Zurich.Connector.Deploy/Config/${{variables.environmentName}}/ConnectorAPIMPolicy.xml
           apimResourceGroup: ${{ variables.apimResourceGroup }}
+          apimResourceLocation: ${{ variables.apimResourceLocation }}
           apiVersion: ${{ variables.apiVersion }}
           appGatewayName: ${{ variables.appGatewayName }}
           appGatewayResourceGroup: ${{ variables.coreResourceGroup }}
+          availabilityAlertDescription: ${{ variables.availabilityAlert_Description }}
+          availabilityAlertGroups: ${{ variables.availabilityAlertGroups}}
+          availabilityAlertName: ${{ variables.availabilityAlert_Name }}
+          availabilityAlertPingFrequency: ${{ variables.availabilityAlert_PingFrequency }}
+          availabilityAlertWindowSize: ${{ variables.availabilityAlert_WindowSize }}
           environmentName: ${{ variables.environmentName }}
           fullyQualifiedDomainName: ${{ variables.connectorServiceFQND }}
           groups: ${{ variables.groups }}
+          healthEndpoint: ${{ variables.healthEndpoint }}
           productDescription: ${{ variables.productDescription }}
           productName: ${{ variables.productName }}
           resourceGroup: ${{ variables.resourceGroup }}
           serviceName: ${{ variables.connectorServiceName }}
           subscriptionName: ${{ variables.subscriptionName }}
           swaggerEndpoint: ${{ variables.swaggerEndpoint }}
-- stage: Testing
-  pool: AutomationTestAgentPool
-  dependsOn: Swap_Slots
-  jobs:
-  - job: 'RegressionTests'
-    timeoutInMinutes: ${{ variables.regressionTestTimeout }} # how long to run the job before automatically cancelling
-    displayName: 'Regression Tests (Smoke Tests)'
-    steps: 
-      - checkout: ZurichTesting
-      - template: pipelines\Templates\legal-home-regression-tests.yml@ZurichTesting
-        parameters:
-          environment: ${{ variables.environmentStorageName }}
-          azureAdClientSecret: $(azureAdClientSecret)
-          testTags: ${{ variables.regressionTestTags }}
+# The testing stage is blocked until Bug 45808 is fixed
+# - stage: Testing
+#   pool: AutomationTestAgentPool
+#   dependsOn: Swap_Slots
+#   jobs:
+#   - job: 'RegressionTests'
+#     timeoutInMinutes: ${{ variables.regressionTestTimeout }} # how long to run the job before automatically cancelling
+#     displayName: 'Regression Tests (Smoke Tests)'
+#     steps: 
+#       - checkout: ZurichTesting
+#       - template: pipelines\Templates\legal-home-regression-tests.yml@ZurichTesting
+#         parameters:
+#           environment: ${{ variables.environmentStorageName }}
+#           azureAdClientSecret: $(azureAdClientSecret)
+#           testTags: ${{ variables.regressionTestTags }}
 # This will probably end up being dev signoff.
 # - stage: QaApproval
 #   dependsOn: 

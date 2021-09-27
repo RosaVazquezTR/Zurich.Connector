@@ -6,23 +6,13 @@
         "description": "Get Favorite item from PL",
         "entityType": "Favorites",
         "dataSourceId": "12",
-        "version": "1.0"
+        "version": "1.0",
+		"subType": "Child"
     },
-  "request": {
-    "endpointPath": "/Micro/FavoriteAndFrequentlyUsed",
-    "method": "GET",
-    "parameters": [],
-    "sorting": {
-      "properties": []
-    }
-  },
-    "response": {
-        "schema": {
-            "properties": {}
-        }
-    },
+	"request": {},
+	"response": {},
+	"filters": [],
     "resultLocation": "list",
-    "filters": [],
     "cdmMapping": {
       "structured": [
         {
