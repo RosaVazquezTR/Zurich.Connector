@@ -1,10 +1,10 @@
 {
   "id": "15",
   "partitionkey": "DataSourceList",
-  "name": "Practical Law UK",
-  "description": "This is connecting to Practical Law UK API ",
+  "name": "Practical Law UK - Search",
+  "description": "This is connecting to Practical Law UK API for search ",
   "infoURL": "",
-  "appCode": "PLCUK",
+  "appCode": "PLCUK-Search",
   "appType": "0",
   "locale": "UK",
   "registrationMode ": "Automatic",
