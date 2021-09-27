@@ -1,10 +1,10 @@
 {
   "id": "16",
   "partitionkey": "DataSourceList",
-  "name": "Practical Law US",
-  "description": "This is connecting to Practical Law US API ",
+  "name": "Practical Law US - Search",
+  "description": "This is connecting to Practical Law US API for search",
   "infoURL": "",
-  "appCode": "PLCUS",
+  "appCode": "PLCUS-Search",
   "appType": "0",
   "locale": "US",
   "registrationMode ": "Automatic",

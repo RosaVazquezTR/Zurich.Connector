@@ -1,10 +1,10 @@
 {
   "id": "17",
   "partitionkey": "DataSourceList",
-  "name": "Practical Law CA",
-  "description": "This is connecting to Practical Law CA API ",
+  "name": "Practical Law CA - Search",
+  "description": "This is connecting to Practical Law CA API for search ",
   "infoURL": "",
-  "appCode": "PLCCA",
+  "appCode": "PLCCA-Search",
   "appType": "0",
   "locale": "CA",
   "registrationMode ": "Automatic",
