@@ -29,6 +29,8 @@ namespace Zurich.Connector.Data.Services
 			{
 				JTokenWriter writer = SetupPostJWriter(parameter);
 				JsonRequest.Merge(writer.Token, settings);
+				// remove so it doesn't get stuck on the query string.
+				parameters.Remove(parameter.Name);
 			}
 			return JsonRequest.ToString(Newtonsoft.Json.Formatting.None);
 		}
