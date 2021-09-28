@@ -62,7 +62,8 @@
   "response": {
     "schema": {
       "properties": {}
-    }
+    },
+	"type": "JSON"
   },
   "pagination": {
     "available": true,

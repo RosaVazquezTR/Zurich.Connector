@@ -62,9 +62,9 @@ namespace Zurich.Connector.IntegrationTests
                 }
                 if (connector != null)
                 {
-                    if (string.IsNullOrEmpty(entityType) || connector.info.entityType.ToString() == entityType)
+                    if (string.IsNullOrEmpty(entityType) || connector.Info.EntityType.ToString() == entityType)
                     {
-                        if (string.IsNullOrEmpty(subType) || string.IsNullOrEmpty(connector.info.subType) || connector.info.subType == subType)
+                        if (string.IsNullOrEmpty(subType) || string.IsNullOrEmpty(connector.Info.SubType) || connector.Info.SubType == subType)
                         {
                             connectors.Add(connector);
                         }
@@ -94,7 +94,7 @@ namespace Zurich.Connector.IntegrationTests
 
             var testCases = from connector in connectors
                             join dataSource in dataSources
-                            on connector.info.dataSourceId equals dataSource.Id
+                            on connector.Info.DataSourceId equals dataSource.Id
                             select new object[] { connector, dataSource };
 
             return testCases;
@@ -132,38 +132,38 @@ namespace Zurich.Connector.IntegrationTests
             connector.Should().NotBeNull();
 
             connector.Id.Should().NotBeNull();
-            connector.partitionkey.Should().Be("ConnectorList");
-            connector.info.Should().NotBeNull();
-            connector.info.title.Should().NotBeNullOrWhiteSpace();
-            connector.info.description.Should().NotBeNullOrWhiteSpace();
-            connector.info.entityType.ToString().Should().NotBeNullOrWhiteSpace();
-            connector.info.dataSourceId.Should().NotBeNullOrWhiteSpace();
-            connector.info.version.Should().NotBeNull();
-            if (string.IsNullOrEmpty(connector.info.subType) || connector.info.subType.Equals("Parent"))
+            connector.PartitionKey.Should().Be("ConnectorList");
+            connector.Info.Should().NotBeNull();
+            connector.Info.Title.Should().NotBeNullOrWhiteSpace();
+            connector.Info.Description.Should().NotBeNullOrWhiteSpace();
+            connector.Info.EntityType.ToString().Should().NotBeNullOrWhiteSpace();
+            connector.Info.DataSourceId.Should().NotBeNullOrWhiteSpace();
+            connector.Info.Version.Should().NotBeNull();
+            if (string.IsNullOrEmpty(connector.Info.SubType) || connector.Info.SubType.Equals("Parent"))
             {
                 connector.Alias.Should().NotBeNull();
-                connector.request.Should().NotBeNull();
-                connector.request.endpointPath.Should().NotBeNull();
-                connector.request.method.Should().ContainAny(requestMethodTypes);
-                foreach (var param in connector.request.parameters)
+                connector.Request.Should().NotBeNull();
+                connector.Request.EndpointPath.Should().NotBeNull();
+                connector.Request.Method.Should().ContainAny(requestMethodTypes);
+                foreach (var param in connector.Request.Parameters)
                 {
-                    param.cdmname.Should().NotBeNullOrWhiteSpace();
-                    param.name.Should().NotBeNullOrWhiteSpace();
-                    param.inClause.Should().ContainAny(requestInClauseTypes);
-                    param.type.Should().ContainAny(parameterTypes);
+                    param.Cdmname.Should().NotBeNullOrWhiteSpace();
+                    param.Name.Should().NotBeNullOrWhiteSpace();
+                    param.InClause.Should().ContainAny(requestInClauseTypes);
+                    param.Type.Should().ContainAny(parameterTypes);
                 }
-                foreach (var sortParam in connector.request.sorting?.properties)
+                foreach (var sortParam in connector.Request.Sorting?.Properties)
                 {
-                    sortParam.name.Should().NotBeNullOrWhiteSpace();
-                    sortParam.element.Should().NotBeNull();
-                    sortParam.elementValue.Should().NotBeNull();
-                    sortParam.type.Should().ContainAny(parameterTypes);
+                    sortParam.Name.Should().NotBeNullOrWhiteSpace();
+                    sortParam.Element.Should().NotBeNull();
+                    sortParam.ElementValue.Should().NotBeNull();
+                    sortParam.Type.Should().ContainAny(parameterTypes);
                 }
-                if (connector.request.responseContentType == Data.Model.ResponseContentType.XML)
+                if (connector.Response.Type == Data.Model.ResponseContentType.XML)
                 {
-                    connector.request.xmlArrayAttribute.Should().NotBeNull();
+                    connector.Response.XmlArrayAttribute.Should().NotBeNull();
                 }
-                foreach (var filterValue in connector.filters)
+                foreach (var filterValue in connector.Filters)
                 {
                     filterValue.Name.Should().NotBeNullOrWhiteSpace();
                     filterValue.Description.Should().NotBeNullOrWhiteSpace();
@@ -178,19 +178,19 @@ namespace Zurich.Connector.IntegrationTests
             else
             {
                 connector.Alias.Should().BeNull();
-                connector.request.endpointPath.Should().BeNull();
-                connector.request.method.Should().BeNull();
-                connector.request.parameters.Should().BeNull();
-                connector.request.responseContentType.Should().BeNull();
-                connector.request.sorting.Should().BeNull();
-                connector.request.xmlArrayAttribute.Should().BeNull();
-                connector.response.schema.Should().BeNull();
-                connector.filters.Should().BeEmpty();
+                connector.Request.EndpointPath.Should().BeNull();
+                connector.Request.Method.Should().BeNull();
+                connector.Request.Parameters.Should().BeNull();
+                connector.Request.ResponseContentType.Should().BeNull();
+                connector.Request.Sorting.Should().BeNull();
+                connector.Response.XmlArrayAttribute.Should().BeNull();
+                connector.Response.Schema.Should().BeNull();
+                connector.Filters.Should().BeEmpty();
             }
 
-            connector.cdmMapping.Should().NotBeNull();
-            connector.cdmMapping.structured.Should().NotBeNull();
-            foreach (var param in connector.cdmMapping.structured)
+            connector.CdmMapping.Should().NotBeNull();
+            connector.CdmMapping.structured.Should().NotBeNull();
+            foreach (var param in connector.CdmMapping.structured)
             {
                 param.name.Should().NotBeNull();
                 param.type.Should().ContainAny(parameterTypes);
@@ -199,7 +199,7 @@ namespace Zurich.Connector.IntegrationTests
                 // Verify child connector exists
                 if (param.type == "object")
                 {
-                    var allEntityChildrenRecords = GetConnectors(connector.info.entityType.ToString(), "Child");
+                    var allEntityChildrenRecords = GetConnectors(connector.Info.EntityType.ToString(), "Child");
                     var match = Regex.Match(param.responseElement, @"{(.*?)}");
                     var connectionId = match.Groups[1].ToString();
                     var childConnector = allEntityChildrenRecords.SingleOrDefault(x => x.Id == connectionId);
@@ -218,9 +218,9 @@ namespace Zurich.Connector.IntegrationTests
         {
             dataSource.Should().NotBeNull();
             // Assert
-            if (string.IsNullOrEmpty(connector.info.subType) || connector.info.subType.Equals("Parent"))
+            if (string.IsNullOrEmpty(connector.Info.SubType) || connector.Info.SubType.Equals("Parent"))
             {
-                connector.Alias.Should().StartWith($"{dataSource.appCode}.{connector.info.entityType}".ToLower());
+                connector.Alias.Should().StartWith($"{dataSource.appCode}.{connector.Info.EntityType}".ToLower());
             }
 
         }

@@ -46,7 +46,8 @@
   "response": {
     "schema": {
       "properties": {}
-    }
+    },
+	"type": "JSON"
   },
   "filters": [],
   "resultLocation": "value.hitsContainers.[]",

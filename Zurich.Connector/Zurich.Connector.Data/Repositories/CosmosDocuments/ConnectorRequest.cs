@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Zurich.Connector.Data.Model;
 
 namespace Zurich.Connector.Data.Repositories.CosmosDocuments
@@ -11,27 +12,23 @@ namespace Zurich.Connector.Data.Repositories.CosmosDocuments
         /// <summary>
         /// End point path. Ex: "/api/6/sites",
         /// </summary>
-        public string endpointPath { get; set; }
+        public string EndpointPath { get; set; }
         /// <summary>
         /// Method type. Ex: "get"
         /// </summary>
-        public string method { get; set; }
+        public string Method { get; set; }
         /// <summary>
         /// Reponse Content Type Ex: JSON, XML etc.
         /// </summary>
-        public ResponseContentType? responseContentType { get; set; }
-        /// <summary>
-        /// Indicates if there is any array in the xml. 
-        /// </summary>
-        public string xmlArrayAttribute { get; set; }
+        public ResponseContentType? ResponseContentType { get; set; }
         /// <summary>
         /// Request parameters
         /// </summary>
-        public List<ConnectorRequestParameter> parameters { get; set; }
+        public List<ConnectorRequestParameter> Parameters { get; set; }
         /// <summary>
         /// Sorting properties
         /// </summary>
-        public ConnectorRequestSorting sorting { get; set; }
+        public ConnectorRequestSorting Sorting { get; set; }
     }
 
     /// <summary>
@@ -42,35 +39,35 @@ namespace Zurich.Connector.Data.Repositories.CosmosDocuments
         /// <summary>
         /// Parameter name
         /// </summary>
-        public string name { get; set; }
+        public string Name { get; set; }
         /// <summary>
         /// Use "Query" or "Header"
         /// </summary>
-        public string inClause { get; set; }
+        public string InClause { get; set; }
         /// <summary>
         /// Specify if the parameter is a required property.
         /// </summary>
-        public bool required { get; set; }
+        public bool Required { get; set; }
         /// <summary>
         /// Type of the parameter
         /// </summary>
-        public string type { get; set; }
+        public string Type { get; set; }
         /// <summary>
         /// Default value of the parameter
         /// </summary>
-        public object defaultValue { get; set; }
+        public object DefaultValue { get; set; }
         /// <summary>
         /// Name of querys tring parameter in request
         /// </summary>
-        public string cdmname { get; set; }
+        public string Cdmname { get; set; }
         /// <summary>
         /// Tags for the related to the parameter. Ex: pagination/ sort etc.
         /// </summary>
-        public List<string> tags { get; set; }
+        public List<string> Tags { get; set; }
         /// <summary>
         /// Key being used in Request param. Currently only used with OData.
         /// </summary>
-        public string key { get; set; }
+        public string Key { get; set; }
     }
 
     /// <summary>
@@ -78,7 +75,7 @@ namespace Zurich.Connector.Data.Repositories.CosmosDocuments
     /// </summary>
     public class ConnectorRequestSorting
     {
-        public List<ConnectorRequestSortingProperties> properties { get; set; }
+        public List<ConnectorRequestSortingProperties> Properties { get; set; }
     }
 
     /// <summary>
@@ -89,18 +86,18 @@ namespace Zurich.Connector.Data.Repositories.CosmosDocuments
         /// <summary>
         /// Name
         /// </summary>
-        public string name { get; set; }
+        public string Name { get; set; }
         /// <summary>
         /// Type
         /// </summary>
-        public string type { get; set; }
+        public string Type { get; set; }
         /// <summary>
         /// Element
         /// </summary>
-        public string element { get; set; }
+        public string Element { get; set; }
         /// <summary>
         /// Element Value
         /// </summary>
-        public string elementValue { get; set; }
+        public string ElementValue { get; set; }
     }
 }

@@ -1,18 +1,13 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using System.Web;
 using Zurich.Common;
 using Zurich.Connector.Data;
 using Zurich.Connector.Data.DataMap;
+using Zurich.Connector.Data.Factories;
 using Zurich.Connector.Data.Model;
-using Zurich.Connector.Data.Services;
-using Microsoft.Extensions.Configuration;
 
 namespace Zurich.Connector.App.Services.DataSources
 {
@@ -25,7 +20,7 @@ namespace Zurich.Connector.App.Services.DataSources
         public PracticalLawConnectorOperation(ILogger<IConnectorDataSourceOperations> logger, IDataMappingFactory dataMappingFactory, IConfiguration configuration)
         {
             _logger = logger;
-            _dataMapping = dataMappingFactory.GetMapper(AuthType.OAuth2);
+            _dataMapping = dataMappingFactory.GetImplementation(AuthType.OAuth2.ToString());
             _configuration = configuration;
         }
 

@@ -44,33 +44,33 @@ namespace Zurich.Connector.Tests.ServiceTests
                 {
                     Id = "1",
                     Alias = "A.B.C",
-                    info = new ConnectorInfo()
+                    Info = new ConnectorInfo()
                     {
-                        title = "title1",
-                        dataSourceId = "100",
-                        description ="desc1"
+                        Title = "title1",
+                        DataSourceId = "100",
+                        Description ="desc1"
                     }
                 },
                 new ConnectorDocument()
                 {
                     Id = "2",
                     Alias = "X.Y.Z",
-                    info = new ConnectorInfo()
+                    Info = new ConnectorInfo()
                     {
-                        title = "title2",
-                        dataSourceId = "102",
-                        description ="desc2"
+                        Title = "title2",
+                        DataSourceId = "102",
+                        Description ="desc2"
                     }
                 },
                 new ConnectorDocument()
                 {
                     Id = "3",
                     Alias = "P.Q.R",
-                    info = new ConnectorInfo()
+                    Info = new ConnectorInfo()
                     {
-                        title = "title3",
-                        dataSourceId = "103",
-                        description ="desc3"
+                        Title = "title3",
+                        DataSourceId = "103",
+                        Description ="desc3"
                     }
                 }
             };
@@ -172,7 +172,7 @@ namespace Zurich.Connector.Tests.ServiceTests
                                         Times.Once());
             Assert.IsNotNull(connector);
             Assert.AreEqual(testConnector.Id, connector.Id);
-            Assert.AreEqual(testConnector.info.title, connector.Info.Title);
+            Assert.AreEqual(testConnector.Info.Title, connector.Info.Title);
         }
 
         [TestMethod]
@@ -214,7 +214,7 @@ namespace Zurich.Connector.Tests.ServiceTests
             Assert.IsNotNull(connectors);
             Assert.AreEqual(testConnectors.Count(), connectors.Count());
             Assert.AreEqual(testConnectors.ToList()[0].Id, connectors[0].Id);
-            Assert.AreEqual(testConnectors.ToList()[0].info.title, connectors[0].Info.Title);
+            Assert.AreEqual(testConnectors.ToList()[0].Info.Title, connectors[0].Info.Title);
         }
 
         [TestMethod]

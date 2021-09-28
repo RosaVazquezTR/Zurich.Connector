@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Zurich.Connector.Data.Model;
 
 namespace Zurich.Connector.App.Model
 {
@@ -15,6 +11,16 @@ namespace Zurich.Connector.App.Model
         /// Define connector response schema
         /// </summary>
         public ConnectorReponseSchemaModel Schema { get; set; }
+
+        /// <summary>
+        /// Define connector response Type
+        /// </summary>
+        public ResponseContentType Type { get; set; }
+
+        /// <summary>
+        /// Indicates if there is any array in the xml. 
+        /// </summary>
+        public string XmlArrayAttribute { get; set; }
     }
 
     /// <summary>

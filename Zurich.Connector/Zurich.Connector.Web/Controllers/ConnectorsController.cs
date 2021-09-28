@@ -4,18 +4,15 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using Zurich.Common.Exceptions;
+using Zurich.Connector.App.Enum;
 using Zurich.Connector.App.Model;
+using Zurich.Connector.App.Services;
 using Zurich.Connector.Data.Services;
 using Zurich.Connector.Web.Models;
-using Zurich.Connector.App.Services;
-using Zurich.Connector.App.Enum;
-using Zurich.Common.Exceptions;
-using Zurich.Connector.Data.Repositories.CosmosDocuments;
-using System.Net;
-using Zurich.Common.Repositories.Cosmos;
 
 namespace Zurich.Connector.Web.Controllers
 {
@@ -24,13 +21,15 @@ namespace Zurich.Connector.Web.Controllers
     public class ConnectorsController : ControllerBase
     {
         private readonly IConnectorService _connectorService;
+        private readonly IConnectorDataService _connectorDataService;
         private readonly IRegistrationService _registrationService;
         private readonly IMapper _mapper;
         private readonly ILogger<ConnectorsController> _logger;
 
-        public ConnectorsController(IConnectorService connectorService, ILogger<ConnectorsController> logger, IMapper mapper, IRegistrationService registrationService)
+        public ConnectorsController(IConnectorService connectorService, IConnectorDataService connectorDataService, ILogger<ConnectorsController> logger, IMapper mapper, IRegistrationService registrationService)
         {
             _connectorService = connectorService;
+            _connectorDataService = connectorDataService;
             _registrationService = registrationService;
             _logger = logger;
             _mapper = mapper;
@@ -49,7 +48,7 @@ namespace Zurich.Connector.Web.Controllers
                     && !param.Equals("retrievefilters", StringComparison.InvariantCultureIgnoreCase))
                     .ToDictionary(k => k, v => HttpContext?.Request.Query[v].ToString(), StringComparer.OrdinalIgnoreCase);
 
-                results = await _connectorService.GetConnectorData(id, hostName, transferToken, parameters, retrieveFilters);
+                results = await _connectorDataService.GetConnectorData(id, hostName, transferToken, parameters, retrieveFilters);
                 if (results == null)
                 {
                     throw new ResourceNotFoundException("Connector or data not found");

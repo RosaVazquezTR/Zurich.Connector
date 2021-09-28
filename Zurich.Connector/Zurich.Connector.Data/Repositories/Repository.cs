@@ -12,44 +12,7 @@ using System.Web;
 
 namespace Zurich.Connector.Data.Repositories
 {
-	/// <summary>
-	/// Very generic Repository that should be able to make all API calls
-	/// </summary>
-	public interface IRepository
-	{
-        /// <summary>
-        /// Makes a GET call
-        /// </summary>
-        /// <param name="apiInformation">Holds information around how to make the api call</param>
-        /// <param name="parameters">query parameters for the call</param>
-        /// <returns>a string</returns>
-        Task<string> Get(ApiInformation apiInformation, NameValueCollection query = null);
-
-		/// <summary>
-		/// Makes a POST call
-		/// </summary>
-		/// <param name="apiInformation">Holds information around how to make the api call</param>
-        /// <param name="postBody">string post body</param>
-        /// <param name="parameters">query parameters for the call</param>
-		/// <returns>a string</returns>
-		Task<string> Post(ApiInformation apiInformation, string postBody, NameValueCollection parameters = null);
-
-        /// <summary>
-        /// Makes a PUT call
-        /// </summary>
-        /// <param name="apiInformation">Holds information around how to make the api call</param>
-        /// <returns>a string</returns>
-        Task<string> Put(ApiInformation apiInformation);
-
-		/// <summary>
-		/// Makes a DELETE call
-		/// </summary>
-		/// <param name="apiInformation">Holds information around how to make the api call</param>
-		/// <returns>a string</returns>
-		Task<string> Delete(ApiInformation apiInformation);
-	}
-
-	public class Repository : IRepository
+    public class Repository : IRepository
 	{
 		private readonly HttpClient _httpClient;
 		private readonly ILogger<Repository> _logger;
@@ -60,11 +23,30 @@ namespace Zurich.Connector.Data.Repositories
 			_logger = logger;
 		}
 
-		public async Task<string> Get(ApiInformation apiInformation, NameValueCollection parameters)
+        public async Task<string> MakeRequest(ApiInformation apiInformation, NameValueCollection parameters, string body)
         {
-            UriBuilder builder = CreateUriBuilder(apiInformation, parameters);
+            string response;
 
-            using (var requestMessage = new HttpRequestMessage(HttpMethod.Get, builder.ToString()))
+            switch (apiInformation.Method.ToUpper())
+            {
+                case "POST":
+                    response = await this.Post(apiInformation, parameters, body);
+                    break;
+                case "GET":
+                    response = await this.Get(apiInformation, parameters);
+                    break;
+                default:
+                    throw new NotImplementedException($"{apiInformation.Method} not currently implemented");
+            }
+            return response;
+        }
+
+
+        public async Task<string> Get(ApiInformation apiInformation, NameValueCollection parameters)
+        {
+            string uri = CreateUri(apiInformation, parameters);
+
+            using (var requestMessage = new HttpRequestMessage(HttpMethod.Get, uri))
             {
                 SetupRequestMessage(apiInformation, requestMessage);
 
@@ -72,12 +54,12 @@ namespace Zurich.Connector.Data.Repositories
             }
         }
 
-        public async Task<string> Post(ApiInformation apiInformation, string postBody, NameValueCollection parameters)
+        public async Task<string> Post(ApiInformation apiInformation, NameValueCollection parameters, string postBody)
 		{
 
-            UriBuilder builder = CreateUriBuilder(apiInformation, parameters);
+            string uri = CreateUri(apiInformation, parameters);
 
-            using (var requestMessage = new HttpRequestMessage(HttpMethod.Post, builder.ToString()))
+            using (var requestMessage = new HttpRequestMessage(HttpMethod.Post, uri))
             {
                 SetupRequestMessage(apiInformation, requestMessage);
 
@@ -97,7 +79,7 @@ namespace Zurich.Connector.Data.Repositories
             throw new NotImplementedException("Delete not currently implemented");
         }
 
-        private static UriBuilder CreateUriBuilder(ApiInformation apiInformation, NameValueCollection parameters)
+        private static string CreateUri(ApiInformation apiInformation, NameValueCollection parameters)
         {
             // TODO: We need this to parse a query string from the relative url. 
             // Eventually the query params should be passed in and this could be removed.
@@ -111,13 +93,14 @@ namespace Zurich.Connector.Data.Repositories
 
             UriBuilder builder = new UriBuilder(scheme, apiInformation.HostName, -1, relativePath);
             builder.Query = paramCollection.ToString();
-            return builder;
+            return builder.ToString();
         }
 
         private void SetupRequestMessage(ApiInformation apiInformation, HttpRequestMessage requestMessage)
         {
             if (!string.IsNullOrWhiteSpace(apiInformation.Token?.access_token))
             {
+                // Should we move this?
                 if (string.IsNullOrEmpty(apiInformation.AuthHeader))
                 {
                     requestMessage.Headers.Authorization = new AuthenticationHeaderValue(apiInformation.Token.token_type, apiInformation.Token.access_token);

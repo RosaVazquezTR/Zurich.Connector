@@ -6,13 +6,13 @@ namespace Zurich.Connector.Data.Model
     {
         public PostRequestParameter(ConnectorRequestParameter connectorParameter)
         {
-            name = connectorParameter.name;
-            inClause = connectorParameter.inClause;
-            required = connectorParameter.required;
-            type = connectorParameter.type;
-            defaultValue = connectorParameter.defaultValue;
-            cdmname = connectorParameter.cdmname;
-            tags = connectorParameter.tags;
+            Name = connectorParameter.Name;
+            InClause = connectorParameter.InClause;
+            Required = connectorParameter.Required;
+            Type = connectorParameter.Type;
+            DefaultValue = connectorParameter.DefaultValue;
+            Cdmname = connectorParameter.Cdmname;
+            Tags = connectorParameter.Tags;
     }
 
         public string ParamValue { get; set; }

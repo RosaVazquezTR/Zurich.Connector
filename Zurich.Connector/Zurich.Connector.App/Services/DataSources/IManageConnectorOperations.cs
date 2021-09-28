@@ -1,12 +1,16 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using AutoMapper;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web;
+using Zurich.Connector.App.Model;
 using Zurich.Connector.Data;
 using Zurich.Connector.Data.DataMap;
+using Zurich.Connector.Data.Factories;
 using Zurich.Connector.Data.Model;
+using Zurich.Connector.Data.Repositories.CosmosDocuments;
 using Zurich.Connector.Data.Services;
 
 namespace Zurich.Connector.App.Services.DataSources
@@ -15,6 +19,8 @@ namespace Zurich.Connector.App.Services.DataSources
     {
         private readonly ILogger _logger;
         private readonly IDataMapping _dataMapping;
+        private readonly ICosmosService _cosmosService;
+        private readonly IMapper _mapper;
 
         #region Endpoints
         private const string DocumentsEndpoint = "work/link/d/";
@@ -22,10 +28,12 @@ namespace Zurich.Connector.App.Services.DataSources
         private string customerId;
         #endregion
 
-        public IManageConnectorOperations(ILogger<IConnectorDataSourceOperations> logger, IDataMappingFactory dataMappingFactory)
+        public IManageConnectorOperations(ILogger<IConnectorDataSourceOperations> logger, IDataMappingFactory dataMappingFactory, IMapper mapper, ICosmosService cosmosService)
         {
             _logger = logger;
-            _dataMapping = dataMappingFactory.GetMapper(AuthType.OAuth2);
+            _mapper = mapper;
+            _cosmosService = cosmosService;
+            _dataMapping = dataMappingFactory.GetImplementation(AuthType.OAuth2.ToString());
         }
 
         public bool IsCompatible(string appCode)
@@ -45,9 +53,11 @@ namespace Zurich.Connector.App.Services.DataSources
                             if (result["Items"] is JArray)
                             {
                                 // 1 = iManage user profile
-                                var dataTypeInformation = await _dataMapping.RetrieveProductInformationMap("1", hostName);
+                                ConnectorModel connectorModel = await _cosmosService.GetConnector("1", true);
+                                ConnectorDocument connectorDocument = _mapper.Map<ConnectorDocument>(connectorModel);
                                 // Make api call to get the information for the url variable inside { }
-                                JToken userProfileResponse = await _dataMapping.Get<JToken>(dataTypeInformation, string.Empty);
+                                connectorDocument.HostName = hostName;
+                                JToken userProfileResponse = await _dataMapping.GetAndMapResults<JToken>(connectorDocument, string.Empty);
                                 customerId = userProfileResponse["customer_id"].Value<string>();
 
                                 foreach (JObject doc in (result["Items"] as JArray))
@@ -79,7 +89,7 @@ namespace Zurich.Connector.App.Services.DataSources
         private async Task<string> BuildDownloadLink(ConnectorEntityType itemType, JObject item, string hostName)
         {
             string result = null;
-           
+
             switch (itemType)
             {
                 case ConnectorEntityType.Document:
@@ -91,7 +101,7 @@ namespace Zurich.Connector.App.Services.DataSources
                     var title = item.ContainsKey(StructuredCDMProperties.Title) ? item[StructuredCDMProperties.Title].Value<string>() : "";
                     var fileName = Regex.Replace(title, @"\s+", ""); //Replaces all(+) space characters (\s) with empty("")
                     var builder = new UriBuilder("https", hostName, -1);
-                    result = $"{builder.Uri}{DocumentsDowloadEndpoint}/customers/{customerId}/libraries/{libraryId}/documents/{docId}/download"; 
+                    result = $"{builder.Uri}{DocumentsDowloadEndpoint}/customers/{customerId}/libraries/{libraryId}/documents/{docId}/download";
                     break;
             }
             return result;
@@ -113,7 +123,7 @@ namespace Zurich.Connector.App.Services.DataSources
                     var docId = item.ContainsKey(StructuredCDMProperties.EntityId) ? item[StructuredCDMProperties.EntityId].Value<string>() : "";
                     var builder = new UriBuilder("https", hostName, -1);
                     result = $"{builder.Uri}{DocumentsEndpoint}{docId}";
-                break;
+                    break;
             }
             return result;
         }
