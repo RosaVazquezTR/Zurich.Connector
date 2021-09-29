@@ -40,7 +40,8 @@ namespace Zurich.Connector.Data.DataMap
                 HostName = connectorDocument.HostName,
                 UrlPath = connectorDocument.Request.EndpointPath,
                 AuthHeader = connectorDocument.DataSource.securityDefinition.defaultSecurityDefinition.authorizationHeader,
-                Token = null
+                Token = null,
+                Method = connectorDocument.Request.Method
             };
 
             var transferTokenParam = new NameValueCollection() { { "transferToken", transferToken } };
