@@ -4,7 +4,7 @@
   "alias": "crsw.history",
   "info": {
     "title": "Get Research History",
-    "description": "Pull Research History from Westlaw Next Canada",
+    "description": "Pull Research History from Westlaw and Westlaw Edge Canada",
     "entityType": "History",
     "dataSourceId": "24",
     "version": "1.0"
