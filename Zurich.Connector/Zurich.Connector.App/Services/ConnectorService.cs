@@ -71,7 +71,7 @@ namespace Zurich.Connector.Data.Services
 
                 registeredConnectors = _registrationService.GetUserConnections(filters.RegistrationModes);
 
-                Expression<Func<ConnectorDocument, bool>> condition = connector => (isEntityTypeFilter == false || entityTypeFilter.Contains(connector.Info.EntityType.ToString())) 
+                Expression<Func<ConnectorDocument, bool>> condition = connector => (isEntityTypeFilter == false || entityTypeFilter.Contains(connector.Info.EntityType.ToString()))
                                         && (isDataSourceFilter == false || dataSourceFilter.Contains(connector.Info.DataSourceId))
                                         && (filters.IsRegistered == false || registeredConnectors.Contains(connector.Id));
                 var connectors = await _cosmosService.GetConnectors(true, condition);
@@ -82,7 +82,8 @@ namespace Zurich.Connector.Data.Services
                 }
 
                 return connectors.ToList();
-            } catch(Exception ex)
+            }
+            catch (Exception ex)
             {
                 _logger.LogError(ex.Message);
                 throw;

@@ -20,6 +20,13 @@
     {
         public const string iManage = "iManage";
         public const string practicalLawConnect = "PracticalLawConnect";
+        public const string plcUS = "PLCUS";
+        public const string plcUK = "PLCUK";
+        public const string plcCA = "PLCCA";
+        public const string practicalLawConnectSearch = "PracticalLawConnect-Search";
+        public const string plcUSSearch = "PLCUS-Search";
+        public const string plcUKSearch = "PLCUK-Search";
+        public const string plcCASearch = "PLCCA-Search";
 
     }
     public static class DataConstants

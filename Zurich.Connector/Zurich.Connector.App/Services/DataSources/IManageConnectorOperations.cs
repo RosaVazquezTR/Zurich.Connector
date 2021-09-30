@@ -41,7 +41,7 @@ namespace Zurich.Connector.App.Services.DataSources
             return appCode == KnownDataSources.iManage;
         }
 
-        public async Task<dynamic> SetItemLink(ConnectorEntityType entityType, dynamic item, string hostName)
+        public async Task<dynamic> SetItemLink(ConnectorEntityType entityType, dynamic item, string appCode, string hostName)
         {
             try
             {

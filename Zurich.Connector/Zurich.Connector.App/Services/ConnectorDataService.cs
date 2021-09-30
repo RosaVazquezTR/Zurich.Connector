@@ -117,30 +117,47 @@ namespace Zurich.Connector.Data.Services
                     cdmQueryParameters = SetupPagination(connectorModel, cdmQueryParameters);
                 }
 
-                queryParameters = (from param in cdmQueryParameters
-                                                  join requestParam in connectorModel.Request?.Parameters
-                                                  on param.Key.ToString().ToLower() equals requestParam.CdmName.ToLower()
-                                                  where requestParam.InClause != ODataConstants.OData
-                                                  select new { name = requestParam.Name, value = param.Value.ToString() }).ToDictionary(c => c.name, c=> c.value);
+                if (connectorModel.Request?.Parameters != null)
+                    queryParameters = (from param in cdmQueryParameters
+                                       join requestParam in connectorModel.Request?.Parameters
+                                       on param.Key.ToString().ToLower() equals requestParam.CdmName.ToLower()
+                                       where requestParam.InClause != ODataConstants.OData
+                                       select new { name = requestParam.Name, value = param.Value.ToString() }).ToDictionary(c => c.name, c => c.value);
 
-                sortParameters = (from param in cdmQueryParameters
-                                  join requestParam in connectorModel.Request?.Sorting?.Properties
-                                  on param.Value.ToString().ToLower() equals requestParam.ElementValue.ToLower() 
-                                  select new { name = requestParam.Element, value = requestParam.ElementValue.ToString() })
+
+                if (connectorModel.Request?.Sorting != null)
+                    sortParameters = (from param in cdmQueryParameters
+                                      join requestParam in connectorModel.Request?.Sorting?.Properties
+                                      on param.Value.ToString().ToLower() equals requestParam.ElementValue.ToLower()
+                                      select new { name = requestParam.Element, value = requestParam.ElementValue.ToString() })
                                   .ToDictionary(c => c.name, c => c.value);
+
             }
+
             if (ODataHandler.HasODataParams(connectorModel))
                 ODataHandler.BuildQueryParams(cdmQueryParameters, connectorModel).ToList().ForEach(param => queryParameters.Add(param.Key, param.Value));
 
             // Add default parameters if not present in the request. ex: locale, ResultSize etc
-            var defaultParameters = connectorModel.Request?.Parameters.Where(t => DefaultParametersCheck(t, queryParameters))
+            var defaultParameters = connectorModel.Request?.Parameters?.Where(t => DefaultParametersCheck(t, queryParameters))
                                 .ToDictionary(c => c.Name, c => c.DefaultValue);
+            
+            IEnumerable<KeyValuePair<string, string>> allParameters = new Dictionary<string, string>();
 
-            var allParameters = defaultParameters.Concat(queryParameters).Concat(sortParameters);
+            if (queryParameters.Any())
+                allParameters = allParameters.Concat(queryParameters);
 
-            foreach (var parameter in allParameters)
+            if (defaultParameters != null && defaultParameters.Any())
+                allParameters = allParameters.Concat(defaultParameters);
+
+            if (sortParameters.Any())
+                allParameters = allParameters.Concat(sortParameters);
+
+            if (allParameters != null)
             {
-                modifiedQueryParameters.Add(parameter.Key, parameter.Value);
+                foreach (var parameter in allParameters)
+                {
+                    modifiedQueryParameters.Add(parameter.Key, parameter.Value);
+                }
             }
 
             return modifiedQueryParameters;
@@ -213,7 +230,7 @@ namespace Zurich.Connector.Data.Services
         {
             var dataSourceOperationsService = _dataSourceOperationsFactory.GetDataSourceOperationsService(connector?.DataSource?.AppCode);
             if (dataSourceOperationsService != null)
-                data = await dataSourceOperationsService.SetItemLink(connector.Info.EntityType, data, connector.HostName);
+                data = await dataSourceOperationsService.SetItemLink(connector.Info.EntityType, data, connector?.DataSource?.AppCode, connector.HostName);
             else
                 _logger.LogInformation("No data source operations service found for {appCode}", connector?.DataSource?.AppCode ?? "");
             return data;

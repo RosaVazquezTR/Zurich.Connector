@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Zurich.Common;
 using Zurich.Connector.Data;
@@ -16,6 +17,8 @@ namespace Zurich.Connector.App.Services.DataSources
         private readonly ILogger _logger;
         private readonly IDataMapping _dataMapping;
         private readonly IConfiguration _configuration;
+        private List<string> _supportedPracticalLawAppCodes = new List<string>() { "PracticalLawConnect", "PLCUS", "PLCUK", "PLCCA", "PracticalLawConnect-Search", "PLCUS-Search", "PLCUK-Search"
+                                                                                   , "PLCCA-Search" };
 
         public PracticalLawConnectorOperation(ILogger<IConnectorDataSourceOperations> logger, IDataMappingFactory dataMappingFactory, IConfiguration configuration)
         {
@@ -26,10 +29,10 @@ namespace Zurich.Connector.App.Services.DataSources
 
         public bool IsCompatible(string appCode)
         {
-            return appCode == KnownDataSources.practicalLawConnect;
+            return _supportedPracticalLawAppCodes.Contains(appCode);
         }
 
-        public async Task<dynamic> SetItemLink(ConnectorEntityType entityType, dynamic item, string hostName)
+        public async Task<dynamic> SetItemLink(ConnectorEntityType entityType, dynamic item, string appCode, string hostName)
         {
             try
             {
@@ -42,7 +45,7 @@ namespace Zurich.Connector.App.Services.DataSources
                             {
                                 if (doc.ContainsKey(StructuredCDMProperties.WebUrl))
                                 {
-                                    doc[StructuredCDMProperties.WebUrl] = CreateUrl(doc);
+                                    doc[StructuredCDMProperties.WebUrl] = CreateUrl(doc, appCode);
                                 }
                             }
                         }
@@ -64,13 +67,26 @@ namespace Zurich.Connector.App.Services.DataSources
         /// <param name="hostName">The data source host name</param>
         /// <returns></returns>
 
-        private string CreateUrl(JObject item)
+        private string CreateUrl(JObject item, string appCode)
         {
-            var configuredUrl = _configuration.GetValue<string>(AppConfigKeys.PracticalLawConnectSearchHost);
-            var builder = new UriBuilder("https", configuredUrl, -1);
-            string url = $"{builder.Uri}{item["PlcReference"]}";
+            string configuredUrl = "";
+           
+            if (appCode == KnownDataSources.practicalLawConnect || appCode == KnownDataSources.practicalLawConnectSearch)
+                configuredUrl = _configuration.GetValue<string>(AppConfigKeys.PracticalLawConnectSearchHost);
+            else if (appCode == KnownDataSources.plcUS || appCode == KnownDataSources.plcUSSearch)
+                configuredUrl = _configuration.GetValue<string>(AppConfigKeys.PracticalLawUSHost);
+            else if (appCode == KnownDataSources.plcUK || appCode == KnownDataSources.plcUKSearch)
+                configuredUrl = _configuration.GetValue<string>(AppConfigKeys.PracticalLawUKHost);
+            else if (appCode == KnownDataSources.plcCA || appCode == KnownDataSources.plcCASearch)
+                configuredUrl = _configuration.GetValue<string>(AppConfigKeys.PracticalLawCAHost);
 
-            return url;
+            if (!string.IsNullOrEmpty(configuredUrl))
+            {
+                var builder = new UriBuilder("https", configuredUrl, -1);
+                return $"{builder.Uri}{item["PlcReference"]}";
+            }
+            else
+            return "";
         }
     }
 }

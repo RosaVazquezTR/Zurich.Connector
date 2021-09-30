@@ -207,5 +207,59 @@ namespace Zurich.Connector.Tests.ServiceTests
 			Assert.IsNotNull(newUrl);
 			Assert.AreEqual("/work/api/v2/customers/241/documents", newUrl);
 		}
+
+		[TestMethod]
+		public async Task CallMapQueryParametersFromDBWithRequestSortingPropertiesAsNull()
+		{
+			// ARRANGE
+			var cdmQueryParameters = new Dictionary<string, string>() { { "Offset", "1" }, { "ResultSize", "10" } };
+			var connector = MockConnectorData.SetupConnectorModel_Version2().Where(t => t.Id == "1").FirstOrDefault();
+
+			ConnectorDataService service = new ConnectorDataService(_mockDataMappingFactory.Object, _mockDataMappingRepo.Object, null, _mapper, _mockCosmosService.Object, _mockdataMappingService.Object,
+				_mockDataSourceOperationsFactory.Object, _mockRegistrationService.Object);
+
+			// ACT
+			var mappedResult = service.MapQueryParametersFromDB(cdmQueryParameters, connector);
+
+			// ASSERT
+			Assert.AreEqual(mappedResult["searchTerm"], "*");
+			Assert.AreEqual(mappedResult["resultsStartIndex"], "1");
+			Assert.AreEqual(mappedResult["resultsCount"], "10");
+		}
+
+		[TestMethod]
+		public async Task CallMapQueryParametersFromDBWithRequestParametersAsNull()
+		{
+			// ARRANGE
+			var cdmQueryParameters = new Dictionary<string, string>() { { "Offset", "1" }, { "ResultSize", "10" } };
+			var connector = MockConnectorData.SetupConnectorModel_Version2().Where(t => t.Id == "2").FirstOrDefault();
+
+			ConnectorDataService service = new ConnectorDataService(_mockDataMappingFactory.Object, _mockDataMappingRepo.Object, null, _mapper, _mockCosmosService.Object, _mockdataMappingService.Object,
+				_mockDataSourceOperationsFactory.Object, _mockRegistrationService.Object);
+
+			// ACT
+			var mappedResult = service.MapQueryParametersFromDB(cdmQueryParameters, connector);
+
+			// ASSERT
+			Assert.AreEqual(mappedResult.Count, 0);
+		}
+
+		[TestMethod]
+		public async Task CallMapQueryParametersFromDBWithRequestParametersAndSortPropertiesAsNull()
+		{
+			// ARRANGE
+			var cdmQueryParameters = new Dictionary<string, string>() { { "Offset", "1" }, { "ResultSize", "10" } };
+			var connector = MockConnectorData.SetupConnectorModel_Version2().Where(t => t.Id == "3").FirstOrDefault();
+
+			ConnectorDataService service = new ConnectorDataService(_mockDataMappingFactory.Object, _mockDataMappingRepo.Object, null, _mapper, _mockCosmosService.Object, _mockdataMappingService.Object,
+				_mockDataSourceOperationsFactory.Object, _mockRegistrationService.Object);
+
+			// ACT
+			var mappedResult = service.MapQueryParametersFromDB(cdmQueryParameters, connector);
+
+			// ASSERT
+			Assert.AreEqual(mappedResult.Count, 0);
+		}
+
 	}
 }

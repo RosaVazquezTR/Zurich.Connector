@@ -15,7 +15,7 @@ namespace Zurich.Connector.App.Services.DataSources
         /// <param name="item">The target data item</param>
         /// <param name="hostName">The data source app host name</param>
         /// <returns></returns>
-        Task<dynamic> SetItemLink(ConnectorEntityType entityType, dynamic item, string hostName);
+        Task<dynamic> SetItemLink(ConnectorEntityType entityType, dynamic item, string appCode, string hostName);
 
         /// <summary>
         /// Checks if the service implementation is compatible with the third party app

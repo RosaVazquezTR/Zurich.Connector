@@ -47,7 +47,7 @@ namespace Zurich.Connector.App.Utils
 
 		public static bool HasODataParams(ConnectorModel connectorModel)
         {
-			return connectorModel?.Request?.Parameters.Exists(param => param.InClause == ODataConstants.OData) ?? false;
+			return connectorModel?.Request?.Parameters?.Exists(param => param.InClause == ODataConstants.OData) ?? false;
 		}
 
 		private static string GetQueryStringFromQueryOrDefault(Dictionary<string, string> queryParameters, ConnectorRequestParameterModel param)
