@@ -143,14 +143,30 @@ namespace Zurich.Connector.Data.DataMap
 
 		private async Task<dynamic> MapResult(dynamic apiResult, ConnectorDocument connector)
         {
-            dynamic cdmResult = new JObject();
-            List<CDMElement> properties = connector?.CdmMapping?.structured;
+			JObject cdmResult = new JObject();
+			List<CDMElement> structuredProperties = connector?.CdmMapping?.structured;
+
+			if (structuredProperties != null)
+				cdmResult = await MapProperties(structuredProperties, apiResult);
+
+			List<CDMElement> unstructuredProperties = connector?.CdmMapping?.unstructured;
+
+			JObject additionalProps = new JObject();
+			if (unstructuredProperties != null)
+				additionalProps = await MapProperties(unstructuredProperties, apiResult);
+
+			if (!cdmResult.ContainsKey("AdditionalProperties"))
+				cdmResult["AdditionalProperties"] = additionalProps;
+
+			return cdmResult;
+		}
+
+		private async Task<JObject> MapProperties(List<CDMElement> properties, dynamic apiResult)
+		{
+			JObject jObjectResult = new JObject();
 
 			foreach (var property in properties)
 			{
-				if (cdmResult[property.name] != null)
-					continue;
-
 				// Get the correct json property when not on the same level
 				string[] resultsLocation = property.responseElement.Split('.');
 
@@ -186,9 +202,10 @@ namespace Zurich.Connector.Data.DataMap
 						break;
 				}
 
-				cdmResult[property.name] = tempResult;
+				jObjectResult[property.name] = tempResult;
 			}
-			return cdmResult;
+
+			return jObjectResult;
 		}
 
 		/// <summary>
