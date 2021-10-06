@@ -76,6 +76,10 @@ namespace Zurich.Connector.Data.Services
                                         && (filters.IsRegistered == false || registeredConnectors.Contains(connector.Id));
                 var connectors = await _cosmosService.GetConnectors(true, condition);
 
+                if (filters.RegistrationModes != null && filters.RegistrationModes.Any())
+                {
+                    connectors = connectors.Where(x => filters.RegistrationModes.Contains(x.DataSource.RegistrationMode));
+                }
                 foreach (var connector in connectors.Where(connector => registeredConnectors.Contains(connector.Id)))
                 {
                     connector.RegistrationStatus = RegistrationStatus.Registered;

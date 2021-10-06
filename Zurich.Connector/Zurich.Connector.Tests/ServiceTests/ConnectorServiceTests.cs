@@ -224,5 +224,40 @@ namespace Zurich.Connector.Tests.ServiceTests
 			});
 		}
 
+		[TestMethod]
+		public async Task CallGetConnectorsWithRegistrationModesFilter()
+		{
+			// ARRANGE
+			var registeredConnectorIds = new List<string>() { "2", "4" };
+			var testConnections = MockConnectorData.SetupConnectorModel().Where(t => registeredConnectorIds.Contains(t.Id));
+
+			ConnectorFilterModel filters = new ConnectorFilterModel()
+			{
+				RegistrationModes = new List<Zurich.Common.Models.Connectors.RegistrationEntityMode>()
+				{ Zurich.Common.Models.Connectors.RegistrationEntityMode.Automatic ,
+				{ Zurich.Common.Models.Connectors.RegistrationEntityMode.Manual }
+				}
+			};
+
+			_mockCosmosService.Setup(x => x.GetConnectors(true, It.IsAny<Expression<Func<ConnectorDocument, bool>>>())).Returns(Task.FromResult(testConnections));
+			_mockRegistrationService.Setup(x => x.GetUserConnections(It.IsAny<IEnumerable<Zurich.Common.Models.Connectors.RegistrationEntityMode>>())).Returns(registeredConnectorIds);
+
+			ConnectorService service = new ConnectorService(null, _mockCosmosService.Object, _mockRegistrationService.Object);
+
+			// ACT
+			var connectors = await service.GetConnectors(filters);
+
+			// ASSERT
+			_mockCosmosService.Verify(x => x.GetConnectors(true, It.IsAny<Expression<Func<ConnectorDocument, bool>>>()), Times.Once());
+			Assert.IsNotNull(connectors);
+            Assert.AreEqual(2, connectors.Count);
+            //Assert.AreEqual(MockConnectorData.SetupConnectorModel().ToList().Count, connectors.Count);
+            Assert.AreEqual(registeredConnectorIds.First(), connectors[0].Id);
+			Assert.AreEqual(Zurich.Common.Models.Connectors.RegistrationEntityMode.Manual, connectors[0].DataSource.RegistrationMode);
+			Assert.AreEqual(registeredConnectorIds.Last(), connectors[1].Id);
+			Assert.AreEqual(Zurich.Common.Models.Connectors.RegistrationEntityMode.Automatic, connectors[1].DataSource.RegistrationMode);
+
+
+		}
 	}
 }

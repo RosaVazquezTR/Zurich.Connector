@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using Zurich.Connector.App.Model;
 using System.Linq.Expressions;
 using System.Linq;
+using Zurich.Common.Models.Connectors;
 
 namespace Zurich.Connector.Tests.ServiceTests
 {
@@ -73,7 +74,7 @@ namespace Zurich.Connector.Tests.ServiceTests
             //Arrange
             var testId = "";
             var appCode = "";
-            var registraionMode = "";
+            var registraionMode = RegistrationEntityMode.Automatic;
             var userId = new Guid("55e7a5d2-2134-4828-a2cd-2c4284ec11b9");
             var tenantId = new Guid("d564ff78-bdab-4bf4-c9ae-08d83232798c");
             _mockSessionAccessor.Setup(x => x.UserId).Returns(userId);
@@ -93,7 +94,7 @@ namespace Zurich.Connector.Tests.ServiceTests
             //Arrange
             var testId = "140";
             var appCode = "";
-            var registraionMode = "";
+            var registraionMode = RegistrationEntityMode.Manual;
             var userId = new Guid("55e7a5d2-2134-4828-a2cd-2c4284ec11b9");
             var tenantId = new Guid("d564ff78-bdab-4bf4-c9ae-08d83232798c");
             _mockSessionAccessor.Setup(x => x.UserId).Returns(userId);
@@ -170,7 +171,7 @@ namespace Zurich.Connector.Tests.ServiceTests
             //Arrange
             var testId = "140";
             var appCode = "PLCUS";
-            var registraionMode = "Automatic";
+            var registraionMode = RegistrationEntityMode.Automatic;
             var userId = new Guid("55e7a5d2-2134-4828-a2cd-2c4284ec11b9");
             var tenantId = new Guid("d564ff78-bdab-4bf4-c9ae-08d83232798c");
             _mockSessionAccessor.Setup(x => x.UserId).Returns(userId);
@@ -191,7 +192,7 @@ namespace Zurich.Connector.Tests.ServiceTests
             //Arrange
             var testId = "14";
             var appCode = "PLCUK";
-            var registraionMode = "Automatic";
+            var registraionMode = RegistrationEntityMode.Automatic;
             var userId = new Guid("55e7a5d2-2134-4828-a2cd-2c4284ec11b9");
             var tenantId = new Guid("d564ff78-bdab-4bf4-c9ae-08d83232798c");
             _mockSessionAccessor.Setup(x => x.UserId).Returns(userId);
