@@ -1,20 +1,21 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using AutoMapper;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Specialized;
+using System.Security.Authentication;
 using System.Threading.Tasks;
 using Zurich.Common.Services.Security;
+using Zurich.Connector.Data.Factories;
 using Zurich.Connector.Data.Model;
 using Zurich.Connector.Data.Repositories;
-using AutoMapper;
 using Zurich.Connector.Data.Repositories.CosmosDocuments;
-using System.Security.Authentication;
 using Zurich.Connector.Data.Services;
 
 namespace Zurich.Connector.Data.DataMap
 {
-    public class DataMappingOAuth : DataMappingBase, IDataMapping
+    public class DataMappingOAuth : AbstractDataMapping, IDataMapping
     {
-        public DataMappingOAuth(IRepository repository, IDataMappingRepository dataMappingRepository, IOAuthService oAuthService, ILogger<DataMappingOAuth> logger, ConnectorCosmosContext cosmosContext, IMapper mapper)
+        public DataMappingOAuth(IRepository repository, IDataMappingRepository dataMappingRepository, IOAuthService oAuthService, ILogger<DataMappingOAuth> logger, ConnectorCosmosContext cosmosContext, IMapper mapper, IHttpBodyFactory factory, IHttpResponseFactory httpResponseFactory)
         {
             this._repository = repository;
             this._dataMappingRepository = dataMappingRepository;
@@ -22,28 +23,30 @@ namespace Zurich.Connector.Data.DataMap
             this._logger = logger;
             this._cosmosContext = cosmosContext;
             this._mapper = mapper;
+            this._httpBodyFactory = factory;
+            this._httpResponseFactory = httpResponseFactory;
         }
 
-        public async override Task<T> Get<T>(ConnectorDocument connector, string transferToken = null, NameValueCollection query = null)
+        public async override Task<T> GetAndMapResults<T>(ConnectorDocument connector, string transferToken = null, NameValueCollection query = null)
         {
-            var token = await this.RetrieveToken(connector?.dataSource?.appCode,
-                                                  connector?.dataSource?.appType,
-                                                  connector?.dataSource?.locale,
-                                                  connector?.dataSource?.securityDefinition?.defaultSecurityDefinition?.grantType,
-                                                  connector?.dataSource?.securityDefinition?.defaultSecurityDefinition?.sendCredentialsInBody);         
+            var token = await this.RetrieveToken(connector?.DataSource?.appCode,
+                                                  connector?.DataSource?.appType,
+                                                  connector?.DataSource?.locale,
+                                                  connector?.DataSource?.securityDefinition?.defaultSecurityDefinition?.grantType,
+                                                  connector?.DataSource?.securityDefinition?.defaultSecurityDefinition?.sendCredentialsInBody);         
             
             if (!string.IsNullOrEmpty(token?.access_token))
             {
                 ApiInformation apiInfo = new ApiInformation()
                 {
-                    AppCode = connector.dataSource.appCode,
-                    HostName = string.IsNullOrEmpty(connector.hostName) ? connector.dataSource.domain : connector.hostName,
-                    UrlPath = connector.request.endpointPath,
-                    AuthHeader = connector.dataSource.securityDefinition.defaultSecurityDefinition.authorizationHeader,
-                    Token = token
+                    AppCode = connector.DataSource.appCode,
+                    HostName = string.IsNullOrEmpty(connector.HostName) ? connector.DataSource.domain : connector.HostName,
+                    UrlPath = connector.Request.EndpointPath,
+                    AuthHeader = connector.DataSource.securityDefinition.defaultSecurityDefinition.authorizationHeader,
+                    Token = token,
+                    Method = connector.Request.Method
                 };
 
-                apiInfo.UrlPath = await this.UpdateUrl(apiInfo.UrlPath, connector);
                 try
                 {
                     return await GetFromRepo<T>(apiInfo, connector, query);

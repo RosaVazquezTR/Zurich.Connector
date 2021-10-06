@@ -4,7 +4,7 @@
   "alias": "crsw.favorites",
   "info": {
     "title": "Get Research Favorites",
-    "description": "Pull Research Favorite Groups from Westlaw Next Canada",
+    "description": "Pull Research Favorite Groups from Westlaw and Westlaw Edge Canada",
     "entityType": "Favorites",
     "dataSourceId": "24",
     "version": "1.0"
@@ -20,7 +20,8 @@
   "response": {
     "schema": {
       "properties": {}
-    }
+    },
+	"type": "JSON"
   },
   "resultLocation": "FavoritesAndFrequentlyUsed",
   "filters": [],

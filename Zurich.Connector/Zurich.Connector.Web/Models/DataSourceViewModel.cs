@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Zurich.Common.Models.Connectors;
 
 namespace Zurich.Connector.Web.Models
 {
@@ -27,10 +28,15 @@ namespace Zurich.Connector.Web.Models
         /// Data source infomation url.
         /// </summary>
         public string InfoUrl { get; set; }
+
         /// <summary>
         /// Extra request context. Ex: "iManageCustomerId"
         /// </summary>
         public string ExtraRequestContext { get; set; }
+
+        /// Flag for registrationMode. ex:"Automatic"
+        /// </summary>
+        public RegistrationEntityMode RegistrationMode { get; set; }
         /// <summary>
         /// Define security definition
         /// </summary>

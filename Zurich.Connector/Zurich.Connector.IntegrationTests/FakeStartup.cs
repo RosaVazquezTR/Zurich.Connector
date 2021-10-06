@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System.IdentityModel.Tokens.Jwt;
+using Zurich.Connector.App.Services;
 using Zurich.Connector.Web;
 using Zurich.TenantData;
 
@@ -25,6 +26,7 @@ namespace Zurich.Connector.IntegrationTests
             JwtSecurityTokenHandler.DefaultMapInboundClaims = false;
 
             services.AddScoped<ISessionAccessor, IntegrationTestSessionAccessor>();
+            services.AddScoped<ICosmosService, IntegrationTestCosmosService>();
         }
 
         public override void Configure(IApplicationBuilder app, IWebHostEnvironment env)

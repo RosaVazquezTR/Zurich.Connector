@@ -115,7 +115,9 @@
   "response": {
     "schema": {
       "properties": {}
-    }
+    },
+	"type": "XML",
+    "xmlArrayAttribute": "//searchResults/detail/document"
   },
   "filters": [
     {

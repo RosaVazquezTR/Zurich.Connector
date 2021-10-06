@@ -78,7 +78,8 @@
     "response": {
         "schema": {
             "properties": {}
-        }
+        },
+		"type": "JSON"
     },
     "resultLocation": "",
     "filters": [],

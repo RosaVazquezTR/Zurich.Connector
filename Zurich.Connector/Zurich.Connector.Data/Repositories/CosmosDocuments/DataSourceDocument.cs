@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Zurich.Common.Cosmos;
+using Zurich.Common.Models.Connectors;
 using Zurich.Common.Services.Security;
 
 namespace Zurich.Connector.Data.Repositories.CosmosDocuments
@@ -38,7 +39,7 @@ namespace Zurich.Connector.Data.Repositories.CosmosDocuments
         /// <summary>
         /// Flag for registrationMode. ex:"Automatic"
         /// </summary>
-        public string registrationMode { get; set; }
+        public RegistrationEntityMode registrationMode { get; set; }
         /// <summary>
         /// Define security definition
         /// </summary>

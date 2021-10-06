@@ -35,7 +35,7 @@ namespace Zurich.Connector.App.Services
             var connector = _mapper.Map<ConnectorModel>(connectorDocument);
             if (includeDataSource && connector != null)
             {
-                connector.DataSource = await GetDataSource(connectorDocument.info.dataSourceId);
+                connector.DataSource = await GetDataSource(connectorDocument.Info.DataSourceId);
             }
             return connector;
         }
@@ -56,7 +56,7 @@ namespace Zurich.Connector.App.Services
 
             if (includeDataSource && connector != null)
             {
-                connector.DataSource = await GetDataSource(connectorDocument.info.dataSourceId);
+                connector.DataSource = await GetDataSource(connectorDocument.Info.DataSourceId);
             }
 
             return connector;

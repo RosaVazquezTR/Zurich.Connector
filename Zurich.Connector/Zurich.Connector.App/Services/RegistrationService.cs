@@ -17,7 +17,7 @@ namespace Zurich.Connector.App.Services
         /// </summary>
         /// <param name="connectorId">The connector id</param>
         /// <returns>Boolean indicating success</returns>
-        Task<bool> RegisterDataSource(string connectorId, string applicationCode, string registrationMode);
+        Task<bool> RegisterDataSource(string connectorId, string applicationCode, RegistrationEntityMode registrationMode);
 
         /// <summary>
         /// Remove user from cosmosdb
@@ -47,7 +47,7 @@ namespace Zurich.Connector.App.Services
             _OAuthService = OAuthService;
         }
 
-        public async Task<bool> RegisterDataSource(string connectorId, string applicationCode, string registrationMode)
+        public async Task<bool> RegisterDataSource(string connectorId, string applicationCode, RegistrationEntityMode registrationMode)
         {
             if (string.IsNullOrEmpty(connectorId))
             {
@@ -64,7 +64,7 @@ namespace Zurich.Connector.App.Services
             };
 
             await _cosmosService.StoreConnectorRegistration(cosmosDocument);
-            if (registrationMode == Constants.AutoregistrationMode)
+            if (registrationMode == RegistrationEntityMode.Automatic)
             {
                 bool result = await _OAuthService.AutomaticRegistration(applicationCode);
                 return result;
@@ -94,7 +94,6 @@ namespace Zurich.Connector.App.Services
         {
             var partitionKey = _sessionAccesor.UserId.ToString();
 
-            // TODO: Add filtering by registration modes
             var connections = _cosmosService.GetConnectorRegistrations(partitionKey, null);
             var connectionIds = connections.Select(connection => connection.ConnectorId);
 
