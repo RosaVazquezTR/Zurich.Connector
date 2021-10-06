@@ -1,7 +1,7 @@
 {
   "id": "16",
   "partitionkey": "ConnectorList",
-  "alias": "plcca.search",
+  "alias": "plcca-search.search",
   "info": {
     "title": "Get Search Practical law documents",
     "description": "Pull Practical law documents",

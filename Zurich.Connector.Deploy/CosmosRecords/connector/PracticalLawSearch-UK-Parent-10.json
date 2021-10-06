@@ -1,7 +1,7 @@
 {
   "id": "10",
   "partitionkey": "ConnectorList",
-  "alias": "plcuk.search",
+  "alias": "plcuk-search.search",
   "info": {
     "title": "Get Search Practical law documents - UK",
     "description": "Pull Practical law documents - UK",
