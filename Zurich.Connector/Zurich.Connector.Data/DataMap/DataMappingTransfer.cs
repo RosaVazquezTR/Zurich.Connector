@@ -1,23 +1,19 @@
-﻿using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
+﻿using AutoMapper;
+using Microsoft.Extensions.Logging;
 using System.Collections.Specialized;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Zurich.Common.Services.Security;
+using Zurich.Connector.Data.Factories;
 using Zurich.Connector.Data.Model;
 using Zurich.Connector.Data.Repositories;
-using AutoMapper;
 using Zurich.Connector.Data.Repositories.CosmosDocuments;
-using Zurich.Common.Repositories.Cosmos;
 using Zurich.Connector.Data.Services;
 
 namespace Zurich.Connector.Data.DataMap
 {
-    public class DataMappingTransfer : DataMappingBase, IDataMapping
+    public class DataMappingTransfer : AbstractDataMapping, IDataMapping
     {
-        public DataMappingTransfer(IRepository repository, IDataMappingRepository dataMappingRepository, IOAuthService oAuthService, ILogger<DataMappingTransfer> logger, ConnectorCosmosContext cosmosContext, IMapper mapper)
+        public DataMappingTransfer(IRepository repository, IDataMappingRepository dataMappingRepository, IOAuthService oAuthService, ILogger<DataMappingTransfer> logger, ConnectorCosmosContext cosmosContext, IMapper mapper, IHttpBodyFactory factory, IHttpResponseFactory httpResponseFactory)
         {
             this._repository = repository;
             this._dataMappingRepository = dataMappingRepository;
@@ -25,29 +21,31 @@ namespace Zurich.Connector.Data.DataMap
             this._logger = logger;
             this._cosmosContext = cosmosContext;
             this._mapper = mapper;
+            this._httpBodyFactory = factory;
+            this._httpResponseFactory = httpResponseFactory;
         }
 
-        public async override Task<T> Get<T>(ConnectorDocument dataTypeInformation, string transferToken, NameValueCollection query = null)
+        public async override Task<T> GetAndMapResults<T>(ConnectorDocument connectorDocument, string transferToken, NameValueCollection query = null)
         {
             T results = default(T);
 
-            if (dataTypeInformation == null || transferToken == null)
+            if (connectorDocument == null || transferToken == null)
             {
                 return results;
             }
 
             ApiInformation apiInfo = new ApiInformation()
             {
-                AppCode = dataTypeInformation.dataSource.appCode,
-                HostName = dataTypeInformation.hostName,
-                UrlPath = dataTypeInformation.request.endpointPath,
-                AuthHeader = dataTypeInformation.dataSource.securityDefinition.defaultSecurityDefinition.authorizationHeader,
-                Token = null
+                AppCode = connectorDocument.DataSource.appCode,
+                HostName = connectorDocument.HostName,
+                UrlPath = connectorDocument.Request.EndpointPath,
+                AuthHeader = connectorDocument.DataSource.securityDefinition.defaultSecurityDefinition.authorizationHeader,
+                Token = null,
+                Method = connectorDocument.Request.Method
             };
-            apiInfo.UrlPath = await this.UpdateUrl(apiInfo.UrlPath, dataTypeInformation, transferToken);
 
             var transferTokenParam = new NameValueCollection() { { "transferToken", transferToken } };
-            return await GetFromRepo<T>(apiInfo, dataTypeInformation, transferTokenParam);
+            return await GetFromRepo<T>(apiInfo, connectorDocument, transferTokenParam);
 
         }
     }

@@ -13,8 +13,6 @@
     "request": {
         "endpointPath": "https://api-test.thomsonreuters.com:443/practicallaw/v4/federatedsearch",
         "method": "GET",
-        "responseContentType": "XML",
-        "xmlArrayAttribute": "//searchResults/detail/document",
         "parameters": [
             {
                 "cdmName": "Query",
@@ -115,7 +113,9 @@
     "response": {
         "schema": {
             "properties": {}
-        }
+        },
+        "type": "XML",
+        "xmlArrayAttribute": "//searchResults/detail/document"
     },
     "filters": [
         {

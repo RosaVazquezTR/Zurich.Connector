@@ -37,6 +37,28 @@
         "required": false,
         "type": "string",
         "defaultValue": "Name,CreatedDateTime,LastModifiedDateTime,LastModifiedBy,WebUrl,ParentReference"
+      },
+	  {
+        "cdmName": "ResultSize",
+        "name": "requests.[].size",
+        "inClause": "Body",
+        "required": true,
+        "type": "string",
+        "defaultValue": "25",
+        "tags": [
+          "pagination"
+        ]
+      },
+	  {
+        "cdmName": "Offset",
+        "name": "requests.[].from",
+        "inClause": "Body",
+        "required": true,
+        "type": "string",
+        "defaultValue": "0",
+        "tags": [
+          "pagination"
+        ]
       }
     ],
     "sorting": {
@@ -46,7 +68,8 @@
   "response": {
     "schema": {
       "properties": {}
-    }
+    },
+	"type": "JSON"
   },
   "filters": [],
   "resultLocation": "value.hitsContainers.[]",

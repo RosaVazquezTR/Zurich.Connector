@@ -42,9 +42,9 @@ namespace Zurich.Connector.IntegrationTests
                 }
                 if (connector != null)
                 {
-                    if (string.IsNullOrEmpty(entityType) || connector.info.entityType.ToString() == entityType)
+                    if (string.IsNullOrEmpty(entityType) || connector.Info.EntityType.ToString() == entityType)
                     {
-                        if (!isParent || string.IsNullOrEmpty(connector.info.subType) || connector.info.subType == "Parent")
+                        if (!isParent || string.IsNullOrEmpty(connector.Info.SubType) || connector.Info.SubType == "Parent")
                         {
                             connectors.Add(connector);
                         }
@@ -87,11 +87,11 @@ namespace Zurich.Connector.IntegrationTests
             // Arrange
             var request = $"/Connectors/{connector.Id}/Data";
             // TODO: remove when we can find host and dont have to pass in
-            if (connector.info.dataSourceId == "10")
+            if (connector.Info.DataSourceId == "10")
             {
                 request = $"/Connectors/{connector.Id}/Data?Hostname=cloudimanage.com";
             }
-            if (connector.info.dataSourceId != "10")
+            if (connector.Info.DataSourceId != "10")
             {
                 //Act
                 var response = await _client.GetAsync(request);
@@ -149,12 +149,12 @@ namespace Zurich.Connector.IntegrationTests
             // Arrange
             var request = $"/Connectors/{connector.Id}/Data";
             // TODO: remove when we can find host and dont have to pass in
-            if (connector.info.dataSourceId == "10")
+            if (connector.Info.DataSourceId == "10")
             {
                 request = $"/Connectors/{connector.Id}/Data?Hostname=cloudimanage.com";
             }
 
-            if (connector.info.dataSourceId != "10")
+            if (connector.Info.DataSourceId != "10")
             {
                 //Act
                 var response = await _client.GetAsync(request);

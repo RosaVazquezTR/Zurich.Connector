@@ -36,5 +36,10 @@ namespace Zurich.Connector.Data.Model
 		/// The HostName of the product we are trying to call
 		/// </summary>
 		public string HostName { get; set; }
+
+		/// <summary>
+		/// Type of http method that the request will be.
+		/// </summary>
+		public string Method { get; set; }
 	}
 }

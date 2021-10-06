@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Zurich.Common.Models.Connectors;
 using Zurich.Common.Services.Security;
 
 namespace Zurich.Connector.App.Model
@@ -51,7 +52,7 @@ namespace Zurich.Connector.App.Model
         public string ExtraRequestContext { get; set; }
         /// Flag for registrationMode. ex:"Automatic"
         /// </summary>
-        public string RegistrationMode { get; set; }
+        public RegistrationEntityMode RegistrationMode { get; set; }
         /// <summary>
         /// Define security definition
         /// </summary>

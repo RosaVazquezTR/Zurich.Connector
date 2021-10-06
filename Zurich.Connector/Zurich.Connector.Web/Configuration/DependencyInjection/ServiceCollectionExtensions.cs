@@ -1,17 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using AutoMapper;
-using IdentityModel;
+﻿using IdentityModel;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Polly;
+using System;
+using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using Zurich.Common;
 using Zurich.Common.Exceptions;
 using Zurich.Common.Middleware;
@@ -19,19 +17,19 @@ using Zurich.Common.Models.Cosmos;
 using Zurich.Common.Models.HighQ;
 using Zurich.Common.Models.OAuth;
 using Zurich.Common.Repositories.Cosmos;
-using Zurich.Common.Services;
 using Zurich.Common.Services.Security;
 using Zurich.Connector.App.Services;
+using Zurich.Connector.App.Utils;
 using Zurich.Connector.Data.Repositories;
 using Zurich.Connector.Data.Services;
 using Zurich.Connector.Web.Configuration;
-using Zurich.TenantData;
+
 namespace Microsoft.Extensions.DependencyInjection
 {
-	/// <summary>
-	/// Represents an extension class used for bootstrapping the required services
-	/// </summary>
-	public static class ServiceCollectionExtensions
+    /// <summary>
+    /// Represents an extension class used for bootstrapping the required services
+    /// </summary>
+    public static class ServiceCollectionExtensions
 	{
 		/// <summary>
 		/// Adds partner app authentication related services
@@ -65,6 +63,7 @@ namespace Microsoft.Extensions.DependencyInjection
 			services.AddScoped<IRegistrationService, RegistrationService>();
 			services.AddScoped<IOAuthServices, OAuthServices>();
 			services.AddScoped<IOAuthRepository, OAuthRepository>();
+			services.AddScoped<IConnectorDataService, ConnectorDataService>();
 		}
 
 		/// <summary>

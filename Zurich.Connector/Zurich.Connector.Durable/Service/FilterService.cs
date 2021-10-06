@@ -81,7 +81,7 @@ namespace Zurich.Connector.Durable.Service
 			try
 			{
 				var connectorDocument = _mapper.Map<ConnectorDocument>(connector);
-				var filters = connectorDocument.filters.FirstOrDefault();
+				var filters = connectorDocument.Filters.FirstOrDefault();
 				if (filters != null)
 				{
 					filters.FilterList = _mapper.Map<List<FilterList>>(dynamicFilter);

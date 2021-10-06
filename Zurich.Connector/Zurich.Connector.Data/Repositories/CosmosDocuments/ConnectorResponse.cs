@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Zurich.Connector.Data.Model;
 
 namespace Zurich.Connector.Data.Repositories.CosmosDocuments
 {
@@ -14,7 +15,17 @@ namespace Zurich.Connector.Data.Repositories.CosmosDocuments
         /// <summary>
         /// Define connector response schema
         /// </summary>
-        public ConnectorReponseSchema schema { get; set; }
+        public ConnectorReponseSchema Schema { get; set; }
+
+        /// <summary>
+        /// Define connector response Type
+        /// </summary>
+        public ResponseContentType Type { get; set; }
+
+        /// <summary>
+        /// Indicates if there is any array in the xml. 
+        /// </summary>
+        public string XmlArrayAttribute { get; set; }
     }
 
     /// <summary>

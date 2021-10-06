@@ -22,6 +22,7 @@ namespace Zurich.Connector.Tests.ControllerTests
 	public class ConnectorTests
 	{
 		private Mock<IConnectorService> _mockConnectorservice;
+		private Mock<IConnectorDataService> _mockConnectorDataService;
 		private IMapper _mapper;
 		private Mock<IMapper> _mockmapper;
 
@@ -29,6 +30,7 @@ namespace Zurich.Connector.Tests.ControllerTests
 		public void TestInitialize()
 		{
 			_mockConnectorservice = new Mock<IConnectorService>();
+			_mockConnectorDataService = new Mock<IConnectorDataService>();
 
 			var mapConfig = new MapperConfiguration(cfg =>
 			{
@@ -231,7 +233,7 @@ namespace Zurich.Connector.Tests.ControllerTests
 		public async Task CallConnectorData()
 		{
 			// ARRANGE
-			_mockConnectorservice.Setup(x => x.GetConnectorData(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(),It.IsAny<Dictionary<string, string>>(), It.IsAny<bool>())).Returns(Task.FromResult<dynamic>(TwoDocumentsListJson));
+			_mockConnectorDataService.Setup(x => x.GetConnectorData(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(),It.IsAny<Dictionary<string, string>>(), It.IsAny<bool>())).Returns(Task.FromResult<dynamic>(TwoDocumentsListJson));
 
 			ConnectorsController connector = CreateConnectorsController();
 
@@ -239,7 +241,7 @@ namespace Zurich.Connector.Tests.ControllerTests
 			var response = await connector.ConnectorData("fakeId", "fakeHost", null,true);
 
 			// ASSERT
-			_mockConnectorservice.Verify(x => x.GetConnectorData(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<bool>()), Times.Exactly(1));
+			_mockConnectorDataService.Verify(x => x.GetConnectorData(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<bool>()), Times.Exactly(1));
 			var result = (ContentResult)response.Result;
 			Assert.AreEqual(StatusCodes.Status200OK, result.StatusCode);
 		}
@@ -248,7 +250,7 @@ namespace Zurich.Connector.Tests.ControllerTests
 		public async Task CallConnectorDataAndGetNullResponse()
 		{
 			// ARRANGE
-			_mockConnectorservice.Setup(x => x.GetConnectorData(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<bool>())).Returns(Task.FromResult<dynamic>(null));
+			_mockConnectorDataService.Setup(x => x.GetConnectorData(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<bool>())).Returns(Task.FromResult<dynamic>(null));
 
 			ConnectorsController connector = CreateConnectorsController();
 
@@ -256,7 +258,7 @@ namespace Zurich.Connector.Tests.ControllerTests
             var response = await connector.ConnectorData("fakeId", "fakeHost", null, true);
 
 			// ASSERT
-			_mockConnectorservice.Verify(x => x.GetConnectorData(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<bool>()), Times.Exactly(1));
+			_mockConnectorDataService.Verify(x => x.GetConnectorData(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<bool>()), Times.Exactly(1));
 			var result = response.Value;
 			Assert.AreEqual("Connector or data not found", result.Message);
 		}
@@ -269,7 +271,7 @@ namespace Zurich.Connector.Tests.ControllerTests
             Zurich.Common.Models.Connectors.ConnectorFilterModel filters = new Zurich.Common.Models.Connectors.ConnectorFilterModel();
 			_mockConnectorservice.Setup(x => x.GetConnectors(It.IsAny<Zurich.Common.Models.Connectors.ConnectorFilterModel>())).Returns(Task.FromResult(connections.ToList()));
 
-            ConnectorsController connector = new ConnectorsController(_mockConnectorservice.Object, null, _mapper,null);
+            ConnectorsController connector = new ConnectorsController(_mockConnectorservice.Object, _mockConnectorDataService.Object, null, _mapper,null);
 
 			// ACT
 			var response = await connector.Connectors(filters);
@@ -317,7 +319,7 @@ namespace Zurich.Connector.Tests.ControllerTests
 		public async Task CallConnectorDatawithStaticFilters()
 		{
 			// ARRANGE
-			_mockConnectorservice.Setup(x => x.GetConnectorData(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<bool>())).Returns(Task.FromResult<dynamic>(StaticFilterJson));
+			_mockConnectorDataService.Setup(x => x.GetConnectorData(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<bool>())).Returns(Task.FromResult<dynamic>(StaticFilterJson));
 
 			ConnectorsController connector = CreateConnectorsController();
 
@@ -325,7 +327,7 @@ namespace Zurich.Connector.Tests.ControllerTests
 			var response = await connector.ConnectorData("fakeId", "fakeHost", null, true);
 
 			// ASSERT
-			_mockConnectorservice.Verify(x => x.GetConnectorData(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<bool>()), Times.Exactly(1));
+			_mockConnectorDataService.Verify(x => x.GetConnectorData(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<bool>()), Times.Exactly(1));
 			var result = (ContentResult)response.Result;
 			Assert.AreEqual(StatusCodes.Status200OK, result.StatusCode);
 		}
@@ -341,7 +343,7 @@ namespace Zurich.Connector.Tests.ControllerTests
 				HttpContext = httpContext,
 			};
 
-			return new ConnectorsController(_mockConnectorservice.Object, null, _mockmapper.Object,null) { ControllerContext = controllerContext };
+			return new ConnectorsController(_mockConnectorservice.Object, _mockConnectorDataService.Object, null, _mockmapper.Object,null) { ControllerContext = controllerContext };
 		}
 	}
 }

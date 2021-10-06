@@ -11,6 +11,11 @@ using System.Threading.Tasks;
 using Zurich.Connector.Data.DataMap;
 using Zurich.Connector.Data.Services;
 using Zurich.Connector.Data.Repositories.CosmosDocuments;
+using Zurich.Connector.Data.Factories;
+using Zurich.Connector.App.Services;
+using AutoMapper;
+using Zurich.Connector.App;
+using Zurich.Connector.App.Model;
 
 namespace Zurich.Connector.Tests.ServiceTests
 {
@@ -22,6 +27,8 @@ namespace Zurich.Connector.Tests.ServiceTests
         private Mock<ILogger<IManageConnectorOperations>> _mockLogger;
         private Mock<IDataMapping> _mockDataMapping;
         private Mock<IDataMappingFactory> _mockDataMappingFactory;
+        private Mock<ICosmosService> _mockCosmosService;
+        private IMapper _mapper;
 
         [TestInitialize]
         public void Init()
@@ -29,6 +36,13 @@ namespace Zurich.Connector.Tests.ServiceTests
             _mockLogger = new Mock<ILogger<IManageConnectorOperations>>();
             _mockDataMappingFactory = new Mock<IDataMappingFactory>();
             _mockDataMapping = new Mock<IDataMapping>();
+            _mockCosmosService = new Mock<ICosmosService>();
+
+            var mapConfig = new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile(new ServiceMappingRegistrar());
+            });
+            _mapper = mapConfig.CreateMapper();
         }
 
         [TestMethod]
@@ -37,15 +51,17 @@ namespace Zurich.Connector.Tests.ServiceTests
             //Arrange
             var mockDocuments = MockConnectorData.SetupDocumentsModel();
             var hostName = "my.cookieapp.com";
+            var appCode = "";
             var expectedUrl = $"https://{hostName}/work/link/d/1";
             var customerId = "1";
             //Act
             var token = new JObject();
             token["customer_id"] = customerId;
-            _mockDataMapping.Setup(x => x.Get<JToken>(It.IsAny<ConnectorDocument>(), string.Empty, null)).Returns(Task.FromResult((JToken)token));
-            _mockDataMappingFactory.Setup(x => x.GetMapper(Data.Model.AuthType.OAuth2)).Returns(_mockDataMapping.Object);
-            var service = new IManageConnectorOperations(_mockLogger.Object, _mockDataMappingFactory.Object);
-            var result = (await service.SetItemLink(Data.Model.ConnectorEntityType.Document, mockDocuments, hostName) as JObject);
+            _mockDataMapping.Setup(x => x.GetAndMapResults<JToken>(It.IsAny<ConnectorDocument>(), string.Empty, null)).Returns(Task.FromResult((JToken)token));
+            _mockDataMappingFactory.Setup(x => x.GetImplementation(Data.Model.AuthType.OAuth2.ToString())).Returns(_mockDataMapping.Object);
+            _mockCosmosService.Setup(x => x.GetConnector("1", true)).Returns(Task.FromResult(new ConnectorModel()));
+            var service = new IManageConnectorOperations(_mockLogger.Object, _mockDataMappingFactory.Object, _mapper, _mockCosmosService.Object);
+            var result = (await service.SetItemLink(Data.Model.ConnectorEntityType.Document, mockDocuments, appCode, hostName) as JObject);
             //Assert
             result.Should().NotBeNull();
             var doc = result["Items"][0] as JObject;
@@ -59,13 +75,15 @@ namespace Zurich.Connector.Tests.ServiceTests
             //Arrange
             var mockDocuments = MockConnectorData.SetupDocumentsModel();
             var customerId = "2";
+            var appCode = "";
             //Act
             var token = new JObject();
             token["customer_id"] = customerId;
-            _mockDataMapping.Setup(x => x.Get<JToken>(It.IsAny<ConnectorDocument>(), string.Empty, null)).Returns(Task.FromResult((JToken)token));
-            _mockDataMappingFactory.Setup(x => x.GetMapper(Data.Model.AuthType.OAuth2)).Returns(_mockDataMapping.Object);
-            var service = new IManageConnectorOperations(_mockLogger.Object, _mockDataMappingFactory.Object);
-            var result =  (await service.SetItemLink(Data.Model.ConnectorEntityType.Document, mockDocuments, null) as JObject);
+            _mockDataMapping.Setup(x => x.GetAndMapResults<JToken>(It.IsAny<ConnectorDocument>(), string.Empty, null)).Returns(Task.FromResult((JToken)token));
+            _mockDataMappingFactory.Setup(x => x.GetImplementation(Data.Model.AuthType.OAuth2.ToString())).Returns(_mockDataMapping.Object);
+            _mockCosmosService.Setup(x => x.GetConnector("1", true)).Returns(Task.FromResult(new ConnectorModel()));
+            var service = new IManageConnectorOperations(_mockLogger.Object, _mockDataMappingFactory.Object, _mapper, _mockCosmosService.Object);
+            var result = (await service.SetItemLink(Data.Model.ConnectorEntityType.Document, mockDocuments, appCode, null) as JObject);
             //Assert
             _mockLogger.Verify(ml => ml.Log(LogLevel.Error, It.IsAny<EventId>(), It.Is<It.IsAnyType>((v, _) => v.ToString().StartsWith("Unable to parse")), null, It.IsAny<Func<It.IsAnyType, Exception, string>>()));
             result.Should().NotBeNull();
@@ -79,6 +97,7 @@ namespace Zurich.Connector.Tests.ServiceTests
             //Arrange
             var mockDocuments = MockConnectorData.SetupDocumentsModel();
             var hostName = "my.cookieapp.com";
+            var appCode = "";
             var customerId = "3";
             var libraryId = "TestLibrary";
             var docId = "1";
@@ -87,10 +106,11 @@ namespace Zurich.Connector.Tests.ServiceTests
             //Act
             var token = new JObject();
             token["customer_id"] = customerId;
-            _mockDataMapping.Setup(x => x.Get<JToken>(It.IsAny<ConnectorDocument>(), string.Empty, null)).Returns(Task.FromResult((JToken)token));
-            _mockDataMappingFactory.Setup(x => x.GetMapper(Data.Model.AuthType.OAuth2)).Returns(_mockDataMapping.Object);           
-            var service = new IManageConnectorOperations(_mockLogger.Object, _mockDataMappingFactory.Object);
-            var result = (await service.SetItemLink(Data.Model.ConnectorEntityType.Document, mockDocuments, hostName) as JObject);            
+            _mockDataMapping.Setup(x => x.GetAndMapResults<JToken>(It.IsAny<ConnectorDocument>(), string.Empty, null)).Returns(Task.FromResult((JToken)token));
+            _mockDataMappingFactory.Setup(x => x.GetImplementation(Data.Model.AuthType.OAuth2.ToString())).Returns(_mockDataMapping.Object);
+            _mockCosmosService.Setup(x => x.GetConnector("1", true)).Returns(Task.FromResult(new ConnectorModel()));
+            var service = new IManageConnectorOperations(_mockLogger.Object, _mockDataMappingFactory.Object, _mapper, _mockCosmosService.Object);
+            var result = (await service.SetItemLink(Data.Model.ConnectorEntityType.Document, mockDocuments, appCode, hostName) as JObject);
             //Assert
             result.Should().NotBeNull();
             var doc = result["Items"][0] as JObject;

@@ -20,7 +20,8 @@
   "response": {
     "schema": {
       "properties": {}
-    }
+    },
+	"type": "JSON"
   },
   "resultLocation": "data.user",
   "filters": [],

@@ -24,6 +24,7 @@ using Zurich.Connector.App;
 using Zurich.Connector.App.Services;
 using Zurich.Connector.App.Services.DataSources;
 using System.Text.Json.Serialization;
+using Zurich.Connector.Data.Factories;
 
 namespace Zurich.Connector.Web
 {
@@ -70,7 +71,12 @@ namespace Zurich.Connector.Web
             services.AddControllers()
                     .AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
             services.AddScoped<IDataMappingFactory, DataMappingFactory>();
-            services.AddScoped<IDataMapping, DataMapping>();
+            services.AddScoped<DataMapping>();
+            services.AddScoped<IDataMapping, DataMapping>(s => s.GetService<DataMapping>());
+            services.AddScoped<DataMappingOAuth>();
+            services.AddScoped<IDataMapping, DataMappingOAuth>(s => s.GetService<DataMappingOAuth>());
+            services.AddScoped<DataMappingTransfer>();
+            services.AddScoped<IDataMapping, DataMappingTransfer>(s => s.GetService<DataMappingTransfer>());
             services.AddScoped<IDataMappingService, DataMappingService>();
             services.AddScoped<IConnectorService, ConnectorService>();
             services.AddScoped<DataMappingOAuth>();
@@ -80,6 +86,17 @@ namespace Zurich.Connector.Web
             services.AddScoped<IConnectorDataSourceOperations, IManageConnectorOperations>();
             services.AddScoped<IConnectorDataSourceOperations, PracticalLawConnectorOperation>();
             services.AddScoped<IConnectorDataSourceOperationsFactory, ConnectorDataSourceOperationsFactory>();
+            services.AddScoped<IHttpBodyFactory, HttpBodyFactory>();
+            services.AddScoped<HttpGetBodyService>();
+            services.AddScoped<IHttpBodyService, HttpGetBodyService>(s => s.GetService<HttpGetBodyService>());
+            services.AddScoped<HttpPostBodyService>();
+            services.AddScoped<IHttpBodyService, HttpPostBodyService>(s => s.GetService<HttpPostBodyService>());
+            services.AddScoped<IHttpResponseFactory, HttpResponseFactory>();
+            services.AddScoped<HttpJsonResponseService>();
+            services.AddScoped<IHttpResponseService, HttpJsonResponseService>(s => s.GetService<HttpJsonResponseService>());
+            services.AddScoped<HttpXmlResponseService>();
+            services.AddScoped<IHttpResponseService, HttpXmlResponseService>(s => s.GetService<HttpXmlResponseService>());
+
 
             services.AddServices();
             services.AddDiagnostics();

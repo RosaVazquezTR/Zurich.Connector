@@ -6,6 +6,7 @@
     "appcode": "MsGraph",
     "domain": "graph.microsoft.com",
     "infoURL": "",
+    "registrationMode ": "Manual",
     "extraRequestContext": "",
     "securityDefinition": {
         "type": "oauth2",

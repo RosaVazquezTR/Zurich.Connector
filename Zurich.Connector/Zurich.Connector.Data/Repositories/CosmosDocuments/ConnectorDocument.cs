@@ -23,43 +23,43 @@ namespace Zurich.Connector.Data.Repositories.CosmosDocuments
         /// <summary>
         /// Connector partition key
         /// </summary>
-        public string partitionkey { get { return CosmosConstants.ConnectorPartitionKey; } }
+        public string PartitionKey { get { return CosmosConstants.ConnectorPartitionKey; } }
         /// <summary>
         /// Connector Info like title, description etc.
         /// </summary>
-        public ConnectorInfo info { get; set; }
+        public ConnectorInfo Info { get; set; }
         /// <summary>
         /// Request details
         /// </summary>
-        public ConnectorRequest request { get; set; }
+        public ConnectorRequest Request { get; set; }
         /// <summary>
         /// Response details
         /// </summary>
-        public ConnectorResponse response { get; set; }
+        public ConnectorResponse Response { get; set; }
         /// <summary>
         /// Filter details
         /// </summary>
-        public List<ConnectorFilter> filters { get; set; }
+        public List<ConnectorFilter> Filters { get; set; }
         /// <summary>
         /// Pagination details.
         /// </summary>
-        public PaginationInfo pagination { get; set; }
+        public PaginationInfo Pagination { get; set; }
         /// <summary>
         /// CDM Mapping of properties
         /// </summary>
-        public CDMMapping cdmMapping { get; set; }
+        public CDMMapping CdmMapping { get; set; }
         /// <summary>
         /// DataSource Document
         /// </summary>
-        public DataSourceDocument dataSource { get; set; }
+        public DataSourceDocument DataSource { get; set; }
         /// <summary>
         /// Result Location
         /// </summary>
-        public string resultLocation { get; set; }
+        public string ResultLocation { get; set; }
         /// <summary>
         /// Host name
         /// </summary>
-        public string hostName { get; set; }
+        public string HostName { get; set; }
     }
 
     public class ConnectorInfo
@@ -67,31 +67,31 @@ namespace Zurich.Connector.Data.Repositories.CosmosDocuments
         /// <summary>
         /// Connector title
         /// </summary>
-        public string title { get; set; }
+        public string Title { get; set; }
         /// <summary>
         /// Connector description
         /// </summary>
-        public string description { get; set; }
+        public string Description { get; set; }
         /// <summary>
         /// Entity type like Document, Search etc.
         /// </summary>
-        public ConnectorEntityType entityType { get; set; }
+        public ConnectorEntityType EntityType { get; set; }
         /// <summary>
         /// Data Source ID
         /// </summary>
-        public string dataSourceId { get; set; }
+        public string DataSourceId { get; set; }
         /// <summary>
         /// Version
         /// </summary>
-        public string version { get; set; }
+        public string Version { get; set; }
         /// <summary>
         /// Flag to indicate if a dynamic filter is available
         /// </summary>
-        public bool? isDynamicFilter { get; set; }
+        public bool? IsDynamicFilter { get; set; }
         /// <summary>
         /// Used to determine if a child or Parent
         /// </summary>
-        public string subType { get; set; }
+        public string SubType { get; set; }
     }
 
     /// <summary>
@@ -99,11 +99,17 @@ namespace Zurich.Connector.Data.Repositories.CosmosDocuments
     /// </summary>
     public class PaginationInfo
     {
-        // Indicates id pagination is available.
-        public bool available { get; set; }
-        // Pagination type.
-        public string paginationType { get; set; }
-        // Set true if the offset indexing is zero based.
-        public bool isZeroBasedOffset { get; set; }
+        /// <summary>
+        /// Indicates id pagination is available.
+        /// </summary>
+        public bool Available { get; set; }
+        /// <summary>
+        /// Pagination type.
+        /// </summary>
+        public string PaginationType { get; set; }
+        /// <summary>
+        /// Set true if the offset indexing is zero based.
+        /// </summary>
+        public bool IsZeroBasedOffset { get; set; }
     }
 }
