@@ -144,6 +144,7 @@ namespace Zurich.Connector.IntegrationTests
                 connector.Alias.Should().NotBeNull();
                 connector.Request.Should().NotBeNull();
                 connector.Request.EndpointPath.Should().NotBeNull();
+                connector.Request.EndpointPath.Should().StartWith("/");
                 connector.Request.Method.Should().ContainAny(requestMethodTypes);
                 foreach (var param in connector.Request.Parameters)
                 {

@@ -31,6 +31,7 @@ namespace Zurich.Connector.Tests
 		private Mock<IHttpBodyFactory> _mockHttpBodyFactory;
 		private Mock<IHttpResponseFactory> _mockHttpResponseFactory;
 		private Mock<IMapper> _mockMapper;
+		private OAuthOptions _fakeOAuthOptions;
 
 		[TestInitialize]
 		public void TestInitialize()
@@ -42,6 +43,9 @@ namespace Zurich.Connector.Tests
 			_mockLoggerTransfer = new Mock<ILogger<DataMappingTransfer>>();
 			_mockHttpBodyFactory = new Mock<IHttpBodyFactory>();
 			_mockHttpResponseFactory = new Mock<IHttpResponseFactory>();
+			_fakeOAuthOptions = new OAuthOptions();
+
+			_fakeOAuthOptions.Connections = new Dictionary<string, OAuthConnection>();
 
 			// feels like this won't change
 			AppToken token = new AppToken() { access_token = "fakeToken" };
@@ -325,7 +329,7 @@ namespace Zurich.Connector.Tests
 			mockResponseService.Setup(x => x.GetJTokenResponse(It.IsAny<string>(), It.IsAny<ConnectorResponse>())).Returns(JToken.Parse(TwoDocumentsJson));
 			_mockHttpResponseFactory.Setup(x => x.GetImplementation(It.IsAny<string>())).Returns(mockResponseService.Object);
 
-			DataMappingOAuth documentMap = new DataMappingOAuth(_mockRepository.Object, _mockDataMappingRepository.Object, _mockOAuthService.Object, _mockLoggerOAuth.Object, _mockCosmosDocumentReader.Object, _mockMapper.Object, _mockHttpBodyFactory.Object, _mockHttpResponseFactory.Object);
+			DataMappingOAuth documentMap = new DataMappingOAuth(_mockRepository.Object, _mockDataMappingRepository.Object, _mockOAuthService.Object, _mockLoggerOAuth.Object, _mockCosmosDocumentReader.Object, _mockMapper.Object, _mockHttpBodyFactory.Object, _mockHttpResponseFactory.Object, _fakeOAuthOptions);
 
 			// ACT
 			dynamic documents = await documentMap.GetAndMapResults<dynamic>(connectorDocument, null);
@@ -408,7 +412,7 @@ namespace Zurich.Connector.Tests
 			mockResponseService.Setup(x => x.GetJTokenResponse(It.IsAny<string>(), It.IsAny<ConnectorResponse>())).Returns(JToken.Parse(TwoDocumentsListJson));
 			_mockHttpResponseFactory.Setup(x => x.GetImplementation(It.IsAny<string>())).Returns(mockResponseService.Object);
 
-			DataMappingOAuth documentMap = new DataMappingOAuth(_mockRepository.Object, _mockDataMappingRepository.Object, _mockOAuthService.Object, _mockLoggerOAuth.Object, _mockCosmosDocumentReader.Object, _mockMapper.Object, _mockHttpBodyFactory.Object, _mockHttpResponseFactory.Object);
+			DataMappingOAuth documentMap = new DataMappingOAuth(_mockRepository.Object, _mockDataMappingRepository.Object, _mockOAuthService.Object, _mockLoggerOAuth.Object, _mockCosmosDocumentReader.Object, _mockMapper.Object, _mockHttpBodyFactory.Object, _mockHttpResponseFactory.Object, _fakeOAuthOptions);
 
 			// ACT
 			dynamic documents = await documentMap.GetAndMapResults<dynamic>(connectorDocument);
@@ -482,7 +486,7 @@ namespace Zurich.Connector.Tests
 			mockResponseService.Setup(x => x.GetJTokenResponse(It.IsAny<string>(), It.IsAny<ConnectorResponse>())).Returns(JToken.Parse(TwoDocumentsJson));
 			_mockHttpResponseFactory.Setup(x => x.GetImplementation(It.IsAny<string>())).Returns(mockResponseService.Object);
 
-			DataMappingTransfer documentMap = new DataMappingTransfer(_mockRepository.Object, _mockDataMappingRepository.Object, _mockOAuthService.Object, _mockLoggerTransfer.Object, _mockCosmosDocumentReader.Object, _mockMapper.Object, _mockHttpBodyFactory.Object, _mockHttpResponseFactory.Object);
+			DataMappingTransfer documentMap = new DataMappingTransfer(_mockRepository.Object, _mockDataMappingRepository.Object, _mockOAuthService.Object, _mockLoggerTransfer.Object, _mockCosmosDocumentReader.Object, _mockMapper.Object, _mockHttpBodyFactory.Object, _mockHttpResponseFactory.Object, _fakeOAuthOptions);
 
 			// ACT
 			dynamic documents = await documentMap.GetAndMapResults<dynamic>(connectorDocument, "fakeTransferToken");
@@ -592,10 +596,10 @@ namespace Zurich.Connector.Tests
 			mockResponseService.Setup(x => x.GetJTokenResponse(It.IsAny<string>(), It.IsAny<ConnectorResponse>())).Returns(JToken.Parse(TwoDocumentsJson));
 			_mockHttpResponseFactory.Setup(x => x.GetImplementation(It.IsAny<string>())).Returns(mockResponseService.Object);
 
-			DataMappingTransfer documentMap = new DataMappingTransfer(_mockRepository.Object, _mockDataMappingRepository.Object, _mockOAuthService.Object, _mockLoggerTransfer.Object, _mockCosmosDocumentReader.Object, _mockMapper.Object, _mockHttpBodyFactory.Object, _mockHttpResponseFactory.Object);
+			DataMappingTransfer documentMap = new DataMappingTransfer(_mockRepository.Object, _mockDataMappingRepository.Object, _mockOAuthService.Object, _mockLoggerTransfer.Object, _mockCosmosDocumentReader.Object, _mockMapper.Object, _mockHttpBodyFactory.Object, _mockHttpResponseFactory.Object, _fakeOAuthOptions);
 
-            // ACT
-            dynamic documents = await documentMap.GetAndMapResults<dynamic>(connectorDocument1, "fakeTransferToken");
+			// ACT
+			dynamic documents = await documentMap.GetAndMapResults<dynamic>(connectorDocument1, "fakeTransferToken");
 
             // ASSERT
             Assert.IsNotNull(documents);

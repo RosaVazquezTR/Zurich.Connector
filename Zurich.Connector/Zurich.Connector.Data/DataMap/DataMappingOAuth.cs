@@ -4,6 +4,7 @@ using System;
 using System.Collections.Specialized;
 using System.Security.Authentication;
 using System.Threading.Tasks;
+using Zurich.Common.Models.OAuth;
 using Zurich.Common.Services.Security;
 using Zurich.Connector.Data.Factories;
 using Zurich.Connector.Data.Model;
@@ -15,7 +16,7 @@ namespace Zurich.Connector.Data.DataMap
 {
     public class DataMappingOAuth : AbstractDataMapping, IDataMapping
     {
-        public DataMappingOAuth(IRepository repository, IDataMappingRepository dataMappingRepository, IOAuthService oAuthService, ILogger<DataMappingOAuth> logger, ConnectorCosmosContext cosmosContext, IMapper mapper, IHttpBodyFactory factory, IHttpResponseFactory httpResponseFactory)
+        public DataMappingOAuth(IRepository repository, IDataMappingRepository dataMappingRepository, IOAuthService oAuthService, ILogger<DataMappingOAuth> logger, ConnectorCosmosContext cosmosContext, IMapper mapper, IHttpBodyFactory factory, IHttpResponseFactory httpResponseFactory, OAuthOptions oAuthOptions)
         {
             this._repository = repository;
             this._dataMappingRepository = dataMappingRepository;
@@ -25,6 +26,7 @@ namespace Zurich.Connector.Data.DataMap
             this._mapper = mapper;
             this._httpBodyFactory = factory;
             this._httpResponseFactory = httpResponseFactory;
+            this._oAuthOptions = oAuthOptions;
         }
 
         public async override Task<T> GetAndMapResults<T>(ConnectorDocument connector, string transferToken = null, NameValueCollection query = null)
@@ -46,6 +48,8 @@ namespace Zurich.Connector.Data.DataMap
                     Token = token,
                     Method = connector.Request.Method
                 };
+
+                CleanUpApiInformation(apiInfo);
 
                 try
                 {

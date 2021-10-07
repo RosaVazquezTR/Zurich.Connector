@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -8,7 +7,6 @@ using System.Collections.Specialized;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using System.Xml;
 using Zurich.Common.Models.OAuth;
 using Zurich.Common.Services.Security;
 using Zurich.Connector.Data.Factories;
@@ -30,6 +28,7 @@ namespace Zurich.Connector.Data.DataMap
 		protected IMapper _mapper;
 		protected IHttpBodyFactory _httpBodyFactory;
 		protected IHttpResponseFactory _httpResponseFactory;
+		protected OAuthOptions _oAuthOptions;
 
 
 		public async virtual Task<T> GetAndMapResults<T>(ConnectorDocument dataTypeInformation, string transferToken = null, NameValueCollection query = null)
@@ -114,6 +113,24 @@ namespace Zurich.Connector.Data.DataMap
 			}
 
 			return default(T);
+		}
+
+		/// <summary>
+		/// Will make sure ApiInformation is setup correctly
+		/// </summary>
+		/// <param name="info">The apiInformation to check</param>
+		public void CleanUpApiInformation(ApiInformation info)
+        {
+			// can probably get rid of this when OAuth is setup
+			if (string.IsNullOrEmpty(info.HostName))
+			{ 
+				if (_oAuthOptions.Connections.ContainsKey(info.AppCode))
+				{
+					var appCodeBaseUrl = _oAuthOptions.Connections[info.AppCode].BaseUrl;
+					//because we use a url builder we need to drop the https, however we need this for the token information
+					info.HostName = appCodeBaseUrl.Replace("https://", "");
+				}
+			}
 		}
 
 		private async Task<dynamic> PerformMapping(JToken response, ConnectorDocument connectorDocument)

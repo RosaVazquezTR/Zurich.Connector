@@ -11,7 +11,7 @@
     "subType": "Parent"
   },
   "request": {
-    "endpointPath": "https://api-test.thomsonreuters.com:443/practicallaw/v4/federatedsearch",
+    "endpointPath": "/v4/federatedsearch",
     "method": "GET",
     "responseContentType": "XML",
     "xmlArrayAttribute": "//searchResults/detail/document",

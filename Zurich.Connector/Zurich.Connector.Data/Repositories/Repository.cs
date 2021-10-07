@@ -89,7 +89,7 @@ namespace Zurich.Connector.Data.Repositories
             NameValueCollection paramCollection = HttpUtility.ParseQueryString(query);
             if (parameters != null)
                 paramCollection.Add(parameters);
-            string scheme = relativePath.Contains("http") ? "" : "https";
+            string scheme = "https";
 
             UriBuilder builder = new UriBuilder(scheme, apiInformation.HostName, -1, relativePath);
             builder.Query = paramCollection.ToString();

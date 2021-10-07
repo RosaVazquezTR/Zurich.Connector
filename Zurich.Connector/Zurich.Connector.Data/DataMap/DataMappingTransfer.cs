@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using System.Collections.Specialized;
 using System.Threading.Tasks;
+using Zurich.Common.Models.OAuth;
 using Zurich.Common.Services.Security;
 using Zurich.Connector.Data.Factories;
 using Zurich.Connector.Data.Model;
@@ -13,7 +14,7 @@ namespace Zurich.Connector.Data.DataMap
 {
     public class DataMappingTransfer : AbstractDataMapping, IDataMapping
     {
-        public DataMappingTransfer(IRepository repository, IDataMappingRepository dataMappingRepository, IOAuthService oAuthService, ILogger<DataMappingTransfer> logger, ConnectorCosmosContext cosmosContext, IMapper mapper, IHttpBodyFactory factory, IHttpResponseFactory httpResponseFactory)
+        public DataMappingTransfer(IRepository repository, IDataMappingRepository dataMappingRepository, IOAuthService oAuthService, ILogger<DataMappingTransfer> logger, ConnectorCosmosContext cosmosContext, IMapper mapper, IHttpBodyFactory factory, IHttpResponseFactory httpResponseFactory, OAuthOptions oAuthOptions)
         {
             this._repository = repository;
             this._dataMappingRepository = dataMappingRepository;
@@ -23,6 +24,7 @@ namespace Zurich.Connector.Data.DataMap
             this._mapper = mapper;
             this._httpBodyFactory = factory;
             this._httpResponseFactory = httpResponseFactory;
+            this._oAuthOptions = oAuthOptions;
         }
 
         public async override Task<T> GetAndMapResults<T>(ConnectorDocument connectorDocument, string transferToken, NameValueCollection query = null)
@@ -43,6 +45,8 @@ namespace Zurich.Connector.Data.DataMap
                 Token = null,
                 Method = connectorDocument.Request.Method
             };
+
+            CleanUpApiInformation(apiInfo);
 
             var transferTokenParam = new NameValueCollection() { { "transferToken", transferToken } };
             return await GetFromRepo<T>(apiInfo, connectorDocument, transferTokenParam);
