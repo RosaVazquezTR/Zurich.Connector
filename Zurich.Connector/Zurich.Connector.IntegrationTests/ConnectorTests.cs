@@ -149,12 +149,12 @@ namespace Zurich.Connector.IntegrationTests
             // Arrange
             var request = $"/Connectors/{connector.Id}/Data";
             // TODO: remove when we can find host and dont have to pass in
-            if (connector.Info.DataSourceId == "10")
+            if (connector.Info.DataSourceId == "10" && connector.Info.DataSourceId == "42")
             {
                 request = $"/Connectors/{connector.Id}/Data?Hostname=cloudimanage.com";
             }
 
-            if (connector.Info.DataSourceId != "10")
+            if (connector.Info.DataSourceId != "10" && connector.Info.DataSourceId == "42")
             {
                 //Act
                 var response = await _client.GetAsync(request);

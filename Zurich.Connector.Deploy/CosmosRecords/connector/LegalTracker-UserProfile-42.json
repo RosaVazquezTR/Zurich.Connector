@@ -1,0 +1,62 @@
+{
+  "id": "42",
+  "partitionkey": "ConnectorList",
+  "alias": "trackr.userprofile",
+  "info": {
+    "title": "Get Legal Tracker",
+    "description": "Get Legal Tracker User Profile",
+    "entityType": "UserProfile",
+    "dataSourceId": "26",
+    "version": "1.0"
+  },
+  "request": {
+    "endpointPath": "/user-mapping-api/v1/users",
+    "method": "GET",
+    "parameters": [
+      {
+        "cdmName": "Email",
+        "name": "$filter",
+        "inClause": "OData",
+        "key": "email",
+        "required": false,
+        "type": "string",
+        "defaultValue": "",
+        "tags": []
+      }
+    ],
+    "sorting": {
+      "properties": []
+    }
+  },
+  "response": {
+    "schema": {
+      "properties": {}
+    }
+  },
+  "resultLocation": "value.[]",
+  "filters": [],
+  "cdmMapping": {
+    "structured": [
+    
+      {
+        "name": "Id",
+        "type": "string",
+        "responseElement": "userId",
+        "_comment": ""
+      },
+      {
+        "name": "Email",
+        "type": "string",
+        "responseElement": "email",
+        "_comment": ""
+      },
+      {
+        "name": "UserType",
+        "type": "string",
+        "responseElement": "dataCenterId",
+        "_comment": ""
+      }
+    ],
+    "unstructured": []
+  }
+}

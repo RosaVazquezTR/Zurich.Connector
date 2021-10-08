@@ -1,0 +1,28 @@
+{
+  "id": "26",
+  "partitionkey": "DataSourceList",
+  "name": "Legal Tracker",
+  "description": "This is connecting to Legal Tracker Mapping API ",
+  "infoURL": "",
+  "appCode": "TRACKR",
+  "domain": "api-dev.thomsonreuters.com/legal-tracker",
+  "appType": "0",
+  "locale": "US",
+  "registrationMode ": "Automatic",
+  "extraRequestContext": "",
+  "securityDefinition": {
+    "type": "oauth2",
+    "flow": "",
+    "defaultSecurityDefinition": {
+      "authorizationURL": "",
+      "authorizationPath": "",
+      "tokenURL": "",
+      "tokenPath": "",
+      "keyVaultClientId": "",
+      "keyVaultSecret": "",
+      "sendCredentialsInBody": true,
+      "grantType": "client_credentials"
+    },
+    "scopes": {}
+  }
+}
