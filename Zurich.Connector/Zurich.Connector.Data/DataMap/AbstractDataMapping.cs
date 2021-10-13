@@ -180,7 +180,7 @@ namespace Zurich.Connector.Data.DataMap
 
 		private async Task<JObject> MapProperties(List<CDMElement> properties, dynamic apiResult)
 		{
-			JObject jObjectResult = new JObject();
+			dynamic jObjectResult = new JObject();
 
 			foreach (var property in properties)
 			{
