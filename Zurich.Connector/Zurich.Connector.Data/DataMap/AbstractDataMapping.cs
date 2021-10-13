@@ -184,6 +184,8 @@ namespace Zurich.Connector.Data.DataMap
 
 			foreach (var property in properties)
 			{
+				if (jObjectResult[property.name] != null)
+					continue;
 				// Get the correct json property when not on the same level
 				string[] resultsLocation = property.responseElement.Split('.');
 
