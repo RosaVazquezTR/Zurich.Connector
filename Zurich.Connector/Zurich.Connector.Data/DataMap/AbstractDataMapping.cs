@@ -184,6 +184,7 @@ namespace Zurich.Connector.Data.DataMap
 
 			foreach (var property in properties)
 			{
+				// Result already found for CDM property - Skipping mapping.
 				if (jObjectResult[property.name] != null)
 					continue;
 				// Get the correct json property when not on the same level
