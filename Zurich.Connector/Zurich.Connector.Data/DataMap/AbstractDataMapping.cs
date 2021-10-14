@@ -180,12 +180,12 @@ namespace Zurich.Connector.Data.DataMap
 
 		private async Task<JObject> MapProperties(List<CDMElement> properties, dynamic apiResult)
 		{
-			dynamic jObjectResult = new JObject();
-
+			JObject jObjectResult = new JObject();
 			foreach (var property in properties)
 			{
-				// Result already found for CDM property - Skipping mapping.
-				if (jObjectResult[property.name] != null)
+				JToken token = jObjectResult[property.name];
+				// If result is already found for CDM property - skip mapping.
+				if (token != null && token.Type != JTokenType.Null)
 					continue;
 				// Get the correct json property when not on the same level
 				string[] resultsLocation = property.responseElement.Split('.');
