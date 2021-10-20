@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Threading.Tasks;
 using Zurich.Common.Models.OAuth;
@@ -31,7 +32,7 @@ namespace Zurich.Connector.Data.DataMap
             this._legalHomeAccessCheck = legalHomeAccessCheck;
         }
 
-        public async override Task<T> GetAndMapResults<T>(ConnectorDocument connectorDocument, string transferToken, NameValueCollection query = null)
+        public async override Task<T> GetAndMapResults<T>(ConnectorDocument connectorDocument, string transferToken, NameValueCollection query = null, Dictionary<string, string> headers = null)
         {
             T results = default(T);
 

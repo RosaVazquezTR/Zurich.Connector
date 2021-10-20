@@ -39,6 +39,8 @@ parameters:
     type: string
   - name: legalTrackerSecret
     type: string
+  - name: legalTrackerActionItemsSecret
+    type: string
   - name: ltioL1ActionGroupName
     type: string
   - name: ltioL1EmailAddress

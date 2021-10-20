@@ -36,7 +36,7 @@ namespace Zurich.Connector.Data.DataMap
 		protected ILegalHomeAccessCheck _legalHomeAccessCheck;
 
 
-		public async virtual Task<T> GetAndMapResults<T>(ConnectorDocument dataTypeInformation, string transferToken = null, NameValueCollection query = null)
+		public async virtual Task<T> GetAndMapResults<T>(ConnectorDocument dataTypeInformation, string transferToken = null, NameValueCollection query = null, Dictionary<string, string> headers = null)
 		{
 			T results = default(T);
 
