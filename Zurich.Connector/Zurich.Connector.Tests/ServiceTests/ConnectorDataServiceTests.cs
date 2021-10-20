@@ -25,7 +25,7 @@ namespace Zurich.Connector.Tests.ServiceTests
 	[TestClass]
     public class ConnectorDataServiceTests
 	{
-		private Mock<IDataMapping> _mockDataMapping;
+        private Mock<IDataMapping> _mockDataMapping;
 		private Mock<IDataMappingFactory> _mockDataMappingFactory;
 		private Mock<IDataMappingRepository> _mockDataMappingRepo;
 		private Mock<IQueryCollection> _mockQueryCollection;
@@ -65,7 +65,7 @@ namespace Zurich.Connector.Tests.ServiceTests
 				_mockDataSourceOperationsFactory.Object, _mockRegistrationService.Object);
 
 			// ACT
-			var mappedResult = service.MapQueryParametersFromDB(cdmQueryParameters, connector);
+			var mappedResult = await service.MapQueryParametersFromDB(cdmQueryParameters, connector);
 
 			// ASSERT
 			Assert.AreEqual(mappedResult["searchTerm"], "*");
@@ -77,28 +77,28 @@ namespace Zurich.Connector.Tests.ServiceTests
 		[TestMethod]
 		public void CallMapQueryParametersFromDBWithZeroOffsetBasedPagination()
 		{
-			TestPagination(pagination => pagination.IsZeroBasedOffset = true, 0);
+			TestPaginationAsync(pagination => pagination.IsZeroBasedOffset = true, 0);
 		}
 
 		[TestMethod]
 		public void CallMapQueryParametersFromDBWithOneOffsetBasedPagination()
 		{
-			TestPagination(pagination => pagination.IsZeroBasedOffset = false, 1);
+			TestPaginationAsync(pagination => pagination.IsZeroBasedOffset = false, 1);
 		}
 
 		[TestMethod]
 		public void CallMapQueryParametersFromDBWithNullPagination()
 		{
-			TestPagination(pagination => pagination.IsZeroBasedOffset = null, 0);
+			TestPaginationAsync(pagination => pagination.IsZeroBasedOffset = null, 0);
 		}
 
 		[TestMethod]
 		public void CallMapQueryParametersFromDBWithDefaultToZeroOffsetBasedPagination()
 		{
-			TestPagination(pagination => pagination = null, 0);
+			TestPaginationAsync(pagination => pagination = null, 0);
 		}
 
-		private void TestPagination(Action<PaginationModel> arrangePagination, int expectedResult)
+		private async Task TestPaginationAsync(Action<PaginationModel> arrangePagination, int expectedResult)
 		{
 			// ARRANGE
 			var cdmQueryParameters = new Dictionary<string, string>() { { "Offset", "0" } };
@@ -109,7 +109,7 @@ namespace Zurich.Connector.Tests.ServiceTests
 				_mockDataSourceOperationsFactory.Object, _mockRegistrationService.Object);
 
 			// ACT
-			var mappedResult = service.MapQueryParametersFromDB(cdmQueryParameters, connector);
+			var mappedResult = await service.MapQueryParametersFromDB(cdmQueryParameters, connector);
 
 			// ASSERT
 			Assert.AreEqual(mappedResult["searchTerm"], "*");
@@ -128,7 +128,7 @@ namespace Zurich.Connector.Tests.ServiceTests
 				_mockDataSourceOperationsFactory.Object, _mockRegistrationService.Object);
 
 			// ACT
-			var mappedResult = service.MapQueryParametersFromDB(cdmQueryParameters, connector);
+			var mappedResult = await service.MapQueryParametersFromDB(cdmQueryParameters, connector);
 
 			// ASSERT
 			Assert.AreEqual(mappedResult["sortOrder"], "DATE");
@@ -148,7 +148,7 @@ namespace Zurich.Connector.Tests.ServiceTests
 				_mockDataSourceOperationsFactory.Object, _mockRegistrationService.Object);
 
 			// ACT
-			var mappedResult = service.MapQueryParametersFromDB(cdmQueryParameters, connector);
+			var mappedResult = await service.MapQueryParametersFromDB(cdmQueryParameters, connector);
 
 			// ASSERT
 			Assert.AreEqual("(resourceVisualization/type eq 'video' or resourceVisualization/type eq 'word' or resourceVisualization/type eq 'excel') and (referenece/type eq 'testValue')", mappedResult["$filter"]);
@@ -159,8 +159,7 @@ namespace Zurich.Connector.Tests.ServiceTests
 		public async Task VerifyURLFormat()
 		{
 			// ARRANGE
-			string appCode = "TestApp";
-
+			string appCode = "TestApp";		
 			ConnectorModel connectorDocument = new ConnectorModel()
 			{
 				Request = new ConnectorRequestModel()
@@ -192,16 +191,16 @@ namespace Zurich.Connector.Tests.ServiceTests
 			connectorDocument.DataSource = dataSourceDocument;
 			JToken fakeResult = new JObject();
 			fakeResult["id"] = "241";
-
+		//	Dictionary<string, JToken> x = 
 			_mockCosmosService.Setup(x => x.GetConnector("UserInfo", true)).Returns(Task.FromResult(connectorDocument));
-			_mockDataMapping.Setup(x => x.GetAndMapResults<JToken>(It.IsAny<ConnectorDocument>(), null, null)).Returns(Task.FromResult(fakeResult));
+			_mockDataMapping.Setup(x => x.GetAndMapResults<JToken>(It.IsAny<ConnectorDocument>(), string.Empty, null, null)).Returns(Task.FromResult(fakeResult));
 			_mockDataMappingFactory.Setup(x => x.GetImplementation(It.IsAny<string>())).Returns(_mockDataMapping.Object);
 
 			ConnectorDataService service = new ConnectorDataService(_mockDataMappingFactory.Object, _mockDataMappingRepo.Object, null, _mapper, _mockCosmosService.Object, _mockdataMappingService.Object,
 				_mockDataSourceOperationsFactory.Object, _mockRegistrationService.Object);
 
 			// ACT
-			string newUrl = await service.UpdateUrl("/work/api/v2/customers/{UserInfo.id}/documents", "");
+			string newUrl = await service.ReplaceProperty("/work/api/v2/customers/{UserInfo.id}/documents", "");
 
 			// ASSERT
 			Assert.IsNotNull(newUrl);
@@ -219,7 +218,7 @@ namespace Zurich.Connector.Tests.ServiceTests
 				_mockDataSourceOperationsFactory.Object, _mockRegistrationService.Object);
 
 			// ACT
-			var mappedResult = service.MapQueryParametersFromDB(cdmQueryParameters, connector);
+			var mappedResult = await service.MapQueryParametersFromDB(cdmQueryParameters, connector);
 
 			// ASSERT
 			Assert.AreEqual(mappedResult["searchTerm"], "*");
@@ -238,7 +237,7 @@ namespace Zurich.Connector.Tests.ServiceTests
 				_mockDataSourceOperationsFactory.Object, _mockRegistrationService.Object);
 
 			// ACT
-			var mappedResult = service.MapQueryParametersFromDB(cdmQueryParameters, connector);
+			var mappedResult = await service.MapQueryParametersFromDB(cdmQueryParameters, connector);
 
 			// ASSERT
 			Assert.AreEqual(mappedResult.Count, 0);
@@ -255,7 +254,7 @@ namespace Zurich.Connector.Tests.ServiceTests
 				_mockDataSourceOperationsFactory.Object, _mockRegistrationService.Object);
 
 			// ACT
-			var mappedResult = service.MapQueryParametersFromDB(cdmQueryParameters, connector);
+			var mappedResult = await service.MapQueryParametersFromDB(cdmQueryParameters, connector);
 
 			// ASSERT
 			Assert.AreEqual(mappedResult.Count, 0);

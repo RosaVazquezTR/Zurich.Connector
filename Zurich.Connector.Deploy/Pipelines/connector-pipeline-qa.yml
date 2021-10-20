@@ -109,6 +109,7 @@ stages:
                   legalHomeDbUser: ${{ variables.legalHomeDbUser }}
                   legalHomeDbUserPassword: $(legalHomeDbUserPassword)
                   legalTrackerSecret : $(legalTrackerSecret)
+                  legalTrackerActionItemsSecret : $(legalTrackerActionItemsSecret)
                   ltioL1ActionGroupName: ${{variables.ltioL1ActionGroupName}}
                   ltioL1EmailAddress: ${{variables.ltioL1EmailAddress}}
                   ltioL1EmailName: ${{variables.ltioL1EmailName}}

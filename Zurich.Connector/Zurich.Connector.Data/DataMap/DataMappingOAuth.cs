@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Linq;
 using System.Security.Authentication;
 using System.Threading.Tasks;
 using Zurich.Common.Models.OAuth;
@@ -29,7 +31,7 @@ namespace Zurich.Connector.Data.DataMap
             this._oAuthOptions = oAuthOptions;
         }
 
-        public async override Task<T> GetAndMapResults<T>(ConnectorDocument connector, string transferToken = null, NameValueCollection query = null)
+        public async override Task<T> GetAndMapResults<T>(ConnectorDocument connector, string transferToken = null, NameValueCollection query = null, Dictionary<string, string> headers = null)
         {
             var token = await this.RetrieveToken(connector?.DataSource?.appCode,
                                                   connector?.DataSource?.appType,
@@ -46,8 +48,9 @@ namespace Zurich.Connector.Data.DataMap
                     UrlPath = connector.Request.EndpointPath,
                     AuthHeader = connector.DataSource.securityDefinition.defaultSecurityDefinition.authorizationHeader,
                     Token = token,
-                    Method = connector.Request.Method
-                };
+                    Method = connector.Request.Method,
+                    Headers = headers
+            };
 
                 CleanUpApiInformation(apiInfo);
 
