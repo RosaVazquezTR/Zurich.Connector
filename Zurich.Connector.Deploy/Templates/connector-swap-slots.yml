@@ -1,9 +1,11 @@
 parameters:
+  - name: connectorServiceName
+    type: string
   - name: environmentName
     type: string
-  - name: resourceGroup
+  - name: functionName
     type: string
-  - name: connectorServiceName
+  - name: resourceGroup
     type: string
   - name: slotName
     type: string
@@ -24,5 +26,12 @@ jobs:
               inputs:
                 azureSubscription: ${{ parameters.subscriptionName }}
                 WebAppName: '${{ parameters.connectorServiceName }}${{ parameters.environmentName }}'
+                ResourceGroupName: '${{ parameters.resourceGroup }}'
+                SourceSlot: '${{ parameters.slotName }}'
+            - task: AzureAppServiceManage@0
+              displayName: 'Swap Slots: ${{ parameters.functionName }} ${{ parameters.slotName }} Slot into Main'
+              inputs:
+                azureSubscription: ${{ parameters.subscriptionName }}
+                WebAppName: '${{ parameters.functionName }}${{ parameters.environmentName }}'
                 ResourceGroupName: '${{ parameters.resourceGroup }}'
                 SourceSlot: '${{ parameters.slotName }}'

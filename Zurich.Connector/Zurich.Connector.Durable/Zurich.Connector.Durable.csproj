@@ -3,6 +3,7 @@
     <TargetFramework>net5.0</TargetFramework>
     <AzureFunctionsVersion>v3</AzureFunctionsVersion>
     <OutputType>Exe</OutputType>
+    <_FunctionsSkipCleanOutput>true</_FunctionsSkipCleanOutput>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="9.0.0" />
@@ -20,11 +21,19 @@
 		<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	</Content>
 	<ProjectReference Include="..\Zurich.Connector.App\Zurich.Connector.App.csproj" />
+	<None Update="appsettings.prod.json">
+	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	</None>
+	<None Update="appsettings.qa.json">
+	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	</None>
 	<None Update="appsettings.ci.json">
 	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	</None>
 	<None Update="appsettings.development.json">
 	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+	  <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
 	</None>
     <None Update="host.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

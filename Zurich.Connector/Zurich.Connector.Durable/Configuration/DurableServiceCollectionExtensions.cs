@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using AutoMapper;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Logging;
@@ -10,6 +11,7 @@ using Zurich.Common.Models.OAuth;
 using Zurich.Common.Repositories.Cosmos;
 using Zurich.Common.Services.Security;
 using Zurich.Connector.App.Services;
+using Zurich.Connector.Data.Services;
 using Zurich.Connector.Durable.Service;
 
 namespace Microsoft.Extensions.DependencyInjection
@@ -48,16 +50,22 @@ namespace Microsoft.Extensions.DependencyInjection
 		/// <param name="clientOptions"> cosmos client options</param>
 		public static void AddConnectorCosmosServices(this IServiceCollection services, CosmosDbOptions dbOptions, CosmosClientSettings clientOptions)
 		{
+			List<CosmosClient> clients = new List<CosmosClient>();
 			var clientSettings = new CosmosClientOptions()
 			{
 				AllowBulkExecution = clientOptions.AllowBulkExecution,
 				ConnectionMode = ConnectionMode.Gateway,
 				GatewayModeMaxConnectionLimit = clientOptions.GatewayModeMaxConnectionLimit == 0 ? 10 : clientOptions.GatewayModeMaxConnectionLimit,
 				MaxRetryAttemptsOnRateLimitedRequests = clientOptions.MaxRetryAttemptsOnRateLimitedRequests == 0 ? 9 : clientOptions.MaxRetryAttemptsOnRateLimitedRequests,
-				MaxRetryWaitTimeOnRateLimitedRequests = clientOptions.MaxRetryWaitTimeOnRateLimitedRequests == 0 ? new TimeSpan(0, 0, 30) : new TimeSpan(0, 0, clientOptions.MaxRetryWaitTimeOnRateLimitedRequests)
+				MaxRetryWaitTimeOnRateLimitedRequests = clientOptions.MaxRetryWaitTimeOnRateLimitedRequests == 0 ? new TimeSpan(0, 0, 30) : new TimeSpan(0, 0, clientOptions.MaxRetryWaitTimeOnRateLimitedRequests),
+				SerializerOptions = new CosmosSerializationOptions() { PropertyNamingPolicy = CosmosPropertyNamingPolicy.CamelCase }
 			};
 
-			services.AddCosmosClientStore(dbOptions, clientSettings);
+			clients.Add(new CosmosClient(dbOptions.Endpoint, dbOptions.PrimaryKey, clientSettings));
+			services.AddSingleton<IEnumerable<CosmosClient>>(clients);
+			services.AddSingleton<ICosmosClientFactory, CosmosClientFactory>();
+			services.AddScoped(sp => new ConnectorCosmosContext(sp.GetRequiredService<ICosmosClientFactory>(), dbOptions));
+			services.AddTransient<ICosmosService, CosmosService>();
 		}
 	}
 }

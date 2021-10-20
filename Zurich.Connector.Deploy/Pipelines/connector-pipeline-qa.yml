@@ -48,9 +48,10 @@ stages:
         - checkout: ZurichDeploy
         - template: Templates\V2\ZurichDeploy-BuildWebAPI.yml@ZurichDeploy
           parameters:
-            projectName: ${{ variables.projectName }}
             azureAdClientSecret: $(azureAdClientSecret)
             environmentName: qa
+            projectName: ${{ variables.projectName }}
+            publishWebProjects: false
 - stage: Send_Email
   pool: DCO-HighQ-Platform-N
   dependsOn:
@@ -125,6 +126,7 @@ stages:
                   smartDetectionRuleNames: ${{ variables.smartDetectionRuleNames }}
                   subnetPreFix: ${{ variables.subnetPreFix }}
                   subnetConnectorBackend: ${{ variables.subnetConnectorBackend }}
+                  subnetFunctionBackend: ${{ variables.subnetFunctionBackend }}
                   subscriptionId: ${{ variables.subscriptionId }}
                   subscriptionName: ${{ variables.subscriptionName }}
                   tagNames: ${{ variables.tagNames }}
@@ -177,6 +179,52 @@ stages:
                   tlsVersion: ${{ variables.tlsVersion }}
                   vnetName: ${{ variables.vnetName }}
                   vnetResourceGroup: ${{ variables.vnetResourceGroup }}
+    - deployment: DurableFunction
+      environment: CI
+      dependsOn: Prereqs
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+              - checkout: self
+              - checkout: ZurichDeploy
+              - template: Templates\ZurichDeploy-FunctionDeploy.yml@ZurichDeploy
+                parameters:
+                    allowedIps: "[]"
+                    allowedSubnets: ${{ variables.functionSubnets }}
+                    appInsightsName: ${{ variables.appInsightsName }}
+                    appServicePlanName: ${{ variables.functionAppServicePlanName }}
+                    appServicePlanSku: ${{ variables.functionAppServicePlanSku }}
+                    armFolder: ${{ variables.deployArmTemplates }}
+                    cosmosName: ${{ variables.connectorCosmosName }}
+                    cosmosResourceGroup: ${{ variables.resourceGroup }}
+                    deployScriptFolder: ${{ variables.deployScriptFolder }}
+                    environmentName: ${{ variables.environmentName }}
+                    functionArmTemplate: ${{ variables.functionArmTemplate }}
+                    functionName: ${{ variables.functionName }}
+                    functionNamePrefix: ${{ variables.functionNamePrefix }}
+                    functionPrefix: ''
+                    functionStorageName: ${{ variables.functionStorageName }}
+                    functionVersion: ${{ variables.functionVersion }}
+                    keyVault: ${{ variables.keyVault }}
+                    monitorAlertGroups: ${{ variables.monitorAlertGroups }}
+                    monitorAlertPrefix: ${{ variables.monitorAlertPrefix }}
+                    monitoringResourceGroup: ${{ variables.monitoringResourceGroup }}
+                    resourceGroup: ${{ variables.resourceGroup }}
+                    resourceLocation: ${{ variables.resourceLocation }}
+                    retentionDays: ${{ variables.retentionDays }}
+                    scriptFolder: ${{ variables.deployScriptFolder }}
+                    slotName: ${{ variables.slotName }}
+                    storageLoggingName: ${{ variables.storageLoggingName }}
+                    subnetPrefix: ${{ variables.subnetPrefix }}
+                    subnetFunctionBackend: ${{ variables.subnetFunctionBackend }}
+                    subscriptionId: ${{ variables.subscriptionId }}
+                    subscriptionName: ${{ variables.subscriptionName }}
+                    useOneAppServicePlan: "false"
+                    webDnsServer: ${{ variables.webDnsServer }}
+                    vnetName: ${{ variables.vnetName }}
+                    vnetResourceGroup: ${{ variables.vnetResourceGroup }}
+                    zipFileLocation: ${{ variables.functionZipLocation }}
 - stage: Swap_Slots
   dependsOn: QA
   jobs:

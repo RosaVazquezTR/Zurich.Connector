@@ -27,6 +27,20 @@ variables:
     value: "Zurich.Deploy/ArmTemplates"
   - name: deployScriptFolder
     value: "Zurich.Deploy/Scripts"
+  - name: functionAppServicePlanName
+    value: "connectorsFunction"
+  - name: functionArmTemplate
+    value: "FunctionWithCosmos.json"
+  - name: functionName
+    value: "Function"
+  - name: functionNamePrefix
+    value: "connectors"
+  - name: functionStorageName
+    value: "connectorsfunc"
+  - name: functionVersion
+    value: "~3"
+  - name: functionZipLocation
+    value: "Zurich.Connector/Zurich.Connector.Durable.zip"
   - name: healthEndpoint
     value: "connector/Health"
   - name: keyVault

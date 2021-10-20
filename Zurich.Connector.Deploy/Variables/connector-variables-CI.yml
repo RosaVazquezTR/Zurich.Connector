@@ -13,14 +13,20 @@ variables:
     value: '["connector-webApi-CI-Backend", "hqh-VM-RelMgmt-backend"]'
   - name: connectorServiceFQND
     value: "connectorswebapici.azurewebsites.net"
+  - name: functionAppServicePlanSku
+    value: '{"name": "P1v2", "size": "P1v2", "tier": "PremiumV2", "family": "Pv2", "capacity": 1}'
+  - name: functionSubnets
+    value: '["connector-function-CI-backend", "hqh-VM-RelMgmt-backend"]'
   - name: groups
     value: "@('Administrators','Developers')"
   - name: keyVaultSubnets
-    value: "@('connector-webApi-CI-Backend','hqh-VM-RelMgmt-backend')"
+    value: "@('connector-function-CI-backend', 'connector-webApi-CI-Backend','hqh-VM-RelMgmt-backend')"
   - name: resourceGroup
     value: 'centralus-connectors-ci'
   - name: subnetConnectorBackend
     value: "@{SubNetName = 'WebApi'; SubNetCidr = '10.175.64.128/27'; SubNetType = 'backend'; subNetServiceEndpoints = @('Microsoft.AzureCosmosDB', 'Microsoft.KeyVault', 'Microsoft.Sql')}"
+  - name: subnetFunctionBackend
+    value: "@{SubNetName = 'function'; SubNetCidr = '10.175.26.32/27'; SubNetType = 'backend'; subNetServiceEndpoints = @('Microsoft.AzureCosmosDB', 'Microsoft.KeyVault', 'Microsoft.Storage')}"
   - name: subnetPreFix
     value: 'connector'
   - name: swaggerEndpoint

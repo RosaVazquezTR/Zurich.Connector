@@ -100,17 +100,32 @@ function  updateCosmosRecords {
 	foreach ($file in $jsonFiles) {
 		$currentFilePath = "$folderPath$($file[0].Name)"
 		$fileObject = (Get-Content -Path $currentFilePath | Out-String | ConvertFrom-Json)
-		$fileObjectStr = $fileObject | ConvertTo-Json -Compress -Depth 100 | Out-String
+		$fileObjectString = $fileObject | ConvertTo-Json -Compress -Depth 100 | Out-String
 
-		$dbObjectStr = $jsonResponse.Documents | Where-Object { $_.id -eq $fileObject.id } | Select-Object -Property * -ExcludeProperty $excludedProperties | ConvertTo-Json -Depth 100 -Compress | Out-String
+		$dbObjectString = $jsonResponse.Documents | Where-Object { $_.id -eq $fileObject.id } | Select-Object -Property * -ExcludeProperty $excludedProperties | ConvertTo-Json -Depth 100 -Compress | Out-String
 
-		$contentEquals = $fileObjectStr.Equals($dbObjectStr)
+		$contentEquals = $fileObjectString.Equals($dbObjectString)
+
+		# for connectors check the dynamic case
+		if('ConnectorList' -eq $partitionKey -and -not $contentEquals){
+			if($fileObject.info.isDynamicFilter -ieq 'True')
+			{
+				$dbObject = $jsonResponse.Documents | Where-Object { $_.id -eq $fileObject.id }
+				$dbObjectWithoutFilters = $dbObject | Select-Object -Property * -ExcludeProperty 'filters'
+				$fileObjectWithoutFilters = $fileObject | Select-Object -Property * -ExcludeProperty 'filters'
+				$contentEquals = $fileObjectWithoutFilters.Equals($dbObjectWithoutFilters)
+				if($false -eq $contentEquals)
+				{
+					$fileObject.filters = $dbObject.filters
+				}
+			}
+		}
 
 		# If content doesn't match we need to update cosmos based on what's in Repo
 		if (!$contentEquals) {
         
-            write-host ("File Json Content - " + $fileObjectStr)
-            write-host ("DB Json Content - " + $dbObjectStr)
+            write-host ("File Json Content - " + $fileObjectString)
+            write-host ("DB Json Content - " + $dbObjectString)
 
 			write-host ("Changes need to be posted to DB for $file")
 			PostDocument PostDocument -document $fileObject -dbname $databaseName -collection $collectionName -partitionKey $partitionKey -connectionKey $connectionKey         

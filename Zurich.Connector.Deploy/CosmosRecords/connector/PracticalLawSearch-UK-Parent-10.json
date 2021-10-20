@@ -8,7 +8,8 @@
     "entityType": "Search",
     "dataSourceId": "15",
     "version": "1.0",
-    "subType": "Parent"
+    "subType": "Parent",
+    "isDynamicFilter": true
   },
   "request": {
     "endpointPath": "/v4/federatedsearch",

@@ -96,6 +96,7 @@ namespace Zurich.Connector.Durable.Configuration
 
             configuration = builder.Build();
             SetupCosmos(services, configuration);
+            loaderOptions.TokenIssuer = configuration.GetValue<string>("TokenIssuer");
 
             loaderOptions.OAuthOptions = new OAuthOptions();
             configuration.Bind("PartnerOAuthApps", loaderOptions.OAuthOptions);

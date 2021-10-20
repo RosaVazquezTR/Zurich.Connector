@@ -71,6 +71,8 @@ parameters:
     type: string
   - name: subnetConnectorBackend
     type: string
+  - name: subnetFunctionBackend
+    type: string
   - name: subscriptionId
     type: string
   - name: subscriptionName
@@ -130,7 +132,7 @@ steps:
       inlineScript: |
         Import-Module  -Name "$(Build.SourcesDirectory)/Zurich.Deploy/Scripts/V2/AddSubnetandNSG.psm1"
 
-        $subnets = @(${{ parameters.subnetConnectorBackend }})
+        $subnets = @(${{ parameters.subnetConnectorBackend }}, ${{ parameters.subnetFunctionBackend }})
 
         Add-SubNets -removeDelegations $true -CleanupOldNsgs $true -ResourceGroup "${{ parameters.vnetResourceGroup }}" -nsgResourceGroup "${{ parameters.resourceGroup }}" -subnetPreFix "${{ parameters.subnetPreFix }}" -env "${{ parameters.environmentName }}" -Location "${{ parameters.resourceLocation }}" -RouteTableName "${{ parameters.routeTableName }}" -VirtualNetworkName "${{ parameters.vnetName }}" -subNets $subNets -armTemplateFolderLocation "$(Build.SourcesDirectory)/Zurich.Deploy/ArmTemplates"
   - task: AzurePowerShell@5
