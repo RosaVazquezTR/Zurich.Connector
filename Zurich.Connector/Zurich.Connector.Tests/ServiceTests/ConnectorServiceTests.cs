@@ -253,9 +253,9 @@ namespace Zurich.Connector.Tests.ServiceTests
             Assert.AreEqual(2, connectors.Count);
             //Assert.AreEqual(MockConnectorData.SetupConnectorModel().ToList().Count, connectors.Count);
             Assert.AreEqual(registeredConnectorIds.First(), connectors[0].Id);
-			Assert.AreEqual(Zurich.Common.Models.Connectors.RegistrationEntityMode.Manual, connectors[0].DataSource.RegistrationMode);
+			Assert.AreEqual(Zurich.Common.Models.Connectors.RegistrationEntityMode.Manual, connectors[0].DataSource.RegistrationInfo.RegistrationMode);
 			Assert.AreEqual(registeredConnectorIds.Last(), connectors[1].Id);
-			Assert.AreEqual(Zurich.Common.Models.Connectors.RegistrationEntityMode.Automatic, connectors[1].DataSource.RegistrationMode);
+			Assert.AreEqual(Zurich.Common.Models.Connectors.RegistrationEntityMode.Automatic, connectors[1].DataSource.RegistrationInfo.RegistrationMode);
 
 
 		}

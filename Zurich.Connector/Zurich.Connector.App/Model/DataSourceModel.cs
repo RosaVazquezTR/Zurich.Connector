@@ -52,7 +52,11 @@ namespace Zurich.Connector.App.Model
         public string ExtraRequestContext { get; set; }
         /// Flag for registrationMode. ex:"Automatic"
         /// </summary>
-        public RegistrationEntityMode RegistrationMode { get; set; }
+
+        /// <summary>
+        /// Define registration Information
+        /// </summary>
+        public RegistrationInfoModel RegistrationInfo { get; set; }
         /// <summary>
         /// Define security definition
         /// </summary>
@@ -128,5 +132,58 @@ namespace Zurich.Connector.App.Model
         /// sendCredentialsInBody. Ex: true / false.
         /// </summary>
         public bool? sendCredentialsInBody { get; set; }
+    }
+    public class RegistrationInfoModel
+    {
+        /// <summary>
+        /// Flag for registrationMode. ex:"Automatic"
+        /// </summary>
+        public RegistrationEntityMode RegistrationMode { get; set; }
+
+        /// <summary>
+        /// Domain Required ex: true or false
+        /// </summary>
+        public bool DomainRequired { get; set; }
+
+        /// <summary>
+        /// client And Secret Required boolean value ex: true or false.
+        /// </summary>
+        public bool ClientAndSecretRequired { get; set; }
+
+        /// <summary>
+        /// connection Message
+        /// </summary>
+        public string ConnectionMessage { get; set; }
+
+        /// <summary>
+        /// registration File Required 
+        /// </summary>
+        public bool RegistrationFileRequired { get; set; }
+
+        /// <summary>
+        /// domain Specific Information
+        /// </summary>
+        public DomainSpecificInformationModel DomainSpecificInformation { get; set; }
+
+
+    }
+
+    public class DomainSpecificInformationModel
+    {
+        /// <summary>
+        /// Client And Secret Required 
+        /// </summary>
+        public bool ClientAndSecretRequired { get; set; }
+
+        /// <summary>
+        /// connection Message
+        /// </summary>
+        public string ConnectionMessage { get; set; }
+
+        /// <summary>
+        /// Registration File Required
+        /// </summary>
+        public bool RegistrationFileRequired { get; set; }
+
     }
 }

@@ -7,8 +7,14 @@
   "appCode": "PLCCA",
   "appType": "0",
   "locale": "CA",
-  "registrationMode ": "Automatic",
   "extraRequestContext": "",
+  "registrationInfo": {
+    "registrationMode": "Automatic",
+    "domainRequired": "false",
+    "clientAndSecretRequired": "false",
+    "connectionMessage": "",
+    "registrationFileRequired": "false"
+  },
   "securityDefinition": {
     "type": "oauth2",
     "flow": "",

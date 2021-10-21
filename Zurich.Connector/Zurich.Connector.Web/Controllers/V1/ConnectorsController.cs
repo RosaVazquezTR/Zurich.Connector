@@ -156,7 +156,7 @@ namespace Zurich.Connector.Web.Controllers
                 return BadRequest("Connector Id must point to a valid connector");
             }
 
-            var registered = await _registrationService.RegisterDataSource(connector.Id, connector.DataSource.AppCode, connector.DataSource.RegistrationMode);
+            var registered = await _registrationService.RegisterDataSource(connector.Id, connector.DataSource.AppCode, connector.DataSource.RegistrationInfo.RegistrationMode);
             if (!registered)
             {
                 return BadRequest();

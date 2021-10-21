@@ -1,22 +1,29 @@
 {
-    "id": "23",
-    "partitionkey": "DataSourceList",
-    "name": "Westlaw US",
-    "description": "This is connecting to Westlaw US API ",
-    "infoURL": "",
-    "appCode": "CBT",
-    "extraRequestContext": "",
-    "securityDefinition": {
-        "type": "transferToken",
-        "flow": "",
-        "defaultSecurityDefinition": {
-            "authorizationURL": "",
-            "authorizationPath": "",
-            "tokenURL": "",
-            "tokenPath": "",
-            "keyVaultClientId": "",
-            "keyVaultSecret": ""
-        },
-        "scopes": {}
-    }
+  "id": "23",
+  "partitionkey": "DataSourceList",
+  "name": "Westlaw US",
+  "description": "This is connecting to Westlaw US API ",
+  "infoURL": "",
+  "appCode": "CBT",
+  "extraRequestContext": "",
+  "registrationInfo": {
+    "registrationMode": "Automatic",
+    "domainRequired": "false",
+    "clientAndSecretRequired": "false",
+    "connectionMessage": "",
+    "registrationFileRequired": "false"
+  },
+  "securityDefinition": {
+    "type": "transferToken",
+    "flow": "",
+    "defaultSecurityDefinition": {
+      "authorizationURL": "",
+      "authorizationPath": "",
+      "tokenURL": "",
+      "tokenPath": "",
+      "keyVaultClientId": "",
+      "keyVaultSecret": ""
+    },
+    "scopes": {}
+  }
 }

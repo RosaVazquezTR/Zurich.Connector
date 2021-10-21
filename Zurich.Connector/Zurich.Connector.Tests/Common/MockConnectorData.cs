@@ -82,7 +82,12 @@ namespace Zurich.Connector.Tests.Common
                         Id = "22",
                         Name = "DataSource22",
                         Description = "DataSource 22 desc",
-                        RegistrationMode = Zurich.Common.Models.Connectors.RegistrationEntityMode.Manual
+                        
+                        RegistrationInfo = new RegistrationInfoModel()
+                        {
+                            RegistrationMode = Zurich.Common.Models.Connectors.RegistrationEntityMode.Manual
+                        }
+                        
 
                     }
                 },
@@ -161,7 +166,10 @@ namespace Zurich.Connector.Tests.Common
                         Id = "22",
                         Name = "DataSource22",
                         Description = "DataSource 22 desc",
-                        RegistrationMode = Zurich.Common.Models.Connectors.RegistrationEntityMode.Automatic
+                        RegistrationInfo= new RegistrationInfoModel()
+                        {
+                            RegistrationMode = Zurich.Common.Models.Connectors.RegistrationEntityMode.Automatic
+                        }
                     }
                 }
             };

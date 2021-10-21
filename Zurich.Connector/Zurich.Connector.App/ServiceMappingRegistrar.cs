@@ -41,9 +41,10 @@ namespace Zurich.Connector.App
                 .ForMember(dest => dest.InfoUrl, opt => opt.MapFrom(src => src.infoUrl))
                 .ForMember(dest => dest.ExtraRequestContext, opt => opt.MapFrom(src => src.extraRequestContext))
                 .ForMember(dest => dest.SecurityDefinition, opt => opt.MapFrom(src => src.securityDefinition))
-                .ForMember(dest => dest.RegistrationMode, opt => opt.MapFrom(src => src.registrationMode))
+                .ForMember(dest => dest.RegistrationInfo, opt => opt.MapFrom(src => src.registrationInfo))
                 .ForAllOtherMembers(opt => opt.Ignore());
-
+            CreateMap<RegistrationInfo, RegistrationInfoModel>();
+            CreateMap<DomainSpecificInformation, DomainSpecificInformationModel>();
             CreateMap<SecurityDefinition, SecurityDefinitionModel>()
                 .ForMember(dest => dest.Type, opt => opt.MapFrom(src => src.type))
                 .ForMember(dest => dest.Flow, opt => opt.MapFrom(src => src.flow))
@@ -100,6 +101,8 @@ namespace Zurich.Connector.App
             CreateMap<FilterListModel, FilterList>();
 
             CreateMap<DataSourceModel, DataSourceDocument>();
+            CreateMap<RegistrationInfoModel, RegistrationInfo>();
+            CreateMap<DomainSpecificInformationModel, DomainSpecificInformation>();
 
             CreateMap<SecurityDefinitionModel, SecurityDefinition>();
 

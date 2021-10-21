@@ -33,10 +33,10 @@ namespace Zurich.Connector.Web.Models
         /// Extra request context. Ex: "iManageCustomerId"
         /// </summary>
         public string ExtraRequestContext { get; set; }
-
-        /// Flag for registrationMode. ex:"Automatic"
+         /// <summary>
+        /// Define registration Information
         /// </summary>
-        public RegistrationEntityMode RegistrationMode { get; set; }
+        public RegistrationInfoViewModel RegistrationInfo { get; set; }
         /// <summary>
         /// Define security definition
         /// </summary>
@@ -95,6 +95,59 @@ namespace Zurich.Connector.Web.Models
         /// Secret of the key vault.
         /// </summary>
         public string KeyVaultSecret { get; set; }
+
+    }
+    public class RegistrationInfoViewModel
+    {
+        /// <summary>
+        /// Flag for registrationMode. ex:"Automatic"
+        /// </summary>
+        public RegistrationEntityMode RegistrationMode { get; set; }
+
+        /// <summary>
+        /// Domain Required ex: true or false
+        /// </summary>
+        public bool DomainRequired { get; set; }
+
+        /// <summary>
+        /// client And Secret Required boolean value ex: true or false.
+        /// </summary>
+        public bool ClientAndSecretRequired { get; set; }
+
+        /// <summary>
+        /// connection Message
+        /// </summary>
+        public string ConnectionMessage { get; set; }
+
+        /// <summary>
+        /// registration File Required 
+        /// </summary>
+        public bool RegistrationFileRequired { get; set; }
+
+        /// <summary>
+        /// domain Specific Information
+        /// </summary>
+        public DomainSpecificInformationViewModel DomainSpecificInformation { get; set; }
+
+
+    }
+
+    public class DomainSpecificInformationViewModel
+    {
+        /// <summary>
+        /// Client And Secret Required 
+        /// </summary>
+        public bool ClientAndSecretRequired { get; set; }
+
+        /// <summary>
+        /// connection Message
+        /// </summary>
+        public string ConnectionMessage { get; set; }
+
+        /// <summary>
+        /// Registration File Required
+        /// </summary>
+        public bool RegistrationFileRequired { get; set; }
 
     }
 }

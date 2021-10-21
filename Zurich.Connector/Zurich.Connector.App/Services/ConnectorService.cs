@@ -78,7 +78,7 @@ namespace Zurich.Connector.Data.Services
 
                 if (filters.RegistrationModes != null && filters.RegistrationModes.Any())
                 {
-                    connectors = connectors.Where(x => filters.RegistrationModes.Contains(x.DataSource.RegistrationMode));
+                    connectors = connectors.Where(x => filters.RegistrationModes.Contains(x.DataSource.RegistrationInfo.RegistrationMode));
                 }
                 foreach (var connector in connectors.Where(connector => registeredConnectors.Contains(connector.Id)))
                 {

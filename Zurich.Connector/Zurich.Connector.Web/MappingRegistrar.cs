@@ -41,6 +41,8 @@ namespace Zurich.Connector.Web
 
             
             CreateMap<DataSourceModel, DataSourceViewModel>();
+            CreateMap<RegistrationInfoModel, RegistrationInfoViewModel>();
+            CreateMap<DomainSpecificInformationModel, DomainSpecificInformationViewModel>();
             CreateMap<SecurityDefinitionModel, SecurityDefinitionViewModel>();
             CreateMap<SecurityDefinitionDetailsModel, SecurityDefinitionDetailsViewModel>();
 
