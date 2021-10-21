@@ -1,69 +1,71 @@
 {
-    "id": "23",
-    "partitionkey": "ConnectorList",
-    "info": {
-        "title": "Get Search Practical law documents - US - Child connector for 14",
-        "description": "Pull Practical law documents - US - Child connector for 14",
-        "entityType": "Search",
-        "dataSourceId": "19",
-        "version": "1.0",
-        "subType": "Child"
-    },
-    "request": {},
-    "response": {},
-    "filters": [],
-    "resultLocation": "document",
-    "cdmMapping": {
-        "structured": [
-            {
-                "name": "Abstract",
-                "type": "string",
-                "responseElement": "abstract",
-                "_comment": ""
-            },
-            {
-                "name": "WebUrl",
-                "type": "string",
-                "responseElement": "",
-                "_comment": ""
-            },
-            {
-                "name": "Title",
-                "type": "string",
-                "responseElement": "title",
-                "_comment": ""
-            },
-            {
-                "name": "PlcReference",
-                "type": "string",
-                "responseElement": "plcReference",
-                "_comment": ""
-            },
-            {
-                "name": "Maintained",
-                "type": "string",
-                "responseElement": "maintained",
-                "_comment": ""
-            },
-            {
-                "name": "ResourceType",
-                "type": "string",
-                "responseElement": "resourceTypeFolderList.resourceTypeFolder",
-                "_comment": ""
-            },
-            {
-                "name": "LastModifiedDateTime",
-                "type": "string",
-                "responseElement": "PublicationDate",
-                "_comment": ""
-            },
-            {
-                "name": "JurisdictionList",
-                "type": "array",
-                "responseElement": "jurisdictionList",
-                "_comment": ""
-            }
-        ],
-        "unstructured": []
-    }
+  "id": "23",
+  "partitionkey": "ConnectorList",
+  "info": {
+    "title": "Get Search Practical law documents - US - Child connector for 14",
+    "description": "Pull Practical law documents - US - Child connector for 14",
+    "entityType": "Search",
+    "dataSourceId": "19",
+    "version": "1.0",
+    "subType": "Child"
+  },
+  "request": {},
+  "response": {},
+  "filters": [],
+  "resultLocation": "document",
+  "cdmMapping": {
+    "structured": [
+      {
+        "name": "Snippet",
+        "type": "string",
+        "responseElement": "abstract",
+        "_comment": ""
+      },
+      {
+        "name": "Title",
+        "type": "string",
+        "responseElement": "title",
+        "_comment": ""
+      },
+      {
+        "name": "WebUrl",
+        "type": "string",
+        "responseElement": "",
+        "_comment": ""
+      },
+      {
+        "name": "PlcReference",
+        "type": "string",
+        "responseElement": "plcReference",
+        "_comment": ""
+      },
+      {
+        "name": "Type",
+        "type": "string",
+        "responseElement": "resourceTypeFolderList.resourceTypeFolder",
+        "_comment": ""
+      },
+      {
+        "name": "CreationDate",
+        "type": "string",
+        "responseElement": "publicationDate",
+        "_comment": ""
+      }
+
+    ],
+    "unstructured": [
+      {
+        "name": "JurisdictionList",
+        "type": "array",
+        "responseElement": "jurisdictionList",
+        "_comment": ""
+      },
+      {
+        "name": "Maintained",
+        "type": "string",
+        "responseElement": "maintained",
+        "_comment": ""
+      }
+    ]
+  }
 }

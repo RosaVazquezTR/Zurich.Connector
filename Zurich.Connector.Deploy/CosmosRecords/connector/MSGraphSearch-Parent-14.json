@@ -36,7 +36,7 @@
         "inClause": "Body",
         "required": false,
         "type": "string",
-        "defaultValue": "Name,CreatedDateTime,LastModifiedDateTime,LastModifiedBy,WebUrl,ParentReference"
+        "defaultValue": "Name,CreatedDateTime,LastModifiedDateTime,LastModifiedBy,WebUrl,ParentReference,CreatedBy"
       },
 	  {
         "cdmName": "ResultSize",
