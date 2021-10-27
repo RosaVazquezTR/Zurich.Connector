@@ -29,8 +29,8 @@ namespace Zurich.Connector.Data
                 bool hasScope = principal.Claims.Any();
                 if (hasScope)
                 {
-                    string scopes = principal.FindFirst("scope").Value;
-                    return scopes.Contains(DataConstants.legalHomeScope);
+                    var scopes = principal.FindAll("scope").Select(scope => scope.Value);
+                    return scopes.Contains(DataConstants.LegalHomeScope);
                 }
             }
             return false;

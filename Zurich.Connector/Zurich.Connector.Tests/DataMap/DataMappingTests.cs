@@ -693,7 +693,7 @@ namespace Zurich.Connector.Tests
 			_mockHttpResponseFactory.Setup(x => x.GetImplementation(It.IsAny<string>())).Returns(mockResponseService.Object);
 			Mock<HttpContext> mockHttpContext = new Mock<HttpContext>();
 			var claims = new ClaimsPrincipal();
-			var claimsIdent = new ClaimsIdentity(new List<Claim>() { new Claim("scope", DataConstants.legalHomeScope) });
+			var claimsIdent = new ClaimsIdentity(new List<Claim>() { new Claim("scope", DataConstants.LegalHomeScope) });
 			claims.AddIdentity(claimsIdent);
 			mockHttpContext.Setup(x => x.User).Returns(claims);
 			_mockContextAccessor.Setup(x => x.HttpContext).Returns(mockHttpContext.Object);
