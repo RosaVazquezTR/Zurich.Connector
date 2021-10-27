@@ -1,10 +1,12 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System.IdentityModel.Tokens.Jwt;
 using Zurich.Connector.App.Services;
+using Zurich.Connector.Data;
 using Zurich.Connector.Web;
 using Zurich.TenantData;
 
@@ -27,6 +29,7 @@ namespace Zurich.Connector.IntegrationTests
 
             services.AddScoped<ISessionAccessor, IntegrationTestSessionAccessor>();
             services.AddScoped<ICosmosService, IntegrationTestCosmosService>();
+            services.AddScoped<LegalHomeAccessCheck, IntegrationTestLegalHomeAccess>();
         }
 
         public override void Configure(IApplicationBuilder app, IWebHostEnvironment env)

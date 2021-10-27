@@ -1,0 +1,78 @@
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net.Http;
+using System.Text;
+using System.Threading.Tasks;
+using Zurich.Common;
+using Zurich.Common.Models.OAuth;
+using Zurich.Connector.Data.Model;
+
+namespace Zurich.Connector.Data.Repositories
+{
+    public interface IOAuthApiRepository
+    {
+        /// <summary>
+        /// Makes a Get call
+        /// </summary>
+        /// <param name="appCode">The partner app code</param>
+        /// <returns>A <see cref="Token"/> containing the access_token and refresh_token(if available)</returns>
+        public Task<AppToken> GetToken(string appCode);
+
+    }
+    public class OAuthApiRepository : IOAuthApiRepository
+    {
+
+        private readonly HttpClient _httpClient;
+        private readonly ILogger<OAuthApiRepository> _logger;
+        private readonly IConfiguration _configuration;
+        public OAuthApiRepository(IHttpClientFactory httpClientFactory, ILogger<OAuthApiRepository> logger, IConfiguration configuration)
+        {
+            _httpClient = httpClientFactory.CreateClient(HttpClientNames.OAuthAPI);
+            _logger = logger;
+            _configuration = configuration;
+
+        }
+        public async Task<AppToken> GetToken(string appCode)
+        {
+            dynamic token = "";
+            if (appCode != null)
+            {
+                string baseUrl = _configuration.GetValue<string>("OAuthBaseUrl");
+                string path = $"{baseUrl}/api/v1/Token/{appCode}";
+                using (var requestMessage = new HttpRequestMessage(HttpMethod.Get, path))
+                {
+                    var httpContent = await MakeRequest(requestMessage);
+
+                    token = JsonConvert.DeserializeObject(httpContent);
+                }
+                return token;
+            }
+            return null;
+        }
+        /// <summary>
+        /// Makes HTTP requests to a OAuth endpoint
+        /// </summary>
+        /// <param name="requestMessage">The request to send</param>
+        /// <returns></returns>
+        private async Task<string> MakeRequest(HttpRequestMessage requestMessage)
+        {
+            var result = await _httpClient.SendAsync(requestMessage);
+            var requestContent = await result.Content.ReadAsStringAsync();
+
+            if (result.IsSuccessStatusCode)
+            {
+                return requestContent;
+            }
+            else
+            {
+                _logger.LogError("Unable to retrieve data. Server returned: {code} - {message}", result.StatusCode.ToString(), requestContent ?? "");
+                throw new ApplicationException($"Connectors returned status code {result.StatusCode} - {requestContent}");
+
+            }
+        }
+    }
+}
