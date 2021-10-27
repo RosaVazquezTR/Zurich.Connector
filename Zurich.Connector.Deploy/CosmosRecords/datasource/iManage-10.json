@@ -5,6 +5,7 @@
   "description": "Connects to the iManage APIS",
   "appCode": "iManage",
   "infoURL": "",
+  "productType": "AdminCloud",
   "extraRequestContext": "",
   "registrationInfo": {
     "registrationMode": "Manual",

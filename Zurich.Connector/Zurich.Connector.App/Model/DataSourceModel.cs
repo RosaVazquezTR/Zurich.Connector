@@ -66,8 +66,10 @@ namespace Zurich.Connector.App.Model
         /// </summary>
         public string Locale { get; set; }
 
-        // TODO
-        // Define scope here.
+        /// <summary>
+        /// TODO: Remove this, needed for a work around at the moment
+        /// </summary>
+        public string ProductType { get; set; }
     }
 
     /// <summary>

@@ -34,15 +34,6 @@ namespace Zurich.Connector.App
             CreateMap<ConnectorRequestSorting, ConnectorRequestSortingModel>();
             CreateMap<ConnectorRequestSortingProperties, ConnectorRequestSortingPropertiesModel>();
 
-            CreateMap<DataSourceDocument, DataSourceModel>()
-                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
-                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.name))
-                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.description))
-                .ForMember(dest => dest.InfoUrl, opt => opt.MapFrom(src => src.infoUrl))
-                .ForMember(dest => dest.ExtraRequestContext, opt => opt.MapFrom(src => src.extraRequestContext))
-                .ForMember(dest => dest.SecurityDefinition, opt => opt.MapFrom(src => src.securityDefinition))
-                .ForMember(dest => dest.RegistrationInfo, opt => opt.MapFrom(src => src.registrationInfo))
-                .ForAllOtherMembers(opt => opt.Ignore());
             CreateMap<RegistrationInfo, RegistrationInfoModel>();
             CreateMap<DomainSpecificInformation, DomainSpecificInformationModel>();
             CreateMap<SecurityDefinition, SecurityDefinitionModel>()

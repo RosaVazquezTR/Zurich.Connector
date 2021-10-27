@@ -14,6 +14,7 @@ using Zurich.Connector.Data.Model;
 using Zurich.Connector.Data.Repositories;
 using Zurich.Connector.Data.Repositories.CosmosDocuments;
 using Zurich.Connector.Data.Services;
+using Zurich.ProductData.Models;
 
 namespace Zurich.Connector.Data.DataMap
 {
@@ -57,7 +58,7 @@ namespace Zurich.Connector.Data.DataMap
 		}
 
 		public async virtual Task<AppToken> RetrieveToken(string appCode, OAuthApplicationType? appType = null, 
-														  string locale = null, string grandType = null, bool? sendCredentialsInBody = false)
+														  string locale = null, string grandType = null, bool? sendCredentialsInBody = false, string productType = null)
 		{
 			AppToken token;
 			if (locale != null && grandType != null && appType.HasValue && sendCredentialsInBody.HasValue)
@@ -66,7 +67,7 @@ namespace Zurich.Connector.Data.DataMap
 			}
 			else
             {
-				token = await _oAuthService.GetToken(appCode);
+				token = await _oAuthService.GetToken(appCode, productType: string.IsNullOrEmpty(productType) ? null : new ProductType() { ProductTypeName = productType });
 			}
 			return token;
 		}
