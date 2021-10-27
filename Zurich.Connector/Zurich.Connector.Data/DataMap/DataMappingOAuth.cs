@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Specialized;
@@ -16,7 +17,7 @@ namespace Zurich.Connector.Data.DataMap
 {
     public class DataMappingOAuth : AbstractDataMapping, IDataMapping
     {
-        public DataMappingOAuth(IRepository repository, IDataMappingRepository dataMappingRepository, IOAuthService oAuthService, ILogger<DataMappingOAuth> logger, ConnectorCosmosContext cosmosContext, IMapper mapper, IHttpBodyFactory factory, IHttpResponseFactory httpResponseFactory, OAuthOptions oAuthOptions)
+        public DataMappingOAuth(IRepository repository, IDataMappingRepository dataMappingRepository, IOAuthService oAuthService, ILogger<DataMappingOAuth> logger, ConnectorCosmosContext cosmosContext, IMapper mapper, IHttpBodyFactory factory, IHttpResponseFactory httpResponseFactory, IHttpContextAccessor contextAccessor, IOAuthApiRepository OAuthApirepository, OAuthOptions oAuthOptions, LegalHomeAccessCheck legalHomeAccessCheck)
         {
             this._repository = repository;
             this._dataMappingRepository = dataMappingRepository;
@@ -26,7 +27,11 @@ namespace Zurich.Connector.Data.DataMap
             this._mapper = mapper;
             this._httpBodyFactory = factory;
             this._httpResponseFactory = httpResponseFactory;
+            this._contextAccessor = contextAccessor;
+            this._oAuthApirepository = OAuthApirepository;
             this._oAuthOptions = oAuthOptions;
+            this._legalHomeAccessCheck = legalHomeAccessCheck;
+
         }
 
         public async override Task<T> GetAndMapResults<T>(ConnectorDocument connector, string transferToken = null, NameValueCollection query = null)

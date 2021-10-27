@@ -31,6 +31,7 @@
     }
     public static class DataConstants
     {
+        public const string legalHomeScope = "legalhome.full";
         public const string OAuthUrl = "oauth";
     }
 }

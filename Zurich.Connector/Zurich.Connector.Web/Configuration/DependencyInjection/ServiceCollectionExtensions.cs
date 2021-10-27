@@ -20,6 +20,7 @@ using Zurich.Common.Repositories.Cosmos;
 using Zurich.Common.Services.Security;
 using Zurich.Connector.App.Services;
 using Zurich.Connector.App.Utils;
+using Zurich.Connector.Data;
 using Zurich.Connector.Data.Repositories;
 using Zurich.Connector.Data.Services;
 using Zurich.Connector.Web.Configuration;
@@ -64,6 +65,10 @@ namespace Microsoft.Extensions.DependencyInjection
 			services.AddScoped<IOAuthServices, OAuthServices>();
 			services.AddScoped<IOAuthRepository, OAuthRepository>();
 			services.AddScoped<IConnectorDataService, ConnectorDataService>();
+			services.AddScoped<IOAuthApiServices, OAuthApiServices>();
+			services.AddScoped<IOAuthApiRepository, OAuthApiRepository>();
+			services.AddScoped<LegalHomeAccessCheck, LegalHomeAccess>();
+
 		}
 
 		/// <summary>

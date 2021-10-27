@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
 using System;
@@ -28,7 +29,10 @@ namespace Zurich.Connector.Data.DataMap
 		protected IMapper _mapper;
 		protected IHttpBodyFactory _httpBodyFactory;
 		protected IHttpResponseFactory _httpResponseFactory;
+		protected IHttpContextAccessor _contextAccessor;
+		protected IOAuthApiRepository _oAuthApirepository;
 		protected OAuthOptions _oAuthOptions;
+		protected LegalHomeAccessCheck _legalHomeAccessCheck;
 
 
 		public async virtual Task<T> GetAndMapResults<T>(ConnectorDocument dataTypeInformation, string transferToken = null, NameValueCollection query = null)
@@ -60,15 +64,25 @@ namespace Zurich.Connector.Data.DataMap
 														  string locale = null, string grandType = null, bool? sendCredentialsInBody = false)
 		{
 			AppToken token;
-			if (locale != null && grandType != null && appType.HasValue && sendCredentialsInBody.HasValue)
-			{
-				token = await _oAuthService.RequestNewToken(appCode, grandType, appType.Value, sendCredentialsInBody: sendCredentialsInBody.Value, locale: locale);
-			}
-			else
+			if (_legalHomeAccessCheck.isLegalHomeUser())
             {
-				token = await _oAuthService.GetToken(appCode);
+				if (locale != null && grandType != null && appType.HasValue && sendCredentialsInBody.HasValue)
+				{
+					token = await _oAuthService.RequestNewToken(appCode, grandType, appType.Value, sendCredentialsInBody: sendCredentialsInBody.Value, locale: locale);
+				}
+				else
+				{
+					token = await _oAuthService.GetToken(appCode);
+				}
+				return token;
 			}
-			return token;
+            else
+            {
+				AppToken result = await _oAuthApirepository.GetToken(appCode);
+				return result;
+
+			}
+
 		}
 
 		public async virtual Task<T> MapToCDM<T>(JToken jsonResponse, string resultLocation, ConnectorDocument connectorDocument)
@@ -248,6 +262,5 @@ namespace Zurich.Connector.Data.DataMap
 			return connectorDocument;
 		}
 
-		
 	}
 }
