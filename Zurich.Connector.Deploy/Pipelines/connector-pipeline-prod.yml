@@ -228,9 +228,10 @@ stages:
   jobs:
     - template: ../Templates/connector-swap-slots.yml
       parameters:
-        environmentName: ${{ variables.environmentName }}
-        resourceGroup: ${{ variables.resourceGroup }}
         connectorServiceName: ${{ variables.connectorServiceName }}
+        environmentName: ${{ variables.environmentName }}
+        functionName: ${{ variables.functionNamePrefix }}${{ variables.functionName }}
+        resourceGroup: ${{ variables.resourceGroup }}
         slotName: ${{ variables.slotName }}
         subscriptionName: ${{ variables.subscriptionName }}
 - stage: Update_APIM_Product
