@@ -70,6 +70,11 @@ namespace Zurich.Connector.Data.Repositories.CosmosDocuments
         /// Locale (ex: US / UK etc).
         /// </summary>
         public string locale { get; set; }
+
+        /// <summary>
+        /// TODO: Remove this, needed for a work around at the moment
+        /// </summary>
+        public string productType { get; set; }
     }
 
     /// <summary>
