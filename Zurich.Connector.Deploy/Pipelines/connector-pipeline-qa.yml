@@ -52,136 +52,136 @@ stages:
             environmentName: qa
             projectName: ${{ variables.projectName }}
             publishWebProjects: false
-- stage: Send_Email
-  pool: DCO-HighQ-Platform-N
-  dependsOn:
-  - Build
-  jobs:
-  - deployment: Send_Email
-    environment: QA
-    strategy:
-     runOnce:
-       deploy:
-         steps:
-         - download: none
-         - checkout: self
-         - checkout: ZurichDeploy
-         - template: Templates\ZurichDeploy-NotifyBuildOwners.yml@ZurichDeploy
-           parameters:
-             additionalEmails: ${{ variables.additionalEmailsForServiceNowRequest }}
-             applicationName: ${{ variables.applicationName }}
-             assignmentGroup: "${{ variables.assignmentGroup }}"
-             environmentName: ${{ variables.environmentName }}
-             serviceNowUserName: ${{ variables.serviceNowUserName }}
-             serviceNowPassword: ""
-             subscriptionName: ${{ variables.subscriptionName }}
+# - stage: Send_Email
+#   pool: DCO-HighQ-Platform-N
+#   dependsOn:
+#   - Build
+#   jobs:
+#   - deployment: Send_Email
+#     environment: QA
+#     strategy:
+#      runOnce:
+#        deploy:
+#          steps:
+#          - download: none
+#          - checkout: self
+#          - checkout: ZurichDeploy
+#          - template: Templates\ZurichDeploy-NotifyBuildOwners.yml@ZurichDeploy
+#            parameters:
+#              additionalEmails: ${{ variables.additionalEmailsForServiceNowRequest }}
+#              applicationName: ${{ variables.applicationName }}
+#              assignmentGroup: "${{ variables.assignmentGroup }}"
+#              environmentName: ${{ variables.environmentName }}
+#              serviceNowUserName: ${{ variables.serviceNowUserName }}
+#              serviceNowPassword: ""
+#              subscriptionName: ${{ variables.subscriptionName }}
 - stage: QA
   pool: DCO-HighQ-Platform-N
-  dependsOn:
-    - Send_Email
+  # dependsOn:
+  #   - Send_Email
   jobs:
-    - deployment: Prereqs
-      environment: QA
-      strategy:
-        runOnce:
-          deploy:
-            steps:
-              - checkout: self
-              - checkout: ZurichDeploy
-              - template: ../Templates/connector-prereqs.yml
-                parameters:
-                  apimName: ${{ variables.apimName }}
-                  apimResourceGroup: ${{ variables.apimResourceGroup }}
-                  appInsightsName: ${{ variables.appInsightsName }}
-                  availabilityAlertGroups: ${{ variables.availabilityAlertGroups }}
-                  azureAdClientId: ${{ variables.azureAdClientId }}
-                  azureAdClientSecret: $(azureAdClientSecret)
-                  databaseName: ${{ variables.databaseName }}
-                  databaseServerName: ${{ variables.databaseServerName }}
-                  developerActionGroupName: ${{ variables.developerActionGroupName }}
-                  developerEmailAddress: ${{ variables.developerEmailAddress }}
-                  developerEmailName: ${{ variables.developerEmailName }}
-                  environmentName: ${{ variables.environmentName }}
-                  environmentType: ${{ variables.environmentType }}
-                  flowWebhook: ${{ variables.flowWebhook }}
-                  flowWebhookName: ${{ variables.flowWebhookName }}
-                  keyVault: ${{ variables.keyVault }}
-                  keyVaultSubnets: ${{ variables.keyVaultSubnets }}
-                  legalHomeDbUser: ${{ variables.legalHomeDbUser }}
-                  legalHomeDbUserPassword: $(legalHomeDbUserPassword)
-                  legalTrackerSecret : $(legalTrackerSecret)
-                  ltioL1ActionGroupName: ${{variables.ltioL1ActionGroupName}}
-                  ltioL1EmailAddress: ${{variables.ltioL1EmailAddress}}
-                  ltioL1EmailName: ${{variables.ltioL1EmailName}}
-                  ltioL2ActionGroupName: ${{variables.ltioL2ActionGroupName}}
-                  ltioL2EmailAddress: ${{variables.ltioL2EmailAddress}}
-                  ltioL2EmailName: ${{variables.ltioL2EmailName}}
-                  notificationEmailGroup: ${{ variables.notificationEmailGroup }}
-                  practicalLawSecret: $(practicalLawSecret)
-                  resourceGroup: ${{ variables.resourceGroup }}
-                  resourceLocation: ${{ variables.resourceLocation }}
-                  resourceOwner: ${{ variables.resourceOwner }}
-                  routeTableName: ${{ variables.routeTableName }}
-                  connectorServiceName: ${{ variables.connectorServiceName }}
-                  smartDetectionRuleNames: ${{ variables.smartDetectionRuleNames }}
-                  subnetPreFix: ${{ variables.subnetPreFix }}
-                  subnetConnectorBackend: ${{ variables.subnetConnectorBackend }}
-                  subnetFunctionBackend: ${{ variables.subnetFunctionBackend }}
-                  subscriptionId: ${{ variables.subscriptionId }}
-                  subscriptionName: ${{ variables.subscriptionName }}
-                  tagNames: ${{ variables.tagNames }}
-                  tenantDbConnStringKey: ${{ variables.tenantDbConnStringKey }}
-                  vnetName: ${{ variables.vnetName }}
-                  vnetResourceGroup: ${{ variables.vnetResourceGroup }}
-                  webDnsServer: ${{ variables.webDnsServer }}
+    # - deployment: Prereqs
+    #   environment: QA
+    #   strategy:
+    #     runOnce:
+    #       deploy:
+    #         steps:
+    #           - checkout: self
+    #           - checkout: ZurichDeploy
+    #           - template: ../Templates/connector-prereqs.yml
+    #             parameters:
+    #               apimName: ${{ variables.apimName }}
+    #               apimResourceGroup: ${{ variables.apimResourceGroup }}
+    #               appInsightsName: ${{ variables.appInsightsName }}
+    #               availabilityAlertGroups: ${{ variables.availabilityAlertGroups }}
+    #               azureAdClientId: ${{ variables.azureAdClientId }}
+    #               azureAdClientSecret: $(azureAdClientSecret)
+    #               databaseName: ${{ variables.databaseName }}
+    #               databaseServerName: ${{ variables.databaseServerName }}
+    #               developerActionGroupName: ${{ variables.developerActionGroupName }}
+    #               developerEmailAddress: ${{ variables.developerEmailAddress }}
+    #               developerEmailName: ${{ variables.developerEmailName }}
+    #               environmentName: ${{ variables.environmentName }}
+    #               environmentType: ${{ variables.environmentType }}
+    #               flowWebhook: ${{ variables.flowWebhook }}
+    #               flowWebhookName: ${{ variables.flowWebhookName }}
+    #               keyVault: ${{ variables.keyVault }}
+    #               keyVaultSubnets: ${{ variables.keyVaultSubnets }}
+    #               legalHomeDbUser: ${{ variables.legalHomeDbUser }}
+    #               legalHomeDbUserPassword: $(legalHomeDbUserPassword)
+    #               legalTrackerSecret : $(legalTrackerSecret)
+    #               ltioL1ActionGroupName: ${{variables.ltioL1ActionGroupName}}
+    #               ltioL1EmailAddress: ${{variables.ltioL1EmailAddress}}
+    #               ltioL1EmailName: ${{variables.ltioL1EmailName}}
+    #               ltioL2ActionGroupName: ${{variables.ltioL2ActionGroupName}}
+    #               ltioL2EmailAddress: ${{variables.ltioL2EmailAddress}}
+    #               ltioL2EmailName: ${{variables.ltioL2EmailName}}
+    #               notificationEmailGroup: ${{ variables.notificationEmailGroup }}
+    #               practicalLawSecret: $(practicalLawSecret)
+    #               resourceGroup: ${{ variables.resourceGroup }}
+    #               resourceLocation: ${{ variables.resourceLocation }}
+    #               resourceOwner: ${{ variables.resourceOwner }}
+    #               routeTableName: ${{ variables.routeTableName }}
+    #               connectorServiceName: ${{ variables.connectorServiceName }}
+    #               smartDetectionRuleNames: ${{ variables.smartDetectionRuleNames }}
+    #               subnetPreFix: ${{ variables.subnetPreFix }}
+    #               subnetConnectorBackend: ${{ variables.subnetConnectorBackend }}
+    #               subnetFunctionBackend: ${{ variables.subnetFunctionBackend }}
+    #               subscriptionId: ${{ variables.subscriptionId }}
+    #               subscriptionName: ${{ variables.subscriptionName }}
+    #               tagNames: ${{ variables.tagNames }}
+    #               tenantDbConnStringKey: ${{ variables.tenantDbConnStringKey }}
+    #               vnetName: ${{ variables.vnetName }}
+    #               vnetResourceGroup: ${{ variables.vnetResourceGroup }}
+    #               webDnsServer: ${{ variables.webDnsServer }}
 
-    - deployment: Connector
-      environment: QA
-      dependsOn: Prereqs
-      strategy:
-        runOnce:
-          deploy:
-            steps:
-              - checkout: self
-              - checkout: ZurichDeploy
-              - template: ../Templates/connector-deploy.yml
-                parameters:
-                  appInsightsName: ${{ variables.appInsightsName }}
-                  connectorCosmosContainerNames: ${{ variables.connectorCosmosContainerNames }}
-                  connectorCosmosExcludedComparisonProperties: ${{ variables.connectorCosmosExcludedComparisonProperties }}
-                  connectorCosmosThroughput: ${{ variables.connectorCosmosThroughput }}
-                  connectorCosmosMaxThroughput: ${{ variables.connectorCosmosMaxThroughput }}
-                  connectorCosmosDatabaseName: ${{ variables.connectorCosmosDatabaseName }}
-                  connectorCosmosName: ${{ variables.connectorCosmosName }}
-                  connectorCosmosPartitionPath: ${{ variables.connectorCosmosPartitionPath }}
-                  connectorCosmosShouldAutoScale: ${{ variables.connectorCosmosShouldAutoScale }}
-                  connectorCosmoskeyVaultPrefix: ${{ variables.connectorCosmoskeyVaultPrefix }}
-                  connectorServiceName: ${{ variables.connectorServiceName }}
-                  deployArmTemplates: ${{ variables.deployArmTemplates }}
-                  deployScriptFolder: ${{ variables.deployScriptFolder }}
-                  environmentName: ${{ variables.environmentName }}
-                  keyVault: '${{ variables.keyVault }}'
-                  moduleFolder: ${{ variables.moduleFolder }}
-                  monitorAlertGroups: ${{ variables.monitorAlertGroups }}
-                  monitorAlertPrefix: ${{ variables.monitorAlertPrefix }}
-                  projectName: '${{ variables.projectName }}'
-                  resourceGroup: ${{ variables.resourceGroup }}
-                  resourceLocation: ${{ variables.resourceLocation }}
-                  retentionDays: ${{ variables.retentionDays }}
-                  connectorSubnets: ${{ variables.connectorSubnets }}
-                  serviceConnectionName: ${{ variables.serviceConnectionName }}
-                  slotName: ${{ variables.slotName }}
-                  storageResourceGroup: ${{ variables.monitoringResourceGroup }}
-                  subscriptionName: ${{ variables.subscriptionName }}
-                  storageLoggingName: ${{ variables.storageLoggingName }}
-                  subscriptionId: ${{ variables.subscriptionId }}
-                  subnetPrefix: ${{ variables.subnetPrefix }}
-                  tlsVersion: ${{ variables.tlsVersion }}
-                  vnetName: ${{ variables.vnetName }}
-                  vnetResourceGroup: ${{ variables.vnetResourceGroup }}
+    # - deployment: Connector
+    #   environment: QA
+    #   dependsOn: Prereqs
+    #   strategy:
+    #     runOnce:
+    #       deploy:
+    #         steps:
+    #           - checkout: self
+    #           - checkout: ZurichDeploy
+    #           - template: ../Templates/connector-deploy.yml
+    #             parameters:
+    #               appInsightsName: ${{ variables.appInsightsName }}
+    #               connectorCosmosContainerNames: ${{ variables.connectorCosmosContainerNames }}
+    #               connectorCosmosExcludedComparisonProperties: ${{ variables.connectorCosmosExcludedComparisonProperties }}
+    #               connectorCosmosThroughput: ${{ variables.connectorCosmosThroughput }}
+    #               connectorCosmosMaxThroughput: ${{ variables.connectorCosmosMaxThroughput }}
+    #               connectorCosmosDatabaseName: ${{ variables.connectorCosmosDatabaseName }}
+    #               connectorCosmosName: ${{ variables.connectorCosmosName }}
+    #               connectorCosmosPartitionPath: ${{ variables.connectorCosmosPartitionPath }}
+    #               connectorCosmosShouldAutoScale: ${{ variables.connectorCosmosShouldAutoScale }}
+    #               connectorCosmoskeyVaultPrefix: ${{ variables.connectorCosmoskeyVaultPrefix }}
+    #               connectorServiceName: ${{ variables.connectorServiceName }}
+    #               deployArmTemplates: ${{ variables.deployArmTemplates }}
+    #               deployScriptFolder: ${{ variables.deployScriptFolder }}
+    #               environmentName: ${{ variables.environmentName }}
+    #               keyVault: '${{ variables.keyVault }}'
+    #               moduleFolder: ${{ variables.moduleFolder }}
+    #               monitorAlertGroups: ${{ variables.monitorAlertGroups }}
+    #               monitorAlertPrefix: ${{ variables.monitorAlertPrefix }}
+    #               projectName: '${{ variables.projectName }}'
+    #               resourceGroup: ${{ variables.resourceGroup }}
+    #               resourceLocation: ${{ variables.resourceLocation }}
+    #               retentionDays: ${{ variables.retentionDays }}
+    #               connectorSubnets: ${{ variables.connectorSubnets }}
+    #               serviceConnectionName: ${{ variables.serviceConnectionName }}
+    #               slotName: ${{ variables.slotName }}
+    #               storageResourceGroup: ${{ variables.monitoringResourceGroup }}
+    #               subscriptionName: ${{ variables.subscriptionName }}
+    #               storageLoggingName: ${{ variables.storageLoggingName }}
+    #               subscriptionId: ${{ variables.subscriptionId }}
+    #               subnetPrefix: ${{ variables.subnetPrefix }}
+    #               tlsVersion: ${{ variables.tlsVersion }}
+    #               vnetName: ${{ variables.vnetName }}
+    #               vnetResourceGroup: ${{ variables.vnetResourceGroup }}
     - deployment: DurableFunction
       environment: CI
-      dependsOn: Prereqs
+      # dependsOn: Prereqs
       strategy:
         runOnce:
           deploy:
@@ -225,83 +225,83 @@ stages:
                     vnetName: ${{ variables.vnetName }}
                     vnetResourceGroup: ${{ variables.vnetResourceGroup }}
                     zipFileLocation: ${{ variables.functionZipLocation }}
-- stage: Swap_Slots
-  dependsOn: QA
-  jobs:
-    - template: ../Templates/connector-swap-slots.yml
-      parameters:
-        connectorServiceName: ${{ variables.connectorServiceName }}
-        environmentName: ${{ variables.environmentName }}
-        functionName: ${{ variables.functionNamePrefix }}${{ variables.functionName }}
-        resourceGroup: ${{ variables.resourceGroup }}
-        slotName: ${{ variables.slotName }}
-        subscriptionName: ${{ variables.subscriptionName }}
-- stage: Update_APIM_Product
-  dependsOn: Swap_Slots
-  jobs:
-  - job: 'UpdateApim'
-    displayName: 'Update Apim Connector Service'
-    steps:
-      - checkout: self
-      - checkout: ZurichDeploy
-      - template: Templates\ZurichDeploy-SetupApimProduct.yml@ZurichDeploy
-        parameters:
-          apiId: ${{ variables.apiId }}
-          apimAppInsightsName: ${{ variables.apimAppInsightsName }}
-          apimName: ${{ variables.apimName }}
-          apimProductPolicyFilePath: $(Build.SourcesDirectory)/Zurich.Connector.Deploy/Config/${{variables.environmentName}}/ConnectorAPIMPolicy.xml
-          apimResourceGroup: ${{ variables.apimResourceGroup }}
-          apimResourceLocation: ${{ variables.apimResourceLocation }}
-          apiVersion: ${{ variables.apiVersion }}
-          appGatewayName: ${{ variables.appGatewayName }}
-          appGatewayResourceGroup: ${{ variables.coreResourceGroup }}
-          availabilityAlertDescription: ${{ variables.availabilityAlert_Description }}
-          availabilityAlertGroups: ${{ variables.availabilityAlertGroups}}
-          availabilityAlertName: ${{ variables.availabilityAlert_Name }}
-          availabilityAlertPingFrequency: ${{ variables.availabilityAlert_PingFrequency }}
-          availabilityAlertWindowSize: ${{ variables.availabilityAlert_WindowSize }}
-          environmentName: ${{ variables.environmentName }}
-          fullyQualifiedDomainName: ${{ variables.connectorServiceFQND }}
-          groups: ${{ variables.groups }}
-          healthEndpoint: ${{ variables.healthEndpoint }}
-          productDescription: ${{ variables.productDescription }}
-          productName: ${{ variables.productName }}
-          resourceGroup: ${{ variables.resourceGroup }}
-          serviceName: ${{ variables.connectorServiceName }}
-          subscriptionName: ${{ variables.subscriptionName }}
-          swaggerEndpoint: ${{ variables.swaggerEndpoint }}
-- stage: Testing
-  pool: AutomationTestAgentPool
-  dependsOn: Swap_Slots
-  jobs:
-  - job: 'RegressionTests'
-    timeoutInMinutes: ${{ variables.regressionTestTimeout }} # how long to run the job before automatically cancelling
-    displayName: 'Regression Tests (Smoke Tests)'
-    steps: 
-      - checkout: ZurichTesting
-      - template: pipelines\Templates\legal-home-regression-tests.yml@ZurichTesting
-        parameters:
-          environment: ${{ variables.environmentStorageName }}
-          azureAdClientSecret: $(azureAdClientSecret)
-          testTags: ${{ variables.regressionTestTags }}
-# This will probably end up being dev signoff.
-# - stage: QaApproval
-#   dependsOn: 
-#   - Swap_Slots
+# - stage: Swap_Slots
+#   dependsOn: QA
 #   jobs:
-#     - deployment: QaApproval
-#       environment: QA_Quality
-- stage: KickOffProd
-  # dependsOn: BusinessApproval
-  # condition: eq(dependencies.BusinessApproval.result,'Succeeded')
-  jobs:
-    - deployment: KickOffProd
-      environment: QA
-      strategy:
-        runOnce:
-          deploy:
-            steps:
-              - template: Templates\ZurichDeploy-KickOffPipeline.yml@ZurichDeploy
-                parameters:
-                  #Prod pipeline
-                  pipelineDefinitionId: "1554"
+#     - template: ../Templates/connector-swap-slots.yml
+#       parameters:
+#         connectorServiceName: ${{ variables.connectorServiceName }}
+#         environmentName: ${{ variables.environmentName }}
+#         functionName: ${{ variables.functionNamePrefix }}${{ variables.functionName }}
+#         resourceGroup: ${{ variables.resourceGroup }}
+#         slotName: ${{ variables.slotName }}
+#         subscriptionName: ${{ variables.subscriptionName }}
+# - stage: Update_APIM_Product
+#   dependsOn: Swap_Slots
+#   jobs:
+#   - job: 'UpdateApim'
+#     displayName: 'Update Apim Connector Service'
+#     steps:
+#       - checkout: self
+#       - checkout: ZurichDeploy
+#       - template: Templates\ZurichDeploy-SetupApimProduct.yml@ZurichDeploy
+#         parameters:
+#           apiId: ${{ variables.apiId }}
+#           apimAppInsightsName: ${{ variables.apimAppInsightsName }}
+#           apimName: ${{ variables.apimName }}
+#           apimProductPolicyFilePath: $(Build.SourcesDirectory)/Zurich.Connector.Deploy/Config/${{variables.environmentName}}/ConnectorAPIMPolicy.xml
+#           apimResourceGroup: ${{ variables.apimResourceGroup }}
+#           apimResourceLocation: ${{ variables.apimResourceLocation }}
+#           apiVersion: ${{ variables.apiVersion }}
+#           appGatewayName: ${{ variables.appGatewayName }}
+#           appGatewayResourceGroup: ${{ variables.coreResourceGroup }}
+#           availabilityAlertDescription: ${{ variables.availabilityAlert_Description }}
+#           availabilityAlertGroups: ${{ variables.availabilityAlertGroups}}
+#           availabilityAlertName: ${{ variables.availabilityAlert_Name }}
+#           availabilityAlertPingFrequency: ${{ variables.availabilityAlert_PingFrequency }}
+#           availabilityAlertWindowSize: ${{ variables.availabilityAlert_WindowSize }}
+#           environmentName: ${{ variables.environmentName }}
+#           fullyQualifiedDomainName: ${{ variables.connectorServiceFQND }}
+#           groups: ${{ variables.groups }}
+#           healthEndpoint: ${{ variables.healthEndpoint }}
+#           productDescription: ${{ variables.productDescription }}
+#           productName: ${{ variables.productName }}
+#           resourceGroup: ${{ variables.resourceGroup }}
+#           serviceName: ${{ variables.connectorServiceName }}
+#           subscriptionName: ${{ variables.subscriptionName }}
+#           swaggerEndpoint: ${{ variables.swaggerEndpoint }}
+# - stage: Testing
+#   pool: AutomationTestAgentPool
+#   dependsOn: Swap_Slots
+#   jobs:
+#   - job: 'RegressionTests'
+#     timeoutInMinutes: ${{ variables.regressionTestTimeout }} # how long to run the job before automatically cancelling
+#     displayName: 'Regression Tests (Smoke Tests)'
+#     steps: 
+#       - checkout: ZurichTesting
+#       - template: pipelines\Templates\legal-home-regression-tests.yml@ZurichTesting
+#         parameters:
+#           environment: ${{ variables.environmentStorageName }}
+#           azureAdClientSecret: $(azureAdClientSecret)
+#           testTags: ${{ variables.regressionTestTags }}
+# # This will probably end up being dev signoff.
+# # - stage: QaApproval
+# #   dependsOn: 
+# #   - Swap_Slots
+# #   jobs:
+# #     - deployment: QaApproval
+# #       environment: QA_Quality
+# - stage: KickOffProd
+#   # dependsOn: BusinessApproval
+#   # condition: eq(dependencies.BusinessApproval.result,'Succeeded')
+#   jobs:
+#     - deployment: KickOffProd
+#       environment: QA
+#       strategy:
+#         runOnce:
+#           deploy:
+#             steps:
+#               - template: Templates\ZurichDeploy-KickOffPipeline.yml@ZurichDeploy
+#                 parameters:
+#                   #Prod pipeline
+#                   pipelineDefinitionId: "1554"
