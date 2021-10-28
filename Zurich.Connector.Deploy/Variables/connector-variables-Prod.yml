@@ -28,7 +28,7 @@ variables:
   - name: subnetConnectorBackend
     value: "@{SubNetName = 'WebApi'; SubNetCidr = '10.75.22.0/27'; SubNetType = 'backend'; subNetServiceEndpoints = @('Microsoft.AzureCosmosDB', 'Microsoft.KeyVault', 'Microsoft.Sql')}"
   - name: subnetFunctionBackend
-    value: "@{SubNetName = 'function'; SubNetCidr = ''; SubNetType = 'backend'; subNetServiceEndpoints = @('Microsoft.AzureCosmosDB', 'Microsoft.KeyVault')}"
+    value: "@{SubNetName = 'function'; SubNetCidr = ''; SubNetType = 'backend'; subNetServiceEndpoints = @('Microsoft.AzureCosmosDB', 'Microsoft.KeyVault', 'Microsoft.Storage')}"
   - name: subnetPreFix
     value: 'connector'
   - name: swaggerEndpoint
