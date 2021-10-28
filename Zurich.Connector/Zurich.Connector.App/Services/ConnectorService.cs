@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using Zurich.Connector.App;
 using Zurich.Connector.App.Enum;
 using Zurich.Connector.App.Model;
 using Zurich.Connector.App.Services;
@@ -56,7 +57,7 @@ namespace Zurich.Connector.Data.Services
                 bool isDataSourceFilter = false;
                 IEnumerable<string> entityTypeFilter = Enumerable.Empty<string>();
                 IEnumerable<string> dataSourceFilter = Enumerable.Empty<string>();
-                IEnumerable<string> registeredConnectors = Enumerable.Empty<string>();
+                IEnumerable<string> registeredDataSources = Enumerable.Empty<string>();
                 if (filters?.EntityTypes?.Count > 0)
                 {
                     isEntityTypeFilter = true;
@@ -69,20 +70,27 @@ namespace Zurich.Connector.Data.Services
                     dataSourceFilter = filters.DataSources;
                 }
 
-                registeredConnectors = _registrationService.GetUserConnections(filters.RegistrationModes);
-
-                Expression<Func<ConnectorDocument, bool>> condition = connector => (isEntityTypeFilter == false || entityTypeFilter.Contains(connector.Info.EntityType.ToString()))
-                                        && (isDataSourceFilter == false || dataSourceFilter.Contains(connector.Info.DataSourceId))
-                                        && (filters.IsRegistered == false || registeredConnectors.Contains(connector.Id));
+                Expression<Func<ConnectorDocument, bool>> condition = connector => connector.Info.SubType == SubType.Parent
+                                && (isEntityTypeFilter == false || entityTypeFilter.Contains(connector.Info.EntityType.ToString()))
+                                && (isDataSourceFilter == false || dataSourceFilter.Contains(connector.Info.DataSourceId));
                 var connectors = await _cosmosService.GetConnectors(true, condition);
 
                 if (filters.RegistrationModes != null && filters.RegistrationModes.Any())
                 {
                     connectors = connectors.Where(x => filters.RegistrationModes.Contains(x.DataSource.RegistrationInfo.RegistrationMode));
                 }
-                foreach (var connector in connectors.Where(connector => registeredConnectors.Contains(connector.Id)))
+
+                registeredDataSources = await _registrationService.GetUserDataSources();
+                List<ConnectorModel> registeredConnectors = new List<ConnectorModel>();
+                foreach (var connector in connectors.Where(connector => registeredDataSources.Contains(connector.DataSource.AppCode)))
                 {
                     connector.RegistrationStatus = RegistrationStatus.Registered;
+                    registeredConnectors.Add(connector);
+                }
+                // Can't stick this in the cosmos query because it is looking at connectors not datasources.
+                if(filters.IsRegistered)
+                {
+                    connectors = registeredConnectors;
                 }
 
                 return connectors.ToList();

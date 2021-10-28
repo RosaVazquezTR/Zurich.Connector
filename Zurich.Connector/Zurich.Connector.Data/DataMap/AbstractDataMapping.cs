@@ -33,7 +33,7 @@ namespace Zurich.Connector.Data.DataMap
 		protected IHttpContextAccessor _contextAccessor;
 		protected IOAuthApiRepository _oAuthApirepository;
 		protected OAuthOptions _oAuthOptions;
-		protected LegalHomeAccessCheck _legalHomeAccessCheck;
+		protected ILegalHomeAccessCheck _legalHomeAccessCheck;
 
 
 		public async virtual Task<T> GetAndMapResults<T>(ConnectorDocument dataTypeInformation, string transferToken = null, NameValueCollection query = null)

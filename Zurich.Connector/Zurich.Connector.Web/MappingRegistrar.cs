@@ -53,6 +53,10 @@ namespace Zurich.Connector.Web
                 .ForMember(dest => dest.AppName, opt => opt.MapFrom(src => src.AppName))
                 .ForAllOtherMembers(opt => opt.Ignore());
 
+            CreateMap<DataSourceRegistration, DataSourceRegistrationResponseViewModel>()
+                .ForMember(dest => dest.AuthorizeUrl, opt => opt.MapFrom(src => src.AuthorizeUrl))
+                .ForMember(dest => dest.Registered, opt => opt.MapFrom(src => src.Registered));
+
         }
     }
 }

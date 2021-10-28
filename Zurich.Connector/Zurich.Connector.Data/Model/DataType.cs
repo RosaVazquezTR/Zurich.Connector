@@ -44,17 +44,6 @@ namespace Zurich.Connector.Data.Model
     }
 
     /// <summary>
-    /// /Represents Registration Mode
-    /// </summary>
-    public enum RegistrationEntityMode
-    {
-        Registered,
-        AutoRegistered,
-        ManualRegistered,
-        None
-    }
-
-    /// <summary>
     /// Response content type
     /// </summary>
     public enum ResponseContentType

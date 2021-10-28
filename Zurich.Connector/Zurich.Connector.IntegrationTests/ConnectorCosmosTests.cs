@@ -1,11 +1,14 @@
 using FluentAssertions;
 using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Xunit;
+using Zurich.Connector.App;
+using Zurich.Connector.Data.Model;
 using Zurich.Connector.Data.Repositories.CosmosDocuments;
 
 namespace Zurich.Connector.IntegrationTests
@@ -49,7 +52,7 @@ namespace Zurich.Connector.IntegrationTests
 
         public static List<ConnectorDocument> GetConnectors(string entityType, string subType)
         {
-            List<ConnectorDocument> connectors = new List<ConnectorDocument>();
+            List <ConnectorDocument> connectors = new List<ConnectorDocument>();
             string[] fileEntries = Directory.GetFiles($"{folderLocation}\\connector");
 
             foreach (var fileLocation in fileEntries)
@@ -64,7 +67,7 @@ namespace Zurich.Connector.IntegrationTests
                 {
                     if (string.IsNullOrEmpty(entityType) || connector.Info.EntityType.ToString() == entityType)
                     {
-                        if (string.IsNullOrEmpty(subType) || string.IsNullOrEmpty(connector.Info.SubType) || connector.Info.SubType == subType)
+                        if (string.IsNullOrEmpty(subType) || connector.Info.SubType == subType)
                         {
                             connectors.Add(connector);
                         }
@@ -139,7 +142,7 @@ namespace Zurich.Connector.IntegrationTests
             connector.Info.EntityType.ToString().Should().NotBeNullOrWhiteSpace();
             connector.Info.DataSourceId.Should().NotBeNullOrWhiteSpace();
             connector.Info.Version.Should().NotBeNull();
-            if (string.IsNullOrEmpty(connector.Info.SubType) || connector.Info.SubType.Equals("Parent"))
+            if (string.IsNullOrEmpty(connector.Info.SubType) || connector.Info.SubType == SubType.Parent)
             {
                 connector.Alias.Should().NotBeNull();
                 connector.Request.Should().NotBeNull();
@@ -222,7 +225,7 @@ namespace Zurich.Connector.IntegrationTests
         {
             dataSource.Should().NotBeNull();
             // Assert
-            if (string.IsNullOrEmpty(connector.Info.SubType) || connector.Info.SubType.Equals("Parent"))
+            if (connector.Info.SubType == SubType.Parent)
             {
                 connector.Alias.Should().StartWith($"{dataSource.appCode}.{connector.Info.EntityType}".ToLower());
             }

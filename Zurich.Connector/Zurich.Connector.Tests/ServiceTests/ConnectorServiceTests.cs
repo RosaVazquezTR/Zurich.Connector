@@ -92,7 +92,7 @@ namespace Zurich.Connector.Tests.ServiceTests
 		public async Task CallGetConnectors()
 		{
 			// ARRANGE
-			var registeredConnectorIds = new List<string>() { "2", "4" };
+			var registeredDataSources = new List<string>() { "DataSource22" };
 			var testConnections = MockConnectorData.SetupConnectorModel();
 			var testConnectionsList = MockConnectorData.SetupConnectorModel().ToList();
 
@@ -102,7 +102,7 @@ namespace Zurich.Connector.Tests.ServiceTests
 			ConnectorFilterModel filters = new ConnectorFilterModel();
 
 			_mockCosmosService.Setup(x => x.GetConnectors(true, It.IsAny<Expression<Func<ConnectorDocument, bool>>>())).Returns(Task.FromResult(testConnections));
-			_mockRegistrationService.Setup(x => x.GetUserConnections(It.IsAny<IEnumerable<Zurich.Common.Models.Connectors.RegistrationEntityMode>>())).Returns(registeredConnectorIds);
+			_mockRegistrationService.Setup(x => x.GetUserDataSources()).Returns(Task.FromResult<IEnumerable<string>>(registeredDataSources));
 			_mockCosmosService.Setup(x => x.GetDataSources(It.IsAny<Expression<Func<DataSourceDocument, bool>>>())).Returns(Task.FromResult(testDataSources));
 
 			ConnectorService service = new ConnectorService(null, _mockCosmosService.Object, _mockRegistrationService.Object);
@@ -118,8 +118,8 @@ namespace Zurich.Connector.Tests.ServiceTests
 			Assert.AreEqual(testConnectionsList[1].Info.Title, connectors[1].Info.Title);
 			var testName = testDataSourcesList.Where(t => t.Id == connectors[0].Info.DataSourceId).Select(t => t.Name).First();
 			Assert.AreEqual(testName, connectors[0].DataSource.Name);
-			Assert.AreEqual(App.Enum.RegistrationStatus.Registered, connectors.Find(x => x.Id == registeredConnectorIds.First()).RegistrationStatus);
-			Assert.AreEqual(App.Enum.RegistrationStatus.NotRegistered, connectors.Find(x => !registeredConnectorIds.Contains(x.Id)).RegistrationStatus);
+			Assert.AreEqual(App.Enum.RegistrationStatus.Registered, connectors.Find(x => x.DataSource.AppCode == registeredDataSources.First()).RegistrationStatus);
+			Assert.AreEqual(App.Enum.RegistrationStatus.NotRegistered, connectors.Find(x => !registeredDataSources.Contains(x.DataSource.AppCode)).RegistrationStatus);
 		}
 
 		[TestMethod]
@@ -196,8 +196,8 @@ namespace Zurich.Connector.Tests.ServiceTests
 		public async Task CallGetConnectorsWithIsRegisteredFilter()
 		{
 			// ARRANGE
-			var registeredConnectorIds = new List<string>() { "2", "4" };
-			var testConnections = MockConnectorData.SetupConnectorModel().Where(t => registeredConnectorIds.Contains(t.Id));
+			var registeredDataSources = new List<string>() { "DataSource22" };
+			var testConnections = MockConnectorData.SetupConnectorModel();
 
 			ConnectorFilterModel filters = new ConnectorFilterModel()
 			{
@@ -206,7 +206,7 @@ namespace Zurich.Connector.Tests.ServiceTests
 
 
 			_mockCosmosService.Setup(x => x.GetConnectors(true, It.IsAny<Expression<Func<ConnectorDocument, bool>>>())).Returns(Task.FromResult(testConnections));
-			_mockRegistrationService.Setup(x => x.GetUserConnections(It.IsAny<IEnumerable<Zurich.Common.Models.Connectors.RegistrationEntityMode>>())).Returns(registeredConnectorIds);
+			_mockRegistrationService.Setup(x => x.GetUserDataSources()).Returns(Task.FromResult<IEnumerable<string>>(registeredDataSources));
 
 			ConnectorService service = new ConnectorService(null, _mockCosmosService.Object, _mockRegistrationService.Object);
 
@@ -217,7 +217,7 @@ namespace Zurich.Connector.Tests.ServiceTests
 			_mockCosmosService.Verify(x => x.GetConnectors(true, It.IsAny<Expression<Func<ConnectorDocument, bool>>>()), Times.Once());
 			Assert.IsNotNull(connectors);
 			Assert.AreEqual(2, connectors.Count);
-			Assert.AreEqual(registeredConnectorIds.First(), connectors[0].Id);
+			Assert.AreEqual(registeredDataSources.First(), connectors[0].DataSource.AppCode);
 			connectors.ForEach(connector =>
 			{
 				Assert.AreEqual(App.Enum.RegistrationStatus.Registered, connector.RegistrationStatus);
@@ -240,7 +240,7 @@ namespace Zurich.Connector.Tests.ServiceTests
 			};
 
 			_mockCosmosService.Setup(x => x.GetConnectors(true, It.IsAny<Expression<Func<ConnectorDocument, bool>>>())).Returns(Task.FromResult(testConnections));
-			_mockRegistrationService.Setup(x => x.GetUserConnections(It.IsAny<IEnumerable<Zurich.Common.Models.Connectors.RegistrationEntityMode>>())).Returns(registeredConnectorIds);
+			_mockRegistrationService.Setup(x => x.GetUserDataSources()).Returns(Task.FromResult<IEnumerable<string>>(registeredConnectorIds));
 
 			ConnectorService service = new ConnectorService(null, _mockCosmosService.Object, _mockRegistrationService.Object);
 

@@ -7,6 +7,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Zurich.Common;
+using Zurich.Connector.Data.Model;
 
 namespace Zurich.Connector.Data.Repositories
 {
@@ -21,6 +22,27 @@ namespace Zurich.Connector.Data.Repositories
         /// <param name="appCode">Holds application code</param>
         /// <returns>a boolean value</returns>
         Task<bool> AutomaticRegistration(string appCode);
+
+        /// <summary>
+        /// Calls oAuth to lists out the registrations for a user that can be registered
+        /// </summary>
+        /// <returns>returns the information around the domain, appcode and base url</returns>
+        Task<List<DataSourceInformation>> GetAvailableRegistrations();
+
+
+        /// <summary>
+        /// Calls oAuth to Get a users current dataSource registrations
+        /// </summary>
+        /// <returns>returns the information around the domain, appcode and base url for user registrations</returns>
+        Task<List<DataSourceInformation>> GetUserRegistrations();
+
+
+        /// <summary>
+        /// Calls oAuth to get an appCodes corresponding authorize endpoint so the user can sign in
+        /// </summary>
+        /// <param name="applicationCode">The application to get the authorize url for</param>
+        /// <returns>Authorize url</returns>
+        Task<AuthorizeUrlResponse> GetAuthorizeUrl(string applicationCode);
     }
 
 
@@ -38,7 +60,7 @@ namespace Zurich.Connector.Data.Repositories
             dynamic result = "";
             if (appCode != null)
             {
-                string path = $"oauth/api/v1/{appCode}";
+                string path = $"api/v1/{appCode}";
                 using (var requestMessage = new HttpRequestMessage(HttpMethod.Post, path))
                 {
                     var httpContent = await MakeRequest(requestMessage);
@@ -55,6 +77,50 @@ namespace Zurich.Connector.Data.Repositories
                 return false;
             }
         }
+
+        public async Task<List<DataSourceInformation>> GetAvailableRegistrations()
+        {
+            List<DataSourceInformation> result;
+            string path = $"/api/v1/datasources";
+            using (var requestMessage = new HttpRequestMessage(HttpMethod.Get, path))
+            {
+                var httpContent = await MakeRequest(requestMessage);
+
+                result = JsonConvert.DeserializeObject<List<DataSourceInformation>>(httpContent);
+            }
+
+            return result;
+        }
+
+        public async Task<List<DataSourceInformation>> GetUserRegistrations()
+        {
+            List<DataSourceInformation> result;
+            string path = $"/api/v1/datasources/me";
+            using (var requestMessage = new HttpRequestMessage(HttpMethod.Get, path))
+            {
+                var httpContent = await MakeRequest(requestMessage);
+
+                result = JsonConvert.DeserializeObject<List<DataSourceInformation>>(httpContent);
+            }
+
+            return result;
+        }
+
+        public async Task<AuthorizeUrlResponse> GetAuthorizeUrl(string applicationCode)
+        {
+            AuthorizeUrlResponse result;
+            string path = $"/api/v1/{applicationCode}/authorizeURL";
+            using (var requestMessage = new HttpRequestMessage(HttpMethod.Get, path))
+            {
+                var httpContent = await MakeRequest(requestMessage);
+
+                result = JsonConvert.DeserializeObject<AuthorizeUrlResponse>(httpContent);
+            }
+
+            return result;
+        }
+
+
         /// <summary>
         /// Makes HTTP requests to a OAuth endpoint
         /// </summary>

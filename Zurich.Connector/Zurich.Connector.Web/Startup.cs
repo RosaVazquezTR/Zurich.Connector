@@ -68,7 +68,10 @@ namespace Zurich.Connector.Web
             })
             .AddTransientHttpErrorPolicy(policy => policy.WaitAndRetryAsync(new[] { TimeSpan.FromSeconds(1) }));
 
-            services.AddControllers()
+            services.AddControllers(options =>
+                        {
+                            options.AllowEmptyInputInBodyModelBinding = true;
+                        })
                     .AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
             services.AddScoped<IDataMappingFactory, DataMappingFactory>();
             services.AddScoped<DataMapping>();
@@ -129,7 +132,7 @@ namespace Zurich.Connector.Web
             services.AddAutoMapper(typeof(Startup), typeof(CommonMappingsProfile), typeof(ServiceMappingRegistrar), typeof(MappingRegistrar));
             services.AddConnectorCosmosServices(_connectorCosmosDbOptions, _connectorCosmosClientOptions);
             services.ConfigureExceptonhandler();
-            services.AddOAuthHttpClient(Configuration.GetValue<string>("OAuthBaseUrl"));
+            services.AddOAuthHttpClient(Configuration.GetValue<string>(AppSettings.OAuthUrl));
             this.AddAuthServices(services, authority);
         }
 

@@ -67,7 +67,7 @@ namespace Microsoft.Extensions.DependencyInjection
 			services.AddScoped<IConnectorDataService, ConnectorDataService>();
 			services.AddScoped<IOAuthApiServices, OAuthApiServices>();
 			services.AddScoped<IOAuthApiRepository, OAuthApiRepository>();
-			services.AddScoped<LegalHomeAccessCheck, LegalHomeAccess>();
+			services.AddScoped<ILegalHomeAccessCheck, LegalHomeAccess>();
 
 		}
 

@@ -7,7 +7,7 @@ using Zurich.Connector.Data;
 
 namespace Zurich.Connector.IntegrationTests
 {
-    public class IntegrationTestLegalHomeAccess : LegalHomeAccessCheck
+    public class IntegrationTestLegalHomeAccess : ILegalHomeAccessCheck
     {
         public bool isLegalHomeUser()
         {

@@ -29,7 +29,7 @@ namespace Zurich.Connector.IntegrationTests
 
             services.AddScoped<ISessionAccessor, IntegrationTestSessionAccessor>();
             services.AddScoped<ICosmosService, IntegrationTestCosmosService>();
-            services.AddScoped<LegalHomeAccessCheck, IntegrationTestLegalHomeAccess>();
+            services.AddScoped<ILegalHomeAccessCheck, IntegrationTestLegalHomeAccess>();
         }
 
         public override void Configure(IApplicationBuilder app, IWebHostEnvironment env)

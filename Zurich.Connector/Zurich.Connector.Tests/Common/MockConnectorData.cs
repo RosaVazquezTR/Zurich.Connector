@@ -48,6 +48,7 @@ namespace Zurich.Connector.Tests.Common
                     {
                         Id = "11",
                         Name = "DataSource11",
+                        AppCode = "DataSource11",
                         Description = "DataSource 11 desc"
                     }
                 },
@@ -81,6 +82,7 @@ namespace Zurich.Connector.Tests.Common
                     {
                         Id = "22",
                         Name = "DataSource22",
+                        AppCode = "DataSource22",
                         Description = "DataSource 22 desc",
                         
                         RegistrationInfo = new RegistrationInfoModel()
@@ -132,6 +134,7 @@ namespace Zurich.Connector.Tests.Common
                     {
                         Id = "33",
                         Name = "DataSource33",
+                        AppCode = "DataSource33",
                         Description = "DataSource 33 desc"
                     }
                 },
@@ -165,6 +168,7 @@ namespace Zurich.Connector.Tests.Common
                     {
                         Id = "22",
                         Name = "DataSource22",
+                        AppCode = "DataSource22",
                         Description = "DataSource 22 desc",
                         RegistrationInfo= new RegistrationInfoModel()
                         {
@@ -203,6 +207,7 @@ namespace Zurich.Connector.Tests.Common
                     {
                         Id = "11",
                         Name = "DataSource11",
+                        AppCode = "DataSource11",
                         Description = "DataSource 11 desc"
                     }
                 },
@@ -230,6 +235,7 @@ namespace Zurich.Connector.Tests.Common
                     {
                         Id = "22",
                         Name = "DataSource22",
+                        AppCode = "DataSource22",
                         Description = "DataSource 22 desc"
                     }
                 },
@@ -256,6 +262,7 @@ namespace Zurich.Connector.Tests.Common
                     {
                         Id = "33",
                         Name = "DataSource33",
+                        AppCode = "DataSource33",
                         Description = "DataSource 33 desc"
                     }
                 }

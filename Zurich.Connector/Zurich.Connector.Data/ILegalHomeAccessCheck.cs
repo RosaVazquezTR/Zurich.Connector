@@ -1,18 +1,14 @@
 ﻿using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Zurich.Connector.Data
 {
-    public interface LegalHomeAccessCheck
+    public interface ILegalHomeAccessCheck
     {
         public bool isLegalHomeUser();
     }
 
-    public class LegalHomeAccess : LegalHomeAccessCheck
+    public class LegalHomeAccess : ILegalHomeAccessCheck
     {
         protected IHttpContextAccessor _contextAccessor;
 

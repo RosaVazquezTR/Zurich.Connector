@@ -1,7 +1,7 @@
 {
     "id": "22",
     "partitionkey": "ConnectorList",
-    "alias": "practicallawconnect.search",
+    "alias": "cbtpracpt.search",
     "info": {
         "title": "Get Search Practical law documents - Connect",
         "description": "Pull Practical law documents - Connect",

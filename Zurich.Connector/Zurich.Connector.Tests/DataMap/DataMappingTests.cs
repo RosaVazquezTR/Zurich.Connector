@@ -16,6 +16,7 @@ using Zurich.Common.Repositories.Cosmos;
 using Zurich.Connector.Data.Services;
 using Zurich.Connector.Data.Factories;
 using Newtonsoft.Json.Linq;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
 using Zurich.Connector.Data;
@@ -37,7 +38,7 @@ namespace Zurich.Connector.Tests
 		private OAuthOptions _fakeOAuthOptions;
         private Mock<IHttpContextAccessor> _mockContextAccessor;
         private Mock<IOAuthApiRepository> _mockOAuthApirepository;
-		private Mock<LegalHomeAccessCheck> _mockLegalHomeAccessCheck;
+		private Mock<ILegalHomeAccessCheck> _mockLegalHomeAccessCheck;
 
         [TestInitialize]
 		public void TestInitialize()
@@ -52,7 +53,7 @@ namespace Zurich.Connector.Tests
 			_fakeOAuthOptions = new OAuthOptions();
             _mockContextAccessor = new Mock<IHttpContextAccessor>();
             _mockOAuthApirepository = new Mock<IOAuthApiRepository>();
-			_mockLegalHomeAccessCheck = new Mock<LegalHomeAccessCheck>();
+			_mockLegalHomeAccessCheck = new Mock<ILegalHomeAccessCheck>();
 
             _fakeOAuthOptions.Connections = new Dictionary<string, OAuthConnection>();
 

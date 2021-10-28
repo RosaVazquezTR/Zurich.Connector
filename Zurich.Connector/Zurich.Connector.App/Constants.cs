@@ -10,4 +10,14 @@ namespace Zurich.Connector.App
     {
         public const string filters = "filters";
     }
+
+    public static class AppSettings
+    {
+        public const string OAuthUrl = "OAuthBaseUrl";
+    }
+
+    public static class SubType
+    {
+        public const string Parent = "Parent";
+    }
 }
