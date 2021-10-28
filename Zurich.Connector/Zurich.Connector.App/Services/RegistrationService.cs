@@ -153,7 +153,7 @@ namespace Zurich.Connector.App.Services
 
                 var dataSources = await _cosmosService.GetDataSources();
                 // TODO figure out why condition does not work enums
-                dataSources = dataSources.Where(x => x.RegistrationInfo.RegistrationMode == RegistrationEntityMode.Automatic);
+                dataSources = dataSources.Where(x => x.RegistrationInfo?.RegistrationMode == RegistrationEntityMode.Automatic);
 
                 dataSourceAppCodes.AddRange(dataSources.Where(x=>!string.IsNullOrEmpty(x.AppCode)).Select(x => x.AppCode).Distinct());
 
