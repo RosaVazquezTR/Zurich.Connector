@@ -169,10 +169,13 @@ namespace Zurich.Connector.IntegrationTests
                     filterValue.Name.Should().NotBeNullOrWhiteSpace();
                     filterValue.Description.Should().NotBeNullOrWhiteSpace();
                     filterValue.RequestParameter.Should().NotBeNull();
-                    foreach(var filter in filterValue.FilterList)
+                    if (filterValue.FilterList != null)
                     {
-                        filter.Name.Should().NotBeNullOrWhiteSpace();
-                        filter.Id.Should().NotBeNullOrWhiteSpace();
+                        foreach (var filter in filterValue.FilterList)
+                        {
+                            filter.Name.Should().NotBeNullOrWhiteSpace();
+                            filter.Id.Should().NotBeNullOrWhiteSpace();
+                        }
                     }
                 }
             }

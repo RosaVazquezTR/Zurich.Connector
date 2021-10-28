@@ -34,8 +34,8 @@
         "defaultValue": ""
       },
       {
-        "cdmName": "PracticeAreasIds",
-        "name": "PracticeAreasIds",
+        "cdmName": "PracticeArea",
+        "name": "products",
         "inClause": "Query",
         "required": true,
         "type": "string",
@@ -120,7 +120,137 @@
 	"type": "XML",
     "xmlArrayAttribute": "//searchResults/detail/document"
   },
-  "filters": [],
+  "filters": [
+	{
+		"name": "PracticeArea",
+		"description": "The practice areas",
+		"isMultiselect": "false",
+		"requestParameter": "PracticeArea",
+		"filterlist": [
+			{
+				"name": "Agriculture & Rural Land",
+				"id": "4-606-9406"
+			},
+			{
+				"name": "Arbitration (All Jurisdictions)",
+				"id": "6-382-1328"
+			},
+			{
+				"name": "Arbitration (England & Wales)",
+				"id": "8-382-1327"
+			},
+			{
+				"name": "Business Crime & Investigations",
+				"id": "7-589-6165"
+			},
+			{
+				"name": "Capital Markets",
+				"id": "w-013-2361"
+			},
+			{
+				"name": "Commercial",
+				"id": "1-379-8575"
+			},
+			{
+				"name": "Competition",
+				"id": "2-524-1017"
+			},
+			{
+				"name": "Construction",
+				"id": "4-383-5821"
+			},
+			{
+				"name": "Corporate",
+				"id": "3-103-1749"
+			},
+			{
+				"name": "Data Protection",
+				"id": "1-614-3506"
+			},
+			{
+				"name": "Dispute Resolution",
+				"id": "1-203-9929"
+			},
+			{
+				"name": "Employment",
+				"id": "0-200-2200"
+			},
+			{
+				"name": "Environment",
+				"id": "5-203-9927"
+			},
+			{
+				"name": "EU",
+				"id": "4-501-5626"
+			},
+			{
+				"name": "Family",
+				"id": "5-522-0792"
+			},
+			{
+				"name": "Finance",
+				"id": "3-201-3706"
+			},
+			{
+				"name": "Financial Services",
+				"id": "8-200-2201"
+			},
+			{
+				"name": "IP & IT",
+				"id": "5-103-1753"
+			},
+			{
+				"name": "Life Sciences",
+				"id": "7-586-8365"
+			},
+			{
+				"name": "Local Government",
+				"id": "9-614-3625"
+			},
+			{
+				"name": "Media & Telecoms",
+				"id": "1-509-3753"
+			},
+			{
+				"name": "Pensions",
+				"id": "9-204-8963"
+			},
+			{
+				"name": "Planning",
+				"id": "4-606-9425"
+			},
+			{
+				"name": "Private Client",
+				"id": "2-383-9212"
+			},
+			{
+				"name": "Property",
+				"id": "7-103-1771"
+			},
+			{
+				"name": "Property Litigation",
+				"id": "8-606-9466"
+			},
+			{
+				"name": "Public Law",
+				"id": "9-527-9785"
+			},
+			{
+				"name": "Restructuring & Insolvency",
+				"id": "1-381-9653"
+			},
+			{
+				"name": "Share Schemes & Incentives",
+				"id": "1-204-8962"
+			},
+			{
+				"name": "Tax",
+				"id": "5-378-8744"
+		   
+			}
+		]
+	  }
+  ],
   "pagination": {
     "available": true,
     "paginationType": "",

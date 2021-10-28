@@ -31,8 +31,8 @@
                 "defaultValue": ""
             },
             {
-                "cdmName": "PracticeAreasIds",
-                "name": "PracticeAreasIds",
+                "cdmName": "PracticeArea",
+                "name": "products",
                 "inClause": "Query",
                 "required": true,
                 "type": "string",

@@ -71,7 +71,76 @@
     },
 	"type": "JSON"
   },
-  "filters": [],
+  "filters": [
+	{
+		"name": "LastModifiedStartDate",
+		"description": "The end date for the Modified date",
+		"isMultiselect": "false",
+		"requestParameter": "LastModifiedStartDate"
+	  },
+	  {
+		"name": "LastModifiedEndDate",
+		"description": "The end date for the Modified date",
+		"isMultiselect": "false",
+		"requestParameter": "LastModifiedEndDate"
+	  },
+	  {
+		"name": "Type",
+		"description": "The allowed file types for MSGraph",
+		"isMultiselect": "true",
+		"requestParameter": "fileType",
+		"filterlist": [
+			{
+				"name": "Word",
+				"id": "docx,doc"
+			},
+			{
+				"name": "PDF",
+				"id": "pdf"
+			},
+			{
+				"name": "PowerPoint",
+				"id": "pps,ppt,pptx"
+			},
+			{
+				"name": "Excel",
+				"id": "xlr,xls,xlsx"
+			},
+			{
+				"name": "Access",
+				"id": "accdb"
+			},
+			{
+				"name": "Audio",
+				"id": "mp3,wav,wma,aif,iff,m4a"
+			},
+			{
+				"name": "CSV",
+				"id": "csv"
+			},
+			{
+				"name": "Mail",
+				"id": "msg,eml"
+			},
+			{
+				"name": "OneNote",
+				"id": "one"
+			},
+			{
+				"name": "Text",
+				"id": "txt"
+			},
+			{
+				"name": "Video",
+				"id": "3g2,3gp,afg,m4v,rm,srt,swf,vob,mp4,wmv,mov,avi,flv,avchd,mpg"
+			},
+			{
+				"name": "XML",
+				"id": "xml"
+			}
+		]
+	  }
+  ],
   "resultLocation": "value.hitsContainers.[]",
   "cdmMapping": {
     "structured": [
