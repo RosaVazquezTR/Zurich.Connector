@@ -15,6 +15,8 @@ variables:
     value: '["connector-webApi-QA-Backend", "hqh-VM-RelMgmt-backend"]'
   - name: connectorServiceFQND
     value: "connectorswebapiqa.azurewebsites.net"
+  - name: functionAppServicePlanSku
+    value: '{"name": "P1v2", "size": "P1v2", "tier": "PremiumV2", "family": "Pv2", "capacity": 1}'
   - name: functionSubnets
     value: '["connector-function-QA-backend", "hqh-VM-RelMgmt-backend"]'
   - name: groups
@@ -26,7 +28,7 @@ variables:
   - name: subnetConnectorBackend
     value: "@{SubNetName = 'WebApi'; SubNetCidr = '10.175.64.160/27'; SubNetType = 'backend'; subNetServiceEndpoints = @('Microsoft.AzureCosmosDB', 'Microsoft.KeyVault', 'Microsoft.Sql')}"
   - name: subnetFunctionBackend
-    value: "@{SubNetName = 'function'; SubNetCidr = '10.175.26.128/27'; SubNetType = 'backend'; subNetServiceEndpoints = @('Microsoft.AzureCosmosDB', 'Microsoft.KeyVault')}"
+    value: "@{SubNetName = 'function'; SubNetCidr = '10.175.26.128/27'; SubNetType = 'backend'; subNetServiceEndpoints = @('Microsoft.AzureCosmosDB', 'Microsoft.KeyVault', 'Microsoft.Storage')}"
   - name: subnetPreFix
     value: 'connector'
   - name: swaggerEndpoint
