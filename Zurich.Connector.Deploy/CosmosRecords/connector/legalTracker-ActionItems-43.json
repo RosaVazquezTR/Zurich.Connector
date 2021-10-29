@@ -1,7 +1,7 @@
 {
   "id": "43",
   "partitionkey": "ConnectorList",
-  "alias": "trackr.actionitems",
+  "alias": "trackractionitems.actionitems",
   "info": {
     "title": "Get Legal Tracker Action Items",
     "description": "Get Legal Tracker Action Items",
@@ -16,7 +16,7 @@
       {
         "cdmName": "Email",
         "name": "$filter",
-        "inClause": "OData",
+        "inClause": "Child",
         "key": "email",
         "required": false,
         "type": "string",

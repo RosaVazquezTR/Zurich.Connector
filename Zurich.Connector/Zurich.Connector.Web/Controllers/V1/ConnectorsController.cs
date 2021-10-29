@@ -62,6 +62,7 @@ namespace Zurich.Connector.Web.Controllers
                     ContentType = System.Net.Mime.MediaTypeNames.Application.Json,
                     StatusCode = StatusCodes.Status200OK
                 };
+
             }
             catch (Exception e)
             {

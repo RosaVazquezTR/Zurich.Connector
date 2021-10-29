@@ -64,6 +64,8 @@ namespace Microsoft.Extensions.DependencyInjection
 			services.AddScoped<IOAuthServices, OAuthServices>();
 			services.AddScoped<IOAuthRepository, OAuthRepository>();
 			services.AddScoped<IConnectorDataService, ConnectorDataService>();
+			services.AddScoped<IDataExtractionService, DataExtractionService>();
+
 		}
 
 		/// <summary>
