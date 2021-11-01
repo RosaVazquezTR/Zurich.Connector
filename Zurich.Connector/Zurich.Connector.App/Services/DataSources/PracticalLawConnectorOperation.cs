@@ -17,8 +17,8 @@ namespace Zurich.Connector.App.Services.DataSources
         private readonly ILogger _logger;
         private readonly IDataMapping _dataMapping;
         private readonly IConfiguration _configuration;
-        private List<string> _supportedPracticalLawAppCodes = new List<string>() { "PracticalLawConnect", "PLCUS", "PLCUK", "PLCCA", "PracticalLawConnect-Search", "PLCUS-Search", "PLCUK-Search"
-                                                                                   , "PLCCA-Search" };
+        private List<string> _supportedPracticalLawAppCodes = new List<string>() { "PracticalLawConnect", "PLCUS", "PLCUK", "PLCCA", "CBTPRACPT", "PracticalLawConnect-Search", "PLCUS-Search", "PLCUK-Search"
+                                                                                   , "PLCCA-Search", "CBTPRACPT-Search" };
 
         public PracticalLawConnectorOperation(ILogger<IConnectorDataSourceOperations> logger, IDataMappingFactory dataMappingFactory, IConfiguration configuration)
         {
@@ -71,7 +71,7 @@ namespace Zurich.Connector.App.Services.DataSources
         {
             string configuredUrl = "";
            
-            if (appCode == KnownDataSources.practicalLawConnect || appCode == KnownDataSources.practicalLawConnectSearch)
+            if (appCode == KnownDataSources.practicalLawConnect || appCode == KnownDataSources.practicalLawConnectSearch || appCode == KnownDataSources.practicalLawConnectOnePass || appCode == KnownDataSources.practicalLawConnectSearchOnePass)
                 configuredUrl = _configuration.GetValue<string>(AppConfigKeys.PracticalLawConnectSearchHost);
             else if (appCode == KnownDataSources.plcUS || appCode == KnownDataSources.plcUSSearch)
                 configuredUrl = _configuration.GetValue<string>(AppConfigKeys.PracticalLawUSHost);

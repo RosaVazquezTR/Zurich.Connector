@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.Azure.Cosmos.Linq;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -70,7 +71,7 @@ namespace Zurich.Connector.Data.Services
                     dataSourceFilter = filters.DataSources;
                 }
 
-                Expression<Func<ConnectorDocument, bool>> condition = connector => connector.Info.SubType == SubType.Parent
+                Expression<Func<ConnectorDocument, bool>> condition = connector => (connector.Info.SubType == SubType.Parent || !connector.Info.SubType.IsDefined())
                                 && (isEntityTypeFilter == false || entityTypeFilter.Contains(connector.Info.EntityType.ToString()))
                                 && (isDataSourceFilter == false || dataSourceFilter.Contains(connector.Info.DataSourceId));
                 var connectors = await _cosmosService.GetConnectors(true, condition);

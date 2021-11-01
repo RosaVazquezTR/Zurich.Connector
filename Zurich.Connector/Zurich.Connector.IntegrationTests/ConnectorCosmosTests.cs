@@ -213,6 +213,12 @@ namespace Zurich.Connector.IntegrationTests
                     childConnector.Should().NotBeNull();
                 }
             }
+            foreach (var param in connector.CdmMapping.unstructured)
+            {
+                //should be camelCased
+                bool nameCamelCased = !char.IsUpper(param.name[0]);
+                nameCamelCased.Should().BeTrue("Should be camel cased");
+            }
 
         }
 

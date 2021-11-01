@@ -48,13 +48,13 @@
         ],
       "unstructured": [
         {
-          "name": "LastModifiedDateTime",
+          "name": "lastModifiedDateTime",
           "type": "string",
           "responseElement": "resource.lastModifiedDateTime",
           "_comment": ""
         },
         {
-          "name": "AuthorName",
+          "name": "authorName",
           "type": "string",
           "responseElement": "resource.createdBy.user.displayName",
           "_comment": ""

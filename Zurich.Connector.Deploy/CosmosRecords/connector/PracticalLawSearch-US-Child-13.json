@@ -55,13 +55,13 @@
     ],
     "unstructured": [
       {
-        "name": "JurisdictionList",
+        "name": "jurisdictionList",
         "type": "array",
         "responseElement": "jurisdictionList",
         "_comment": ""
       },
       {
-        "name": "Maintained",
+        "name": "maintained",
         "type": "string",
         "responseElement": "maintained",
         "_comment": ""
