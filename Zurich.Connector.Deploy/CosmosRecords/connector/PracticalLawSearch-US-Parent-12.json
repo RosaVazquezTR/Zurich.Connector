@@ -123,7 +123,7 @@
     {
       "name": "PracticeArea",
       "description": "The practice areas",
-      "isMultiselect": "true",
+      "isMultiselect": "false",
       "requestParameter": "PracticeArea",
       "filterlist": [
         {

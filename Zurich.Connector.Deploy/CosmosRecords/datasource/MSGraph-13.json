@@ -1,7 +1,7 @@
 {
   "id": "13",
   "partitionkey": "DataSourceList",
-  "name": "Microsoft Office 365",
+  "name": "Microsoft 365",
   "description": "This is connecting to Graph API ",
   "appcode": "MsGraph",
   "domain": "graph.microsoft.com",
@@ -11,7 +11,7 @@
     "registrationMode": "Manual",
     "domainRequired": "false",
     "clientAndSecretRequired": "false",
-    "connectionMessage": "Install the applicationin the Microsoft Office 365 Control Center. Look for Thomson Reuters Legal home",
+    "connectionMessage": "Install the applicationin the Microsoft 365 Control Center. Look for Thomson Reuters Legal home",
     "registrationFileRequired": "false"
   },
   "securityDefinition": {

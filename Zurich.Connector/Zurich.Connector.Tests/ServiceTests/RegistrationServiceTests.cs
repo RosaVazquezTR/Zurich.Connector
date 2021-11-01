@@ -139,7 +139,7 @@ namespace Zurich.Connector.Tests.ServiceTests
             cosmosApps.Add(new App.Model.DataSourceModel() { AppCode = "newApp", RegistrationInfo = new RegistrationInfoModel() { RegistrationMode = RegistrationEntityMode.Automatic } });
             cosmosApps.Add(new App.Model.DataSourceModel() { AppCode = "NotReturned", RegistrationInfo = new RegistrationInfoModel() { RegistrationMode = RegistrationEntityMode.Manual } });
             _mockCosmosService.Setup(x => x.GetDataSources(null)).Returns(Task.FromResult<IEnumerable<App.Model.DataSourceModel>>(cosmosApps));
-            var apps = appcodes.Select(x=>new TenantMemberApplication() { ApplicationCode = x}).ToList();
+            var apps = appcodes.Select(x=>new TenantMemberApplication() { ApplicationCode = x, CurrentToken_Id = new Guid() }).ToList();
             _mockTenantService.Setup(x => x.GetTenantMemberApps()).Returns(Task.FromResult(apps));
             _mockLegalHomeAccess.Setup(x => x.isLegalHomeUser()).Returns(true);
 
@@ -155,6 +155,35 @@ namespace Zurich.Connector.Tests.ServiceTests
         }
 
         [TestMethod]
+        public async Task CallGetUserDataSourcesNoToken()
+        {
+            List<string> appcodes = new List<string>() { "iManage", "MSGraph", "fakeApp" };
+
+            //Arrange
+            var userId = new Guid("55e7a5d2-2134-4828-a2cd-2c4284ec11b9");
+            _mockSessionAccessor.Setup(x => x.UserId).Returns(userId);
+            var cosmosApps = new List<App.Model.DataSourceModel>();
+            cosmosApps.Add(new App.Model.DataSourceModel() { AppCode = "newApp", RegistrationInfo = new RegistrationInfoModel() { RegistrationMode = RegistrationEntityMode.Automatic } });
+            cosmosApps.Add(new App.Model.DataSourceModel() { AppCode = "NotReturned", RegistrationInfo = new RegistrationInfoModel() { RegistrationMode = RegistrationEntityMode.Manual } });
+            _mockCosmosService.Setup(x => x.GetDataSources(null)).Returns(Task.FromResult<IEnumerable<App.Model.DataSourceModel>>(cosmosApps));
+            var apps = appcodes.Select(x => new TenantMemberApplication() { ApplicationCode = x, CurrentToken_Id = new Guid() }).ToList();
+            apps[2].CurrentToken_Id = null;
+            _mockTenantService.Setup(x => x.GetTenantMemberApps()).Returns(Task.FromResult(apps));
+            _mockLegalHomeAccess.Setup(x => x.isLegalHomeUser()).Returns(true);
+
+            var registrationService = CreateService();
+
+            //Act
+            var returnedDataSources = (await registrationService.GetUserDataSources()).ToList();
+
+            //Assert
+            Assert.IsNotNull(returnedDataSources);
+            Assert.AreEqual(3, returnedDataSources.Count);
+            Assert.IsFalse(returnedDataSources.Contains("NotReturned"));
+            Assert.IsFalse(returnedDataSources.Contains("fakeApp"));
+        }
+
+        [TestMethod]
         public async Task CallGetUserDataSourcesNullRegistrationInfo()
         {
             List<string> appcodes = new List<string>() { "iManage", "MSGraph", "fakeApp" };
@@ -166,7 +195,7 @@ namespace Zurich.Connector.Tests.ServiceTests
             cosmosApps.Add(new App.Model.DataSourceModel() { AppCode = "newApp", RegistrationInfo = null });
             cosmosApps.Add(new App.Model.DataSourceModel() { AppCode = "NotReturned", RegistrationInfo = new RegistrationInfoModel() { RegistrationMode = RegistrationEntityMode.Manual } });
             _mockCosmosService.Setup(x => x.GetDataSources(null)).Returns(Task.FromResult<IEnumerable<App.Model.DataSourceModel>>(cosmosApps));
-            var apps = appcodes.Select(x => new TenantMemberApplication() { ApplicationCode = x }).ToList();
+            var apps = appcodes.Select(x => new TenantMemberApplication() { ApplicationCode = x, CurrentToken_Id = new Guid() }).ToList();
             _mockTenantService.Setup(x => x.GetTenantMemberApps()).Returns(Task.FromResult(apps));
             _mockLegalHomeAccess.Setup(x => x.isLegalHomeUser()).Returns(true);
 

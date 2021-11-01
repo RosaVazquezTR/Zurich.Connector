@@ -149,7 +149,7 @@ namespace Zurich.Connector.App.Services
             if (_legalHomeAccess.isLegalHomeUser())
             {
                 var tenantApps = await _tenantService.GetTenantMemberApps();
-                var dataSourceAppCodes = tenantApps.Select(tenantApp => tenantApp.ApplicationCode).ToList();
+                var dataSourceAppCodes = tenantApps.Where(x=>x.CurrentToken_Id != null).Select(tenantApp => tenantApp.ApplicationCode).ToList();
 
                 var dataSources = await _cosmosService.GetDataSources();
                 // TODO figure out why condition does not work enums
