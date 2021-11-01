@@ -25,6 +25,13 @@ namespace Zurich.Connector.App.Services
         /// <returns>Extracted data for the connector</returns>
         Task<Dictionary<string, string>> ExtractDataSource(NameValueCollection mappedQueryParameters, Dictionary<string, string> queryParameters, string hostname, ConnectorDocument connectorDocument);
 
+        /// <summary>
+        /// Extracts the header params of a given user
+        /// </summary>
+        /// <param name="cdmQueryParameters">The mapped query parameters of request</param>
+        /// <param name="connectorDocument"></param>
+        /// <returns>Extracted data for the connector</returns>
+        Dictionary<string, string> ExtractHeadersParams(Dictionary<string, string> cdmQueryParameters, ConnectorDocument connectorDocument);
     }
     public class DataExtractionService : IDataExtractionService
     {
@@ -41,8 +48,7 @@ namespace Zurich.Connector.App.Services
         }
 
         public async Task<Dictionary<string, string>> ExtractDataSource(NameValueCollection mappedQueryParameters, Dictionary<string, string> queryParameters, string hostname, ConnectorDocument connectorDocument)
-        {
-        
+        {        
             var headerParameters = ExtractHeadersParams(queryParameters, connectorDocument);
             var extractIds = headerParameters.Values.Append(connectorDocument.Request.EndpointPath);
             var connectorIds = ExtractIds(extractIds);
@@ -53,8 +59,7 @@ namespace Zurich.Connector.App.Services
                 foreach (var header in headerParameters)
                 {
                     headerParameters[header.Key] = UpdateIdProperty(header.Value, additionalInfo);
-                }
-      
+                }      
             }
             return headerParameters;
         }
