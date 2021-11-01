@@ -28,6 +28,10 @@ namespace Zurich.Connector.Data.Model
 		public string AuthHeader { get; set; }
 
 		/// <summary>
+		/// The Headers information
+		/// </summary>
+		public Dictionary<string, string> Headers { get; set; }
+		/// <summary>
 		/// The path of the url we are trying to call
 		/// </summary>
 		public string UrlPath { get; set; }
