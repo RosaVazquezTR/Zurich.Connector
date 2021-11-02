@@ -63,6 +63,7 @@ namespace Zurich.Connector.App.Services
             }
             return headerParameters;
         }
+
         public string UpdateIdProperty(string property, Dictionary<string, JToken> connectorResponse)
         {
             string newProperty = property;
@@ -88,6 +89,7 @@ namespace Zurich.Connector.App.Services
             }
             return newProperty;
         }
+
         public IEnumerable<string> ExtractIds(IEnumerable<string> responses)
         {
             List<string> ids = new List<string>();
@@ -102,6 +104,7 @@ namespace Zurich.Connector.App.Services
             }
             return ids;
         }
+
         private string[] SplitString(string response)
         {
             var regexMatch = Regex.Match(response, @"{([^}]*)}");
@@ -115,6 +118,7 @@ namespace Zurich.Connector.App.Services
             }
             return null;
         }
+
         public Dictionary<string, string> ExtractHeadersParams(Dictionary<string, string> cdmQueryParameters, ConnectorDocument connectorDocument)
         {
             if (connectorDocument.Request?.Parameters != null)
@@ -129,6 +133,7 @@ namespace Zurich.Connector.App.Services
             }
             return null;
         }
+
         public async Task<Dictionary<string, JToken>> GetAdditionalInformation(string hostName, IEnumerable<string> ids, Dictionary<string, string> cdmQueryParameters)
         {
             var queryParameters = new Dictionary<string, string>();
