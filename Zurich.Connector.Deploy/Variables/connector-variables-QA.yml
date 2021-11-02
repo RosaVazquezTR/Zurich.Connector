@@ -22,7 +22,7 @@ variables:
   - name: groups
     value: "@('Administrators','Developers')"
   - name: keyVaultSubnets
-    value: "@('connector-function-CI-backend', 'connector-webApi-QA-Backend','hqh-VM-RelMgmt-backend')"
+    value: "@('connector-function-QA-backend', 'connector-webApi-QA-Backend','hqh-VM-RelMgmt-backend')"
   - name: resourceGroup
     value: 'centralus-connectors-qa'
   - name: subnetConnectorBackend
