@@ -50,6 +50,10 @@ namespace Zurich.Connector.App.Model
         /// </summary>
         public CDMMappingModel CDMMapping { get; set; }
         /// <summary>
+        /// Additional Properties of connector
+        /// </summary>
+        public List<AdditionalPropertiesModel> AdditionalProperties { get; set; }
+        /// <summary>
         /// Host name
         /// </summary>
         public string HostName { get; set; }

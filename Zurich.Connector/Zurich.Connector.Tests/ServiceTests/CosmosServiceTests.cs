@@ -72,6 +72,46 @@ namespace Zurich.Connector.Tests.ServiceTests
                         DataSourceId = "103",
                         Description ="desc3"
                     }
+                },
+                 new ConnectorDocument()
+                {
+                    Id = "44",
+                    Alias = "P.Q.R",
+                    Info = new ConnectorInfo()
+                    {
+                        Title = "iManage",
+                        DataSourceId = "10",
+                        Description ="desc44"
+                    },
+                   AdditionalProperties = new List<AdditionalProperties>()
+                    {
+                       new AdditionalProperties
+                       {
+                           name="id",
+                           type="string",
+                           responseElement="Id"
+
+                       },
+                       new AdditionalProperties
+                       {
+                        name = "database",
+                        type = "string",
+                        responseElement="database"
+                       },
+                        new AdditionalProperties
+                       {
+                        name = "document_number",
+                        type = "integer",
+                        responseElement="document_number"
+                       },
+                       new AdditionalProperties
+                       {
+                        name = "version",
+                        type = "integer",
+                        responseElement="version"
+                       },
+                    }
+                    
                 }
             };
         }
@@ -339,6 +379,30 @@ namespace Zurich.Connector.Tests.ServiceTests
             //Assert
             _mockCosmosClientStore.Verify(x => x.GetDocuments<ConnectorRegistrationDocument>(CosmosConstants.ConnectorRegistrationContainerId, UserId, null),
                                             Times.Once());
+        }
+
+        [TestMethod]
+        public async Task CallGetiManageAdditionalDataProperties()
+        {
+            //Arrange
+            var testIds = new List<string> { "44" };
+            var testConnectors = SetupConnectors().Where(x => testIds.Contains(x.Id));
+            Expression<Func<ConnectorDocument, bool>> condition = connectors => testIds.Contains(connectors.Id);
+            _mockCosmosClientStore.Setup(x => x.GetDocuments(CosmosConstants.ConnectorContainerId, CosmosConstants.ConnectorPartitionKey, condition))
+                                    .Returns(testConnectors);
+            var cosmostService = new CosmosService(_mockCosmosClientStore.Object, _mapper, null);
+
+            //Act
+            var connectors = (await cosmostService.GetConnectors(false, condition)).ToList();
+
+            //Assert
+            _mockCosmosClientStore.Verify(x => x.GetDocuments(CosmosConstants.ConnectorContainerId, CosmosConstants.ConnectorPartitionKey, condition), Times.Once());
+            Assert.IsNotNull(connectors);
+            Assert.AreEqual(testConnectors.Count(), connectors.Count());
+            Assert.AreEqual(testConnectors.ToList()[0].Id, connectors[0].Id);
+            Assert.AreEqual(testConnectors.ToList()[0].Info.Title, connectors[0].Info.Title);
+            Assert.AreEqual(testConnectors.ToList()[0].AdditionalProperties.Count, connectors[0].AdditionalProperties.Count);
+
         }
     }
 }

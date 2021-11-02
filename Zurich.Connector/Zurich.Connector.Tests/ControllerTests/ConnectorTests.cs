@@ -332,6 +332,42 @@ namespace Zurich.Connector.Tests.ControllerTests
 			Assert.AreEqual(StatusCodes.Status200OK, result.StatusCode);
 		}
 
+		[TestMethod]
+		public async Task CalliManageConnectordetails()
+		{
+			// ARRANGE
+			var connections = MockConnectorData.SetupConnectorModel_Version2().ToList()[3];
+			_mockConnectorservice.Setup(x => x.GetConnector(It.IsAny<string>())).Returns(Task.FromResult(connections));
+
+			ConnectorsController connector = new ConnectorsController(_mockConnectorservice.Object, _mockConnectorDataService.Object, null, _mapper, null);
+
+			// ACT
+			var response = await connector.Connectors("44");
+
+			// ASSERT
+			_mockConnectorservice.Verify(x => x.GetConnector(It.IsAny<string>()), Times.Exactly(1));
+			var result = response.Result;
+			Assert.AreEqual(StatusCodes.Status200OK, ((Microsoft.AspNetCore.Mvc.ObjectResult)result).StatusCode);
+		}
+
+		[TestMethod]
+		public async Task TestiManageConnectordetailscount()
+		{
+			// ARRANGE
+			var connections = MockConnectorData.SetupConnectorModel_Version2().ToList()[3];
+			_mockConnectorservice.Setup(x => x.GetConnector(It.IsAny<string>())).Returns(Task.FromResult(connections));
+
+			ConnectorsController connector = new ConnectorsController(_mockConnectorservice.Object, _mockConnectorDataService.Object, null, _mapper, null);
+
+			// ACT
+			dynamic response = await connector.Connectors("44");
+
+			// ASSERT
+			_mockConnectorservice.Verify(x => x.GetConnector(It.IsAny<string>()), Times.Exactly(1));
+			var result = response.Result.Value;
+			Assert.AreEqual(connections.AdditionalProperties.Count, result.AdditionalProperties.Count);
+		}
+
 		private ConnectorsController CreateConnectorsController()
 		{
 			var httpContext = new DefaultHttpContext();

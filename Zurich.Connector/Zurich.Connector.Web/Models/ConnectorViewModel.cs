@@ -43,6 +43,10 @@ namespace Zurich.Connector.Web.Models
         /// CDM Mapping of properties
         /// </summary>
         public CDMMappingViewModel CDMMapping { get; set; }
+        /// <summary>
+        /// Additional Properties of connector
+        /// </summary>
+        public List<AdditionalPropertiesViewModel> AdditionalProperties { get; set; }
     }
 
     /// <summary>

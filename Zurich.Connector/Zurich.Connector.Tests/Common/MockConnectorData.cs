@@ -265,8 +265,69 @@ namespace Zurich.Connector.Tests.Common
                         AppCode = "DataSource33",
                         Description = "DataSource 33 desc"
                     }
+                },
+                  new ConnectorModel()
+                {
+                    Id = "44",
+                    Info = new ConnectorInfoModel()
+                    {
+                        Title = "Connector44",
+                        DataSourceId = "10",
+                        Description ="Connector 44 desc",
+                        EntityType = ConnectorEntityType.Search,
+                        Version = "v1"
+                    },
+                    Pagination = new PaginationModel()
+                    {
+                        Available = true,
+                        IsZeroBasedOffset = true,
+                    },
+                    Request = new ConnectorRequestModel()
+                    {
+                    },
+                    DataSource = new DataSourceModel()
+                    {
+                        Id = "10",
+                        Name = "DataSource10",
+                        AppCode = "DataSource10",
+                        Description = "DataSource 10 desc"
+                    },
+                    AdditionalProperties = new List<AdditionalPropertiesModel>()
+                    {
+                       new AdditionalPropertiesModel()
+                       {
+                        Name = "Id",
+                        Type = "string",
+                        ResponseElement="Id"
+                       },
+                       new AdditionalPropertiesModel()
+                       {
+                        Name = "database",
+                        Type = "string",
+                        ResponseElement="database"
+                       },
+                        new AdditionalPropertiesModel()
+                       {
+                        Name = "document_number",
+                        Type = "integer",
+                        ResponseElement="document_number"
+                       },
+                       new AdditionalPropertiesModel()
+                       {
+                        Name = "version",
+                        Type = "integer",
+                        ResponseElement="version"
+                       },
+                       new AdditionalPropertiesModel()
+                       {
+                        Name = "author",
+                        Type = "string",
+                        ResponseElement="author"
+                       }
+                    },
                 }
-            };
+        };
+
         }
 
         /// <summary>

@@ -39,4 +39,23 @@ namespace Zurich.Connector.App.Model
         /// </summary>
         public string ResponseElement { get; set; }
     }
+
+    /// <summary>
+    /// Store the Additional properties of connectors
+    /// </summary>
+    public class AdditionalPropertiesModel
+    {
+        /// <summary>
+        /// Name of the property
+        /// </summary>
+        public string Name { get; set; }
+        /// <summary>
+        /// Type of the property
+        /// </summary>
+        public string Type { get; set; }
+        /// <summary>
+        /// Name of the response element
+        /// </summary>
+        public string ResponseElement { get; set; }
+    }
 }

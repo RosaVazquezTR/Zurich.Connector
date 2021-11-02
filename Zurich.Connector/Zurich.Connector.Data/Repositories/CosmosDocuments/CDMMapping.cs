@@ -40,4 +40,23 @@ namespace Zurich.Connector.Data.Repositories.CosmosDocuments
         /// </summary>
         public string responseElement { get; set; }
     }
+
+    /// <summary>
+    /// Store the Additional properties of connectors
+    /// </summary>
+    public class AdditionalProperties
+    {
+        /// <summary>
+        /// Name of the property
+        /// </summary>
+        public string name { get; set; }
+        /// <summary>
+        /// Type of the property
+        /// </summary>
+        public string type { get; set; }
+        /// <summary>
+        /// Name of the response element
+        /// </summary>
+        public string responseElement { get; set; }
+    }
 }

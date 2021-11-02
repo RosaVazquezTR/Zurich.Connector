@@ -49,6 +49,11 @@ namespace Zurich.Connector.Data.Repositories.CosmosDocuments
         /// </summary>
         public CDMMapping CdmMapping { get; set; }
         /// <summary>
+        /// Additional Properties of connector
+        /// </summary>
+        public List<AdditionalProperties> AdditionalProperties { get; set; }
+
+        /// <summary>
         /// DataSource Document
         /// </summary>
         public DataSourceDocument DataSource { get; set; }
