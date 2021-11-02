@@ -48,7 +48,8 @@ namespace Zurich.Connector.Data.DataMap
                 UrlPath = connectorDocument.Request.EndpointPath,
                 AuthHeader = connectorDocument.DataSource.securityDefinition.defaultSecurityDefinition.authorizationHeader,
                 Token = null,
-                Method = connectorDocument.Request.Method
+                Method = connectorDocument.Request.Method,
+                Headers = headers
             };
 
             CleanUpApiInformation(apiInfo);

@@ -21,6 +21,7 @@ namespace Zurich.Connector.Data.DataMap
         /// <param name="appCode">Application code to get the data from</param>
         /// <param name="dataType">Data type to retrieve</param>
         /// <param name="query">Query parameters mapped from cosmo DB</param>
+        /// <param name="headers"></param>
         /// <returns>The T model based on the request or default(T)</returns>
         Task<T> GetAndMapResults<T>(ConnectorDocument dataTypeInformation, string transferToken = null, NameValueCollection query = null, Dictionary<string, string> headers = null);
 

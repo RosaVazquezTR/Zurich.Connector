@@ -151,7 +151,7 @@ namespace Zurich.Connector.IntegrationTests
                 connector.Request.Method.Should().ContainAny(requestMethodTypes);
                 foreach (var param in connector.Request.Parameters)
                 {
-                    if (param.Name == "Company-Id")
+                    if (param.DefaultValue.ToString().StartsWith("{"))
                     {
                        param.Cdmname.Should().BeNullOrWhiteSpace();
                     } else

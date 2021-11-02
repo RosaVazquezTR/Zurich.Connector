@@ -4,7 +4,7 @@
   "name": "Legal Tracker",
   "description": "This is connecting to Legal Tracker User Info API ",
   "infoURL": "",
-  "appCode": "TRACKRActionItems",
+  "appCode": "TRACKRACTIONITEMS",
   "domain": "api-dev.thomsonreuters.com/legal-tracker",
   "appType": "0",
   "locale": "US",
