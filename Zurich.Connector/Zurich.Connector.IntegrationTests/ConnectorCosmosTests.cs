@@ -23,7 +23,7 @@ namespace Zurich.Connector.IntegrationTests
         private List<string> dataSourceTypes = new List<string>() { "oauth2", "transferToken" };
         private List<string> parameterTypes = new List<string>() { "array", "date", "int", "object", "short", "string" };
         private List<string> requestMethodTypes = new List<string>() { "GET", "POST" };
-        private List<string> requestInClauseTypes = new List<string>() { "Body", "OData", "Query" };
+        private List<string> requestInClauseTypes = new List<string>() { "Child", "Body", "OData", "Query", "Headers" };
 
         public ConnectorCosmosTests(CustomWebApplicationFactory fixture) : base(fixture)
         {
@@ -151,7 +151,13 @@ namespace Zurich.Connector.IntegrationTests
                 connector.Request.Method.Should().ContainAny(requestMethodTypes);
                 foreach (var param in connector.Request.Parameters)
                 {
-                    param.Cdmname.Should().NotBeNullOrWhiteSpace();
+                    if (param.Name == "Company-Id")
+                    {
+                       param.Cdmname.Should().BeNullOrWhiteSpace();
+                    } else
+                    {
+                        param.Cdmname.Should().NotBeNullOrWhiteSpace();
+                    }
                     param.Name.Should().NotBeNullOrWhiteSpace();
                     param.InClause.Should().ContainAny(requestInClauseTypes);
                     param.Type.Should().ContainAny(parameterTypes);

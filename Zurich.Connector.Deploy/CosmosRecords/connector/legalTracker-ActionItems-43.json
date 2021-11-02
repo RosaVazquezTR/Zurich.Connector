@@ -5,7 +5,7 @@
   "info": {
     "title": "Get Legal Tracker Action Items",
     "description": "Get Legal Tracker Action Items",
-    "entityType": "ActionItems",
+    "entityType": "Document",
     "dataSourceId": "27",
     "version": "1.0"
   },
