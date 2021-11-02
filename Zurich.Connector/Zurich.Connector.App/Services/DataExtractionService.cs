@@ -96,7 +96,7 @@ namespace Zurich.Connector.App.Services
             foreach (var response in responses)
             {
                 var splitString = SplitString(response);
-                if (splitString.Length > 1)
+                if (splitString?.Length > 1)
                 {
                     string id = splitString.First();
                     ids.Add(id);

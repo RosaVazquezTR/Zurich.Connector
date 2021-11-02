@@ -40,7 +40,8 @@ namespace Zurich.Connector.Data.Model
         Matters,
         UserProfile,
         Favorites,
-        Search
+        Search,
+        ActionItems
     }
 
     /// <summary>
