@@ -45,7 +45,7 @@ namespace Zurich.Connector.Tests.ServiceTests
             var token = new JObject();
             _mockConfiguration = Utility.CreateConfiguration(AppConfigKeys.PracticalLawConnectSearchHost, "practicallawconnect.com");
 
-            _mockDataMapping.Setup(x => x.GetAndMapResults<JToken>(It.IsAny<ConnectorDocument>(), string.Empty, null)).Returns(Task.FromResult((JToken)token));
+            _mockDataMapping.Setup(x => x.GetAndMapResults<JToken>(It.IsAny<ConnectorDocument>(), string.Empty, null, null)).Returns(Task.FromResult((JToken)token));
             _mockDataMappingFactory.Setup(x => x.GetImplementation(Data.Model.AuthType.OAuth2.ToString())).Returns(_mockDataMapping.Object);
             var service = new PracticalLawConnectorOperation(_mockLogger.Object, _mockDataMappingFactory.Object, _mockConfiguration);
             var result = (await service.SetItemLink(Data.Model.ConnectorEntityType.Search, mockDocuments, appCode, hostName) as JObject);
@@ -67,7 +67,7 @@ namespace Zurich.Connector.Tests.ServiceTests
             var token = new JObject();
             _mockConfiguration = Utility.CreateConfiguration("FakeKey", "practicallawconnect.com");
 
-            _mockDataMapping.Setup(x => x.GetAndMapResults<JToken>(It.IsAny<ConnectorDocument>(), string.Empty, null)).Returns(Task.FromResult((JToken)token));
+            _mockDataMapping.Setup(x => x.GetAndMapResults<JToken>(It.IsAny<ConnectorDocument>(), string.Empty, null, null)).Returns(Task.FromResult((JToken)token));
             _mockDataMappingFactory.Setup(x => x.GetImplementation(Data.Model.AuthType.OAuth2.ToString())).Returns(_mockDataMapping.Object);
             var service = new PracticalLawConnectorOperation(_mockLogger.Object, _mockDataMappingFactory.Object, _mockConfiguration);
             var result = (await service.SetItemLink(Data.Model.ConnectorEntityType.Search, mockDocuments, appCode, null) as JObject);
