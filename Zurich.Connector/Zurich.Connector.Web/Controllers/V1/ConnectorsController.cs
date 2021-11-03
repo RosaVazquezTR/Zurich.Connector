@@ -3,8 +3,10 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
 using Zurich.Common.Exceptions;
@@ -55,7 +57,16 @@ namespace Zurich.Connector.Web.Controllers
                 {
                     throw new ResourceNotFoundException("Connector or data not found");
                 }
-                var jsonResults = JsonConvert.SerializeObject(results);
+
+                var jsonSettings = new JsonSerializerSettings
+                {
+                    ContractResolver = new Newtonsoft.Json.Serialization.CamelCasePropertyNamesContractResolver()
+                };
+
+                // Making dynamic object properties camel cased requires a workaround of converting a JObject to ExpandoObject and then serializing
+                // https://briandunnington.github.io/jobject_serialization
+                JObject jObject = JObject.FromObject(results);
+                var jsonResults = JsonConvert.SerializeObject(jObject.ToObject<ExpandoObject>(), jsonSettings);
                 return new ContentResult
                 {
                     Content = jsonResults,

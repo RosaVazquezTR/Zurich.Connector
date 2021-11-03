@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using System;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -14,11 +14,10 @@ using Zurich.Connector.Data.Services;
 using Zurich.Connector.Tests.Common;
 using Zurich.Connector.Web;
 using Zurich.Connector.Web.Controllers;
-using Zurich.Connector.Web.Models;
 
 namespace Zurich.Connector.Tests.ControllerTests
 {
-	[TestClass]
+    [TestClass]
 	public class ConnectorTests
 	{
 		private Mock<IConnectorService> _mockConnectorservice;
@@ -43,7 +42,8 @@ namespace Zurich.Connector.Tests.ControllerTests
 		#region json Strings
 
 		private const string TwoDocumentsListJson = @"
-		[{
+		{
+			""results"": [{
 				""author_description"": ""Ryan Hunecke"",
 				""author"": ""RYAN.HUNECKE"",
 				""class"": ""DOC"",
@@ -52,28 +52,29 @@ namespace Zurich.Connector.Tests.ControllerTests
 				""author_description"": ""Sally Sales"",
 				""author"": ""ALEX.PRICE""
 			}
-		]";
+		]}";
 
 		private const string StaticFilterJson = @"
-		[{
-				{
-            ""name"": ""Commercial"",
-            ""description"": ""Commercial"",
-            ""isMultiselect"": ""true"",
-            ""requestParameter"": ""Commercial"",
-            ""filterlist"": [
-                {
-                    ""name"": ""Advertising and Marketing"",
-                    ""id"": ""0-103-1114""
+		{
+			""results"":[{
+				""name"": ""Commercial"",
+				""description"": ""Commercial"",
+				""isMultiselect"": ""true"",
+				""requestParameter"": ""Commercial"",
+				""filterlist"": [
+					{
+						""name"": ""Advertising and Marketing"",
+						""id"": ""0-103-1114""
 
-				},
-                {
-                    ""name"": ""Agency, Distribution & Franchising"",
-                    ""id"": ""8-321-0007""
+					},
+					{
+						""name"": ""Agency, Distribution & Franchising"",
+						""id"": ""8-321-0007""
 
-				},
-                         ]
-        }";
+					},
+							 ]
+			}]
+		}";
 
 		//Intialization of test response data //
 		string connectorid = "101";
@@ -233,7 +234,7 @@ namespace Zurich.Connector.Tests.ControllerTests
 		public async Task CallConnectorData()
 		{
 			// ARRANGE
-			_mockConnectorDataService.Setup(x => x.GetConnectorData(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(),It.IsAny<Dictionary<string, string>>(), It.IsAny<bool>())).Returns(Task.FromResult<dynamic>(TwoDocumentsListJson));
+			_mockConnectorDataService.Setup(x => x.GetConnectorData(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(),It.IsAny<Dictionary<string, string>>(), It.IsAny<bool>())).Returns(Task.FromResult<dynamic>(JsonConvert.DeserializeObject(TwoDocumentsListJson)));
 
 			ConnectorsController connector = CreateConnectorsController();
 
@@ -319,7 +320,7 @@ namespace Zurich.Connector.Tests.ControllerTests
 		public async Task CallConnectorDatawithStaticFilters()
 		{
 			// ARRANGE
-			_mockConnectorDataService.Setup(x => x.GetConnectorData(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<bool>())).Returns(Task.FromResult<dynamic>(StaticFilterJson));
+			_mockConnectorDataService.Setup(x => x.GetConnectorData(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<bool>())).Returns(Task.FromResult<dynamic>(JsonConvert.DeserializeObject(StaticFilterJson)));
 
 			ConnectorsController connector = CreateConnectorsController();
 
