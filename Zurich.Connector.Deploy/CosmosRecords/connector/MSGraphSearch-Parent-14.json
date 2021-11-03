@@ -112,7 +112,7 @@
 			},
 			{
 				"name": "Audio",
-				"id": "mp3,wav,wma,aif,iff,m4a"
+				"id": "aif,iff,m3u,m4a,mid,mp3,mpa,wav,wma"
 			},
 			{
 				"name": "CSV",
@@ -128,11 +128,11 @@
 			},
 			{
 				"name": "Text",
-				"id": "txt"
+				"id": "odt,pages,rtf,tex,txt,wpd,wps"
 			},
 			{
 				"name": "Video",
-				"id": "3g2,3gp,afg,m4v,rm,srt,swf,vob,mp4,wmv,mov,avi,flv,avchd,mpg"
+				"id": "3g2,3gp,afg,asf,avi,avchd,flv,m4v,mov,mp4,mpg,rm,srt,swf,vob,wmv"
 			},
 			{
 				"name": "XML",

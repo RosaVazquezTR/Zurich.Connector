@@ -187,8 +187,8 @@ namespace Zurich.Connector.Data.DataMap
 			if (unstructuredProperties != null)
 				additionalProps = await MapProperties(unstructuredProperties, apiResult);
 
-			if (!cdmResult.ContainsKey("AdditionalProperties"))
-				cdmResult["AdditionalProperties"] = additionalProps;
+			if (!cdmResult.ContainsKey(StructuredCDMProperties.AdditionalProperties))
+				cdmResult[StructuredCDMProperties.AdditionalProperties] = additionalProps;
 
 			return cdmResult;
 		}

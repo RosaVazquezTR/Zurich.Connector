@@ -54,6 +54,12 @@
           "_comment": ""
         },
         {
+          "name": "lastModifiedUser",
+          "type": "string",
+          "responseElement": "resource.lastModifiedBy.user.displayName",
+          "_comment": ""
+        },
+        {
           "name": "authorName",
           "type": "string",
           "responseElement": "resource.createdBy.user.displayName",
