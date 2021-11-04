@@ -57,12 +57,12 @@
       {
         "name": "jurisdictionList",
         "type": "array",
-        "responseElement": "jurisdictionList",
+        "responseElement": "jurisdictionList.jurisdiction",
         "_comment": ""
       },
       {
         "name": "maintained",
-        "type": "string",
+        "type": "bool",
         "responseElement": "maintained",
         "_comment": ""
       }
