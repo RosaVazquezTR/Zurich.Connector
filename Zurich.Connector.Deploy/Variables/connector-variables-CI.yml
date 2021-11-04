@@ -10,17 +10,17 @@ variables:
   - name: connectorCosmosShouldAutoScale
     value: "false"
   - name: connectorSubnets
-    value: '["connector-webApi-CI-Backend", "hqh-VM-RelMgmt-backend"]'
+    value: '["connector-webApi-CI-Backend", "hqh-VM-RelMgmt-backend", "lh-VM-CI-backend"]'
   - name: connectorServiceFQND
     value: "connectorswebapici.azurewebsites.net"
   - name: functionAppServicePlanSku
     value: '{"name": "P1v2", "size": "P1v2", "tier": "PremiumV2", "family": "Pv2", "capacity": 1}'
   - name: functionSubnets
-    value: '["connector-function-CI-backend", "hqh-VM-RelMgmt-backend"]'
+    value: '["connector-function-CI-backend", "hqh-VM-RelMgmt-backend", "lh-VM-CI-backend"]'
   - name: groups
     value: "@('Administrators','Developers')"
   - name: keyVaultSubnets
-    value: "@('connector-function-CI-backend', 'connector-webApi-CI-Backend','hqh-VM-RelMgmt-backend')"
+    value: "@('connector-function-CI-backend', 'connector-webApi-CI-Backend','hqh-VM-RelMgmt-backend', 'lh-VM-CI-backend')"
   - name: resourceGroup
     value: 'centralus-connectors-ci'
   - name: subnetConnectorBackend
