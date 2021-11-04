@@ -54,6 +54,19 @@ namespace Zurich.Connector.Tests.ControllerTests
 			}
 		]}";
 
+		private const string TwoDocumentsListArrayJson = @"
+		[
+			{
+				""author_description"": ""Ryan Hunecke"",
+				""author"": ""RYAN.HUNECKE"",
+				""class"": ""DOC"",
+				""class_description"": ""Document""
+			}, {
+				""author_description"": ""Sally Sales"",
+				""author"": ""ALEX.PRICE""
+			}
+		]";
+
 		private const string StaticFilterJson = @"
 		{
 			""results"":[{
@@ -231,7 +244,7 @@ namespace Zurich.Connector.Tests.ControllerTests
 		#endregion
 
 		[TestMethod]
-		public async Task CallConnectorData()
+		public async Task CallConnectorDataReturnObject()
 		{
 			// ARRANGE
 			_mockConnectorDataService.Setup(x => x.GetConnectorData(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(),It.IsAny<Dictionary<string, string>>(), It.IsAny<bool>())).Returns(Task.FromResult<dynamic>(JsonConvert.DeserializeObject(TwoDocumentsListJson)));
@@ -240,6 +253,23 @@ namespace Zurich.Connector.Tests.ControllerTests
 
 			// ACT
 			var response = await connector.ConnectorData("fakeId", "fakeHost", null,true);
+
+			// ASSERT
+			_mockConnectorDataService.Verify(x => x.GetConnectorData(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<bool>()), Times.Exactly(1));
+			var result = (ContentResult)response.Result;
+			Assert.AreEqual(StatusCodes.Status200OK, result.StatusCode);
+		}
+
+		[TestMethod]
+		public async Task CallConnectorDataReturnArray()
+		{
+			// ARRANGE
+			_mockConnectorDataService.Setup(x => x.GetConnectorData(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<bool>())).Returns(Task.FromResult<dynamic>(JsonConvert.DeserializeObject(TwoDocumentsListArrayJson)));
+
+			ConnectorsController connector = CreateConnectorsController();
+
+			// ACT
+			var response = await connector.ConnectorData("fakeId", "fakeHost", null, true);
 
 			// ASSERT
 			_mockConnectorDataService.Verify(x => x.GetConnectorData(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<bool>()), Times.Exactly(1));
