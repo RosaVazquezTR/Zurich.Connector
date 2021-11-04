@@ -59,6 +59,22 @@
         "tags": [
           "pagination"
         ]
+      },
+	  {
+        "cdmName": "SortName",
+        "name": "requests.[].sortProperties.[].name",
+        "inClause": "Body",
+        "required": true,
+        "type": "string",
+        "defaultValue": "rank"
+      },
+	  {
+        "cdmName": "SortDescending",
+        "name": "requests.[].sortProperties.[].isDescending",
+        "inClause": "Body",
+        "required": true,
+        "type": "string",
+        "defaultValue": "false"
       }
     ],
     "sorting": {
