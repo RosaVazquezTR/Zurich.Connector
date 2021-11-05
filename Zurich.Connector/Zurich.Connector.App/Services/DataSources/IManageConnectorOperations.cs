@@ -48,7 +48,7 @@ namespace Zurich.Connector.App.Services.DataSources
                 switch (entityType)
                 {
                     case ConnectorEntityType.Document:
-                        if (item is JObject result && result.ContainsKey("Items"))
+                        if (item is JObject result && result.ContainsKey("Items") && result["Items"].HasValues)
                         {
                             if (result["Items"] is JArray)
                             {

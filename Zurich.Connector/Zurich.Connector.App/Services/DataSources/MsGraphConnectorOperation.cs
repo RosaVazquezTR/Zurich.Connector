@@ -38,7 +38,7 @@ namespace Zurich.Connector.App.Services.DataSources
                 switch (entityType)
                 {
                     case ConnectorEntityType.Search:
-                        if (item is JObject result && result.ContainsKey("Documents"))
+                        if (item is JObject result && result.ContainsKey("Documents") && result["Documents"].HasValues)
                         {
                             foreach (JObject doc in (result["Documents"] as JArray))
                             {
