@@ -115,7 +115,7 @@
             "properties": {}
         },
         "type": "XML",
-        "xmlArrayAttribute": "//searchResults/detail/document"
+        "xmlArrayAttribute": ["//searchResults/detail/document", "//searchResults/detail/document/jurisdictionList/jurisdiction"]
     },
     "filters": [
         {

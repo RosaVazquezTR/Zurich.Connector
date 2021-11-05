@@ -13,6 +13,15 @@
         public const string DownloadUrl = "DownloadUrl";
         public const string DesktopUrl = "DesktopUrl";
         public const string Snippet = "Snippet";
+        public const string AdditionalProperties = "AdditionalProperties";
+    }
+
+    /// <summary>
+    /// Represents a container class for CDM unstructured property names
+    /// </summary>
+    public static class UnstructuredCDMProperties
+    {
+        public const string Extension = "extension";
     }
 
     /// <summary>
@@ -38,5 +47,10 @@
     {
         public const string LegalHomeScope = "legalhome.full";
         public const string OAuthUrl = "oauth";
+    }
+
+    public static class DataTypes
+    {
+        public const string Bool = "bool";
     }
 }

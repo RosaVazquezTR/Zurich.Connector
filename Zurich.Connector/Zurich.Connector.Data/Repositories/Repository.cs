@@ -111,6 +111,14 @@ namespace Zurich.Connector.Data.Repositories
                 }
 			}
 			requestMessage.Headers.Add("accept", "application/json");
+
+           if (apiInformation.Headers?.Count > 0)
+           {
+                foreach (var header in apiInformation.Headers.Keys)
+                {
+                    requestMessage.Headers.Add(header, apiInformation.Headers[header]);
+                }
+           }
 		}
 
         private async Task<string> RetrieveResponse(ApiInformation apiInformation, HttpRequestMessage requestMessage)

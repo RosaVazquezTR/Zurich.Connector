@@ -1,4 +1,5 @@
-﻿using Zurich.Connector.Data.Model;
+﻿using System.Collections.Generic;
+using Zurich.Connector.Data.Model;
 
 namespace Zurich.Connector.App.Model
 {
@@ -20,7 +21,7 @@ namespace Zurich.Connector.App.Model
         /// <summary>
         /// Indicates if there is any array in the xml. 
         /// </summary>
-        public string XmlArrayAttribute { get; set; }
+        public IEnumerable<string> XmlArrayAttribute { get; set; }
     }
 
     /// <summary>

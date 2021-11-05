@@ -36,7 +36,7 @@ namespace Zurich.Connector.Data.DataMap
 		protected ILegalHomeAccessCheck _legalHomeAccessCheck;
 
 
-		public async virtual Task<T> GetAndMapResults<T>(ConnectorDocument dataTypeInformation, string transferToken = null, NameValueCollection query = null)
+		public async virtual Task<T> GetAndMapResults<T>(ConnectorDocument dataTypeInformation, string transferToken = null, NameValueCollection query = null, Dictionary<string, string> headers = null)
 		{
 			T results = default(T);
 
@@ -187,8 +187,8 @@ namespace Zurich.Connector.Data.DataMap
 			if (unstructuredProperties != null)
 				additionalProps = await MapProperties(unstructuredProperties, apiResult);
 
-			if (!cdmResult.ContainsKey("AdditionalProperties"))
-				cdmResult["AdditionalProperties"] = additionalProps;
+			if (!cdmResult.ContainsKey(StructuredCDMProperties.AdditionalProperties))
+				cdmResult[StructuredCDMProperties.AdditionalProperties] = additionalProps;
 
 			return cdmResult;
 		}
@@ -230,10 +230,11 @@ namespace Zurich.Connector.Data.DataMap
 						tempResult = resultArray.FirstOrDefault(x => x[propertyName].ToString() == valueToFind);
 					}
 					else
-					{
-						tempResult = tempResult[location];
-					}
-					if (tempResult == null)
+                    {
+                        tempResult = tempResult[location];
+                        tempResult = ModifyResult(property, tempResult);
+                    }
+                    if (tempResult == null)
 						break;
 				}
 
@@ -243,12 +244,25 @@ namespace Zurich.Connector.Data.DataMap
 			return jObjectResult;
 		}
 
-		/// <summary>
-		/// Needed to get connectors for children connectors
-		/// </summary>
-		/// <param name="connectionId">The id of the connector the will be pulled from cosmos</param>
-		/// <returns>Connector document from cosmos</returns>
-		private async Task<ConnectorDocument> GetConnector(string connectionId)
+        private dynamic ModifyResult(CDMElement property, dynamic tempResult)
+        {
+			dynamic response = tempResult;
+
+			if (!string.IsNullOrEmpty(property.type) && property.type.Equals(DataTypes.Bool, StringComparison.OrdinalIgnoreCase))
+            {
+				bool.TryParse((string)response, out bool boolValue);
+				response = boolValue;
+            }
+
+            return response;
+        }
+
+        /// <summary>
+        /// Needed to get connectors for children connectors
+        /// </summary>
+        /// <param name="connectionId">The id of the connector the will be pulled from cosmos</param>
+        /// <returns>Connector document from cosmos</returns>
+        private async Task<ConnectorDocument> GetConnector(string connectionId)
 		{
 			var connectorDocument = await _cosmosContext.GetDocument<ConnectorDocument>
 										(CosmosConstants.ConnectorContainerId, connectionId, CosmosConstants.ConnectorPartitionKey);

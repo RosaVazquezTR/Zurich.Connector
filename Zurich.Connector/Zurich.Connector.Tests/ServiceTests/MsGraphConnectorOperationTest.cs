@@ -130,7 +130,8 @@ namespace Zurich.Connector.Tests.ServiceTests
         [TestMethod]
         public async Task SetItemLinkTest_Should_RemoveExtensionSetExtensionAndUpdateSnippet()
         {
-            var expectedType = "xlsx";
+            var expectedType = "Excel";
+            var expectedExtension = "xlsx";
             var expectedTitle = "teamSiteexcel";
             var expectedSnippet = "<b>the</b> team site document. ";
 
@@ -144,15 +145,18 @@ namespace Zurich.Connector.Tests.ServiceTests
             doc.ContainsKey(StructuredCDMProperties.Type).Should().BeTrue();
             doc.ContainsKey(StructuredCDMProperties.Title).Should().BeTrue();
             doc.ContainsKey(StructuredCDMProperties.Snippet).Should().BeTrue();
+            doc.ContainsKey(StructuredCDMProperties.AdditionalProperties).Should().BeTrue();
             doc[StructuredCDMProperties.Type].Value<string>().Should().Be(expectedType);
             doc[StructuredCDMProperties.Title].Value<string>().Should().Be(expectedTitle);
             doc[StructuredCDMProperties.Snippet].Value<string>().Should().Be(expectedSnippet);
+            doc[StructuredCDMProperties.AdditionalProperties][UnstructuredCDMProperties.Extension].Value<string>().Should().Be(expectedExtension);
         }
 
         [TestMethod]
         public async Task SetItemLinkTest_Should_UpdateSnippet()
         {
-            var expectedType = "docx";
+            var expectedType = "Word";
+            var expectedExtension = "docx";
             var expectedTitle = "SharepointLibrary doc";
             var expectedSnippet1 = "<b>the</b> team site document. ";
             var expectedSnippet2 = "<b>in</b> a sharepoint library Doing lots of cool stuff <b>in</b> here. ";
@@ -173,9 +177,11 @@ namespace Zurich.Connector.Tests.ServiceTests
             doc2.ContainsKey(StructuredCDMProperties.Type).Should().BeTrue();
             doc2.ContainsKey(StructuredCDMProperties.Title).Should().BeTrue();
             doc2.ContainsKey(StructuredCDMProperties.Snippet).Should().BeTrue();
+            doc2.ContainsKey(StructuredCDMProperties.AdditionalProperties).Should().BeTrue();
             doc2[StructuredCDMProperties.Type].Value<string>().Should().Be(expectedType);
             doc2[StructuredCDMProperties.Title].Value<string>().Should().Be(expectedTitle);
             doc2[StructuredCDMProperties.Snippet].Value<string>().Should().Be(expectedSnippet2);
+            doc2[StructuredCDMProperties.AdditionalProperties][UnstructuredCDMProperties.Extension].Value<string>().Should().Be(expectedExtension);
         }
 
         [TestMethod]

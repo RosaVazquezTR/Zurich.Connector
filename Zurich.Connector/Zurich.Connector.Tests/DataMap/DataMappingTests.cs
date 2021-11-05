@@ -103,6 +103,7 @@ namespace Zurich.Connector.Tests
 						""size"": 18733,
 						""subclass_description"": """",
 						""type"": ""WORDX"",
+						""boolTest"": ""true"",
 						""type_description"": ""WORD 2007"",
 						""extension"": ""DOCX"",
 						""version"": 1,
@@ -165,6 +166,7 @@ namespace Zurich.Connector.Tests
 						""subclass_description"": """",
 						""type_description"": ""WORD 2007"",
 						""type"": ""WORDX"",
+						""boolTest"": ""true"",
 						""extension"": ""DOCX"",
 						""version"": 1,
 						""workspace_name"": ""TestMy Matter"",
@@ -289,34 +291,34 @@ namespace Zurich.Connector.Tests
 			{
 				structured = new List<CDMElement>() {
 							{
-								new CDMElement(){  name = "Name", responseElement ="name"}
+								new CDMElement(){  name = "Name", responseElement ="name", type = "string"}
 							},
 							{
-								new CDMElement(){ name="Id", responseElement ="id"}
+								new CDMElement(){ name="Id", responseElement ="id", type = "string"}
 							},
 							{
-								new CDMElement(){ name="WebLink", responseElement =""}
+								new CDMElement(){ name="WebLink", responseElement ="", type = "string"}
 							},
 							{
-								new CDMElement(){ name="LastOpened", responseElement =""}
+								new CDMElement(){ name="LastOpened", responseElement ="", type = "string"}
 							},
 							{
-								new CDMElement(){ name="LastUpdated", responseElement ="file_edit_date"}
+								new CDMElement(){ name="LastUpdated", responseElement ="file_edit_date", type = "string"}
 							},
 							{
-								new CDMElement(){ name="LastModifiedUser", responseElement ="last_user_description"}
+								new CDMElement(){ name="LastModifiedUser", responseElement ="last_user_description", type = "string"}
 							},
 							{
-								new CDMElement(){ name="CreatedDate", responseElement ="file_create_date"}
+								new CDMElement(){ name="CreatedDate", responseElement ="file_create_date", type = "string"}
 							},
 							{
-								new CDMElement(){ name="CreatedByUser", responseElement ="author_description"}
+								new CDMElement(){ name="CreatedByUser", responseElement ="author_description", type = "string"}
 							},
 							{
-								new CDMElement(){ name="FileType", responseElement ="type"}
+								new CDMElement(){ name="FileType", responseElement ="type", type = "string"}
 							},
 							{
-								new CDMElement(){ name="FileTypeExtended", responseElement ="type_description"}
+								new CDMElement(){ name="FileTypeExtended", responseElement ="type_description", type = "string"}
 							}
 				}
 			};
@@ -371,34 +373,34 @@ namespace Zurich.Connector.Tests
 			{
 				structured = new List<CDMElement>() {
 							{
-								new CDMElement(){ name="Name", responseElement ="name"}
+								new CDMElement(){ name="Name", responseElement ="name", type = "string"}
 							},
 							{
-								new CDMElement(){ name="Id", responseElement ="id"}
+								new CDMElement(){ name="Id", responseElement ="id", type = "string"}
 							},
 							{
-								new CDMElement(){ name="WebLink", responseElement =""}
+								new CDMElement(){ name="WebLink", responseElement ="", type = "string"}
 							},
 							{
-								new CDMElement(){ name="LastOpened", responseElement =""}
+								new CDMElement(){ name="LastOpened", responseElement ="", type = "string"}
 							},
 							{
-								new CDMElement(){ name="LastUpdated", responseElement ="file_edit_date"}
+								new CDMElement(){ name="LastUpdated", responseElement ="file_edit_date", type = "string"}
 							},
 							{
-								new CDMElement(){ name="LastModifiedUser", responseElement ="last_user_description"}
+								new CDMElement(){ name="LastModifiedUser", responseElement ="last_user_description", type = "string"}
 							},
 							{
-								new CDMElement(){ name="CreatedDate", responseElement ="file_create_date"}
+								new CDMElement(){ name="CreatedDate", responseElement ="file_create_date", type = "string"}
 							},
 							{
-								new CDMElement(){ name="CreatedByUser", responseElement ="author_description"}
+								new CDMElement(){ name="CreatedByUser", responseElement ="author_description", type = "string"}
 							},
 							{
-								new CDMElement(){ name="FileType", responseElement ="type"}
+								new CDMElement(){ name="FileType", responseElement ="type", type = "string"}
 							},
 							{
-								new CDMElement(){ name="FileTypeExtended", responseElement ="type_description"}
+								new CDMElement(){ name="FileTypeExtended", responseElement ="type_description", type = "string"}
 							}
 				}
 			};
@@ -455,25 +457,28 @@ namespace Zurich.Connector.Tests
 			{
 				structured = new List<CDMElement>() {
 							{
-								new CDMElement(){ name="Name", responseElement ="name"}
+								new CDMElement(){ name="Name", responseElement ="name", type = "string"}
 							},
 							{
-								new CDMElement(){ name="Id", responseElement ="id"}
+								new CDMElement(){ name="Id", responseElement ="id", type = "string"}
 							},
 							{
-								new CDMElement(){ name="WebLink", responseElement =""}
+								new CDMElement(){ name="WebLink", responseElement ="", type = "string"}
 							},
 							{
-								new CDMElement(){ name="ComplexObjectFieldOne", responseElement ="complexObject.testItem1"}
+								new CDMElement(){ name="ComplexObjectFieldOne", responseElement ="complexObject.testItem1", type = "string"}
 							},
 							{
-								new CDMElement(){ name="ComplexObjectLevelTwo", responseElement ="complexObject.testItem3.level2"}
+								new CDMElement(){ name="ComplexObjectLevelTwo", responseElement ="complexObject.testItem3.level2", type = "string"}
 							},
 							{
-								new CDMElement(){ name="ArrayValue1", responseElement ="testArray.[name:testIndex2].description"}
+								new CDMElement(){ name="ArrayValue1", responseElement ="testArray.[name:testIndex2].description", type = "string"}
 							},
 							{
-								new CDMElement(){ name="ArrayValue2", responseElement ="testArray.[description:fakeDesc3].name"}
+								new CDMElement(){ name="ArrayValue2", responseElement ="testArray.[description:fakeDesc3].name", type = "string"}
+							},
+							{
+								new CDMElement(){ name="boolean", responseElement ="boolTest", type = DataTypes.Bool}
 							}
 				}
 			};
@@ -509,6 +514,7 @@ namespace Zurich.Connector.Tests
 			Assert.AreEqual("level 2 variable", documents[0].ComplexObjectLevelTwo.ToString());
 			Assert.AreEqual("fakeDesc2", documents[0].ArrayValue1.ToString());
 			Assert.AreEqual("testIndex3", documents[0].ArrayValue2.ToString());
+			Assert.AreEqual(true, (bool)documents[0].boolean);
 		}
 
         [TestMethod]

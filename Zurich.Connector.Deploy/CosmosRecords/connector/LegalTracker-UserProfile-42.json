@@ -55,6 +55,12 @@
         "type": "string",
         "responseElement": "dataCenterId",
         "_comment": ""
+      },
+      {
+        "name": "DataSource",
+        "type": "int",
+        "responseElement": "companyId",
+        "_comment": ""
       }
     ],
     "unstructured": []

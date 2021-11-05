@@ -27,7 +27,7 @@ namespace Zurich.Connector.App.Model
         /// <summary>
         /// Indicates if there is any array in the xml. 
         /// </summary>
-        public string XmlArrayAttribute { get; set; }
+        public IEnumerable<string> XmlArrayAttribute { get; set; }
         /// <summary>
         /// Request parameters
         /// </summary>
