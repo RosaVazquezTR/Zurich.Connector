@@ -10,17 +10,17 @@ using Zurich.Connector.Data.Model;
 
 namespace Zurich.Connector.Tests.Common
 {
-	/// <summary>
-	/// class responsible for mocking connector and data source data.
-	/// </summary>
+    /// <summary>
+    /// class responsible for mocking connector and data source data.
+    /// </summary>
     internal static class MockConnectorData
     {
-		/// <summary>
-		/// Setup connector Model
-		/// </summary>
-		/// <returns></returns>
-		internal static IEnumerable<ConnectorModel> SetupConnectorModel()
-		{
+        /// <summary>
+        /// Setup connector Model
+        /// </summary>
+        /// <returns></returns>
+        internal static IEnumerable<ConnectorModel> SetupConnectorModel()
+        {
             return new List<ConnectorModel>()
             {
                 new ConnectorModel()
@@ -84,12 +84,12 @@ namespace Zurich.Connector.Tests.Common
                         Name = "DataSource22",
                         AppCode = "DataSource22",
                         Description = "DataSource 22 desc",
-                        
+
                         RegistrationInfo = new RegistrationInfoModel()
                         {
                             RegistrationMode = Zurich.Common.Models.Connectors.RegistrationEntityMode.Manual
                         }
-                        
+
 
                     }
                 },
@@ -119,7 +119,7 @@ namespace Zurich.Connector.Tests.Common
                         },
                         Sorting = new ConnectorRequestSortingModel(){
                                                                         Properties = new List<ConnectorRequestSortingPropertiesModel>()
-                                                                        { 
+                                                                        {
                                                                             new ConnectorRequestSortingPropertiesModel()
                                                                             {
                                                                                  Element ="sortOrder",
@@ -177,7 +177,7 @@ namespace Zurich.Connector.Tests.Common
                     }
                 }
             };
-		}
+        }
 
         internal static IEnumerable<ConnectorModel> SetupConnectorModel_Version2()
         {
@@ -292,38 +292,44 @@ namespace Zurich.Connector.Tests.Common
                         AppCode = "DataSource10",
                         Description = "DataSource 10 desc"
                     },
-                    AdditionalProperties = new List<AdditionalPropertiesModel>()
+                    CDMMapping = new CDMMappingModel()
                     {
-                       new AdditionalPropertiesModel()
+                        Unstructured = new List<CDMElementModel>()
+
+                      {
+
+                       new CDMElementModel
                        {
+
                         Name = "Id",
                         Type = "string",
                         ResponseElement="Id"
                        },
-                       new AdditionalPropertiesModel()
+                       new CDMElementModel
                        {
                         Name = "database",
                         Type = "string",
                         ResponseElement="database"
                        },
-                        new AdditionalPropertiesModel()
+                        new CDMElementModel
                        {
                         Name = "document_number",
                         Type = "integer",
                         ResponseElement="document_number"
                        },
-                       new AdditionalPropertiesModel()
+                       new CDMElementModel
                        {
                         Name = "version",
                         Type = "integer",
                         ResponseElement="version"
                        },
-                       new AdditionalPropertiesModel()
+                       new CDMElementModel
                        {
                         Name = "author",
                         Type = "string",
                         ResponseElement="author"
                        }
+                        }
                     },
                 }
         };
@@ -335,9 +341,9 @@ namespace Zurich.Connector.Tests.Common
         /// </summary>
         /// <returns></returns>
         internal static IEnumerable<DataSourceModel> SetupDataSourceModel()
-		{
-			return new List<DataSourceModel>()
-			{
+        {
+            return new List<DataSourceModel>()
+            {
                 new DataSourceModel()
                 {
                     Id = "11",
@@ -345,13 +351,13 @@ namespace Zurich.Connector.Tests.Common
                     Description = "DataSource 11 desc"
                 },
                 new DataSourceModel()
-				{
+                {
                     Id = "22",
                     Name = "DataSource22",
                     Description = "DataSource 22 desc"
                 },
-			};
-		}
+            };
+        }
 
         internal static IEnumerable<dynamic> SetupDocumentsModel()
         {

@@ -30,7 +30,6 @@ namespace Zurich.Connector.Web
 
             CreateMap<CDMMappingModel, CDMMappingViewModel>();
             CreateMap<CDMElementModel, CDMElementViewModel>();
-            CreateMap<AdditionalPropertiesModel, AdditionalPropertiesViewModel>();
 
             CreateMap<ConnectorModel, ConnectorListViewModel>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))

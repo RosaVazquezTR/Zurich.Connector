@@ -365,7 +365,7 @@ namespace Zurich.Connector.Tests.ControllerTests
 			// ASSERT
 			_mockConnectorservice.Verify(x => x.GetConnector(It.IsAny<string>()), Times.Exactly(1));
 			var result = response.Result.Value;
-			Assert.AreEqual(connections.AdditionalProperties.Count, result.AdditionalProperties.Count);
+			Assert.AreEqual(connections.CDMMapping.Unstructured.Count, result.CDMMapping.Unstructured.Count);
 		}
 
 		private ConnectorsController CreateConnectorsController()

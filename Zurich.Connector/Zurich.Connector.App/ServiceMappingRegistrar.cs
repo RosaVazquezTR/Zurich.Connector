@@ -29,7 +29,6 @@ namespace Zurich.Connector.App
 
             CreateMap<CDMMapping, CDMMappingModel>();
             CreateMap<CDMElement, CDMElementModel>();
-            CreateMap<AdditionalProperties, AdditionalPropertiesModel>();
 
             CreateMap<ConnectorRequestParameter, ConnectorRequestParameterModel>();
             CreateMap<ConnectorRequestSorting, ConnectorRequestSortingModel>();
@@ -77,7 +76,6 @@ namespace Zurich.Connector.App
             CreateMap<CDMMappingModel, CDMMapping>();
 
             CreateMap<CDMElementModel, CDMElement>();
-            CreateMap<AdditionalPropertiesModel, AdditionalProperties>();
 
             CreateMap<ConnectorInfoModel, ConnectorInfo>();
 

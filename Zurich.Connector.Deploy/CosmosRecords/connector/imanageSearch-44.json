@@ -10,9 +10,29 @@
     "version": "1.0"
   },
   "request": {
-    "endpointPath": "/work/api/v2/customers/{customerId}/libraries/Active/documents/search",
-    "method": "GET",
-    "parameters": [],
+    "endpointPath": "/work/api/v2/customers/{1.customerId}/libraries/Active/documents/search",
+    "method": "POST",
+    "parameters": [
+      {
+        "cdmName": "Profile_fields",
+        "name": "request[].profile_fields.document.[]",
+        "inClause": "body",
+        "required": false,
+        "type": "string",
+        "defaultValue": "name,file_edit_date,size",
+        "tags": []
+
+      },
+      {
+        "cdmName": "Filters",
+        "name": "request[].filters.[]",
+        "inClause": "body",
+        "required": false,
+        "type": "string",
+        "defaultValue": "name,file_edit_date,size",
+        "tags": []
+      }
+    ],
     "sorting": {
       "properties": []
     }
@@ -57,128 +77,122 @@
         "_comment": ""
       }
     ],
-    "unstructured": []
-  },
-  "additionalProperties": [
-    {
-      "name": "Id",
-      "type": "string",
-      "responseElement": "id",
-      "_comment": ""
-    },
-    {
-      "name": "database",
-      "type": "string",
-      "responseElement": "database",
-      "_comment": ""
-    },
-    {
-      "name": "document_number",
-      "type": "integer",
-      "responseElement": "document_number",
-      "_comment": ""
-    },
-    {
-      "name": "version",
-      "type": "integer",
-      "responseElement": "version",
-      "_comment": ""
-    },
-    {
-      "name": "name",
-      "type": "string",
-      "responseElement": "name",
-      "_comment": ""
-    },
-    {
-      "name": "alias",
-      "type": "string",
-      "responseElement": "alias",
-      "_comment": ""
-    },
-    {
-      "name": "author",
-      "type": "string",
-      "responseElement": "author",
-      "_comment": ""
-    },
-    {
-      "name": "operator",
-      "type": "string",
-      "responseElement": "operator",
-      "_comment": ""
-    },
-    {
-      "name": "class",
-      "type": "string",
-      "responseElement": "class",
-      "_comment": ""
-    },
-    {
-      "name": "sub_class",
-      "type": "string",
-      "responseElement": "sub_class",
-      "_comment": ""
-    },
-    {
-      "name": "edit_date",
-      "type": "datetime",
-      "responseElement": "edit_date",
-      "_comment": ""
-    },
-    {
-      "name": "retain_days",
-      "type": "integer",
-      "responseElement": "retain_days",
-      "_comment": ""
-    },
-    {
-      "name": "size",
-      "type": "integer",
-      "responseElement": "size",
-      "_comment": ""
-    },
-    {
-      "name": "indexable",
-      "type": "boolean",
-      "responseElement": "size",
-      "_comment": ""
-    },
-    {
-      "name": "is_related",
-      "type": "string",
-      "responseElement": "is_related",
-      "_comment": ""
-    },
-    {
-      "name": "location",
-      "type": "string",
-      "responseElement": "location",
-      "_comment": ""
-    },
-    {
-      "name": "default_security",
-      "type": "string",
-      "responseElement": "default_security",
-      "_comment": ""
-    },
-    {
-      "name": "last_user",
-      "type": "string",
-      "responseElement": "last_user",
-      "_comment": ""
-    },
-    {
-      "name": "edit_time",
-      "type": "string",
-      "responseElement": "edit_time",
-      "_comment": ""
-    },
-    {
-      "name": "extension",
-      "type": "string",
-      "responseElement": "extension",
-      "_comment": ""
-    }
-  ]
+    "unstructured": [
+      {
+        "name": "Id",
+        "type": "string",
+        "responseElement": "id",
+        "_comment": ""
+      },
+      {
+        "name": "database",
+        "type": "string",
+        "responseElement": "database",
+        "_comment": ""
+      },
+      {
+        "name": "document_number",
+        "type": "integer",
+        "responseElement": "document_number",
+        "_comment": ""
+      },
+      {
+        "name": "version",
+        "type": "integer",
+        "responseElement": "version",
+        "_comment": ""
+      },
+      {
+        "name": "alias",
+        "type": "string",
+        "responseElement": "alias",
+        "_comment": ""
+      },
+      {
+        "name": "author",
+        "type": "string",
+        "responseElement": "author",
+        "_comment": ""
+      },
+      {
+        "name": "operator",
+        "type": "string",
+        "responseElement": "operator",
+        "_comment": ""
+      },
+      {
+        "name": "class",
+        "type": "string",
+        "responseElement": "class",
+        "_comment": ""
+      },
+      {
+        "name": "sub_class",
+        "type": "string",
+        "responseElement": "sub_class",
+        "_comment": ""
+      },
+      {
+        "name": "edit_date",
+        "type": "datetime",
+        "responseElement": "edit_date",
+        "_comment": ""
+      },
+      {
+        "name": "retain_days",
+        "type": "integer",
+        "responseElement": "retain_days",
+        "_comment": ""
+      },
+      {
+        "name": "size",
+        "type": "integer",
+        "responseElement": "size",
+        "_comment": ""
+      },
+      {
+        "name": "indexable",
+        "type": "boolean",
+        "responseElement": "size",
+        "_comment": ""
+      },
+      {
+        "name": "is_related",
+        "type": "string",
+        "responseElement": "is_related",
+        "_comment": ""
+      },
+      {
+        "name": "location",
+        "type": "string",
+        "responseElement": "location",
+        "_comment": ""
+      },
+      {
+        "name": "default_security",
+        "type": "string",
+        "responseElement": "default_security",
+        "_comment": ""
+      },
+      {
+        "name": "last_user",
+        "type": "string",
+        "responseElement": "last_user",
+        "_comment": ""
+      },
+      {
+        "name": "edit_time",
+        "type": "string",
+        "responseElement": "edit_time",
+        "_comment": ""
+      },
+      {
+        "name": "extension",
+        "type": "string",
+        "responseElement": "extension",
+        "_comment": ""
+      }
+
+    ]
+  }
 }

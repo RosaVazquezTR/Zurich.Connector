@@ -83,33 +83,36 @@ namespace Zurich.Connector.Tests.ServiceTests
                         DataSourceId = "10",
                         Description ="desc44"
                     },
-                   AdditionalProperties = new List<AdditionalProperties>()
+                   CdmMapping = new CDMMapping()
                     {
-                       new AdditionalProperties
+                       unstructured = new List<CDMElement>()
+                       {
+                       new CDMElement
                        {
                            name="id",
                            type="string",
                            responseElement="Id"
 
                        },
-                       new AdditionalProperties
+                       new CDMElement
                        {
                         name = "database",
                         type = "string",
                         responseElement="database"
                        },
-                        new AdditionalProperties
+                        new CDMElement
                        {
                         name = "document_number",
                         type = "integer",
                         responseElement="document_number"
                        },
-                       new AdditionalProperties
+                       new CDMElement
                        {
                         name = "version",
                         type = "integer",
                         responseElement="version"
                        },
+                        }
                     }
                     
                 }
@@ -401,7 +404,7 @@ namespace Zurich.Connector.Tests.ServiceTests
             Assert.AreEqual(testConnectors.Count(), connectors.Count());
             Assert.AreEqual(testConnectors.ToList()[0].Id, connectors[0].Id);
             Assert.AreEqual(testConnectors.ToList()[0].Info.Title, connectors[0].Info.Title);
-            Assert.AreEqual(testConnectors.ToList()[0].AdditionalProperties.Count, connectors[0].AdditionalProperties.Count);
+            Assert.AreEqual(testConnectors.ToList()[0].CdmMapping.unstructured.Count, connectors[0].CDMMapping.Unstructured.Count);
 
         }
     }
