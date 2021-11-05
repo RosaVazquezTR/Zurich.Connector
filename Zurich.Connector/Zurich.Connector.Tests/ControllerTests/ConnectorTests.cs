@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -290,8 +291,8 @@ namespace Zurich.Connector.Tests.ControllerTests
 
 			// ASSERT
 			_mockConnectorDataService.Verify(x => x.GetConnectorData(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<bool>()), Times.Exactly(1));
-			var result = response.Value;
-			Assert.AreEqual("Connector or data not found", result.Message);
+			var result = (ObjectResult)response.Result;
+			Assert.AreEqual("Connector or data not found", ((Exception)result.Value).Message);
 		}
 
 		[TestMethod]

@@ -79,7 +79,7 @@ namespace Zurich.Connector.Web.Controllers
             }
             catch (Exception e)
             {
-                return new Exception(e.Message);
+                return StatusCode(500, new Exception(e.Message));
             }
 
         }

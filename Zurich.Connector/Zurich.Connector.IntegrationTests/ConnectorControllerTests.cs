@@ -58,7 +58,7 @@ namespace Zurich.Connector.IntegrationTests
         public async Task TestConnectorDataById_With_Statucode_OK()
         {
             // Arrange
-            var request = "/Connectors/1302/data";
+            var request = "/Connectors/12/data";
             //Act
             var response= await _client.GetAsync(request);
 
@@ -69,7 +69,7 @@ namespace Zurich.Connector.IntegrationTests
         public async Task TestConnectorDataById_With_SuccessStatus()
         {
             // Arrange
-            var request = "/Connectors/1300/data/?query=query";
+            var request = "/Connectors/10/data/?query=query";
             //Act
             var response = await _client.GetAsync(request);
 
