@@ -319,15 +319,15 @@ namespace Zurich.Connector.Tests.ControllerTests
 		{
 			// ARRANGE
 			var connections = MockConnectorData.SetupConnectorModel().ToList()[0];
-			_mockConnectorservice.Setup(x => x.GetConnector(It.IsAny<string>())).Returns(Task.FromResult(connections));
+			_mockConnectorservice.Setup(x => x.GetConnector(It.IsAny<string>(), It.IsAny<string>())).Returns(Task.FromResult(connections));
 
 			ConnectorsController connector = CreateConnectorsController();
 
 			// ACT
-			var response = await connector.Connectors("1");
+			var response = await connector.Connectors("1", "test.com");
 
 			// ASSERT
-			_mockConnectorservice.Verify(x => x.GetConnector(It.IsAny<string>()), Times.Exactly(1));
+			_mockConnectorservice.Verify(x => x.GetConnector(It.IsAny<string>(), It.IsAny<string>()), Times.Exactly(1));
 			var result = response.Result;
 			Assert.AreEqual(StatusCodes.Status200OK, ((Microsoft.AspNetCore.Mvc.ObjectResult)result).StatusCode);
 		}
@@ -336,12 +336,12 @@ namespace Zurich.Connector.Tests.ControllerTests
 		public async Task Call_Connector_Data_And_Get_Null_Response()
 		{
 			// ARRANGE
-			_mockConnectorservice.Setup(x => x.GetConnector(It.IsAny<string>()));
+			_mockConnectorservice.Setup(x => x.GetConnector(It.IsAny<string>(), It.IsAny<string>()));
 
 			ConnectorsController connector = CreateConnectorsController();
 
 			// ACT
-			async Task result() => await connector.Connectors("22");
+			async Task result() => await connector.Connectors("22", "test.com");
 
 			// ASSERT
 			await Assert.ThrowsExceptionAsync<ResourceNotFoundException>(result);

@@ -144,9 +144,9 @@ namespace Zurich.Connector.Web.Controllers
         /// filters, extra set up – specific to search sorting and query parameters)
         /// </returns>
         [HttpGet("{id}")]
-        public async Task<ActionResult<ConnectorViewModel>> Connectors(string id)
+        public async Task<ActionResult<ConnectorViewModel>> Connectors(string id, [FromQuery] string domain)
         {
-            var results = await _connectorService.GetConnector(id);
+            var results = await _connectorService.GetConnector(id, domain);
             if (results == null)
             {
                 throw new ResourceNotFoundException($"Connector 'id' not found");
@@ -164,7 +164,7 @@ namespace Zurich.Connector.Web.Controllers
                 return BadRequest("Connector Id must be defined");
             }
 
-            var connector = await _connectorService.GetConnector(registrationModel.ConnectorId);
+            var connector = await _connectorService.GetConnector(registrationModel.ConnectorId, registrationModel.Domain);
             if (connector == null)
             {
                 return BadRequest("Connector Id must point to a valid connector");
