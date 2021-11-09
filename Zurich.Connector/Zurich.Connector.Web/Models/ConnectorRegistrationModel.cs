@@ -11,6 +11,11 @@ namespace Zurich.Connector.Web.Models
         /// connectorid        
         /// </summary>
         public string ConnectorId { get; set; }
+        /// <summary>
+        /// domain
+        /// </summary>
+        public string Domain { get; set; }
+
 
     }
 }

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using Zurich.Common.Models.OAuth;
 using Zurich.Connector.App.Enum;
 using Zurich.Connector.App.Model;
 using Zurich.Connector.App.Services;
@@ -24,7 +25,7 @@ namespace Zurich.Connector.Data.Services
         /// <returns>List of Data Mapping Connections <see cref="DataMappingConnection"/></returns>
         Task<List<ConnectorModel>> GetConnectors(Common.Models.Connectors.ConnectorFilterModel filters);
 
-        Task<ConnectorModel> GetConnector(string connectorId);
+        Task<ConnectorModel> GetConnector(string connectorId, string domain);
     }
 
     public class ConnectorService : IConnectorService
@@ -32,15 +33,18 @@ namespace Zurich.Connector.Data.Services
         private readonly ICosmosService _cosmosService;
         private readonly ILogger<ConnectorService> _logger;
         private readonly IRegistrationService _registrationService;
+        private readonly OAuthOptions _oAuthOptions;
 
         public ConnectorService(
             ILogger<ConnectorService> logger,
             ICosmosService cosmosService,
-            IRegistrationService registrationService)
+            IRegistrationService registrationService,
+            OAuthOptions oAuthOptions)
         {
             _cosmosService = cosmosService;
             _logger = logger;
             _registrationService = registrationService;
+            _oAuthOptions = oAuthOptions;
         }
 
         /// <summary>
@@ -94,9 +98,19 @@ namespace Zurich.Connector.Data.Services
             }
         }
 
-        public async Task<ConnectorModel> GetConnector(string connectorId)
+        public async Task<ConnectorModel> GetConnector(string connectorId, string domain)
         {
             var connector = await _cosmosService.GetConnector(connectorId, true);
+
+            var domainUrl = _oAuthOptions.Connections[connector.DataSource.AppCode].BaseUrl;
+            if (connector.DataSource.RegistrationInfo.DomainRequired || (!string.IsNullOrEmpty(domain) && domain.Equals(domainUrl)))
+            {
+                return connector;
+            }
+            else
+            {
+                connector.DataSource.RegistrationInfo.DomainSpecificInformation = null;
+            }
             return connector;
         }
 
