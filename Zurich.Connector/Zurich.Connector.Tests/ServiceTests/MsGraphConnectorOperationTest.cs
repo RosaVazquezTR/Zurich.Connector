@@ -5,6 +5,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Zurich.Connector.App.Services.DataSources;
 using Zurich.Connector.Data;
@@ -112,6 +113,42 @@ namespace Zurich.Connector.Tests.ServiceTests
             }");
             return result;
         }
+
+        internal static JObject WebUrlVerification()
+        {
+            JObject result;
+
+            result = JObject.Parse(@"{
+                ""TotalCount"": 2,
+                ""Documents"": [
+                    {
+	                    ""Snippet"": ""<c0>the</c0> team site document <ddd/>"",
+	                    ""Title"": ""teamSiteexcel.pdf"",
+	                    ""Type"": null,
+	                    ""WebUrl"": ""https://rhdevtenant.sharepoint.com/sites/Teamsite/Shared Documents/teamSiteexcel.pdf"",
+	                    ""CreationDate"": ""2021-10-19T16:23:52Z"",
+	                    ""AdditionalProperties"": {
+		                    ""lastModifiedDateTime"": ""2021-10-19T16:24:32Z"",
+		                    ""authorName"": ""Ryan Hunecke""
+	                    }
+                    },
+                    {
+                        ""Snippet"": ""<b>Test</b> settings Notes Index current index None 2020-08-26T21:20:00.287Z 2020-08-26T21:22:06.<ddd/><b>test</b> 2020-08-26T23:14:31.195Z 2020-08-27T06:12:45.755Z 1 every 4 calls 65 1500000 3000<ddd/>"",
+                        ""Title"": ""cosmostimings.xlsx"",
+	                    ""Type"": null,
+                        ""WebUrl"": ""https://rhdevtenant.sharepoint.com/sites/contentTypeHub/Shared Documents/cosmostimings.xlsx"",
+                        ""CreationDate"": ""2021-10-19T16:26:58Z"",
+                        ""AdditionalProperties"": {
+                            ""lastModifiedDateTime"": ""2020-08-27T22:07:08Z"",
+                            ""lastModifiedUser"": ""Ryan Hunecke"",
+                            ""authorName"": ""Ryan Hunecke"",
+                            ""listItemUniqueId"": ""C41B7430-07CC-4174-B1DA-97193AD2692E""
+                        }
+                    }
+                ]
+            }");
+            return result;
+        }
         #endregion Data Setup
 
         [TestInitialize]
@@ -130,6 +167,7 @@ namespace Zurich.Connector.Tests.ServiceTests
         [TestMethod]
         public async Task SetItemLinkTest_Should_RemoveExtensionSetExtensionAndUpdateSnippet()
         {
+            //Arrange
             var expectedType = "Excel";
             var expectedExtension = "xlsx";
             var expectedTitle = "teamSiteexcel";
@@ -138,7 +176,9 @@ namespace Zurich.Connector.Tests.ServiceTests
             var mockDocuments = HappyPath();
             var service = GetService();
 
+            //Act
             var result = (await service.SetItemLink(Data.Model.ConnectorEntityType.Search, mockDocuments, _msAppCode, null) as JObject);
+
             //Assert
             result.Should().NotBeNull();
             var doc = result["Documents"][0] as JObject;
@@ -155,6 +195,7 @@ namespace Zurich.Connector.Tests.ServiceTests
         [TestMethod]
         public async Task SetItemLinkTest_Should_UpdateSnippet()
         {
+            //Arrange
             var expectedType = "Word";
             var expectedExtension = "docx";
             var expectedTitle = "SharepointLibrary doc";
@@ -164,7 +205,9 @@ namespace Zurich.Connector.Tests.ServiceTests
             var mockDocuments = NoTitle();
             var service = GetService();
 
+            //Act
             var result = (await service.SetItemLink(Data.Model.ConnectorEntityType.Search, mockDocuments, _msAppCode, null) as JObject);
+
             //Assert
             result.Should().NotBeNull();
             var doc = result["Documents"][0] as JObject;
@@ -187,13 +230,16 @@ namespace Zurich.Connector.Tests.ServiceTests
         [TestMethod]
         public async Task SetItemLinkTest_Should_UpdateSnippetNoExtension()
         {
+            //Arrange
             var expectedTitle = "Team site";
             var expectedSnippet = "<b>the</b> team site document. ";
 
             var mockDocuments = TitleNoExtension();
             var service = GetService();
 
+            //Act
             var result = (await service.SetItemLink(Data.Model.ConnectorEntityType.Search, mockDocuments, _msAppCode, null) as JObject);
+
             //Assert
             result.Should().NotBeNull();
             var doc = result["Documents"][0] as JObject;
@@ -203,6 +249,30 @@ namespace Zurich.Connector.Tests.ServiceTests
             doc[StructuredCDMProperties.Type].Value<string>().Should().Be(string.Empty);
             doc[StructuredCDMProperties.Title].Value<string>().Should().Be(expectedTitle);
             doc[StructuredCDMProperties.Snippet].Value<string>().Should().Be(expectedSnippet);
+        }
+
+        //
+        [TestMethod]
+        public async Task SetWebUrlTest_Should_UpdateUrlOnlyifNotPdf()
+        {
+            //Arrange
+            var expectedWebUrl = "https://rhdevtenant.sharepoint.com/sites/contentTypeHub/_layouts/15/Doc.aspx?sourcedoc=%7BC41B7430-07CC-4174-B1DA-97193AD2692E%7D&file=cosmostimings.xlsx&action=default&mobileredirect=true&DefaultItemOpen=1";
+
+            var mockDocuments = WebUrlVerification();
+            var service = GetService();
+
+            //Act
+            var result = (await service.SetItemLink(Data.Model.ConnectorEntityType.Search, mockDocuments, _msAppCode, null) as JObject);
+
+            //Assert
+            result.Should().NotBeNull();
+            var pdfDoc = result["Documents"][0] as JObject;
+            pdfDoc.ContainsKey(StructuredCDMProperties.WebUrl).Should().BeTrue();
+            Assert.AreEqual(mockDocuments["Documents"][0][StructuredCDMProperties.WebUrl], pdfDoc[StructuredCDMProperties.WebUrl]);
+
+            var otherDoc = result["Documents"][1] as JObject;
+            otherDoc.ContainsKey(StructuredCDMProperties.WebUrl).Should().BeTrue();
+            Assert.AreEqual(expectedWebUrl, otherDoc[StructuredCDMProperties.WebUrl]);
         }
     }
 }

@@ -64,6 +64,12 @@
           "type": "string",
           "responseElement": "resource.createdBy.user.displayName",
           "_comment": ""
+        },
+        {
+          "name": "listItemUniqueId",
+          "type": "string",
+          "responseElement": "resource.parentReference.sharepointIds.listItemUniqueId",
+          "_comment": ""
         }
       ]
     }
