@@ -2,10 +2,8 @@
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Zurich.Common;
 using Zurich.Connector.Data;
 using Zurich.Connector.Data.DataMap;
 using Zurich.Connector.Data.Factories;
@@ -55,6 +53,10 @@ namespace Zurich.Connector.App.Services.DataSources
                                 if (doc.ContainsKey(StructuredCDMProperties.Snippet))
                                 {
                                     doc[StructuredCDMProperties.Snippet] = UpdateSnippet(doc[StructuredCDMProperties.Snippet].ToString());
+                                }
+                                if (doc.ContainsKey(StructuredCDMProperties.WebUrl))
+                                {
+                                    doc[StructuredCDMProperties.WebUrl] = UpdateWebUrl(doc);
                                 }
                             }
                         }
@@ -399,6 +401,34 @@ namespace Zurich.Connector.App.Services.DataSources
                 snippet = snippet.Replace("<c0>", "<b>").Replace("</c0>", "</b>").Replace(" <ddd/>", ". ");
             }
             return snippet;
+        }
+
+        internal static string UpdateWebUrl(JObject doc)
+        {
+            string returnUrl = doc[StructuredCDMProperties.WebUrl].Value<string>();
+            JObject additionalProperties = (JObject)doc[StructuredCDMProperties.AdditionalProperties];
+
+            if (doc.ContainsKey(StructuredCDMProperties.Title) && 
+                additionalProperties.ContainsKey(UnstructuredCDMProperties.ListItemUniqueId) &&
+                additionalProperties.ContainsKey(UnstructuredCDMProperties.Extension))
+            {
+                var extension = additionalProperties[UnstructuredCDMProperties.Extension].Value<string>();
+                if (string.IsNullOrEmpty(extension) || extension.ToLower() == "pdf")
+                    return returnUrl;
+
+                string containingFolder = "";
+                if (!string.IsNullOrEmpty(returnUrl))
+                {
+                    containingFolder = returnUrl.Contains("/Documents/") ? "/Documents/" : (returnUrl.Contains("/Shared Documents/") ? "/Shared Documents/" : "");
+                }
+                var title = doc[StructuredCDMProperties.Title].Value<string>();
+                var listItemUniqueId = additionalProperties[UnstructuredCDMProperties.ListItemUniqueId].Value<string>();
+
+                returnUrl = (string.IsNullOrEmpty(returnUrl) || string.IsNullOrEmpty(containingFolder)) ? returnUrl :
+                                            returnUrl.Substring(0, (returnUrl.IndexOf(containingFolder))) +
+                                            $"/_layouts/15/Doc.aspx?sourcedoc=%7B{listItemUniqueId}%7D&file={title}.{extension}&action=default&mobileredirect=true&DefaultItemOpen=1";
+            }
+            return returnUrl;
         }
     }
 }

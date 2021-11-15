@@ -22,6 +22,7 @@
     public static class UnstructuredCDMProperties
     {
         public const string Extension = "extension";
+        public const string ListItemUniqueId = "listItemUniqueId";
     }
 
     /// <summary>
