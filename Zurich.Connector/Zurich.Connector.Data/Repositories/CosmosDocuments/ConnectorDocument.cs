@@ -60,6 +60,10 @@ namespace Zurich.Connector.Data.Repositories.CosmosDocuments
         /// Host name
         /// </summary>
         public string HostName { get; set; }
+        /// <summary>
+        /// Determines whether to show pre release connectors 
+        /// </summary>
+        public bool PreRelease { get; set; }
     }
 
     public class ConnectorInfo

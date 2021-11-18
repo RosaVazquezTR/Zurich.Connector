@@ -1,5 +1,6 @@
 ﻿using Microsoft.Azure.Cosmos.Linq;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,15 +35,18 @@ namespace Zurich.Connector.Data.Services
         private readonly ICosmosService _cosmosService;
         private readonly ILogger<ConnectorService> _logger;
         private readonly IRegistrationService _registrationService;
+        private readonly IConfiguration _configuration;
 
         public ConnectorService(
             ILogger<ConnectorService> logger,
             ICosmosService cosmosService,
-            IRegistrationService registrationService)
+            IRegistrationService registrationService,
+            IConfiguration configuration)
         {
             _cosmosService = cosmosService;
             _logger = logger;
             _registrationService = registrationService;
+            _configuration = configuration;
         }
 
         /// <summary>
@@ -71,9 +75,26 @@ namespace Zurich.Connector.Data.Services
                     dataSourceFilter = filters.DataSources;
                 }
 
-                Expression<Func<ConnectorDocument, bool>> condition = connector => (connector.Info.SubType == SubType.Parent || !connector.Info.SubType.IsDefined())
-                                && (isEntityTypeFilter == false || entityTypeFilter.Contains(connector.Info.EntityType.ToString()))
-                                && (isDataSourceFilter == false || dataSourceFilter.Contains(connector.Info.DataSourceId));
+                var showPreReleaseConnectors = _configuration.GetValue<string>(AppSettings.ShowPreReleaseConnectors);
+                bool blnShowPreReleaseConnectors;
+                Boolean.TryParse(showPreReleaseConnectors, out blnShowPreReleaseConnectors);
+
+                Expression<Func<ConnectorDocument, bool>> condition;
+
+                if (blnShowPreReleaseConnectors)
+                {
+                    condition = connector => (connector.Info.SubType == SubType.Parent || !connector.Info.SubType.IsDefined())
+                                 && (isEntityTypeFilter == false || entityTypeFilter.Contains(connector.Info.EntityType.ToString()))
+                                 && (isDataSourceFilter == false || dataSourceFilter.Contains(connector.Info.DataSourceId));
+                }
+                else
+                {
+                    condition = connector => (!connector.PreRelease.IsDefined() || !connector.PreRelease)
+                                 && (connector.Info.SubType == SubType.Parent || !connector.Info.SubType.IsDefined())
+                                 && (isEntityTypeFilter == false || entityTypeFilter.Contains(connector.Info.EntityType.ToString()))
+                                 && (isDataSourceFilter == false || dataSourceFilter.Contains(connector.Info.DataSourceId));
+                }
+
                 var connectors = await _cosmosService.GetConnectors(true, condition);
 
                 if (filters.RegistrationModes != null && filters.RegistrationModes.Any())

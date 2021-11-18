@@ -14,6 +14,7 @@ namespace Zurich.Connector.App
     public static class AppSettings
     {
         public const string OAuthUrl = "OAuthBaseUrl";
+        public const string ShowPreReleaseConnectors = "ShowPreReleaseConnectors";
     }
 
     public static class SubType
