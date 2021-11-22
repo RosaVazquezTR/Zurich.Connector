@@ -68,7 +68,7 @@ namespace Zurich.Connector.App.Services
         /// <returns>Connector document list.</returns> 
         public async Task<IEnumerable<ConnectorModel>> GetConnectors(bool includeDataSource = false, Expression<Func<ConnectorDocument, bool>> condition = null)
         {
-            var connectorDocuments = _cosmosContext.GetDocuments(CosmosConstants.ConnectorContainerId, CosmosConstants.ConnectorPartitionKey, condition);
+            var connectorDocuments = _cosmosContext.GetDocuments(CosmosConstants.ConnectorContainerId, CosmosConstants.ConnectorPartitionKey, condition).ToList();
             var connectors = _mapper.Map<List<ConnectorModel>>(connectorDocuments);
 
             if (includeDataSource && connectors != null)
@@ -103,7 +103,7 @@ namespace Zurich.Connector.App.Services
         /// <returns>List of data sources.</returns> 
         public async Task<IEnumerable<DataSourceModel>> GetDataSources(Expression<Func<DataSourceDocument, bool>> condition = null)
         {
-            var dataSourceDocuments = _cosmosContext.GetDocuments(CosmosConstants.DataSourceContainerId, CosmosConstants.DataSourcePartitionKey, condition);
+            var dataSourceDocuments = _cosmosContext.GetDocuments(CosmosConstants.DataSourceContainerId, CosmosConstants.DataSourcePartitionKey, condition).ToList();
             List<DataSourceModel> dataSources = _mapper.Map<List<DataSourceModel>>(dataSourceDocuments);
             return dataSources;
         }
@@ -148,7 +148,7 @@ namespace Zurich.Connector.App.Services
 		/// </summary>
 		public IEnumerable<ConnectorRegistration> GetConnectorRegistrations(string userId, Expression<Func<ConnectorRegistrationDocument, bool>> condition = null)
         {
-            var registeredConnectorDocuments = _cosmosContext.GetDocuments(CosmosConstants.ConnectorRegistrationContainerId, userId, condition);
+            var registeredConnectorDocuments = _cosmosContext.GetDocuments(CosmosConstants.ConnectorRegistrationContainerId, userId, condition).ToArray();
             List<ConnectorRegistration> connectorRegistrations = _mapper.Map<List<ConnectorRegistration>>(registeredConnectorDocuments);
 
             return connectorRegistrations;

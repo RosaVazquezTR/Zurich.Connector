@@ -101,7 +101,10 @@ namespace Zurich.Connector.Data.DataMap
 						if(jsonResponse is JArray)
                         {
 							// Default to first value in array at the moment if passed in the location
-							jsonResponse = jsonResponse.First();
+							//if (jsonResponse.Any())
+							//{
+								jsonResponse = jsonResponse.First();
+							//}
 						}
 						if (location != "[]")
 						{
