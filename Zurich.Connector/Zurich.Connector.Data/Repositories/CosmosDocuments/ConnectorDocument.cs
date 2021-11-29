@@ -1,5 +1,6 @@
 ﻿
 using System.Collections.Generic;
+using Newtonsoft.Json;
 using Zurich.Common.Cosmos;
 using Zurich.Connector.Data.Model;
 
@@ -23,6 +24,7 @@ namespace Zurich.Connector.Data.Repositories.CosmosDocuments
         /// <summary>
         /// Connector partition key
         /// </summary>
+        [JsonProperty("partitionkey")]
         public string PartitionKey { get { return CosmosConstants.ConnectorPartitionKey; } }
         /// <summary>
         /// Connector Info like title, description etc.
