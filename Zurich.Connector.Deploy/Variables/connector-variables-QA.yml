@@ -12,7 +12,7 @@ variables:
   - name: connectorCosmosShouldAutoScale
     value: "false"
   - name: connectorSubnets
-    value: '["connector-webApi-QA-Backend", "hqh-VM-RelMgmt-backend", "lh-VM-CI-backend"]'
+    value: '["connector-function-QA-backend", "connector-webApi-QA-Backend", "hqh-VM-RelMgmt-backend", "lh-VM-CI-backend"]'
   - name: connectorServiceFQND
     value: "connectorswebapiqa.azurewebsites.net"
   - name: functionAppServicePlanSku
@@ -28,7 +28,7 @@ variables:
   - name: subnetConnectorBackend
     value: "@{SubNetName = 'WebApi'; SubNetCidr = '10.175.64.160/27'; SubNetType = 'backend'; subNetServiceEndpoints = @('Microsoft.AzureCosmosDB', 'Microsoft.KeyVault', 'Microsoft.Sql')}"
   - name: subnetFunctionBackend
-    value: "@{SubNetName = 'function'; SubNetCidr = '10.175.26.128/27'; SubNetType = 'backend'; subNetServiceEndpoints = @('Microsoft.AzureCosmosDB', 'Microsoft.KeyVault', 'Microsoft.Storage')}"
+    value: "@{SubNetName = 'function'; SubNetCidr = '10.175.26.128/27'; SubNetType = 'backend'; subNetServiceEndpoints = @('Microsoft.AzureCosmosDB', 'Microsoft.KeyVault', 'Microsoft.Sql', 'Microsoft.Storage')}"
   - name: subnetPreFix
     value: 'connector'
   - name: swaggerEndpoint
