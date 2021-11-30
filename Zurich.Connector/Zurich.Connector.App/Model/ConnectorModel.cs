@@ -62,6 +62,10 @@ namespace Zurich.Connector.App.Model
         /// Registration status
         /// </summary>
         public RegistrationStatus RegistrationStatus { get; set; }
+        /// <summary>
+        /// Determines whether to show pre release connectors 
+        /// </summary>
+        public bool PreRelease { get; set; }
 
     }
 

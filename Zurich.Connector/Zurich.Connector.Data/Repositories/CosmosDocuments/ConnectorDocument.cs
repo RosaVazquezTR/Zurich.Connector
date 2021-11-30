@@ -50,6 +50,7 @@ namespace Zurich.Connector.Data.Repositories.CosmosDocuments
         /// CDM Mapping of properties
         /// </summary>
         public CDMMapping CdmMapping { get; set; }
+
         /// <summary>
         /// DataSource Document
         /// </summary>

@@ -165,12 +165,12 @@ namespace Zurich.Connector.Web.Controllers
             }
 
             var connector = await _connectorService.GetConnector(registrationModel.ConnectorId);
-            if (connector == null)
+            ConnectorListViewModel connectorResults = _mapper.Map<ConnectorListViewModel>(connector);
+            if (connectorResults == null)
             {
                 return BadRequest("Connector Id must point to a valid connector");
             }
-
-            var registered = await _registrationService.RegisterConnector(connector.Id, connector.DataSource.AppCode, connector.DataSource.RegistrationInfo.RegistrationMode);
+            var registered = await _registrationService.RegisterConnector(connectorResults.Id, connectorResults.DataSource.AppCode, connectorResults.DataSource.RegistrationInfo.RegistrationMode);
             if (!registered)
             {
                 return BadRequest();

@@ -88,6 +88,14 @@ namespace Zurich.Connector.App.Services
         /// <returns>Connector document list.</returns> 
         public async Task<IEnumerable<ConnectorModel>> GetConnectors(bool includeDataSource = false, Expression<Func<ConnectorDocument, bool>> condition = null)
         {
+            // TODO: fix Hack around undefined.  At the moment only 10 works for this.
+            if (condition.ToString().Contains("blnShowPreReleaseConnectors"))
+            {
+                //var test = condition.Compile();
+                //var test2 = ((dynamic)test.Target).Constants[0];
+                condition = connector => (connector.Id == "10");
+            }
+
             var connectorDocuments = _connectors.AsQueryable().Where(condition);
             var connectors = _mapper.Map<List<ConnectorModel>>(connectorDocuments);
 

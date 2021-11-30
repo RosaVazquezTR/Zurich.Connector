@@ -126,8 +126,14 @@ namespace Zurich.Connector.Data.Services
 
         public async Task<ConnectorModel> GetConnector(string connectorId)
         {
-            var connector = await _cosmosService.GetConnector(connectorId, true);
-            return connector;
+            var showPreReleaseConnectors = _configuration.GetValue<string>(AppSettings.ShowPreReleaseConnectors);
+            bool blnShowPreReleaseConnectors;
+            Boolean.TryParse(showPreReleaseConnectors, out blnShowPreReleaseConnectors);
+            Expression<Func<ConnectorDocument, bool>> condition;
+            condition = connector => (connector.Id == connectorId && (blnShowPreReleaseConnectors || (!connector.PreRelease.IsDefined() || !connector.PreRelease)));
+            var connector = await _cosmosService.GetConnectors(true, condition);
+            var connectorDetails = connector.SingleOrDefault();
+            return connectorDetails;
         }
 
     }

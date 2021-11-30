@@ -318,7 +318,7 @@ namespace Zurich.Connector.Tests.ControllerTests
 		public async Task CallConnectorsById()
 		{
 			// ARRANGE
-			var connections = MockConnectorData.SetupConnectorModel().ToList()[0];
+			var connections = MockConnectorData.SetupConnectorModel().ToList()[3];
 			_mockConnectorservice.Setup(x => x.GetConnector(It.IsAny<string>())).Returns(Task.FromResult(connections));
 
 			ConnectorsController connector = CreateConnectorsController();
@@ -362,6 +362,42 @@ namespace Zurich.Connector.Tests.ControllerTests
 			_mockConnectorDataService.Verify(x => x.GetConnectorData(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<bool>()), Times.Exactly(1));
 			var result = (ContentResult)response.Result;
 			Assert.AreEqual(StatusCodes.Status200OK, result.StatusCode);
+		}
+
+		[TestMethod]
+		public async Task CalliManageConnectordetails()
+		{
+			// ARRANGE
+			var connections = MockConnectorData.SetupConnectorModel_Version2().ToList()[0];
+			_mockConnectorservice.Setup(x => x.GetConnector(It.IsAny<string>())).Returns(Task.FromResult(connections));
+
+			ConnectorsController connector = new ConnectorsController(_mockConnectorservice.Object, _mockConnectorDataService.Object, null, _mapper, null);
+
+			// ACT
+			var response = await connector.Connectors("44");
+
+			// ASSERT
+			_mockConnectorservice.Verify(x => x.GetConnector(It.IsAny<string>()), Times.Exactly(1));
+			var result = response.Result;
+			Assert.AreEqual(StatusCodes.Status200OK, ((Microsoft.AspNetCore.Mvc.ObjectResult)result).StatusCode);
+		}
+
+		[TestMethod]
+		public async Task TestiManageConnectordetailscount()
+		{
+			// ARRANGE
+			var connections = MockConnectorData.SetupConnectorModel_Version2().ToList()[3];
+			_mockConnectorservice.Setup(x => x.GetConnector(It.IsAny<string>())).Returns(Task.FromResult(connections));
+
+			ConnectorsController connector = new ConnectorsController(_mockConnectorservice.Object, _mockConnectorDataService.Object, null, _mapper, null);
+
+			// ACT
+			dynamic response = await connector.Connectors("44");
+
+			// ASSERT
+			_mockConnectorservice.Verify(x => x.GetConnector(It.IsAny<string>()), Times.Exactly(1));
+			var result = response.Result.Value;
+			Assert.AreEqual(connections.CDMMapping.Unstructured.Count, result.CDMMapping.Unstructured.Count);
 		}
 
 		private ConnectorsController CreateConnectorsController()
