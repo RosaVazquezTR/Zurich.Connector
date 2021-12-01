@@ -7,8 +7,10 @@
     "description": "Get Search details from iManage",
     "entityType": "Search",
     "dataSourceId": "10",
-    "version": "1.0"
+    "version": "1.0",
+    "subType": "Parent"
   },
+  "preRelease": true,
   "request": {
     "endpointPath": "/work/api/v2/customers/{1.customerId}/libraries/Active/documents/search",
     "method": "POST",
