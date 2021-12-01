@@ -27,9 +27,9 @@
     /// <summary>
     /// Represents the supported scopes by the Connector API
     /// </summary>
-    public static class SupportedScopes
+    public static class LegalPlatformConnectorsScopes
     {
         // TODO: Add Connector specific scopes to Identity Server. Shouldn't use the legalhome ones
-        public const string Full = "legalhome.full";
+        public const string Full = "connectors.full";
     }
 }

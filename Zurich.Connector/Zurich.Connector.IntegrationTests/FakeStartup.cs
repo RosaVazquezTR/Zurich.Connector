@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System.IdentityModel.Tokens.Jwt;
+using Zurich.Common.Services.Security.CIAM;
 using Zurich.Connector.App.Services;
 using Zurich.Connector.Data;
 using Zurich.Connector.Web;
@@ -23,7 +24,7 @@ namespace Zurich.Connector.IntegrationTests
         {
         }
 
-        public override void AddAuthServices(IServiceCollection services, string authority)
+        public override void AddAuthServices(IServiceCollection services, string authority, CIAMAuthOptions ciamOptions)
         {
             JwtSecurityTokenHandler.DefaultMapInboundClaims = false;
 

@@ -25,6 +25,7 @@ using Zurich.Connector.App.Services;
 using Zurich.Connector.App.Services.DataSources;
 using System.Text.Json.Serialization;
 using Zurich.Connector.Data.Factories;
+using Zurich.Common.Services.Security.CIAM;
 
 namespace Zurich.Connector.Web
 {
@@ -36,6 +37,7 @@ namespace Zurich.Connector.Web
         private ClientCredential _clientCredential;
         private CosmosDbOptions _connectorCosmosDbOptions;
         private CosmosClientSettings _connectorCosmosClientOptions;
+        private CIAMAuthOptions _ciamAuthOptions;
 
         public Startup(IConfiguration configuration, IHostEnvironment environment)
         {
@@ -134,12 +136,12 @@ namespace Zurich.Connector.Web
             services.AddConnectorCosmosServices(_connectorCosmosDbOptions, _connectorCosmosClientOptions);
             services.ConfigureExceptonhandler();
             services.AddOAuthHttpClient(Configuration.GetValue<string>(AppSettings.OAuthUrl));
-            this.AddAuthServices(services, authority);
+            AddAuthServices(services, authority, _ciamAuthOptions);
         }
 
-        public virtual void AddAuthServices(IServiceCollection services, string authority)
+        public virtual void AddAuthServices(IServiceCollection services, string authority, CIAMAuthOptions ciamOptions)
         {
-            services.AddAuthenticationServices(Configuration.GetValue<string>("Audience"), authority);
+            services.AddAuthenticationServices(Configuration.GetValue<string>("Audience"), authority, ciamOptions);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -218,6 +220,9 @@ namespace Zurich.Connector.Web
 
             _connectorCosmosClientOptions = new CosmosClientSettings();
             Configuration.Bind("Connector:CosmosClientOptions", _connectorCosmosClientOptions);
+
+            _ciamAuthOptions = new CIAMAuthOptions();
+            Configuration.Bind("CIAM", _ciamAuthOptions);
         }
     }
 }
