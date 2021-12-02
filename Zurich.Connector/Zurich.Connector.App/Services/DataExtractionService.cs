@@ -168,7 +168,7 @@ namespace Zurich.Connector.App.Services
                 // Make api call to get the information for the url variable inside { }
                 // Shouldn't be a need to pass transfer token, because after it is used it will be invalid
                 IDataMapping service = _dataMappingFactory.GetImplementation(connectorModel?.DataSource?.SecurityDefinition?.Type);
-                JToken result = await service.GetAndMapResults<JToken>(connectorDocument, null, queryParams);
+                JToken result = await service.GetAndMapResults<JToken>(connectorDocument, null, queryParams, null, null);
                 additionalInfo.Add(id, result);
             }
             return additionalInfo;

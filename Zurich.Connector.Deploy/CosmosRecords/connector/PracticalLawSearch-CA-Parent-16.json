@@ -178,6 +178,12 @@
         "_comment": ""
       },
       {
+        "name": "SourceDirectoryUrl",
+        "type": "interpolationString",
+        "responseElement": "https://(PracticalLawCAHost)/Search/Results.html?query=(%Query)&categoryPageUrl=Home/Home&contentType=KNOWHOW_PLC_CA&querySubmissionGuid=(NewGuid())",
+        "_comment": ""
+      },
+      {
         "name": "Documents",
         "type": "object",
         "responseElement": "{17}",

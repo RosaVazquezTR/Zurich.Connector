@@ -53,5 +53,6 @@
     public static class DataTypes
     {
         public const string Bool = "bool";
+        public const string InterpolationString = "interpolationString";
     }
 }

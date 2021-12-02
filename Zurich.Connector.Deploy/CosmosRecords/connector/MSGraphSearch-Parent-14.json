@@ -167,6 +167,12 @@
         "_comment": ""
       },
       {
+        "name": "SourceDirectoryUrl",
+        "type": "interpolationString",
+        "responseElement": "https://www.office.com/search/files?q=(%Query)",
+        "_comment": ""
+      },
+      {
         "name": "Documents",
         "type": "object",
         "responseElement": "{15}",

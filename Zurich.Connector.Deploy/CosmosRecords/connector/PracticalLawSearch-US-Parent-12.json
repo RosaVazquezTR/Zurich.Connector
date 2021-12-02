@@ -217,6 +217,12 @@
         "responseElement": "total",
         "_comment": ""
       },
+	  {
+		"name": "SourceDirectoryUrl",
+		"type": "interpolationString",
+		"responseElement": "https://(PracticalLawUSHost)/Search/Results.html?query=(%Query)&categoryPageUrl=Home/PracticalLaw&contentType=KNOWHOW&querySubmissionGuid=(NewGuid())",
+		"_comment": ""
+	  },
       {
         "name": "Documents",
         "type": "object",

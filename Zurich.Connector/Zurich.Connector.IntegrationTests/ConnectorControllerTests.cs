@@ -1,23 +1,7 @@
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc.Authorization;
-using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.AspNetCore.TestHost;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
 using System.Net;
-using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Xunit;
 using Zurich.Common.Exceptions;
-using Zurich.Connector.App.Model;
-using Zurich.Connector.Data.Model;
-using Zurich.Connector.Web;
-using Zurich.Connector.Web.Controllers;
 
 namespace Zurich.Connector.IntegrationTests
 {
