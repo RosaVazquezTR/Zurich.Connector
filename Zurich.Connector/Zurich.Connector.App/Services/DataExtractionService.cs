@@ -125,10 +125,10 @@ namespace Zurich.Connector.App.Services
             {
                 var headerParameters = (from param in cdmQueryParameters
                                         join requestParam in connectorDocument.Request?.Parameters
-                                        on param.Key.ToString().ToLower() equals requestParam.Cdmname.ToLower()
+                                        on param.Key.ToString().ToLower() equals requestParam.CdmName.ToLower()
                                         where requestParam.InClause == InClauseConstants.Headers
                                         select new { name = requestParam.Name, value = param.Value.ToString() }).ToDictionary(c => c.name, c => c.value);
-                var headers = connectorDocument.Request.Parameters.Where(x => string.IsNullOrEmpty(x.Cdmname) && x.InClause == InClauseConstants.Headers).Select(x => new { name = x.Name, value = x.DefaultValue.ToString() }).ToDictionary(c => c.name, c => c.value);
+                var headers = connectorDocument.Request.Parameters.Where(x => string.IsNullOrEmpty(x.CdmName) && x.InClause == InClauseConstants.Headers).Select(x => new { name = x.Name, value = x.DefaultValue.ToString() }).ToDictionary(c => c.name, c => c.value);
                 return headerParameters.Concat(headers).ToDictionary(x => x.Key, x => x.Value);
             }
             return null;
@@ -159,7 +159,7 @@ namespace Zurich.Connector.App.Services
                         }
                         else
                         {
-                            queryParams.Add(param.Name, cdmQueryParameters[param.Cdmname]);
+                            queryParams.Add(param.Name, cdmQueryParameters[param.CdmName]);
 
                         }
                     }

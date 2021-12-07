@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using AutoMapper;
 using Microsoft.Azure.Cosmos;
-using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Serialization;
 using Polly;
 using Zurich.Common;
 using Zurich.Common.Models.Cosmos;
@@ -10,16 +11,16 @@ using Zurich.Common.Models.HighQ;
 using Zurich.Common.Models.OAuth;
 using Zurich.Common.Repositories.Cosmos;
 using Zurich.Common.Services.Security;
+using Zurich.Connector.App.Serializers;
 using Zurich.Connector.App.Services;
 using Zurich.Connector.Data.Services;
-using Zurich.Connector.Durable.Service;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
-	/// <summary>
-	/// Represents an extension class used for bootstrapping the required services
-	/// </summary>
-	public static class DurableServiceCollectionExtensions
+    /// <summary>
+    /// Represents an extension class used for bootstrapping the required services
+    /// </summary>
+    public static class DurableServiceCollectionExtensions
 	{
 		/// <summary>
 		/// Adds partner app authentication related services
@@ -51,6 +52,13 @@ namespace Microsoft.Extensions.DependencyInjection
 		public static void AddConnectorCosmosServices(this IServiceCollection services, CosmosDbOptions dbOptions, CosmosClientSettings clientOptions)
 		{
 			List<CosmosClient> clients = new List<CosmosClient>();
+			var jsonSerializerSettings = new JsonSerializerSettings
+			{
+				NullValueHandling = NullValueHandling.Ignore,
+				Formatting = Formatting.Indented,
+				ContractResolver = new CamelCasePropertyNamesContractResolver()
+			};
+			jsonSerializerSettings.Converters.Add(new StringEnumConverter());
 			var clientSettings = new CosmosClientOptions()
 			{
 				AllowBulkExecution = clientOptions.AllowBulkExecution,
@@ -58,7 +66,7 @@ namespace Microsoft.Extensions.DependencyInjection
 				GatewayModeMaxConnectionLimit = clientOptions.GatewayModeMaxConnectionLimit == 0 ? 10 : clientOptions.GatewayModeMaxConnectionLimit,
 				MaxRetryAttemptsOnRateLimitedRequests = clientOptions.MaxRetryAttemptsOnRateLimitedRequests == 0 ? 9 : clientOptions.MaxRetryAttemptsOnRateLimitedRequests,
 				MaxRetryWaitTimeOnRateLimitedRequests = clientOptions.MaxRetryWaitTimeOnRateLimitedRequests == 0 ? new TimeSpan(0, 0, 30) : new TimeSpan(0, 0, clientOptions.MaxRetryWaitTimeOnRateLimitedRequests),
-				SerializerOptions = new CosmosSerializationOptions() { PropertyNamingPolicy = CosmosPropertyNamingPolicy.CamelCase }
+				Serializer = new CosmosJsonSerializer(jsonSerializerSettings)
 			};
 
 			clients.Add(new CosmosClient(dbOptions.Endpoint, dbOptions.PrimaryKey, clientSettings));

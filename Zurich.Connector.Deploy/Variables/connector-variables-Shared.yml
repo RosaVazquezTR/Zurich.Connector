@@ -39,6 +39,8 @@ variables:
     value: "connectorsfunc"
   - name: functionVersion
     value: "~3"
+  - name: functionWorkerRuntime
+    value: "dotnet-isolated"
   - name: functionZipLocation
     value: "Zurich.Connector/Zurich.Connector.Durable.zip"
   - name: healthEndpoint

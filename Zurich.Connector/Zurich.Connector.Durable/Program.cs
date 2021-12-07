@@ -9,7 +9,6 @@ using Zurich.Common.Services;
 using Zurich.Common.Services.Security;
 using Zurich.Connector.App;
 using Zurich.Connector.App.Services;
-using Zurich.Connector.Data.Services;
 using Zurich.Connector.Durable.Configuration;
 using Zurich.Connector.Durable.Repository;
 using Zurich.Connector.Durable.Service;

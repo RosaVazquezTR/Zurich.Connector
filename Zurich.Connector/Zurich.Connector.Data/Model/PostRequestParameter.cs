@@ -11,7 +11,7 @@ namespace Zurich.Connector.Data.Model
             Required = connectorParameter.Required;
             Type = connectorParameter.Type;
             DefaultValue = connectorParameter.DefaultValue;
-            Cdmname = connectorParameter.Cdmname;
+            CdmName = connectorParameter.CdmName;
             Tags = connectorParameter.Tags;
     }
 

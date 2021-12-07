@@ -54,12 +54,12 @@ namespace Zurich.Connector.Data.Repositories.CosmosDocuments
         public string Type { get; set; }
         /// <summary>
         /// Default value of the parameter
-        /// </summary>
+        /// </summary>s
         public object DefaultValue { get; set; }
         /// <summary>
         /// Name of querys tring parameter in request
         /// </summary>
-        public string Cdmname { get; set; }
+        public string CdmName { get; set; }
         /// <summary>
         /// Tags for the related to the parameter. Ex: pagination/ sort etc.
         /// </summary>
