@@ -95,7 +95,10 @@ namespace Zurich.Connector.Data.Repositories
         public async Task<List<DataSourceInformation>> GetUserRegistrations()
         {
             List<DataSourceInformation> result;
-            string path = $"/api/v1/datasources/me";
+            // Legalhome
+            //string path = $"/oauth/api/v1/datasources/me";
+            // CIAM 
+            string path = $"/oauth/api/v1/datasources/me";
             using (var requestMessage = new HttpRequestMessage(HttpMethod.Get, path))
             {
                 var httpContent = await MakeRequest(requestMessage);
