@@ -107,30 +107,45 @@ function  updateCosmosRecords {
 		$contentEquals = $fileObjectString.Equals($dbObjectString)
 
 		# for connectors check the dynamic case
-		if('ConnectorList' -eq $partitionKey -and -not $contentEquals){
-			if($fileObject.info.isDynamicFilter -ieq 'True')
-			{
+		if ('ConnectorList' -eq $partitionKey -and -not $contentEquals) {
+			if ($fileObject.info.isDynamicFilter -ieq 'True') {
 				$dbObject = $jsonResponse.Documents | Where-Object { $_.id -eq $fileObject.id }
 				if ($dbObject.PSobject.Properties.Name -contains "filters" -and $dbObject.filters.count -gt 0) {
+					$databaseFilters = $dbObject.filters
 					[array] $dbObject.filters = $dbObject.filters | Select-Object -Property * -ExcludeProperty 'filterlist'
 				}
 				if ($fileObject.PSobject.Properties.Name -contains "filters" -and $fileObject.filters.count -gt 0) {
+					$fileObjectFilters = $fileObject.filters
 					[array] $fileObject.filters = $fileObject.filters | Select-Object -Property * -ExcludeProperty 'filterlist'
 				}
 				$contentEquals = $fileObject.Equals($dbObject)
+
+				# if we need to push the object makes sure the file has the correct filters.
+				if (!$contentEquals) {
+					#database has filters
+					if ($databaseFilters.filterList.Count -gt 0) {
+						$fileObject.filters = $databaseFilters
+						Write-Host ("$($fileObject.alias) used filters from database")
+					}
+					#no filters in the database yet so add in ones from the file
+					else {
+						$fileObject.filters = $fileObjectFilters
+						Write-Host ("$($fileObject.alias) used filters from file")
+					}
+				}
 			}
 		}
 
 		# If content doesn't match we need to update cosmos based on what's in Repo
 		if (!$contentEquals) {
         
-            write-host ("File Json Content - " + $fileObjectString)
-            write-host ("DB Json Content - " + $dbObjectString)
+			write-host ("File Json Content - " + $fileObjectString)
+			write-host ("DB Json Content   - " + $dbObjectString)
 
 			write-host ("Changes need to be posted to DB for $file")
 			PostDocument PostDocument -document $fileObject -dbname $databaseName -collection $collectionName -partitionKey $partitionKey -connectionKey $connectionKey         
-        }
-		else{
+		}
+		else {
 			write-host ("No Change needed for $file")
 		}
 
