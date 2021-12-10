@@ -27,10 +27,10 @@ using Zurich.Connector.Web.Configuration;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
-    /// <summary>
-    /// Represents an extension class used for bootstrapping the required services
-    /// </summary>
-    public static class ServiceCollectionExtensions
+	/// <summary>
+	/// Represents an extension class used for bootstrapping the required services
+	/// </summary>
+	public static class ServiceCollectionExtensions
 	{
 		/// <summary>
 		/// Adds partner app authentication related services
@@ -44,16 +44,16 @@ namespace Microsoft.Extensions.DependencyInjection
 			services.AddSingleton(microServiceOptions);
 
 			services.AddHttpClient(HttpClientNames.HighQ, httpClient =>
-            {
-                httpClient.DefaultRequestHeaders.Add("Accept", "application/json");
-            })
-            .AddTransientHttpErrorPolicy(policy => policy.WaitAndRetryAsync(new[] { TimeSpan.FromSeconds(1) }));
+			{
+				httpClient.DefaultRequestHeaders.Add("Accept", "application/json");
+			})
+			.AddTransientHttpErrorPolicy(policy => policy.WaitAndRetryAsync(new[] { TimeSpan.FromSeconds(1) }));
 
-            services.AddScoped<IEncryptionService, EncryptionService>();
-            services.AddHttpContextAccessor();
+			services.AddScoped<IEncryptionService, EncryptionService>();
+			services.AddHttpContextAccessor();
 			services.AddCommonTenantServicesWithWebApiAuth(tenantConnectionString, authority, oAuthOptions);
 
-        }
+		}
 
 		/// <summary>
 		/// Adds services to dependency injection
@@ -76,11 +76,46 @@ namespace Microsoft.Extensions.DependencyInjection
 		/// </summary>
 		/// <param name="services">The app service collection</param>
 		public static void AddDiagnostics(this IServiceCollection services)
-        {
+		{
 			services.AddApplicationInsightsTelemetry();
 			services.AddHealthChecks();
-        }
+		}
 
+		/// <summary>
+		/// Adds authentication related services
+		/// </summary>
+		/// <param name="services">The app services</param>
+		/// <param name="audience">The authorization token audience</param>
+		/// <param name="authority">The authorization token issuer</param>
+		public static void AddAuthenticationServices(this IServiceCollection services, string audience, string authority, CIAMAuthOptions ciamOptions)
+		{
+			JwtSecurityTokenHandler.DefaultMapInboundClaims = false;
+
+			services.AddSingleton(ciamOptions);
+
+			services.AddAuthentication(AuthSchemes.CIAM).AddJwtBearer(AuthSchemes.LegalPlatform, options =>
+			{
+				options.Authority = authority;
+				options.Audience = audience;
+				options.TokenValidationParameters.ValidTypes = new[] { SupportedTokenTypes.AccessTokenJwt };
+				options.RequireHttpsMetadata = true;
+			})
+			.AddJwtBearer(AuthSchemes.CIAM, options =>
+			{
+				options.Authority = ciamOptions.TokenIssuer;
+				options.Audience = ciamOptions.Audience;
+			});
+
+			services.AddScoped<IClaimsTransformation, CIAMClaimsTransformation>();
+
+			services.AddAuthorization(options =>
+			{
+				var scopes = ciamOptions.Scopes.Append(LegalPlatformConnectorsScopes.Full);
+				//TODO - Add "search.full" when connector support it own token. At present connector use "legalhome.full" scope.
+				options.FallbackPolicy = new AuthorizationPolicyBuilder(AuthSchemes.LegalPlatform, AuthSchemes.CIAM).RequireAuthenticatedUser()
+				.RequireClaim(JwtClaimTypes.Scope, scopes).Build();
+			});
+		}
 
 		/// <summary>
 		/// Configure dependency injection services for cosmos module.
@@ -89,7 +124,7 @@ namespace Microsoft.Extensions.DependencyInjection
 		/// <param name="dbOptions"> cosmos DB options</param>
 		/// <param name="clientOptions"> cosmos client options</param>
 		public static void AddConnectorCosmosServices(this IServiceCollection services, CosmosDbOptions dbOptions, CosmosClientSettings clientOptions)
-        {
+		{
 			List<CosmosClient> clients = new List<CosmosClient>();
 			var clientSettings = new CosmosClientOptions()
 			{
@@ -98,29 +133,29 @@ namespace Microsoft.Extensions.DependencyInjection
 				GatewayModeMaxConnectionLimit = clientOptions.GatewayModeMaxConnectionLimit == 0 ? 10 : clientOptions.GatewayModeMaxConnectionLimit,
 				MaxRetryAttemptsOnRateLimitedRequests = clientOptions.MaxRetryAttemptsOnRateLimitedRequests == 0 ? 9 : clientOptions.MaxRetryAttemptsOnRateLimitedRequests,
 				MaxRetryWaitTimeOnRateLimitedRequests = clientOptions.MaxRetryWaitTimeOnRateLimitedRequests == 0 ? new TimeSpan(0, 0, 30) : new TimeSpan(0, 0, clientOptions.MaxRetryWaitTimeOnRateLimitedRequests),
-                SerializerOptions = new CosmosSerializationOptions() { PropertyNamingPolicy = CosmosPropertyNamingPolicy.CamelCase }
-            };
+				SerializerOptions = new CosmosSerializationOptions() { PropertyNamingPolicy = CosmosPropertyNamingPolicy.CamelCase }
+			};
 
-            clients.Add(new CosmosClient(dbOptions.Endpoint, dbOptions.PrimaryKey, clientSettings));
-            services.AddSingleton<IEnumerable<CosmosClient>>(clients);
-            services.AddSingleton<ICosmosClientFactory, CosmosClientFactory>();
-            services.AddScoped(sp => new ConnectorCosmosContext(sp.GetRequiredService<ICosmosClientFactory>(), dbOptions));
+			clients.Add(new CosmosClient(dbOptions.Endpoint, dbOptions.PrimaryKey, clientSettings));
+			services.AddSingleton<IEnumerable<CosmosClient>>(clients);
+			services.AddSingleton<ICosmosClientFactory, CosmosClientFactory>();
+			services.AddScoped(sp => new ConnectorCosmosContext(sp.GetRequiredService<ICosmosClientFactory>(), dbOptions));
 			services.AddTransient<ICosmosService, CosmosService>();
-        }
+		}
 
 		/// <summary>
 		/// Configuring the ExceptionHandling Middleware.
 		/// </summary>
 		public static void ConfigureExceptionHandleMiddleware(this IApplicationBuilder App, IHostEnvironment env)
-        {
+		{
 			App.UseMiddleware<ExceptionHandlingMiddleware>();
-        }
+		}
 
 		/// <summary>
 		/// Adding Exception handler dependency class from Common package.
 		/// </summary>
 		public static void ConfigureExceptonhandler(this IServiceCollection services)
-        {
+		{
 			services.AddSingleton<IExceptionHandler, ExceptionHandler>();
 		}
 
