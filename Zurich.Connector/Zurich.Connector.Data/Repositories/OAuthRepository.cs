@@ -93,10 +93,7 @@ namespace Zurich.Connector.Data.Repositories
         public async Task<List<DataSourceInformation>> GetUserRegistrations()
         {
             List<DataSourceInformation> result;
-            // Legalhome
-            //string path = $"/oauth/api/v1/datasources/me";
-            // CIAM 
-            string path = $"/oauth/api/v1/datasources/me";
+            string path = $"api/v1/datasources/me";
             using (var requestMessage = new HttpRequestMessage(HttpMethod.Get, path))
             {
                 var httpContent = await MakeRequest(requestMessage);
@@ -138,6 +135,10 @@ namespace Zurich.Connector.Data.Repositories
             }
             else
             {
+                if(result.StatusCode == System.Net.HttpStatusCode.NotFound)
+                {
+                    return string.Empty;
+                }
                 _logger.LogError("Unable to retrieve data. Server returned: {code} - {message}", result.StatusCode.ToString(), requestContent ?? "");
                 throw new ApplicationException($"Connectors returned status code {result.StatusCode} - {requestContent}");
             }
