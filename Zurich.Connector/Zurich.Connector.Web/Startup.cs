@@ -25,6 +25,8 @@ using Zurich.Connector.App.Services;
 using Zurich.Connector.App.Services.DataSources;
 using System.Text.Json.Serialization;
 using Zurich.Connector.Data.Factories;
+using Zurich.Common.Services.Security.CIAM;
+using Zurich.Common.Services.Security;
 
 namespace Zurich.Connector.Web
 {
@@ -36,6 +38,8 @@ namespace Zurich.Connector.Web
         private ClientCredential _clientCredential;
         private CosmosDbOptions _connectorCosmosDbOptions;
         private CosmosClientSettings _connectorCosmosClientOptions;
+        private AuthIssuerOptions _authOptions;
+        private CIAMAuthOptions _ciamAuthOptions;
 
         public Startup(IConfiguration configuration, IHostEnvironment environment)
         {
@@ -50,12 +54,6 @@ namespace Zurich.Connector.Web
         public virtual void ConfigureServices(IServiceCollection services)
         {
             BindConfigurationOptions();
-
-            string authority = Configuration.GetValue<string>("TokenIssuer");
-            if (Environment.IsDevelopment() && !string.IsNullOrWhiteSpace(Configuration.GetValue<string>("LocalTokenIssuer")))
-            {
-                authority = Configuration.GetValue<string>("LocalTokenIssuer");
-            }
 
             string tenantConnectionString = Configuration.GetConnectionString("LegalHomeDB");
             if (Environment.IsDevelopment() && !string.IsNullOrEmpty(Configuration.GetConnectionString("LocalLegalHomeDB")))
@@ -129,17 +127,17 @@ namespace Zurich.Connector.Web
                     // can also be used to control the format of the API version in route templates
                     options.SubstituteApiVersionInUrl = true;
                 });
-            services.AddPartnerAppAuth(tenantConnectionString, authority, _oAuthOptions, _microServOptions);
+            services.AddPartnerAppAuth(tenantConnectionString, _authOptions.TokenIssuer, _oAuthOptions, _microServOptions);
             services.AddAutoMapper(typeof(Startup), typeof(CommonMappingsProfile), typeof(ServiceMappingRegistrar), typeof(MappingRegistrar));
             services.AddConnectorCosmosServices(_connectorCosmosDbOptions, _connectorCosmosClientOptions);
             services.ConfigureExceptonhandler();
             services.AddOAuthHttpClient(Configuration.GetValue<string>(AppSettings.OAuthUrl));
-            this.AddAuthServices(services, authority);
+            AddAuthServices(services, _authOptions, _ciamAuthOptions);
         }
 
-        public virtual void AddAuthServices(IServiceCollection services, string authority)
+        public virtual void AddAuthServices(IServiceCollection services, AuthIssuerOptions authOptions, CIAMAuthOptions ciamOptions)
         {
-            services.AddAuthenticationServices(Configuration.GetValue<string>("Audience"), authority);
+            services.AddAuthenticationServices(authOptions, ciamOptions);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -218,6 +216,12 @@ namespace Zurich.Connector.Web
 
             _connectorCosmosClientOptions = new CosmosClientSettings();
             Configuration.Bind("Connector:CosmosClientOptions", _connectorCosmosClientOptions);
+
+            _authOptions = new AuthIssuerOptions();
+            Configuration.Bind("LegalPlatform", _authOptions);
+
+            _ciamAuthOptions = new CIAMAuthOptions();
+            Configuration.Bind("CIAM", _ciamAuthOptions);
         }
     }
 }

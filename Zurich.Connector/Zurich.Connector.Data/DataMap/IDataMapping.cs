@@ -21,9 +21,10 @@ namespace Zurich.Connector.Data.DataMap
         /// <param name="appCode">Application code to get the data from</param>
         /// <param name="dataType">Data type to retrieve</param>
         /// <param name="query">Query parameters mapped from cosmo DB</param>
-        /// <param name="headers"></param>
+        /// <param name="headers">headers that should be passed to the 3rd party request</param>
+        /// <param name="requestParameters">parameters that came in on the data request</param>
         /// <returns>The T model based on the request or default(T)</returns>
-        Task<T> GetAndMapResults<T>(ConnectorDocument dataTypeInformation, string transferToken = null, NameValueCollection query = null, Dictionary<string, string> headers = null);
+        Task<T> GetAndMapResults<T>(ConnectorDocument dataTypeInformation, string transferToken, NameValueCollection query, Dictionary<string, string> headers, Dictionary<string, string> requestParameters);
 
         /// <summary>
         /// Retrieve token based on appCode, appType, locale, grandType
@@ -40,7 +41,8 @@ namespace Zurich.Connector.Data.DataMap
         /// <param name="jsonResponse">the Jtoken object of the response</param>
         /// <param name="resultLocation">What values we should grab to get to the data ie: "data.results"</param>
         /// <param name="propertyMap">Connector Document object</param>
+        /// <param name="requestParameters">parameters that came in on the data request</param>
         /// <returns>The CDM Model</returns>
-        Task<T> MapToCDM<T>(JToken jsonResponse, string resultLocation, ConnectorDocument propertyMap);
+        Task<T> MapToCDM<T>(JToken jsonResponse, string resultLocation, ConnectorDocument propertyMap, Dictionary<string, string> requestParameters);
     }
 }

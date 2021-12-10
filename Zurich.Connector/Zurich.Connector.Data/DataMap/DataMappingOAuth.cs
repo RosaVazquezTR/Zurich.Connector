@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -19,7 +20,7 @@ namespace Zurich.Connector.Data.DataMap
 {
     public class DataMappingOAuth : AbstractDataMapping, IDataMapping
     {
-        public DataMappingOAuth(IRepository repository, IDataMappingRepository dataMappingRepository, IOAuthService oAuthService, ILogger<DataMappingOAuth> logger, ConnectorCosmosContext cosmosContext, IMapper mapper, IHttpBodyFactory factory, IHttpResponseFactory httpResponseFactory, IHttpContextAccessor contextAccessor, IOAuthApiRepository OAuthApirepository, OAuthOptions oAuthOptions, ILegalHomeAccessCheck legalHomeAccessCheck)
+        public DataMappingOAuth(IRepository repository, IDataMappingRepository dataMappingRepository, IOAuthService oAuthService, ILogger<DataMappingOAuth> logger, ConnectorCosmosContext cosmosContext, IMapper mapper, IHttpBodyFactory factory, IHttpResponseFactory httpResponseFactory, IHttpContextAccessor contextAccessor, IOAuthApiRepository OAuthApirepository, OAuthOptions oAuthOptions, ILegalHomeAccessCheck legalHomeAccessCheck, IConfiguration configuration)
         {
             this._repository = repository;
             this._dataMappingRepository = dataMappingRepository;
@@ -33,10 +34,10 @@ namespace Zurich.Connector.Data.DataMap
             this._oAuthApirepository = OAuthApirepository;
             this._oAuthOptions = oAuthOptions;
             this._legalHomeAccessCheck = legalHomeAccessCheck;
-
+            this._configuration = configuration;
         }
 
-        public async override Task<T> GetAndMapResults<T>(ConnectorDocument connector, string transferToken = null, NameValueCollection query = null, Dictionary<string, string> headers = null)
+        public async override Task<T> GetAndMapResults<T>(ConnectorDocument connector, string transferToken, NameValueCollection query, Dictionary<string, string> headers, Dictionary<string, string> requestParameters)
         {
             var token = await this.RetrieveToken(connector?.DataSource?.appCode,
                                                   connector?.DataSource?.appType,
@@ -62,7 +63,7 @@ namespace Zurich.Connector.Data.DataMap
 
                 try
                 {
-                    return await GetFromRepo<T>(apiInfo, connector, query);
+                    return await GetFromRepo<T>(apiInfo, connector, query, requestParameters);
                 } catch(Exception e)
                 {
                     _logger.LogError(e.Message);

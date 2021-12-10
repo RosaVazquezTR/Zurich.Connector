@@ -2,9 +2,7 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 using Zurich.Common;
 using Zurich.Connector.Data.Model;
@@ -81,7 +79,7 @@ namespace Zurich.Connector.Data.Repositories
         public async Task<List<DataSourceInformation>> GetAvailableRegistrations()
         {
             List<DataSourceInformation> result;
-            string path = $"/api/v1/datasources";
+            string path = $"api/v1/datasources";
             using (var requestMessage = new HttpRequestMessage(HttpMethod.Get, path))
             {
                 var httpContent = await MakeRequest(requestMessage);
@@ -112,7 +110,7 @@ namespace Zurich.Connector.Data.Repositories
         public async Task<AuthorizeUrlResponse> GetAuthorizeUrl(string applicationCode)
         {
             AuthorizeUrlResponse result;
-            string path = $"/api/v1/{applicationCode}/authorizeURL";
+            string path = $"api/v1/{applicationCode}/authorizeURL";
             using (var requestMessage = new HttpRequestMessage(HttpMethod.Get, path))
             {
                 var httpContent = await MakeRequest(requestMessage);

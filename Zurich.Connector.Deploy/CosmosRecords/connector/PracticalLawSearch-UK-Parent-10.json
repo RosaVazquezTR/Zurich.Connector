@@ -263,6 +263,12 @@
         "responseElement": "total",
         "_comment": ""
       },
+	  {
+		"name": "SourceDirectoryUrl",
+		"type": "interpolationString",
+		"responseElement": "https://(PracticalLawUKHost)/Search/Results.html?query=(%Query)&categoryPageUrl=Home/PracticalLaw&contentType=KNOWHOW_UK&querySubmissionGuid=(NewGuid())",
+		"_comment": ""
+	  },
       {
         "name": "Documents",
         "type": "object",

@@ -111,13 +111,13 @@ function  updateCosmosRecords {
 			if($fileObject.info.isDynamicFilter -ieq 'True')
 			{
 				$dbObject = $jsonResponse.Documents | Where-Object { $_.id -eq $fileObject.id }
-				$dbObjectWithoutFilters = $dbObject | Select-Object -Property * -ExcludeProperty 'filters'
-				$fileObjectWithoutFilters = $fileObject | Select-Object -Property * -ExcludeProperty 'filters'
-				$contentEquals = $fileObjectWithoutFilters.Equals($dbObjectWithoutFilters)
-				if($false -eq $contentEquals)
-				{
-					$fileObject.filters = $dbObject.filters
+				if ($dbObject.PSobject.Properties.Name -contains "filters" -and $dbObject.filters.count -gt 0) {
+					[array] $dbObject.filters = $dbObject.filters | Select-Object -Property * -ExcludeProperty 'filterlist'
 				}
+				if ($fileObject.PSobject.Properties.Name -contains "filters" -and $fileObject.filters.count -gt 0) {
+					[array] $fileObject.filters = $fileObject.filters | Select-Object -Property * -ExcludeProperty 'filterlist'
+				}
+				$contentEquals = $fileObject.Equals($dbObject)
 			}
 		}
 

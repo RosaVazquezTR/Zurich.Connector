@@ -153,10 +153,10 @@ namespace Zurich.Connector.IntegrationTests
                 {
                     if (param.DefaultValue.ToString().StartsWith("{"))
                     {
-                       param.Cdmname.Should().BeNullOrWhiteSpace();
+                       param.CdmName.Should().BeNullOrWhiteSpace();
                     } else
                     {
-                        param.Cdmname.Should().NotBeNullOrWhiteSpace();
+                        param.CdmName.Should().NotBeNullOrWhiteSpace();
                     }
                     param.Name.Should().NotBeNullOrWhiteSpace();
                     param.InClause.Should().ContainAny(requestInClauseTypes);

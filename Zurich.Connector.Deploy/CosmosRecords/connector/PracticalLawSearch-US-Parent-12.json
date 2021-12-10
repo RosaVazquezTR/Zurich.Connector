@@ -128,75 +128,75 @@
             "name": "Antitrust",
             "id": "3-504-6510"
         },
-		{
+		    {
             "name": "Bankruptcy & Restructuring",
             "id": "9-523-0906"
         },
-		{
+		    {
             "name": "Capital Markets & Corporate Governance",
             "id": "1-523-0910"
         },
-		{
+		    {
             "name": "Commercial",
             "id": "w-026-6543"
         },
-		{
+		    {
             "name": "Corporate and M&A",
             "id": "5-523-0908"
         },
-		{
+		    {
             "name": "Employee Benefits & Executive Compensation",
             "id": "1-504-6506"
         },
-		{
+		    {
             "name": "Finance",
             "id": "8-380-8566"
         },
-		{
+		    {
             "name": "Financial Services",
             "id": "5-636-0866"
         },
-		{
+		    {
             "name": "Government Practice: Federal",
             "id": "7-636-8211"
         },
-		{
+		    {
             "name": "Government Practice: State & Local",
             "id": "7-636-5951"
         },
-		{
+		    {
             "name": "Health Care",
             "id": "8-552-0977"
         },
-		{
+		    {
             "name": "Intellectual Property & Technology",
             "id": "3-504-6505"
         },
-		{
+		    {
             "name": "Labor & Employment",
             "id": "6-504-6504"
         },
-		{
+		    {
             "name": "Life Sciences & FDA Regulatory",
             "id": "7-636-0865"
         },
-		{
+		    {
             "name": "Litigation",
             "id": "5-504-6509"
         },
-		{
+		    {
             "name": "Real Estate",
             "id": "9-504-6512"
         },
-		{
+		    {
             "name": "Startups & Small Businesses",
             "id": "w-011-3814"
         },
-		{
+		    {
             "name": "Trusts & Estates",
             "id": "w-000-2647"
         },
-		{
+		    {
             "name": "US Law Department Management",
             "id": "w-000-0043"
         }
@@ -217,6 +217,12 @@
         "responseElement": "total",
         "_comment": ""
       },
+	  {
+		"name": "SourceDirectoryUrl",
+		"type": "interpolationString",
+		"responseElement": "https://(PracticalLawUSHost)/Search/Results.html?query=(%Query)&categoryPageUrl=Home/PracticalLaw&contentType=KNOWHOW&querySubmissionGuid=(NewGuid())",
+		"_comment": ""
+	  },
       {
         "name": "Documents",
         "type": "object",

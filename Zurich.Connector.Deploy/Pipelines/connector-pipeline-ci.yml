@@ -200,6 +200,7 @@ stages:
                     subscriptionName: ${{ variables.subscriptionName }}
                     useOneAppServicePlan: "false"
                     webDnsServer: ${{ variables.webDnsServer }}
+                    workerRuntime: ${{ variables.functionWorkerRuntime }}
                     vnetName: ${{ variables.vnetName }}
                     vnetResourceGroup: ${{ variables.vnetResourceGroup }}
                     zipFileLocation: ${{ variables.functionZipLocation }}

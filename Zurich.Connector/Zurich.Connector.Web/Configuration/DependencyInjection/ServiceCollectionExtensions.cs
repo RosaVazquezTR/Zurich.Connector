@@ -1,5 +1,5 @@
 ﻿using IdentityModel;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -18,8 +18,8 @@ using Zurich.Common.Models.HighQ;
 using Zurich.Common.Models.OAuth;
 using Zurich.Common.Repositories.Cosmos;
 using Zurich.Common.Services.Security;
+using Zurich.Common.Services.Security.CIAM;
 using Zurich.Connector.App.Services;
-using Zurich.Connector.App.Utils;
 using Zurich.Connector.Data;
 using Zurich.Connector.Data.Repositories;
 using Zurich.Connector.Data.Services;
@@ -81,28 +81,6 @@ namespace Microsoft.Extensions.DependencyInjection
 			services.AddHealthChecks();
         }
 
-		/// <summary>
-		/// Adds authentication related services
-		/// </summary>
-		/// <param name="services">The app services</param>
-		/// <param name="audience">The authorization token audience</param>
-		/// <param name="authority">The authorization token issuer</param>
-		public static void AddAuthenticationServices(this IServiceCollection services, string audience, string authority)
-		{
-			JwtSecurityTokenHandler.DefaultMapInboundClaims = false;
-			services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
-			{
-				options.Authority = authority;
-				options.Audience = audience;
-				options.TokenValidationParameters.ValidTypes = new[] { SupportedTokenTypes.AccessTokenJwt };
-			});
-
-			services.AddAuthorization(options =>
-			{
-				// TODO: Add Connector specific scopes to Identity Server
-				options.FallbackPolicy = new AuthorizationPolicyBuilder(JwtBearerDefaults.AuthenticationScheme).RequireAuthenticatedUser().RequireClaim(JwtClaimTypes.Scope, SupportedScopes.Full).Build();
-			});
-		}
 
 		/// <summary>
 		/// Configure dependency injection services for cosmos module.

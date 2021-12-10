@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -16,7 +17,7 @@ namespace Zurich.Connector.Data.DataMap
 {
     public class DataMappingTransfer : AbstractDataMapping, IDataMapping
     {
-        public DataMappingTransfer(IRepository repository, IDataMappingRepository dataMappingRepository, IOAuthService oAuthService, ILogger<DataMappingTransfer> logger, ConnectorCosmosContext cosmosContext, IMapper mapper, IHttpBodyFactory factory, IHttpResponseFactory httpResponseFactory, IHttpContextAccessor contextAccessor, IOAuthApiRepository OAuthApirepository, OAuthOptions oAuthOptions, ILegalHomeAccessCheck legalHomeAccessCheck)
+        public DataMappingTransfer(IRepository repository, IDataMappingRepository dataMappingRepository, IOAuthService oAuthService, ILogger<DataMappingTransfer> logger, ConnectorCosmosContext cosmosContext, IMapper mapper, IHttpBodyFactory factory, IHttpResponseFactory httpResponseFactory, IHttpContextAccessor contextAccessor, IOAuthApiRepository OAuthApirepository, OAuthOptions oAuthOptions, ILegalHomeAccessCheck legalHomeAccessCheck, IConfiguration configuration)
         {
             this._repository = repository;
             this._dataMappingRepository = dataMappingRepository;
@@ -30,9 +31,10 @@ namespace Zurich.Connector.Data.DataMap
             this._oAuthApirepository = OAuthApirepository;
             this._oAuthOptions = oAuthOptions;
             this._legalHomeAccessCheck = legalHomeAccessCheck;
+            this._configuration = configuration;
         }
 
-        public async override Task<T> GetAndMapResults<T>(ConnectorDocument connectorDocument, string transferToken, NameValueCollection query = null, Dictionary<string, string> headers = null)
+        public async override Task<T> GetAndMapResults<T>(ConnectorDocument connectorDocument, string transferToken, NameValueCollection query, Dictionary<string, string> headers, Dictionary<string, string> requestParameters)
         {
             T results = default(T);
 
@@ -55,7 +57,7 @@ namespace Zurich.Connector.Data.DataMap
             CleanUpApiInformation(apiInfo);
 
             var transferTokenParam = new NameValueCollection() { { "transferToken", transferToken } };
-            return await GetFromRepo<T>(apiInfo, connectorDocument, transferTokenParam);
+            return await GetFromRepo<T>(apiInfo, connectorDocument, transferTokenParam, requestParameters);
 
         }
     }

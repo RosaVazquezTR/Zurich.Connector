@@ -2,14 +2,10 @@
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 using Zurich.Common;
 using Zurich.Common.Models.OAuth;
-using Zurich.Connector.Data.Model;
 
 namespace Zurich.Connector.Data.Repositories
 {
@@ -28,21 +24,18 @@ namespace Zurich.Connector.Data.Repositories
 
         private readonly HttpClient _httpClient;
         private readonly ILogger<OAuthApiRepository> _logger;
-        private readonly IConfiguration _configuration;
-        public OAuthApiRepository(IHttpClientFactory httpClientFactory, ILogger<OAuthApiRepository> logger, IConfiguration configuration)
+
+        public OAuthApiRepository(IHttpClientFactory httpClientFactory, ILogger<OAuthApiRepository> logger)
         {
             _httpClient = httpClientFactory.CreateClient(HttpClientNames.OAuthAPI);
             _logger = logger;
-            _configuration = configuration;
-
         }
         public async Task<AppToken> GetToken(string appCode)
         {
             dynamic token = "";
             if (appCode != null)
             {
-                string baseUrl = _configuration.GetValue<string>("OAuthBaseUrl");
-                string path = $"{baseUrl}/api/v1/Token/{appCode}";
+                string path = $"api/v1/Token/{appCode}";
                 using (var requestMessage = new HttpRequestMessage(HttpMethod.Get, path))
                 {
                     var httpContent = await MakeRequest(requestMessage);

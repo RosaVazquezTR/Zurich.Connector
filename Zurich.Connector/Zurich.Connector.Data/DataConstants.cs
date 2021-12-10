@@ -22,6 +22,7 @@
     public static class UnstructuredCDMProperties
     {
         public const string Extension = "extension";
+        public const string ListItemUniqueId = "listItemUniqueId";
     }
 
     /// <summary>
@@ -52,5 +53,6 @@
     public static class DataTypes
     {
         public const string Bool = "bool";
+        public const string InterpolationString = "interpolationString";
     }
 }

@@ -3,23 +3,18 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
 using System.Threading.Tasks;
-using Zurich.Common.Models.Cosmos;
-using Zurich.Common.Repositories.Cosmos;
 using Zurich.Connector.App.Model;
 using Zurich.Connector.App.Services;
 using Zurich.Connector.Data.Repositories.CosmosDocuments;
-using Zurich.Connector.Durable.Constants;
 using Zurich.Connector.Durable.Model;
 
 namespace Zurich.Connector.Durable.Service
 {
-	/// <summary>
-	/// Service to get and update dynamic filter properties
-	/// </summary>
-	public interface IFilterService
+    /// <summary>
+    /// Service to get and update dynamic filter properties
+    /// </summary>
+    public interface IFilterService
     {
 		/// <summary>
 		/// Get a list of connectors which is having dynamic filters.
@@ -82,7 +77,7 @@ namespace Zurich.Connector.Durable.Service
 			{
 				var connectorDocument = _mapper.Map<ConnectorDocument>(connector);
 				var filters = connectorDocument.Filters.FirstOrDefault();
-				if (filters != null)
+				if (filters != null && dynamicFilter != null && dynamicFilter.Any())
 				{
 					filters.FilterList = _mapper.Map<List<FilterList>>(dynamicFilter);
 					await _cosmosService.StoreConnector(connectorDocument);
