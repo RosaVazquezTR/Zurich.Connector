@@ -97,7 +97,7 @@ namespace Microsoft.Extensions.DependencyInjection
 			{
 				options.Authority = authority;
 				options.Audience = audience;
-				options.TokenValidationParameters.ValidTypes = new[] { SupportedTokenTypes.AccessTokenJwt };
+				options.TokenValidationParameters.ValidTypes = new[] { Zurich.Connector.Web.Configuration.SupportedTokenTypes.AccessTokenJwt };
 				options.RequireHttpsMetadata = true;
 			})
 			.AddJwtBearer(AuthSchemes.CIAM, options =>

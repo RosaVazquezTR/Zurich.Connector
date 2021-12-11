@@ -24,6 +24,14 @@ namespace Zurich.Connector.IntegrationTests
         {
         }
 
+        public override void AddAuthServices(IServiceCollection services, string authority, CIAMAuthOptions ciamOptions)
+        {
+            JwtSecurityTokenHandler.DefaultMapInboundClaims = false;
+
+            services.AddScoped<ISessionAccessor, IntegrationTestSessionAccessor>();
+            services.AddScoped<ICosmosService, IntegrationTestCosmosService>();
+            services.AddScoped<ILegalHomeAccessCheck, IntegrationTestLegalHomeAccess>();
+        }
 
         public override void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
