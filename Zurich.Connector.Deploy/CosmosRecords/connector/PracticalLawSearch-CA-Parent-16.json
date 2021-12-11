@@ -13,8 +13,6 @@
   "request": {
     "endpointPath": "/v4/federatedsearch",
     "method": "GET",
-    "responseContentType": "XML",
-    "xmlArrayAttribute": "//searchResults/detail/document",
     "parameters": [
       {
         "cdmName": "Query",
@@ -33,8 +31,8 @@
         "defaultValue": ""
       },
       {
-        "cdmName": "PracticeAreasIds",
-        "name": "PracticeAreasIds",
+        "cdmName": "PracticeArea",
+        "name": "products",
         "inClause": "Query",
         "required": true,
         "type": "string",
@@ -117,9 +115,54 @@
       "properties": {}
     },
 	"type": "XML",
-    "xmlArrayAttribute": "//searchResults/detail/document"
+	"xmlArrayAttribute": ["//searchResults/detail/document", "//searchResults/detail/document/jurisdictionList/jurisdiction"]
   },
-  "filters": [],
+  "filters": [
+	{
+		"name": "PracticeArea",
+		"description": "The practice areas",
+		"isMultiselect": "false",
+		"requestParameter": "PracticeArea",
+		"filterlist": [
+			{
+				"name": "Capital Markets & Securities",
+				"id": "1-554-8287"
+			},
+			{
+				"name": "Commercial Real Estate",
+				"id": "w-016-4160"
+			},
+			{
+				"name": "Commercial Transactions",
+				"id": "0-556-8006"
+			},
+			{
+				"name": "Competition",
+				"id": "1-554-8305"
+			},
+			{
+				"name": "Corporate and M&A",
+				"id": "7-554-8294"
+			},
+			{
+				"name": "Employment",
+				"id": "4-611-2546"
+			},
+			{
+				"name": "Finance",
+				"id": "9-554-8325"
+			},
+			{
+				"name": "Insolvency & Restructuring",
+				"id": "w-024-3447"
+			},
+			{
+				"name": "Litigation: Corporate & Commercial",
+				"id": "6-619-6168"
+			}
+		]
+	  }
+  ],
   "pagination": {
     "available": true,
     "paginationType": "",
@@ -132,6 +175,12 @@
         "name": "Count",
         "type": "short",
         "responseElement": "total",
+        "_comment": ""
+      },
+      {
+        "name": "SourceDirectoryUrl",
+        "type": "interpolationString",
+        "responseElement": "https://(PracticalLawCAHost)/Search/Results.html?query=(%Query)&categoryPageUrl=Home/Home&contentType=KNOWHOW_PLC_CA&querySubmissionGuid=(NewGuid())",
         "_comment": ""
       },
       {

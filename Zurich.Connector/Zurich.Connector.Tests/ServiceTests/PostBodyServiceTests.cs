@@ -29,12 +29,12 @@ namespace Zurich.Connector.Tests
                     Parameters = new List<ConnectorRequestParameter>()
                     {
                         new ConnectorRequestParameter() {
-                            Cdmname = "Query",
+                            CdmName = "Query",
                             Name = "requests.[].query.queryString",
                             InClause = "body"
                         },
                         new ConnectorRequestParameter() {
-                            Cdmname = "EntityType",
+                            CdmName = "EntityType",
                             Name = "requests.[].entityTypes.[]",
                             InClause = "body"
                         }
@@ -66,17 +66,17 @@ namespace Zurich.Connector.Tests
                     Parameters = new List<ConnectorRequestParameter>()
                     {
                         new ConnectorRequestParameter() {
-                            Cdmname = "Query",
+                            CdmName = "Query",
                             Name = "requests.[].query.queryString",
                             InClause = "body"
                         },
                         new ConnectorRequestParameter() {
-                            Cdmname = "EntityType",
+                            CdmName = "EntityType",
                             Name = "requests.[].entityTypes.[]",
                             InClause = "body"
                         },
                         new ConnectorRequestParameter() {
-                            Cdmname = "Fields",
+                            CdmName = "Fields",
                             Name = "requests.[].fields.[]",
                             InClause = "body"
                         }
@@ -109,17 +109,17 @@ namespace Zurich.Connector.Tests
                     Parameters = new List<ConnectorRequestParameter>()
                     {
                         new ConnectorRequestParameter() {
-                            Cdmname = "Query",
+                            CdmName = "Query",
                             Name = "requests.[].query.queryString",
                             InClause = "body"
                         },
                         new ConnectorRequestParameter() {
-                            Cdmname = "EntityType",
+                            CdmName = "EntityType",
                             Name = "requests.[].entityTypes.[]",
                             InClause = "body"
                         },
                         new ConnectorRequestParameter() {
-                            Cdmname = "Fields",
+                            CdmName = "Fields",
                             Name = "requests.[].fields.[]",
                             InClause = "body"
                         }

@@ -28,11 +28,14 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="Zurich.Common" Version="1.0.1-CI-20211005-150243" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Zurich.Connector.Web\Zurich.Connector.Web.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Properties\" />
   </ItemGroup>
 
 </Project>

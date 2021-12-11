@@ -27,25 +27,50 @@
                 "responseElement": "resource.name",
                 "_comment": ""
             },
-            {
-                "name": "ResourceType",
-                "type": "string",
-                "responseElement": "type",
-                "_comment": ""
-            },
-            {
-                "name": "PublicationDate",
-                "type": "string",
-                "responseElement": "resource.lastModifiedDateTime",
-                "_comment": ""
-            },
-            {
-                "name": "WebUrl",
-                "type": "string",
-                "responseElement": "resource.webUrl",
-                "_comment": ""
-            }
+          {
+            "name": "Type",
+            "type": "string",
+            "responseElement": "",
+            "_comment": ""
+          },
+          {
+            "name": "WebUrl",
+            "type": "string",
+            "responseElement": "resource.webUrl",
+            "_comment": ""
+          },
+          {
+            "name": "CreationDate",
+            "type": "string",
+            "responseElement": "resource.createdDateTime",
+            "_comment": ""
+          }
         ],
-        "unstructured": []
+      "unstructured": [
+        {
+          "name": "lastModifiedDateTime",
+          "type": "string",
+          "responseElement": "resource.lastModifiedDateTime",
+          "_comment": ""
+        },
+        {
+          "name": "lastModifiedUser",
+          "type": "string",
+          "responseElement": "resource.lastModifiedBy.user.displayName",
+          "_comment": ""
+        },
+        {
+          "name": "authorName",
+          "type": "string",
+          "responseElement": "resource.createdBy.user.displayName",
+          "_comment": ""
+        },
+        {
+          "name": "listItemUniqueId",
+          "type": "string",
+          "responseElement": "resource.parentReference.sharepointIds.listItemUniqueId",
+          "_comment": ""
+        }
+      ]
     }
 }

@@ -41,6 +41,8 @@ namespace Zurich.Connector.Web
 
             
             CreateMap<DataSourceModel, DataSourceViewModel>();
+            CreateMap<RegistrationInfoModel, RegistrationInfoViewModel>();
+            CreateMap<DomainSpecificInformationModel, DomainSpecificInformationViewModel>();
             CreateMap<SecurityDefinitionModel, SecurityDefinitionViewModel>();
             CreateMap<SecurityDefinitionDetailsModel, SecurityDefinitionDetailsViewModel>();
 
@@ -50,6 +52,10 @@ namespace Zurich.Connector.Web
                 .ForMember(dest => dest.Tenantid, opt => opt.MapFrom(src => src.TenantId))
                 .ForMember(dest => dest.AppName, opt => opt.MapFrom(src => src.AppName))
                 .ForAllOtherMembers(opt => opt.Ignore());
+
+            CreateMap<DataSourceRegistration, DataSourceRegistrationResponseViewModel>()
+                .ForMember(dest => dest.AuthorizeUrl, opt => opt.MapFrom(src => src.AuthorizeUrl))
+                .ForMember(dest => dest.Registered, opt => opt.MapFrom(src => src.Registered));
 
         }
     }

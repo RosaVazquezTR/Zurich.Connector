@@ -1,22 +1,29 @@
 {
-    "id": "20",
-    "partitionkey": "DataSourceList",
-    "name": "Practical Law US",
-    "description": "This is connecting to Practical Law US API ",
-    "infoURL": "",
-    "appCode": "PLCUS",
-    "extraRequestContext": "",
-    "securityDefinition": {
-        "type": "transferToken",
-        "flow": "",
-        "defaultSecurityDefinition": {
-            "authorizationURL": "",
-            "authorizationPath": "",
-            "tokenURL": "",
-            "tokenPath": "",
-            "keyVaultClientId": "",
-            "keyVaultSecret": ""
-        },
-        "scopes": {}
-    }
+  "id": "20",
+  "partitionkey": "DataSourceList",
+  "name": "Practical Law US",
+  "description": "This is connecting to Practical Law US API ",
+  "infoURL": "",
+  "appCode": "PLCUS",
+  "extraRequestContext": "",
+  "registrationInfo": {
+    "registrationMode": "Automatic",
+    "domainRequired": "false",
+    "clientAndSecretRequired": "false",
+    "connectionMessage": "",
+    "registrationFileRequired": "false"
+  },
+  "securityDefinition": {
+    "type": "transferToken",
+    "flow": "",
+    "defaultSecurityDefinition": {
+      "authorizationURL": "",
+      "authorizationPath": "",
+      "tokenURL": "",
+      "tokenPath": "",
+      "keyVaultClientId": "",
+      "keyVaultSecret": ""
+    },
+    "scopes": {}
+  }
 }

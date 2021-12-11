@@ -1,22 +1,29 @@
 {
-    "id": "22",
-    "partitionkey": "DataSourceList",
-    "name": "Practical Law Canada",
-    "description": "This is connecting to Practical Law CA API ",
-    "infoURL": "",
-    "appCode": "PLCCA",
-    "extraRequestContext": "",
-    "securityDefinition": {
-        "type": "transferToken",
-        "flow": "",
-        "defaultSecurityDefinition": {
-            "authorizationURL": "",
-            "authorizationPath": "",
-            "tokenURL": "",
-            "tokenPath": "",
-            "keyVaultClientId": "",
-            "keyVaultSecret": ""
-        },
-        "scopes": {}
-    }
+  "id": "22",
+  "partitionkey": "DataSourceList",
+  "name": "Practical Law Canada",
+  "description": "This is connecting to Practical Law CA API ",
+  "infoURL": "",
+  "appCode": "PLCCA",
+  "extraRequestContext": "",
+  "registrationInfo": {
+    "registrationMode": "Automatic",
+    "domainRequired": "false",
+    "clientAndSecretRequired": "false",
+    "connectionMessage": "",
+    "registrationFileRequired": "false"
+  },
+  "securityDefinition": {
+    "type": "transferToken",
+    "flow": "",
+    "defaultSecurityDefinition": {
+      "authorizationURL": "",
+      "authorizationPath": "",
+      "tokenURL": "",
+      "tokenPath": "",
+      "keyVaultClientId": "",
+      "keyVaultSecret": ""
+    },
+    "scopes": {}
+  }
 }

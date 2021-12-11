@@ -13,8 +13,6 @@
   "request": {
     "endpointPath": "/v4/federatedsearch",
     "method": "GET",
-    "responseContentType": "XML",
-    "xmlArrayAttribute": "//searchResults/detail/document",
     "parameters": [
       {
         "cdmName": "Query",
@@ -33,8 +31,8 @@
         "defaultValue": ""
       },
       {
-        "cdmName": "PracticeAreasIds",
-        "name": "PracticeAreasIds",
+        "cdmName": "PracticeArea",
+        "name": "products",
         "inClause": "Query",
         "required": true,
         "type": "string",
@@ -117,58 +115,90 @@
       "properties": {}
     },
 	"type": "XML",
-    "xmlArrayAttribute": "//searchResults/detail/document"
+	"xmlArrayAttribute": ["//searchResults/detail/document", "//searchResults/detail/document/jurisdictionList/jurisdiction"]
   },
   "filters": [
     {
       "name": "PracticeArea",
       "description": "The practice areas",
-      "isMultiselect": "true",
+      "isMultiselect": "false",
       "requestParameter": "PracticeArea",
       "filterlist": [
         {
-          "name": "Antitrust Litigation",
-          "id": "9-521-5538"
+            "name": "Antitrust",
+            "id": "3-504-6510"
         },
-        {
-          "name": "Cartels",
-          "id": "1-103-1161"
+		    {
+            "name": "Bankruptcy & Restructuring",
+            "id": "9-523-0906"
         },
-        {
-          "name": "Competition Compliance and Dawn Raids",
-          "id": "2-103-2056"
+		    {
+            "name": "Capital Markets & Corporate Governance",
+            "id": "1-523-0910"
         },
-        {
-          "name": "General - Competition",
-          "id": "8-103-1167"
-        }
-      ]
-    },
-    {
-      "name": "Commercial",
-      "description": "Commercial",
-      "isMultiselect": "true",
-      "requestParameter": "Commercial",
-      "filterlist": [
-        {
-          "name": "Advertising and Marketing",
-          "id": "0-103-1114"
+		    {
+            "name": "Commercial",
+            "id": "w-026-6543"
         },
-        {
-          "name": "Agency, Distribution & Franchising",
-          "id": "8-321-0007"
+		    {
+            "name": "Corporate and M&A",
+            "id": "5-523-0908"
         },
-        {
-          "name": "Bribery and Corruption",
-          "id": "1-520-9254"
+		    {
+            "name": "Employee Benefits & Executive Compensation",
+            "id": "1-504-6506"
         },
-        {
-          "name": "Confidentiality",
-          "id": "7-103-1304"
+		    {
+            "name": "Finance",
+            "id": "8-380-8566"
         },
-        {
-          "name": "General Commercial",
-          "id": "7-379-8563"
+		    {
+            "name": "Financial Services",
+            "id": "5-636-0866"
+        },
+		    {
+            "name": "Government Practice: Federal",
+            "id": "7-636-8211"
+        },
+		    {
+            "name": "Government Practice: State & Local",
+            "id": "7-636-5951"
+        },
+		    {
+            "name": "Health Care",
+            "id": "8-552-0977"
+        },
+		    {
+            "name": "Intellectual Property & Technology",
+            "id": "3-504-6505"
+        },
+		    {
+            "name": "Labor & Employment",
+            "id": "6-504-6504"
+        },
+		    {
+            "name": "Life Sciences & FDA Regulatory",
+            "id": "7-636-0865"
+        },
+		    {
+            "name": "Litigation",
+            "id": "5-504-6509"
+        },
+		    {
+            "name": "Real Estate",
+            "id": "9-504-6512"
+        },
+		    {
+            "name": "Startups & Small Businesses",
+            "id": "w-011-3814"
+        },
+		    {
+            "name": "Trusts & Estates",
+            "id": "w-000-2647"
+        },
+		    {
+            "name": "US Law Department Management",
+            "id": "w-000-0043"
         }
       ]
     }
@@ -187,6 +217,12 @@
         "responseElement": "total",
         "_comment": ""
       },
+	  {
+		"name": "SourceDirectoryUrl",
+		"type": "interpolationString",
+		"responseElement": "https://(PracticalLawUSHost)/Search/Results.html?query=(%Query)&categoryPageUrl=Home/PracticalLaw&contentType=KNOWHOW&querySubmissionGuid=(NewGuid())",
+		"_comment": ""
+	  },
       {
         "name": "Documents",
         "type": "object",

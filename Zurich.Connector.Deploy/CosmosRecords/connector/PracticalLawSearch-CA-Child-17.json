@@ -28,36 +28,44 @@
         "_comment": ""
       },
       {
+        "name": "WebUrl",
+        "type": "string",
+        "responseElement": "",
+        "_comment": ""
+      },
+      {
         "name": "PlcReference",
         "type": "string",
         "responseElement": "plcReference",
         "_comment": ""
       },
       {
-        "name": "Maintained",
-        "type": "string",
-        "responseElement": "maintained",
-        "_comment": ""
-      },
-      {
-        "name": "ResourceType",
+        "name": "Type",
         "type": "string",
         "responseElement": "resourceTypeFolderList.resourceTypeFolder",
         "_comment": ""
       },
       {
-        "name": "LastModifiedDateTime",
+        "name": "CreationDate",
         "type": "string",
-        "responseElement": "PublicationDate",
+        "responseElement": "publicationDate",
+        "_comment": ""
+      }
+
+    ],
+    "unstructured": [
+      {
+        "name": "jurisdictionList",
+        "type": "array",
+        "responseElement": "jurisdictionList.jurisdiction",
         "_comment": ""
       },
       {
-        "name": "JurisdictionList",
-        "type": "array",
-        "responseElement": "jurisdictionList",
+        "name": "maintained",
+        "type": "bool",
+        "responseElement": "maintained",
         "_comment": ""
       }
-    ],
-    "unstructured": []
+    ]
   }
 }

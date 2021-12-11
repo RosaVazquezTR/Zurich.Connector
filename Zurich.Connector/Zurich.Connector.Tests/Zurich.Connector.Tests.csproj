@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Zurich.Connector.Data\Zurich.Connector.Data.csproj" />
+    <ProjectReference Include="..\Zurich.Connector.Durable\Zurich.Connector.Durable.csproj" />
     <ProjectReference Include="..\Zurich.Connector.Web\Zurich.Connector.Web.csproj" />
   </ItemGroup>
 

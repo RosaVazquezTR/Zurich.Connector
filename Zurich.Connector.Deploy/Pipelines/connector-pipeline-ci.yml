@@ -45,10 +45,11 @@ stages:
         - checkout: ZurichDeploy
         - template: Templates\V2\ZurichDeploy-BuildWebAPI.yml@ZurichDeploy
           parameters:
-            projectName: ${{ variables.projectName }}
             azureAdClientSecret: $(azureAdClientSecret)
             environmentName: ci
+            projectName: ${{ variables.projectName }}
             publishToNuget: true
+            publishWebProjects: false
             sandboxName: 'Connector-CI'
 - stage: CI
   pool: DCO-HighQ-Platform-N
@@ -86,6 +87,7 @@ stages:
                   legalHomeDbUser: ${{ variables.legalHomeDbUser }}
                   legalHomeDbUserPassword: $(legalHomeDbUserPassword)
                   legalTrackerSecret : $(legalTrackerSecret)
+                  legalTrackerActionItemsSecret : $(legalTrackerActionItemsSecret)
                   ltioL1ActionGroupName: ${{variables.ltioL1ActionGroupName}}
                   ltioL1EmailAddress: ${{variables.ltioL1EmailAddress}}
                   ltioL1EmailName: ${{variables.ltioL1EmailName}}
@@ -102,6 +104,7 @@ stages:
                   smartDetectionRuleNames: ${{ variables.smartDetectionRuleNames }}
                   subnetPreFix: ${{ variables.subnetPreFix }}
                   subnetConnectorBackend: ${{ variables.subnetConnectorBackend }}
+                  subnetFunctionBackend: ${{ variables.subnetFunctionBackend }}
                   subscriptionId: ${{ variables.subscriptionId }}
                   subscriptionName: ${{ variables.subscriptionName }}
                   tagNames: ${{ variables.tagNames }}
@@ -154,15 +157,63 @@ stages:
                   tlsVersion: ${{ variables.tlsVersion }}
                   vnetName: ${{ variables.vnetName }}
                   vnetResourceGroup: ${{ variables.vnetResourceGroup }}
+    - deployment: DurableFunction
+      environment: CI
+      dependsOn: Prereqs
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+              - checkout: self
+              - checkout: ZurichDeploy
+              - template: Templates\ZurichDeploy-FunctionDeploy.yml@ZurichDeploy
+                parameters:
+                    allowedIps: "[]"
+                    allowedSubnets: ${{ variables.functionSubnets }}
+                    appInsightsName: ${{ variables.appInsightsName }}
+                    appServicePlanName: ${{ variables.functionAppServicePlanName }}
+                    appServicePlanSku: ${{ variables.functionAppServicePlanSku }}
+                    armFolder: ${{ variables.deployArmTemplates }}
+                    cosmosName: ${{ variables.connectorCosmosName }}
+                    cosmosResourceGroup: ${{ variables.resourceGroup }}
+                    deployScriptFolder: ${{ variables.deployScriptFolder }}
+                    environmentName: ${{ variables.environmentName }}
+                    functionArmTemplate: ${{ variables.functionArmTemplate }}
+                    functionName: ${{ variables.functionName }}
+                    functionNamePrefix: ${{ variables.functionNamePrefix }}
+                    functionPrefix: ''
+                    functionStorageName: ${{ variables.functionStorageName }}
+                    functionVersion: ${{ variables.functionVersion }}
+                    keyVault: ${{ variables.keyVault }}
+                    monitorAlertGroups: ${{ variables.monitorAlertGroups }}
+                    monitorAlertPrefix: ${{ variables.monitorAlertPrefix }}
+                    monitoringResourceGroup: ${{ variables.monitoringResourceGroup }}
+                    resourceGroup: ${{ variables.resourceGroup }}
+                    resourceLocation: ${{ variables.resourceLocation }}
+                    retentionDays: ${{ variables.retentionDays }}
+                    scriptFolder: ${{ variables.deployScriptFolder }}
+                    slotName: ${{ variables.slotName }}
+                    storageLoggingName: ${{ variables.storageLoggingName }}
+                    subnetPrefix: ${{ variables.subnetPrefix }}
+                    subnetFunctionBackend: ${{ variables.subnetFunctionBackend }}
+                    subscriptionId: ${{ variables.subscriptionId }}
+                    subscriptionName: ${{ variables.subscriptionName }}
+                    useOneAppServicePlan: "false"
+                    webDnsServer: ${{ variables.webDnsServer }}
+                    workerRuntime: ${{ variables.functionWorkerRuntime }}
+                    vnetName: ${{ variables.vnetName }}
+                    vnetResourceGroup: ${{ variables.vnetResourceGroup }}
+                    zipFileLocation: ${{ variables.functionZipLocation }}
 - stage: Swap_Slots
   dependsOn: CI
   condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'master'))
   jobs:
     - template: ../Templates/connector-swap-slots.yml
       parameters:
-        environmentName: ${{ variables.environmentName }}
-        resourceGroup: ${{ variables.resourceGroup }}
         connectorServiceName: ${{ variables.connectorServiceName }}
+        environmentName: ${{ variables.environmentName }}
+        functionName: ${{ variables.functionNamePrefix }}${{ variables.functionName }}
+        resourceGroup: ${{ variables.resourceGroup }}
         slotName: ${{ variables.slotName }}
         subscriptionName: ${{ variables.subscriptionName }}
 - stage: Update_APIM_Product

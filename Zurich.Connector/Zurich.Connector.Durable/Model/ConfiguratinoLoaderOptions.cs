@@ -24,7 +24,7 @@ namespace Zurich.Connector.Durable.Model
         /// <summary>
         /// Issuer
         /// </summary>
-        public string Issuer { get; set; }
+        public string TokenIssuer { get; set; }
         /// <summary>
         /// OAuth DB Connection string
         /// </summary>

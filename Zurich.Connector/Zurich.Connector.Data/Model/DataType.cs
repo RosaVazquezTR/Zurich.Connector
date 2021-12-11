@@ -40,18 +40,8 @@ namespace Zurich.Connector.Data.Model
         Matters,
         UserProfile,
         Favorites,
-        Search
-    }
-
-    /// <summary>
-    /// /Represents Registration Mode
-    /// </summary>
-    public enum RegistrationEntityMode
-    {
-        Registered,
-        AutoRegistered,
-        ManualRegistered,
-        None
+        Search,
+        ActionItems
     }
 
     /// <summary>

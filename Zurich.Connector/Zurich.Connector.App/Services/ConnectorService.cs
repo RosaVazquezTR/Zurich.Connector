@@ -1,9 +1,12 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.Azure.Cosmos.Linq;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using Zurich.Connector.App;
 using Zurich.Connector.App.Enum;
 using Zurich.Connector.App.Model;
 using Zurich.Connector.App.Services;
@@ -32,15 +35,18 @@ namespace Zurich.Connector.Data.Services
         private readonly ICosmosService _cosmosService;
         private readonly ILogger<ConnectorService> _logger;
         private readonly IRegistrationService _registrationService;
+        private readonly IConfiguration _configuration;
 
         public ConnectorService(
             ILogger<ConnectorService> logger,
             ICosmosService cosmosService,
-            IRegistrationService registrationService)
+            IRegistrationService registrationService,
+            IConfiguration configuration)
         {
             _cosmosService = cosmosService;
             _logger = logger;
             _registrationService = registrationService;
+            _configuration = configuration;
         }
 
         /// <summary>
@@ -56,7 +62,7 @@ namespace Zurich.Connector.Data.Services
                 bool isDataSourceFilter = false;
                 IEnumerable<string> entityTypeFilter = Enumerable.Empty<string>();
                 IEnumerable<string> dataSourceFilter = Enumerable.Empty<string>();
-                IEnumerable<string> registeredConnectors = Enumerable.Empty<string>();
+                IEnumerable<string> registeredDataSources = Enumerable.Empty<string>();
                 if (filters?.EntityTypes?.Count > 0)
                 {
                     isEntityTypeFilter = true;
@@ -69,20 +75,44 @@ namespace Zurich.Connector.Data.Services
                     dataSourceFilter = filters.DataSources;
                 }
 
-                registeredConnectors = _registrationService.GetUserConnections(filters.RegistrationModes);
+                var showPreReleaseConnectors = _configuration.GetValue<string>(AppSettings.ShowPreReleaseConnectors);
+                bool blnShowPreReleaseConnectors;
+                Boolean.TryParse(showPreReleaseConnectors, out blnShowPreReleaseConnectors);
 
-                Expression<Func<ConnectorDocument, bool>> condition = connector => (isEntityTypeFilter == false || entityTypeFilter.Contains(connector.Info.EntityType.ToString()))
-                                        && (isDataSourceFilter == false || dataSourceFilter.Contains(connector.Info.DataSourceId))
-                                        && (filters.IsRegistered == false || registeredConnectors.Contains(connector.Id));
+                Expression<Func<ConnectorDocument, bool>> condition;
+
+                if (blnShowPreReleaseConnectors)
+                {
+                    condition = connector => (connector.Info.SubType == SubType.Parent || !connector.Info.SubType.IsDefined())
+                                 && (isEntityTypeFilter == false || entityTypeFilter.Contains(connector.Info.EntityType.ToString()))
+                                 && (isDataSourceFilter == false || dataSourceFilter.Contains(connector.Info.DataSourceId));
+                }
+                else
+                {
+                    condition = connector => (!connector.PreRelease.IsDefined() || !connector.PreRelease)
+                                 && (connector.Info.SubType == SubType.Parent || !connector.Info.SubType.IsDefined())
+                                 && (isEntityTypeFilter == false || entityTypeFilter.Contains(connector.Info.EntityType.ToString()))
+                                 && (isDataSourceFilter == false || dataSourceFilter.Contains(connector.Info.DataSourceId));
+                }
+
                 var connectors = await _cosmosService.GetConnectors(true, condition);
 
                 if (filters.RegistrationModes != null && filters.RegistrationModes.Any())
                 {
-                    connectors = connectors.Where(x => filters.RegistrationModes.Contains(x.DataSource.RegistrationMode));
+                    connectors = connectors.Where(x => filters.RegistrationModes.Contains(x.DataSource.RegistrationInfo.RegistrationMode));
                 }
-                foreach (var connector in connectors.Where(connector => registeredConnectors.Contains(connector.Id)))
+
+                registeredDataSources = await _registrationService.GetUserDataSources();
+                List<ConnectorModel> registeredConnectors = new List<ConnectorModel>();
+                foreach (var connector in connectors.Where(connector => registeredDataSources.Contains(connector.DataSource.AppCode)))
                 {
                     connector.RegistrationStatus = RegistrationStatus.Registered;
+                    registeredConnectors.Add(connector);
+                }
+                // Can't stick this in the cosmos query because it is looking at connectors not datasources.
+                if(filters.IsRegistered)
+                {
+                    connectors = registeredConnectors;
                 }
 
                 return connectors.ToList();
@@ -96,8 +126,14 @@ namespace Zurich.Connector.Data.Services
 
         public async Task<ConnectorModel> GetConnector(string connectorId)
         {
-            var connector = await _cosmosService.GetConnector(connectorId, true);
-            return connector;
+            var showPreReleaseConnectors = _configuration.GetValue<string>(AppSettings.ShowPreReleaseConnectors);
+            bool blnShowPreReleaseConnectors;
+            Boolean.TryParse(showPreReleaseConnectors, out blnShowPreReleaseConnectors);
+            Expression<Func<ConnectorDocument, bool>> condition;
+            condition = connector => (connector.Id == connectorId && (blnShowPreReleaseConnectors || (!connector.PreRelease.IsDefined() || !connector.PreRelease)));
+            var connector = await _cosmosService.GetConnectors(true, condition);
+            var connectorDetails = connector.SingleOrDefault();
+            return connectorDetails;
         }
 
     }

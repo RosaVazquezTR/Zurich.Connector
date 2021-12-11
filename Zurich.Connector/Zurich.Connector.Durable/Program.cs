@@ -1,41 +1,18 @@
-using Microsoft.Azure.Cosmos;
-using Microsoft.Azure.Documents.Client;
-using Microsoft.Azure.Functions.Worker.Configuration;
-using Microsoft.Azure.KeyVault;
-using Microsoft.Azure.Services.AppAuthentication;
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Configuration.AzureAppConfiguration;
-using Microsoft.Extensions.Configuration.AzureKeyVault;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using AutoMapper;
-using Polly;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 using Zurich.Common;
-using Zurich.Common.Models;
-using Zurich.Common.Models.Cosmos;
-using Zurich.Common.Models.HighQ;
-using Zurich.Common.Models.OAuth;
 using Zurich.Common.Repositories;
 using Zurich.Common.Services;
 using Zurich.Common.Services.Security;
-using Zurich.TenantData;
-using System.Net.Http;
-using Microsoft.IdentityModel.Clients.ActiveDirectory;
-using Microsoft.Data.SqlClient.AlwaysEncrypted.AzureKeyVaultProvider;
-using Microsoft.Data.SqlClient;
+using Zurich.Connector.App;
+using Zurich.Connector.App.Services;
 using Zurich.Connector.Durable.Configuration;
 using Zurich.Connector.Durable.Repository;
 using Zurich.Connector.Durable.Service;
-using Zurich.Connector.App;
-using Zurich.Connector.App.Services;
+using Zurich.TenantData;
 
 namespace Zurich.Connector.Durable
 {
@@ -58,7 +35,7 @@ namespace Zurich.Connector.Durable
                     services.AddPartnerAppAuth(configurationOptions.OAuthOptions, configurationOptions.MicroServOptions);
                     services.AddSingleton<IOIDCAuthorityRepo, OIDCAuthorityRepo>();
                     services.AddSingleton<ITokenAuthorityDiscoveryService, TokenAuthorityDiscoveryService>(s => new TokenAuthorityDiscoveryService(
-                            configurationOptions.Issuer, s.GetRequiredService<ILogger<TokenAuthorityDiscoveryService>>(), s.GetRequiredService<IOIDCAuthorityRepo>(), 
+                            configurationOptions.TokenIssuer, s.GetRequiredService<ILogger<TokenAuthorityDiscoveryService>>(), s.GetRequiredService<IOIDCAuthorityRepo>(), 
                             s.GetRequiredService<System.Net.Http.IHttpClientFactory>()));
 
                     services.AddSingleton<ITokenAuthenticationService, FunctionsTokenAuthenticationService>(s => new FunctionsTokenAuthenticationService(

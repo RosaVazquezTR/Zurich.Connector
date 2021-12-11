@@ -9,6 +9,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Xunit;
 using Zurich.Common.Models.CommonDataModels;
+using Zurich.Connector.App;
 using Zurich.Connector.Data.Repositories.CosmosDocuments;
 using Zurich.Connector.IntegrationTests.Models;
 
@@ -44,8 +45,10 @@ namespace Zurich.Connector.IntegrationTests
                 {
                     if (string.IsNullOrEmpty(entityType) || connector.Info.EntityType.ToString() == entityType)
                     {
-                        if (!isParent || string.IsNullOrEmpty(connector.Info.SubType) || connector.Info.SubType == "Parent")
+                        if (!isParent || string.IsNullOrEmpty(connector.Info.SubType) || connector.Info.SubType == SubType.Parent)
                         {
+                            //ToDo: Needs to remove this once iManage connector token generation sucessful.
+                            if (connector.Id != "44")
                             connectors.Add(connector);
                         }
                     }

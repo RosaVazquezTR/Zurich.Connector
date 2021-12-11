@@ -1,7 +1,7 @@
 {
     "id": "22",
     "partitionkey": "ConnectorList",
-    "alias": "practicallawconnect.search",
+    "alias": "cbtpracpt.search",
     "info": {
         "title": "Get Search Practical law documents - Connect",
         "description": "Pull Practical law documents - Connect",
@@ -31,8 +31,8 @@
                 "defaultValue": ""
             },
             {
-                "cdmName": "PracticeAreasIds",
-                "name": "PracticeAreasIds",
+                "cdmName": "PracticeArea",
+                "name": "products",
                 "inClause": "Query",
                 "required": true,
                 "type": "string",
@@ -115,7 +115,7 @@
             "properties": {}
         },
         "type": "XML",
-        "xmlArrayAttribute": "//searchResults/detail/document"
+        "xmlArrayAttribute": ["//searchResults/detail/document", "//searchResults/detail/document/jurisdictionList/jurisdiction"]
     },
     "filters": [
         {
@@ -193,6 +193,12 @@
                 "responseElement": "total",
                 "_comment": ""
             },
+			{
+			  "name": "SourceDirectoryUrl",
+			  "type": "interpolationString",
+			  "responseElement": "https://(PracticalLawConnectSearchHost)/Search/Results.html?query=(%Query)&categoryPageUrl=Home/PracticalLaw&contentType=KNOWHOW&querySubmissionGuid=(NewGuid())",
+			  "_comment": ""
+			},
             {
                 "name": "Documents",
                 "type": "object",

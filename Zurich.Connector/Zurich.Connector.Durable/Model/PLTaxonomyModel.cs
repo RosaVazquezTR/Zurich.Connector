@@ -35,6 +35,7 @@ namespace Zurich.Connector.Durable.Model
 	{
 		public string Name { get; set; }
 		public PlcReferenceTaxonomy Id { get; set; }
+		[JsonProperty("practiceAreaList")]
 		public IEnumerable<PracticeAreaListPA> PracticeAreaSubList { get; set; }
 	}
 
@@ -53,6 +54,7 @@ namespace Zurich.Connector.Durable.Model
 	/// </summary>
 	public class PlcReferenceTaxonomy
 	{
+		[JsonProperty("plcReference")]
 		public string Value { get; set; }
 	}
 
@@ -61,6 +63,7 @@ namespace Zurich.Connector.Durable.Model
 	/// </summary>
 	public class SiteName
 	{
+		[JsonProperty("siteName")]
 		public string SName { get; set; }
 
 	}
@@ -70,6 +73,7 @@ namespace Zurich.Connector.Durable.Model
 	/// </summary>
 	public class Product
 	{
+		[JsonProperty("product")]
 		public string PName { get; set; }
 	}
 }

@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System.Linq;
 using System.Xml;
 using Zurich.Connector.Data.Repositories.CosmosDocuments;
 
@@ -15,10 +16,13 @@ namespace Zurich.Connector.Data.Services
         {
             XmlDocument xmlDoc = new XmlDocument();
             xmlDoc.LoadXml(response);
-            if (!string.IsNullOrWhiteSpace(connectorResponse.XmlArrayAttribute))
+            if (connectorResponse.XmlArrayAttribute.Any())
             {
-                // if the search result has only one xml record, manually convert that into an array.
-                xmlDoc = AddJsonArrayAttributes(xmlDoc, connectorResponse.XmlArrayAttribute);
+                foreach (var arrayElement in connectorResponse.XmlArrayAttribute)
+                {
+                    // if the search result has only one xml record, manually convert that into an array.
+                    xmlDoc = AddJsonArrayAttributes(xmlDoc, arrayElement);
+                }
             }
             string jsonText = JsonConvert.SerializeXmlNode(xmlDoc);
 
@@ -34,12 +38,15 @@ namespace Zurich.Connector.Data.Services
 		private XmlDocument AddJsonArrayAttributes(XmlDocument doc, string xmlArrayAttribute)
         {
             var elements = doc.SelectNodes(xmlArrayAttribute);
-            if (elements != null && elements.Count == 1)
+            if (elements != null)
             {
-                // Below namespaceURL is required to work the functionality.
-                var jsonArray = doc.CreateAttribute("json", "Array", "http://james.newtonking.com/projects/json");
-                jsonArray.Value = "true";
-                (elements[0] as XmlElement).SetAttributeNode(jsonArray);
+                foreach (var element in elements)
+                {
+                    // Below namespaceURL is required to work the functionality.
+                    var jsonArray = doc.CreateAttribute("json", "Array", "http://james.newtonking.com/projects/json");
+                    jsonArray.Value = "true";
+                    (element as XmlElement).SetAttributeNode(jsonArray);
+                }
             }
             return doc;
         }

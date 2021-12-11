@@ -96,6 +96,7 @@ namespace Zurich.Connector.Durable.Configuration
 
             configuration = builder.Build();
             SetupCosmos(services, configuration);
+            loaderOptions.TokenIssuer = configuration.GetValue<string>("TokenIssuer");
 
             loaderOptions.OAuthOptions = new OAuthOptions();
             configuration.Bind("PartnerOAuthApps", loaderOptions.OAuthOptions);
@@ -110,12 +111,12 @@ namespace Zurich.Connector.Durable.Configuration
             configuration.Bind("StatsStorage", loaderOptions.TableStorageOptions);
 
             // TODO - This should be removed when we get the OAuthService setup.
-            loaderOptions.OAuthDbConnString = configuration.GetValue<string>("EncryptedDBConnectionString");
+            loaderOptions.OAuthDbConnString = configuration.GetConnectionString("LegalHomeDB");
 
             //TODO Probably get rid of this at some point
-            if (env.Equals("Development", StringComparison.OrdinalIgnoreCase) && !string.IsNullOrWhiteSpace(configuration.GetValue<string>("LocalEncryptedDBConnectionString")))
+            if (env.Equals("Development", StringComparison.OrdinalIgnoreCase) && !string.IsNullOrWhiteSpace(configuration.GetConnectionString("LocalLegalHomeDB")))
             {
-                loaderOptions.OAuthDbConnString = configuration.GetValue<string>("LocalEncryptedDBConnectionString");
+                loaderOptions.OAuthDbConnString = configuration.GetConnectionString("LocalLegalHomeDB");
             }
 
             loaderOptions.ConnectorCosmosDbOptions = new CosmosDbOptions();

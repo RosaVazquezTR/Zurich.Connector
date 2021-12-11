@@ -1,5 +1,6 @@
 ﻿
 using System.Collections.Generic;
+using Newtonsoft.Json;
 using Zurich.Common.Cosmos;
 using Zurich.Connector.Data.Model;
 
@@ -23,6 +24,7 @@ namespace Zurich.Connector.Data.Repositories.CosmosDocuments
         /// <summary>
         /// Connector partition key
         /// </summary>
+        [JsonProperty("partitionkey")]
         public string PartitionKey { get { return CosmosConstants.ConnectorPartitionKey; } }
         /// <summary>
         /// Connector Info like title, description etc.
@@ -48,6 +50,7 @@ namespace Zurich.Connector.Data.Repositories.CosmosDocuments
         /// CDM Mapping of properties
         /// </summary>
         public CDMMapping CdmMapping { get; set; }
+
         /// <summary>
         /// DataSource Document
         /// </summary>
@@ -60,6 +63,10 @@ namespace Zurich.Connector.Data.Repositories.CosmosDocuments
         /// Host name
         /// </summary>
         public string HostName { get; set; }
+        /// <summary>
+        /// Determines whether to show pre release connectors 
+        /// </summary>
+        public bool PreRelease { get; set; }
     }
 
     public class ConnectorInfo

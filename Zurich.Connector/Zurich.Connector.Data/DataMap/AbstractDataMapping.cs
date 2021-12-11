@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
 using System;
@@ -7,6 +9,7 @@ using System.Collections.Specialized;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Web;
 using Zurich.Common.Models.OAuth;
 using Zurich.Common.Services.Security;
 using Zurich.Connector.Data.Factories;
@@ -14,6 +17,7 @@ using Zurich.Connector.Data.Model;
 using Zurich.Connector.Data.Repositories;
 using Zurich.Connector.Data.Repositories.CosmosDocuments;
 using Zurich.Connector.Data.Services;
+using Zurich.ProductData.Models;
 
 namespace Zurich.Connector.Data.DataMap
 {
@@ -28,17 +32,21 @@ namespace Zurich.Connector.Data.DataMap
 		protected IMapper _mapper;
 		protected IHttpBodyFactory _httpBodyFactory;
 		protected IHttpResponseFactory _httpResponseFactory;
+		protected IHttpContextAccessor _contextAccessor;
+		protected IOAuthApiRepository _oAuthApirepository;
 		protected OAuthOptions _oAuthOptions;
+		protected ILegalHomeAccessCheck _legalHomeAccessCheck;
+		protected IConfiguration _configuration;
 
 
-		public async virtual Task<T> GetAndMapResults<T>(ConnectorDocument dataTypeInformation, string transferToken = null, NameValueCollection query = null)
+		public async virtual Task<T> GetAndMapResults<T>(ConnectorDocument dataTypeInformation, string transferToken, NameValueCollection query, Dictionary<string, string> headers, Dictionary<string, string> requestParameters)
 		{
 			T results = default(T);
 
 			return results;
 		}
 
-		protected async Task<T> GetFromRepo<T>(ApiInformation apiInfo, ConnectorDocument connectorDocument, NameValueCollection query = null)
+		protected async Task<T> GetFromRepo<T>(ApiInformation apiInfo, ConnectorDocument connectorDocument, NameValueCollection query, Dictionary<string, string> requestParameter)
 		{
 			IHttpBodyService service = _httpBodyFactory.GetImplementation(apiInfo.Method);
 			string body = service.CreateBody(connectorDocument, query);
@@ -48,7 +56,7 @@ namespace Zurich.Connector.Data.DataMap
 			{
 				IHttpResponseService httpResponseService = _httpResponseFactory.GetImplementation(connectorDocument.Response.Type.ToString());
 				JToken jsonResponse = httpResponseService.GetJTokenResponse(response, connectorDocument.Response);
-				return await MapToCDM<T>(jsonResponse, connectorDocument.ResultLocation, connectorDocument);
+				return await MapToCDM<T>(jsonResponse, connectorDocument.ResultLocation, connectorDocument, requestParameter);
 			}
 			else
 			{
@@ -57,21 +65,31 @@ namespace Zurich.Connector.Data.DataMap
 		}
 
 		public async virtual Task<AppToken> RetrieveToken(string appCode, OAuthApplicationType? appType = null, 
-														  string locale = null, string grandType = null, bool? sendCredentialsInBody = false)
+														  string locale = null, string grandType = null, bool? sendCredentialsInBody = false, string productType = null)
 		{
 			AppToken token;
-			if (locale != null && grandType != null && appType.HasValue && sendCredentialsInBody.HasValue)
-			{
-				token = await _oAuthService.RequestNewToken(appCode, grandType, appType.Value, sendCredentialsInBody: sendCredentialsInBody.Value, locale: locale);
-			}
-			else
+			if (_legalHomeAccessCheck.isLegalHomeUser())
             {
-				token = await _oAuthService.GetToken(appCode);
+				if (locale != null && grandType != null && appType.HasValue && sendCredentialsInBody.HasValue)
+				{
+					token = await _oAuthService.RequestNewToken(appCode, grandType, appType.Value, sendCredentialsInBody: sendCredentialsInBody.Value, locale: locale);
+				}
+				else
+				{
+					token = await _oAuthService.GetToken(appCode, productType: string.IsNullOrEmpty(productType) ? null : new ProductType() { ProductTypeName = productType });
+				}
+				return token;
 			}
-			return token;
+            else
+            {
+				AppToken result = await _oAuthApirepository.GetToken(appCode);
+				return result;
+
+			}
+
 		}
 
-		public async virtual Task<T> MapToCDM<T>(JToken jsonResponse, string resultLocation, ConnectorDocument connectorDocument)
+		public async virtual Task<T> MapToCDM<T>(JToken jsonResponse, string resultLocation, ConnectorDocument connectorDocument, Dictionary<string, string> requestParameters)
 		{
 			// TODO: Remove this JToken logic when database is set up
 			bool isJToken = typeof(T).Name == "JToken";
@@ -104,7 +122,7 @@ namespace Zurich.Connector.Data.DataMap
 
 			try
 			{
-				return await PerformMapping(jsonResponse, connectorDocument);
+				return await PerformMapping(jsonResponse, connectorDocument, requestParameters);
 			}
 			catch (Exception e)
 			{
@@ -133,7 +151,7 @@ namespace Zurich.Connector.Data.DataMap
 			}
 		}
 
-		private async Task<dynamic> PerformMapping(JToken response, ConnectorDocument connectorDocument)
+		private async Task<dynamic> PerformMapping(JToken response, ConnectorDocument connectorDocument, Dictionary<string, string> requestParameters)
 		{
 			if (response == null)
 			{
@@ -144,13 +162,13 @@ namespace Zurich.Connector.Data.DataMap
 				JArray results = new JArray();
 				foreach (var result in response)
 				{
-					results.Add(await MapResult(result, connectorDocument));
+					results.Add(await MapResult(result, connectorDocument, requestParameters));
 				}
 				return (dynamic)results;
 			}
 			else if (response is JObject)
 			{
-				return await MapResult(response, connectorDocument);
+				return await MapResult(response, connectorDocument, requestParameters);
 			}
 			else
 			{
@@ -158,27 +176,27 @@ namespace Zurich.Connector.Data.DataMap
 			}
 		}
 
-		private async Task<dynamic> MapResult(dynamic apiResult, ConnectorDocument connector)
+		private async Task<dynamic> MapResult(dynamic apiResult, ConnectorDocument connector, Dictionary<string, string> requestParameters)
         {
 			JObject cdmResult = new JObject();
 			List<CDMElement> structuredProperties = connector?.CdmMapping?.structured;
 
 			if (structuredProperties != null)
-				cdmResult = await MapProperties(structuredProperties, apiResult);
+				cdmResult = await MapProperties(structuredProperties, apiResult, requestParameters);
 
 			List<CDMElement> unstructuredProperties = connector?.CdmMapping?.unstructured;
 
 			JObject additionalProps = new JObject();
 			if (unstructuredProperties != null)
-				additionalProps = await MapProperties(unstructuredProperties, apiResult);
+				additionalProps = await MapProperties(unstructuredProperties, apiResult, requestParameters);
 
-			if (!cdmResult.ContainsKey("AdditionalProperties"))
-				cdmResult["AdditionalProperties"] = additionalProps;
+			if (!cdmResult.ContainsKey(StructuredCDMProperties.AdditionalProperties))
+				cdmResult[StructuredCDMProperties.AdditionalProperties] = additionalProps;
 
 			return cdmResult;
 		}
 
-		private async Task<JObject> MapProperties(List<CDMElement> properties, dynamic apiResult)
+		private async Task<JObject> MapProperties(List<CDMElement> properties, dynamic apiResult, Dictionary<string, string> requestParameters)
 		{
 			JObject jObjectResult = new JObject();
 			foreach (var property in properties)
@@ -189,7 +207,11 @@ namespace Zurich.Connector.Data.DataMap
 					continue;
 				// Get the correct json property when not on the same level
 				string[] resultsLocation = property.responseElement.Split('.');
-
+				if (!string.IsNullOrEmpty(property.type) && (property.type.Equals(DataTypes.InterpolationString, StringComparison.OrdinalIgnoreCase)))
+				{
+					resultsLocation = new string[] { property.responseElement };
+				}
+				
 				var tempResult = apiResult;
 				foreach (string location in resultsLocation)
 				{
@@ -197,28 +219,35 @@ namespace Zurich.Connector.Data.DataMap
 					if (location.Contains('{'))
 					{
 						var match = Regex.Match(location, @"{(.*?)}");
-						var connectionId = match.Groups[1].ToString();
-						// TODO: Cache this datamapping so we don't have to call the DB for every result
-						var childConnector = await GetConnector(connectionId);
+						if (match.Success)
+						{
+							var connectionId = match.Groups[1].ToString();
+							// TODO: Cache this datamapping so we don't have to call the DB for every result
+							var childConnector = await GetConnector(connectionId);
 
-						tempResult = await MapToCDM<dynamic>(tempResult,
-																childConnector.ResultLocation,
-																childConnector);
+							tempResult = await MapToCDM<dynamic>(tempResult,
+																	childConnector.ResultLocation,
+																	childConnector, requestParameters);
+						}
 					}
 					// Flatten array results instead 
 					else if (location.Contains('['))
 					{
 						var match = Regex.Match(location, @"\[(.*?):(.*?)\]");
-						string propertyName = match.Groups[1].ToString();
-						string valueToFind = match.Groups[2].ToString();
-						JArray resultArray = (JArray)tempResult;
-						tempResult = resultArray.FirstOrDefault(x => x[propertyName].ToString() == valueToFind);
+						if (match.Success)
+						{
+							string propertyName = match.Groups[1].ToString();
+							string valueToFind = match.Groups[2].ToString();
+							JArray resultArray = (JArray)tempResult;
+							tempResult = resultArray.FirstOrDefault(x => x[propertyName].ToString() == valueToFind);
+						}
 					}
 					else
-					{
-						tempResult = tempResult[location];
-					}
-					if (tempResult == null)
+                    {
+                        tempResult = tempResult[location];
+                        tempResult = ModifyResult(property, tempResult, requestParameters);
+                    }
+                    if (tempResult == null)
 						break;
 				}
 
@@ -229,11 +258,65 @@ namespace Zurich.Connector.Data.DataMap
 		}
 
 		/// <summary>
-		/// Needed to get connectors for children connectors
+		/// Modifies the returned results based on size.  If this starts to get big we should probably move it to its own class
 		/// </summary>
-		/// <param name="connectionId">The id of the connector the will be pulled from cosmos</param>
-		/// <returns>Connector document from cosmos</returns>
-		private async Task<ConnectorDocument> GetConnector(string connectionId)
+		/// <param name="property">Current property from the CDM mapping in Cosmos</param>
+		/// <param name="tempResult">The current result for the JObject</param>
+		/// <param name="requestParameters">All the request parameters coming in</param>
+		/// <returns></returns>
+        private dynamic ModifyResult(CDMElement property, dynamic tempResult, Dictionary<string, string> requestParameters)
+        {
+			dynamic response = tempResult;
+
+			if (!string.IsNullOrEmpty(property.type) && property.type.Equals(DataTypes.Bool, StringComparison.OrdinalIgnoreCase))
+            {
+				bool.TryParse((string)response, out bool boolValue);
+				response = boolValue;
+			}
+			else if (!string.IsNullOrEmpty(property.type) && property.type.Equals(DataTypes.InterpolationString, StringComparison.OrdinalIgnoreCase))
+			{
+				var propertyResponse = property.responseElement;
+				var matches = Regex.Matches(propertyResponse, @"\((%*[\w()]+)\)");
+				if (matches.Any())
+				{
+					foreach(Match match in matches)
+                    {
+						if(match.Groups.Count >= 2)
+						{
+							string propertyName = match.Groups[1].Value.Replace("%", "");
+							string value = string.Empty;
+							// TODO: This should probably go elsewhere, but at the moment not sure where else to put it.
+							if (propertyName.Equals("NewGuid()", StringComparison.OrdinalIgnoreCase))
+							{
+								value = Guid.NewGuid().ToString();
+							}
+							else
+							{
+								if (requestParameters != null && requestParameters.ContainsKey(propertyName))
+									value = requestParameters[propertyName];
+								else
+									value = _configuration.GetValue<string>(propertyName);
+							}
+							if (match.Groups[1].Value.StartsWith("%"))
+							{
+								value = HttpUtility.UrlEncode(value);
+							}
+							propertyResponse = propertyResponse.Replace(match.Groups[0].Value, value);
+						}
+                    }
+				}
+				response = propertyResponse;
+			}
+
+			return response;
+        }
+
+        /// <summary>
+        /// Needed to get connectors for children connectors
+        /// </summary>
+        /// <param name="connectionId">The id of the connector the will be pulled from cosmos</param>
+        /// <returns>Connector document from cosmos</returns>
+        private async Task<ConnectorDocument> GetConnector(string connectionId)
 		{
 			var connectorDocument = await _cosmosContext.GetDocument<ConnectorDocument>
 										(CosmosConstants.ConnectorContainerId, connectionId, CosmosConstants.ConnectorPartitionKey);
@@ -248,6 +331,5 @@ namespace Zurich.Connector.Data.DataMap
 			return connectorDocument;
 		}
 
-		
 	}
 }

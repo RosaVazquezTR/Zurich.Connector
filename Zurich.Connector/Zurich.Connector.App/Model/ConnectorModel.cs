@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using Zurich.Connector.App.Enum;
 using Zurich.Connector.Data.Model;
 
@@ -62,6 +58,10 @@ namespace Zurich.Connector.App.Model
         /// Registration status
         /// </summary>
         public RegistrationStatus RegistrationStatus { get; set; }
+        /// <summary>
+        /// Determines whether to show pre release connectors 
+        /// </summary>
+        public bool PreRelease { get; set; }
 
     }
 
@@ -90,6 +90,10 @@ namespace Zurich.Connector.App.Model
         /// Version
         /// </summary>
         public string Version { get; set; }
+        /// <summary>
+        /// Gets or sets the subtype
+        /// </summary>
+        public string SubType { get; set; }
         /// <summary>
         /// Flag to indicate if a dynamic filter is available
         /// </summary>

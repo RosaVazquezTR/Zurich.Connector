@@ -3,8 +3,10 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
 using Zurich.Common.Exceptions;
@@ -55,13 +57,25 @@ namespace Zurich.Connector.Web.Controllers
                 {
                     throw new ResourceNotFoundException("Connector or data not found");
                 }
-                var jsonResults = JsonConvert.SerializeObject(results);
+
+                var jsonSettings = new JsonSerializerSettings
+                {
+                    ContractResolver = new Newtonsoft.Json.Serialization.CamelCasePropertyNamesContractResolver()
+                };
+
+                // Making dynamic object properties camel cased requires a workaround of converting a JToken to ExpandoObject and then serializing
+                // https://briandunnington.github.io/jobject_serialization
+                JToken jToken = JToken.FromObject(results);
+                dynamic expando = jToken.Type == JTokenType.Array ? jToken.ToObject<List<ExpandoObject>>() : jToken.ToObject<ExpandoObject>();
+                var jsonResults = JsonConvert.SerializeObject(expando, jsonSettings);
+
                 return new ContentResult
                 {
                     Content = jsonResults,
                     ContentType = System.Net.Mime.MediaTypeNames.Application.Json,
                     StatusCode = StatusCodes.Status200OK
                 };
+
             }
             catch (Exception e)
             {
@@ -156,12 +170,12 @@ namespace Zurich.Connector.Web.Controllers
             }
 
             var connector = await _connectorService.GetConnector(registrationModel.ConnectorId);
-            if (connector == null)
+            ConnectorListViewModel connectorResults = _mapper.Map<ConnectorListViewModel>(connector);
+            if (connectorResults == null)
             {
                 return BadRequest("Connector Id must point to a valid connector");
             }
-
-            var registered = await _registrationService.RegisterDataSource(connector.Id, connector.DataSource.AppCode, connector.DataSource.RegistrationMode);
+            var registered = await _registrationService.RegisterConnector(connectorResults.Id, connectorResults.DataSource.AppCode, connectorResults.DataSource.RegistrationInfo.RegistrationMode);
             if (!registered)
             {
                 return BadRequest();

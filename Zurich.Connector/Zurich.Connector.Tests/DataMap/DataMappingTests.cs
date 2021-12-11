@@ -1,25 +1,28 @@
+using AutoMapper;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Zurich.Common.Models.OAuth;
 using Zurich.Common.Services.Security;
+using Zurich.Connector.Data;
 using Zurich.Connector.Data.DataMap;
+using Zurich.Connector.Data.Factories;
 using Zurich.Connector.Data.Model;
 using Zurich.Connector.Data.Repositories;
-using Zurich.ProductData.Models;
-using AutoMapper;
 using Zurich.Connector.Data.Repositories.CosmosDocuments;
-using Zurich.Common.Repositories.Cosmos;
 using Zurich.Connector.Data.Services;
-using Zurich.Connector.Data.Factories;
-using Newtonsoft.Json.Linq;
+using Zurich.ProductData.Models;
 
 namespace Zurich.Connector.Tests
 {
-	[TestClass]
+    [TestClass]
 	public class DataMappingTests
 	{
 		private Mock<IRepository> _mockRepository;
@@ -32,6 +35,10 @@ namespace Zurich.Connector.Tests
 		private Mock<IHttpResponseFactory> _mockHttpResponseFactory;
 		private Mock<IMapper> _mockMapper;
 		private OAuthOptions _fakeOAuthOptions;
+        private Mock<IHttpContextAccessor> _mockContextAccessor;
+        private Mock<IOAuthApiRepository> _mockOAuthApirepository;
+		private Mock<ILegalHomeAccessCheck> _mockLegalHomeAccessCheck;
+		private IConfiguration _fakeConfiguration;
 
 		[TestInitialize]
 		public void TestInitialize()
@@ -44,12 +51,17 @@ namespace Zurich.Connector.Tests
 			_mockHttpBodyFactory = new Mock<IHttpBodyFactory>();
 			_mockHttpResponseFactory = new Mock<IHttpResponseFactory>();
 			_fakeOAuthOptions = new OAuthOptions();
+            _mockContextAccessor = new Mock<IHttpContextAccessor>();
+            _mockOAuthApirepository = new Mock<IOAuthApiRepository>();
+			_mockLegalHomeAccessCheck = new Mock<ILegalHomeAccessCheck>();
+			_fakeConfiguration = Utility.CreateConfiguration("fakeKey", "fakeValue");
 
-			_fakeOAuthOptions.Connections = new Dictionary<string, OAuthConnection>();
+            _fakeOAuthOptions.Connections = new Dictionary<string, OAuthConnection>();
 
 			// feels like this won't change
 			AppToken token = new AppToken() { access_token = "fakeToken" };
 			_mockOAuthService.Setup(x => x.GetToken(It.IsAny<string>(), It.IsAny<OAuthApplicationType>(), It.IsAny<bool>(), It.IsAny<string>(), It.IsAny<ProductType>())).Returns(Task.FromResult(token));
+			_mockOAuthApirepository.Setup(x => x.GetToken(It.IsAny<string>())).Returns(Task.FromResult(token));
 			_mockCosmosDocumentReader = new Mock<ConnectorCosmosContext>(null, null);
 			_mockMapper = new Mock<IMapper>();
 		}
@@ -92,6 +104,7 @@ namespace Zurich.Connector.Tests
 						""size"": 18733,
 						""subclass_description"": """",
 						""type"": ""WORDX"",
+						""boolTest"": ""true"",
 						""type_description"": ""WORD 2007"",
 						""extension"": ""DOCX"",
 						""version"": 1,
@@ -154,6 +167,7 @@ namespace Zurich.Connector.Tests
 						""subclass_description"": """",
 						""type_description"": ""WORD 2007"",
 						""type"": ""WORDX"",
+						""boolTest"": ""true"",
 						""extension"": ""DOCX"",
 						""version"": 1,
 						""workspace_name"": ""TestMy Matter"",
@@ -256,6 +270,11 @@ namespace Zurich.Connector.Tests
 
 		#endregion
 
+		private DataMappingOAuth CreateDataMapping()
+        {
+			return new DataMappingOAuth(_mockRepository.Object, _mockDataMappingRepository.Object, _mockOAuthService.Object, _mockLoggerOAuth.Object, _mockCosmosDocumentReader.Object, _mockMapper.Object, _mockHttpBodyFactory.Object, _mockHttpResponseFactory.Object, _mockContextAccessor.Object, _mockOAuthApirepository.Object, _fakeOAuthOptions, _mockLegalHomeAccessCheck.Object, _fakeConfiguration);
+		}
+
 		[TestMethod]
 		public async Task TestMapping()
 		{
@@ -278,34 +297,34 @@ namespace Zurich.Connector.Tests
 			{
 				structured = new List<CDMElement>() {
 							{
-								new CDMElement(){  name = "Name", responseElement ="name"}
+								new CDMElement(){  name = "Name", responseElement ="name", type = "string"}
 							},
 							{
-								new CDMElement(){ name="Id", responseElement ="id"}
+								new CDMElement(){ name="Id", responseElement ="id", type = "string"}
 							},
 							{
-								new CDMElement(){ name="WebLink", responseElement =""}
+								new CDMElement(){ name="WebLink", responseElement ="", type = "string"}
 							},
 							{
-								new CDMElement(){ name="LastOpened", responseElement =""}
+								new CDMElement(){ name="LastOpened", responseElement ="", type = "string"}
 							},
 							{
-								new CDMElement(){ name="LastUpdated", responseElement ="file_edit_date"}
+								new CDMElement(){ name="LastUpdated", responseElement ="file_edit_date", type = "string"}
 							},
 							{
-								new CDMElement(){ name="LastModifiedUser", responseElement ="last_user_description"}
+								new CDMElement(){ name="LastModifiedUser", responseElement ="last_user_description", type = "string"}
 							},
 							{
-								new CDMElement(){ name="CreatedDate", responseElement ="file_create_date"}
+								new CDMElement(){ name="CreatedDate", responseElement ="file_create_date", type = "string"}
 							},
 							{
-								new CDMElement(){ name="CreatedByUser", responseElement ="author_description"}
+								new CDMElement(){ name="CreatedByUser", responseElement ="author_description", type = "string"}
 							},
 							{
-								new CDMElement(){ name="FileType", responseElement ="type"}
+								new CDMElement(){ name="FileType", responseElement ="type", type = "string"}
 							},
 							{
-								new CDMElement(){ name="FileTypeExtended", responseElement ="type_description"}
+								new CDMElement(){ name="FileTypeExtended", responseElement ="type_description", type = "string"}
 							}
 				}
 			};
@@ -329,10 +348,10 @@ namespace Zurich.Connector.Tests
 			mockResponseService.Setup(x => x.GetJTokenResponse(It.IsAny<string>(), It.IsAny<ConnectorResponse>())).Returns(JToken.Parse(TwoDocumentsJson));
 			_mockHttpResponseFactory.Setup(x => x.GetImplementation(It.IsAny<string>())).Returns(mockResponseService.Object);
 
-			DataMappingOAuth documentMap = new DataMappingOAuth(_mockRepository.Object, _mockDataMappingRepository.Object, _mockOAuthService.Object, _mockLoggerOAuth.Object, _mockCosmosDocumentReader.Object, _mockMapper.Object, _mockHttpBodyFactory.Object, _mockHttpResponseFactory.Object, _fakeOAuthOptions);
+			DataMappingOAuth documentMap = CreateDataMapping();
 
 			// ACT
-			dynamic documents = await documentMap.GetAndMapResults<dynamic>(connectorDocument, null);
+			dynamic documents = await documentMap.GetAndMapResults<dynamic>(connectorDocument, null, null, null, null);
 
 			// ASSERT
 			Assert.IsNotNull(documents);
@@ -360,34 +379,34 @@ namespace Zurich.Connector.Tests
 			{
 				structured = new List<CDMElement>() {
 							{
-								new CDMElement(){ name="Name", responseElement ="name"}
+								new CDMElement(){ name="Name", responseElement ="name", type = "string"}
 							},
 							{
-								new CDMElement(){ name="Id", responseElement ="id"}
+								new CDMElement(){ name="Id", responseElement ="id", type = "string"}
 							},
 							{
-								new CDMElement(){ name="WebLink", responseElement =""}
+								new CDMElement(){ name="WebLink", responseElement ="", type = "string"}
 							},
 							{
-								new CDMElement(){ name="LastOpened", responseElement =""}
+								new CDMElement(){ name="LastOpened", responseElement ="", type = "string"}
 							},
 							{
-								new CDMElement(){ name="LastUpdated", responseElement ="file_edit_date"}
+								new CDMElement(){ name="LastUpdated", responseElement ="file_edit_date", type = "string"}
 							},
 							{
-								new CDMElement(){ name="LastModifiedUser", responseElement ="last_user_description"}
+								new CDMElement(){ name="LastModifiedUser", responseElement ="last_user_description", type = "string"}
 							},
 							{
-								new CDMElement(){ name="CreatedDate", responseElement ="file_create_date"}
+								new CDMElement(){ name="CreatedDate", responseElement ="file_create_date", type = "string"}
 							},
 							{
-								new CDMElement(){ name="CreatedByUser", responseElement ="author_description"}
+								new CDMElement(){ name="CreatedByUser", responseElement ="author_description", type = "string"}
 							},
 							{
-								new CDMElement(){ name="FileType", responseElement ="type"}
+								new CDMElement(){ name="FileType", responseElement ="type", type = "string"}
 							},
 							{
-								new CDMElement(){ name="FileTypeExtended", responseElement ="type_description"}
+								new CDMElement(){ name="FileTypeExtended", responseElement ="type_description", type = "string"}
 							}
 				}
 			};
@@ -412,10 +431,10 @@ namespace Zurich.Connector.Tests
 			mockResponseService.Setup(x => x.GetJTokenResponse(It.IsAny<string>(), It.IsAny<ConnectorResponse>())).Returns(JToken.Parse(TwoDocumentsListJson));
 			_mockHttpResponseFactory.Setup(x => x.GetImplementation(It.IsAny<string>())).Returns(mockResponseService.Object);
 
-			DataMappingOAuth documentMap = new DataMappingOAuth(_mockRepository.Object, _mockDataMappingRepository.Object, _mockOAuthService.Object, _mockLoggerOAuth.Object, _mockCosmosDocumentReader.Object, _mockMapper.Object, _mockHttpBodyFactory.Object, _mockHttpResponseFactory.Object, _fakeOAuthOptions);
+			DataMappingOAuth documentMap = CreateDataMapping();
 
 			// ACT
-			dynamic documents = await documentMap.GetAndMapResults<dynamic>(connectorDocument);
+			dynamic documents = await documentMap.GetAndMapResults<dynamic>(connectorDocument, null, null, null, null);
 
 			// ASSERT
 			Assert.IsNotNull(documents);
@@ -444,25 +463,28 @@ namespace Zurich.Connector.Tests
 			{
 				structured = new List<CDMElement>() {
 							{
-								new CDMElement(){ name="Name", responseElement ="name"}
+								new CDMElement(){ name="Name", responseElement ="name", type = "string"}
 							},
 							{
-								new CDMElement(){ name="Id", responseElement ="id"}
+								new CDMElement(){ name="Id", responseElement ="id", type = "string"}
 							},
 							{
-								new CDMElement(){ name="WebLink", responseElement =""}
+								new CDMElement(){ name="WebLink", responseElement ="", type = "string"}
 							},
 							{
-								new CDMElement(){ name="ComplexObjectFieldOne", responseElement ="complexObject.testItem1"}
+								new CDMElement(){ name="ComplexObjectFieldOne", responseElement ="complexObject.testItem1", type = "string"}
 							},
 							{
-								new CDMElement(){ name="ComplexObjectLevelTwo", responseElement ="complexObject.testItem3.level2"}
+								new CDMElement(){ name="ComplexObjectLevelTwo", responseElement ="complexObject.testItem3.level2", type = "string"}
 							},
 							{
-								new CDMElement(){ name="ArrayValue1", responseElement ="testArray.[name:testIndex2].description"}
+								new CDMElement(){ name="ArrayValue1", responseElement ="testArray.[name:testIndex2].description", type = "string"}
 							},
 							{
-								new CDMElement(){ name="ArrayValue2", responseElement ="testArray.[description:fakeDesc3].name"}
+								new CDMElement(){ name="ArrayValue2", responseElement ="testArray.[description:fakeDesc3].name", type = "string"}
+							},
+							{
+								new CDMElement(){ name="boolean", responseElement ="boolTest", type = DataTypes.Bool}
 							}
 				}
 			};
@@ -486,10 +508,10 @@ namespace Zurich.Connector.Tests
 			mockResponseService.Setup(x => x.GetJTokenResponse(It.IsAny<string>(), It.IsAny<ConnectorResponse>())).Returns(JToken.Parse(TwoDocumentsJson));
 			_mockHttpResponseFactory.Setup(x => x.GetImplementation(It.IsAny<string>())).Returns(mockResponseService.Object);
 
-			DataMappingTransfer documentMap = new DataMappingTransfer(_mockRepository.Object, _mockDataMappingRepository.Object, _mockOAuthService.Object, _mockLoggerTransfer.Object, _mockCosmosDocumentReader.Object, _mockMapper.Object, _mockHttpBodyFactory.Object, _mockHttpResponseFactory.Object, _fakeOAuthOptions);
+			DataMappingOAuth documentMap = CreateDataMapping();
 
 			// ACT
-			dynamic documents = await documentMap.GetAndMapResults<dynamic>(connectorDocument, "fakeTransferToken");
+			dynamic documents = await documentMap.GetAndMapResults<dynamic>(connectorDocument, "fakeTransferToken", null, null, null);
 
 			// ASSERT
 			Assert.IsNotNull(documents);
@@ -498,6 +520,7 @@ namespace Zurich.Connector.Tests
 			Assert.AreEqual("level 2 variable", documents[0].ComplexObjectLevelTwo.ToString());
 			Assert.AreEqual("fakeDesc2", documents[0].ArrayValue1.ToString());
 			Assert.AreEqual("testIndex3", documents[0].ArrayValue2.ToString());
+			Assert.AreEqual(true, (bool)documents[0].boolean);
 		}
 
         [TestMethod]
@@ -596,10 +619,10 @@ namespace Zurich.Connector.Tests
 			mockResponseService.Setup(x => x.GetJTokenResponse(It.IsAny<string>(), It.IsAny<ConnectorResponse>())).Returns(JToken.Parse(TwoDocumentsJson));
 			_mockHttpResponseFactory.Setup(x => x.GetImplementation(It.IsAny<string>())).Returns(mockResponseService.Object);
 
-			DataMappingTransfer documentMap = new DataMappingTransfer(_mockRepository.Object, _mockDataMappingRepository.Object, _mockOAuthService.Object, _mockLoggerTransfer.Object, _mockCosmosDocumentReader.Object, _mockMapper.Object, _mockHttpBodyFactory.Object, _mockHttpResponseFactory.Object, _fakeOAuthOptions);
+			DataMappingOAuth documentMap = CreateDataMapping();
 
 			// ACT
-			dynamic documents = await documentMap.GetAndMapResults<dynamic>(connectorDocument1, "fakeTransferToken");
+			dynamic documents = await documentMap.GetAndMapResults<dynamic>(connectorDocument1, "fakeTransferToken", null, null, null);
 
             // ASSERT
             Assert.IsNotNull(documents);
@@ -609,5 +632,248 @@ namespace Zurich.Connector.Tests
             Assert.AreEqual("fakeDesc2", documents[0].ObjectArray[1].DescriptionProp.ToString());
         }
 
-    }
+		[TestMethod]
+		public async Task TestMappingWithLegalHomeAccess()
+		{
+			// ARRANGE
+			string appCode = "TestApp";
+
+			_mockRepository.Setup(x => x.MakeRequest(It.IsAny<ApiInformation>(), It.IsAny<NameValueCollection>(), It.IsAny<string>())).Returns(Task.FromResult(TwoDocumentsListJson));
+
+			ConnectorDocument connectorDocument = new ConnectorDocument()
+			{
+				Request = new ConnectorRequest()
+				{ EndpointPath = "https://fakeaddress.thomsonreuters.com" },
+				Response = new ConnectorResponse()
+				{
+					Type = ResponseContentType.JSON
+				}
+			};
+			connectorDocument.CdmMapping = new CDMMapping()
+			{
+				structured = new List<CDMElement>() {
+							{
+								new CDMElement(){ name="Name", responseElement ="name"}
+							},
+							{
+								new CDMElement(){ name="Id", responseElement ="id"}
+							},
+							{
+								new CDMElement(){ name="WebLink", responseElement =""}
+							},
+							{
+								new CDMElement(){ name="LastOpened", responseElement =""}
+							},
+							{
+								new CDMElement(){ name="LastUpdated", responseElement ="file_edit_date"}
+							},
+							{
+								new CDMElement(){ name="LastModifiedUser", responseElement ="last_user_description"}
+							},
+							{
+								new CDMElement(){ name="CreatedDate", responseElement ="file_create_date"}
+							},
+							{
+								new CDMElement(){ name="CreatedByUser", responseElement ="author_description"}
+							},
+							{
+								new CDMElement(){ name="FileType", responseElement ="type"}
+							},
+							{
+								new CDMElement(){ name="FileTypeExtended", responseElement ="type_description"}
+							}
+				}
+			};
+
+			connectorDocument.DataSource = new DataSourceDocument()
+			{
+				appCode = appCode,
+				securityDefinition = new SecurityDefinition()
+				{
+					defaultSecurityDefinition = new SecurityDefinitionDetails()
+					{
+						authorizationHeader = "differentAuthHeader"
+					}
+				}
+			};
+
+
+			Mock<IHttpBodyService> mockBodyService = new Mock<IHttpBodyService>();
+			_mockHttpBodyFactory.Setup(x => x.GetImplementation(It.IsAny<string>())).Returns(mockBodyService.Object);
+
+			Mock<IHttpResponseService> mockResponseService = new Mock<IHttpResponseService>();
+			mockResponseService.Setup(x => x.GetJTokenResponse(It.IsAny<string>(), It.IsAny<ConnectorResponse>())).Returns(JToken.Parse(TwoDocumentsListJson));
+			_mockHttpResponseFactory.Setup(x => x.GetImplementation(It.IsAny<string>())).Returns(mockResponseService.Object);
+			Mock<HttpContext> mockHttpContext = new Mock<HttpContext>();
+			var claims = new ClaimsPrincipal();
+			var claimsIdent = new ClaimsIdentity(new List<Claim>() { new Claim("scope", DataConstants.LegalHomeScope) });
+			claims.AddIdentity(claimsIdent);
+			mockHttpContext.Setup(x => x.User).Returns(claims);
+			_mockContextAccessor.Setup(x => x.HttpContext).Returns(mockHttpContext.Object);
+
+			DataMappingOAuth documentMap = CreateDataMapping();
+
+			// ACT
+			dynamic documents = await documentMap.GetAndMapResults<dynamic>(connectorDocument, null, null, null, null);
+
+			// ASSERT
+			Assert.IsNotNull(documents);
+			Assert.AreEqual(2, documents.Count);
+			//_mockOAuthService.Verify(x => x.GetToken(It.IsAny<string>(), It.IsAny<OAuthApplicationType>(), It.IsAny<bool>(), It.IsAny<string>(), It.IsAny<ProductType>()), Times.Once());
+		}
+
+		[TestMethod]
+		public async Task TestMappingWithoutLegalHomeAccess()
+		{
+			// ARRANGE
+			string appCode = "TestApp";
+
+			_mockRepository.Setup(x => x.MakeRequest(It.IsAny<ApiInformation>(), It.IsAny<NameValueCollection>(), It.IsAny<string>())).Returns(Task.FromResult(TwoDocumentsListJson));
+
+			ConnectorDocument connectorDocument = new ConnectorDocument()
+			{
+				Request = new ConnectorRequest()
+				{ EndpointPath = "https://fakeaddress.thomsonreuters.com" },
+				Response = new ConnectorResponse()
+				{
+					Type = ResponseContentType.JSON
+				}
+			};
+			connectorDocument.CdmMapping = new CDMMapping()
+			{
+				structured = new List<CDMElement>() {
+							{
+								new CDMElement(){ name="Name", responseElement ="name"}
+							},
+							{
+								new CDMElement(){ name="Id", responseElement ="id"}
+							},
+							{
+								new CDMElement(){ name="WebLink", responseElement =""}
+							},
+							{
+								new CDMElement(){ name="LastOpened", responseElement =""}
+							},
+							{
+								new CDMElement(){ name="LastUpdated", responseElement ="file_edit_date"}
+							},
+							{
+								new CDMElement(){ name="LastModifiedUser", responseElement ="last_user_description"}
+							},
+							{
+								new CDMElement(){ name="CreatedDate", responseElement ="file_create_date"}
+							},
+							{
+								new CDMElement(){ name="CreatedByUser", responseElement ="author_description"}
+							},
+							{
+								new CDMElement(){ name="FileType", responseElement ="type"}
+							},
+							{
+								new CDMElement(){ name="FileTypeExtended", responseElement ="type_description"}
+							}
+				}
+			};
+
+			connectorDocument.DataSource = new DataSourceDocument()
+			{
+				appCode = appCode,
+				securityDefinition = new SecurityDefinition()
+				{
+					defaultSecurityDefinition = new SecurityDefinitionDetails()
+					{
+						authorizationHeader = "differentAuthHeader"
+					}
+				}
+			};
+
+
+			Mock<IHttpBodyService> mockBodyService = new Mock<IHttpBodyService>();
+			_mockHttpBodyFactory.Setup(x => x.GetImplementation(It.IsAny<string>())).Returns(mockBodyService.Object);
+
+			Mock<IHttpResponseService> mockResponseService = new Mock<IHttpResponseService>();
+			mockResponseService.Setup(x => x.GetJTokenResponse(It.IsAny<string>(), It.IsAny<ConnectorResponse>())).Returns(JToken.Parse(TwoDocumentsListJson));
+			_mockHttpResponseFactory.Setup(x => x.GetImplementation(It.IsAny<string>())).Returns(mockResponseService.Object);
+
+			DataMappingOAuth documentMap = CreateDataMapping();
+
+			// ACT
+			dynamic documents = await documentMap.GetAndMapResults<dynamic>(connectorDocument, null, null, null, null);
+
+			// ASSERT
+			Assert.IsNotNull(documents);
+			Assert.AreEqual(2, documents.Count);
+		}
+
+		[TestMethod]
+		public async Task VerifyModifyResult()
+		{
+			// ARRANGE
+			string appCode = "TestApp";
+
+			_mockRepository.Setup(x => x.MakeRequest(It.IsAny<ApiInformation>(), It.IsAny<NameValueCollection>(), It.IsAny<string>())).Returns(Task.FromResult(TwoDocumentsJson));
+
+			ConnectorDocument connectorDocument = new ConnectorDocument()
+			{
+				ResultLocation = "data.results",
+				Request = new ConnectorRequest()
+				{ EndpointPath = "https://fakeaddress.thomsonreuters.com" },
+				Response = new ConnectorResponse()
+				{
+					Type = ResponseContentType.JSON
+				}
+			};
+			connectorDocument.CdmMapping = new CDMMapping()
+			{
+				structured = new List<CDMElement>() {
+							{
+								new CDMElement(){ name="Name", responseElement ="name", type = "string"}
+							},
+							{
+								new CDMElement(){ name="Id", responseElement ="id", type = "string"}
+							},
+							{
+								new CDMElement(){ name="url", responseElement ="https://fakeurl.tr.com/(notEncoded)/files?q=(%Query)&t=(doesntExist)", type = DataTypes.InterpolationString}
+							},
+							{
+								new CDMElement(){ name="boolean", responseElement ="boolTest", type = DataTypes.Bool}
+							}
+				}
+			};
+
+			connectorDocument.DataSource = new DataSourceDocument()
+			{
+				appCode = appCode,
+				securityDefinition = new SecurityDefinition()
+				{
+					defaultSecurityDefinition = new SecurityDefinitionDetails()
+					{
+						authorizationHeader = "differentAuthHeader"
+					}
+				}
+			};
+
+			Mock<IHttpBodyService> mockBodyService = new Mock<IHttpBodyService>();
+			_mockHttpBodyFactory.Setup(x => x.GetImplementation(It.IsAny<string>())).Returns(mockBodyService.Object);
+
+			Mock<IHttpResponseService> mockResponseService = new Mock<IHttpResponseService>();
+			mockResponseService.Setup(x => x.GetJTokenResponse(It.IsAny<string>(), It.IsAny<ConnectorResponse>())).Returns(JToken.Parse(TwoDocumentsJson));
+			_mockHttpResponseFactory.Setup(x => x.GetImplementation(It.IsAny<string>())).Returns(mockResponseService.Object);
+
+			DataMappingOAuth documentMap = CreateDataMapping();
+
+			Dictionary<string, string> fakeRequestparams = new Dictionary<string, string>();
+			fakeRequestparams.Add("Query", "this is a fake search");
+			fakeRequestparams.Add("notEncoded", "not/encoded");
+
+			// ACT
+			dynamic documents = await documentMap.GetAndMapResults<dynamic>(connectorDocument, null, null, null, fakeRequestparams);
+
+			// ASSERTAssert.IsNotNull(documents);
+			Assert.IsNotNull(documents);
+			Assert.AreEqual(2, documents.Count);
+			Assert.AreEqual(true, (bool)documents[0].boolean);
+			Assert.AreEqual(@"https://fakeurl.tr.com/not/encoded/files?q=this+is+a+fake+search&t=", (string)documents[0].url);
+		}
+	}
 }

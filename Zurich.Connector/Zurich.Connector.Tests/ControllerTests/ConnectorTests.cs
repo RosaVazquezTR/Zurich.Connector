@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,11 +15,10 @@ using Zurich.Connector.Data.Services;
 using Zurich.Connector.Tests.Common;
 using Zurich.Connector.Web;
 using Zurich.Connector.Web.Controllers;
-using Zurich.Connector.Web.Models;
 
 namespace Zurich.Connector.Tests.ControllerTests
 {
-	[TestClass]
+    [TestClass]
 	public class ConnectorTests
 	{
 		private Mock<IConnectorService> _mockConnectorservice;
@@ -43,7 +43,21 @@ namespace Zurich.Connector.Tests.ControllerTests
 		#region json Strings
 
 		private const string TwoDocumentsListJson = @"
-		[{
+		{
+			""results"": [{
+				""author_description"": ""Ryan Hunecke"",
+				""author"": ""RYAN.HUNECKE"",
+				""class"": ""DOC"",
+				""class_description"": ""Document""
+			}, {
+				""author_description"": ""Sally Sales"",
+				""author"": ""ALEX.PRICE""
+			}
+		]}";
+
+		private const string TwoDocumentsListArrayJson = @"
+		[
+			{
 				""author_description"": ""Ryan Hunecke"",
 				""author"": ""RYAN.HUNECKE"",
 				""class"": ""DOC"",
@@ -55,25 +69,26 @@ namespace Zurich.Connector.Tests.ControllerTests
 		]";
 
 		private const string StaticFilterJson = @"
-		[{
-				{
-            ""name"": ""Commercial"",
-            ""description"": ""Commercial"",
-            ""isMultiselect"": ""true"",
-            ""requestParameter"": ""Commercial"",
-            ""filterlist"": [
-                {
-                    ""name"": ""Advertising and Marketing"",
-                    ""id"": ""0-103-1114""
+		{
+			""results"":[{
+				""name"": ""Commercial"",
+				""description"": ""Commercial"",
+				""isMultiselect"": ""true"",
+				""requestParameter"": ""Commercial"",
+				""filterlist"": [
+					{
+						""name"": ""Advertising and Marketing"",
+						""id"": ""0-103-1114""
 
-				},
-                {
-                    ""name"": ""Agency, Distribution & Franchising"",
-                    ""id"": ""8-321-0007""
+					},
+					{
+						""name"": ""Agency, Distribution & Franchising"",
+						""id"": ""8-321-0007""
 
-				},
-                         ]
-        }";
+					},
+							 ]
+			}]
+		}";
 
 		//Intialization of test response data //
 		string connectorid = "101";
@@ -230,15 +245,32 @@ namespace Zurich.Connector.Tests.ControllerTests
 		#endregion
 
 		[TestMethod]
-		public async Task CallConnectorData()
+		public async Task CallConnectorDataReturnObject()
 		{
 			// ARRANGE
-			_mockConnectorDataService.Setup(x => x.GetConnectorData(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(),It.IsAny<Dictionary<string, string>>(), It.IsAny<bool>())).Returns(Task.FromResult<dynamic>(TwoDocumentsListJson));
+			_mockConnectorDataService.Setup(x => x.GetConnectorData(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(),It.IsAny<Dictionary<string, string>>(), It.IsAny<bool>())).Returns(Task.FromResult<dynamic>(JsonConvert.DeserializeObject(TwoDocumentsListJson)));
 
 			ConnectorsController connector = CreateConnectorsController();
 
 			// ACT
 			var response = await connector.ConnectorData("fakeId", "fakeHost", null,true);
+
+			// ASSERT
+			_mockConnectorDataService.Verify(x => x.GetConnectorData(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<bool>()), Times.Exactly(1));
+			var result = (ContentResult)response.Result;
+			Assert.AreEqual(StatusCodes.Status200OK, result.StatusCode);
+		}
+
+		[TestMethod]
+		public async Task CallConnectorDataReturnArray()
+		{
+			// ARRANGE
+			_mockConnectorDataService.Setup(x => x.GetConnectorData(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<bool>())).Returns(Task.FromResult<dynamic>(JsonConvert.DeserializeObject(TwoDocumentsListArrayJson)));
+
+			ConnectorsController connector = CreateConnectorsController();
+
+			// ACT
+			var response = await connector.ConnectorData("fakeId", "fakeHost", null, true);
 
 			// ASSERT
 			_mockConnectorDataService.Verify(x => x.GetConnectorData(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<bool>()), Times.Exactly(1));
@@ -259,8 +291,8 @@ namespace Zurich.Connector.Tests.ControllerTests
 
 			// ASSERT
 			_mockConnectorDataService.Verify(x => x.GetConnectorData(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<bool>()), Times.Exactly(1));
-			var result = response.Value;
-			Assert.AreEqual("Connector or data not found", result.Message);
+			var result = (ObjectResult)response.Result;
+			Assert.AreEqual("Connector or data not found", ((Exception)result.Value).Message);
 		}
 
 		[TestMethod]
@@ -286,7 +318,7 @@ namespace Zurich.Connector.Tests.ControllerTests
 		public async Task CallConnectorsById()
 		{
 			// ARRANGE
-			var connections = MockConnectorData.SetupConnectorModel().ToList()[0];
+			var connections = MockConnectorData.SetupConnectorModel().ToList()[3];
 			_mockConnectorservice.Setup(x => x.GetConnector(It.IsAny<string>())).Returns(Task.FromResult(connections));
 
 			ConnectorsController connector = CreateConnectorsController();
@@ -319,7 +351,7 @@ namespace Zurich.Connector.Tests.ControllerTests
 		public async Task CallConnectorDatawithStaticFilters()
 		{
 			// ARRANGE
-			_mockConnectorDataService.Setup(x => x.GetConnectorData(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<bool>())).Returns(Task.FromResult<dynamic>(StaticFilterJson));
+			_mockConnectorDataService.Setup(x => x.GetConnectorData(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<bool>())).Returns(Task.FromResult<dynamic>(JsonConvert.DeserializeObject(StaticFilterJson)));
 
 			ConnectorsController connector = CreateConnectorsController();
 
@@ -330,6 +362,42 @@ namespace Zurich.Connector.Tests.ControllerTests
 			_mockConnectorDataService.Verify(x => x.GetConnectorData(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<bool>()), Times.Exactly(1));
 			var result = (ContentResult)response.Result;
 			Assert.AreEqual(StatusCodes.Status200OK, result.StatusCode);
+		}
+
+		[TestMethod]
+		public async Task CalliManageConnectordetails()
+		{
+			// ARRANGE
+			var connections = MockConnectorData.SetupConnectorModel_Version2().ToList()[0];
+			_mockConnectorservice.Setup(x => x.GetConnector(It.IsAny<string>())).Returns(Task.FromResult(connections));
+
+			ConnectorsController connector = new ConnectorsController(_mockConnectorservice.Object, _mockConnectorDataService.Object, null, _mapper, null);
+
+			// ACT
+			var response = await connector.Connectors("44");
+
+			// ASSERT
+			_mockConnectorservice.Verify(x => x.GetConnector(It.IsAny<string>()), Times.Exactly(1));
+			var result = response.Result;
+			Assert.AreEqual(StatusCodes.Status200OK, ((Microsoft.AspNetCore.Mvc.ObjectResult)result).StatusCode);
+		}
+
+		[TestMethod]
+		public async Task TestiManageConnectordetailscount()
+		{
+			// ARRANGE
+			var connections = MockConnectorData.SetupConnectorModel_Version2().ToList()[3];
+			_mockConnectorservice.Setup(x => x.GetConnector(It.IsAny<string>())).Returns(Task.FromResult(connections));
+
+			ConnectorsController connector = new ConnectorsController(_mockConnectorservice.Object, _mockConnectorDataService.Object, null, _mapper, null);
+
+			// ACT
+			dynamic response = await connector.Connectors("44");
+
+			// ASSERT
+			_mockConnectorservice.Verify(x => x.GetConnector(It.IsAny<string>()), Times.Exactly(1));
+			var result = response.Result.Value;
+			Assert.AreEqual(connections.CDMMapping.Unstructured.Count, result.CDMMapping.Unstructured.Count);
 		}
 
 		private ConnectorsController CreateConnectorsController()

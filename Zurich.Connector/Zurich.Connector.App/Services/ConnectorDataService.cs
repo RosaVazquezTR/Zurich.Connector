@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Zurich.Connector.App;
 using Zurich.Connector.App.Model;
@@ -14,14 +13,13 @@ using Zurich.Connector.App.Services.DataSources;
 using Zurich.Connector.App.Utils;
 using Zurich.Connector.Data.DataMap;
 using Zurich.Connector.Data.Factories;
-using Zurich.Connector.Data.Model;
 using Zurich.Connector.Data.Repositories;
 using Zurich.Connector.Data.Repositories.CosmosDocuments;
 
 namespace Zurich.Connector.Data.Services
 {
     /// <summary>
-    /// Service to help facilitate the connectors data call.  This should only be doing the work to get data and transform request and response objects.
+    /// Service to help facilitate the connectors data call. This should only be doing the work to get data and transform request and response objects.
     /// </summary>
     public interface IConnectorDataService
     {
@@ -46,6 +44,7 @@ namespace Zurich.Connector.Data.Services
         private readonly IDataMappingService _dataMappingService;
         private readonly IConnectorDataSourceOperationsFactory _dataSourceOperationsFactory;
         private readonly IRegistrationService _registrationService;
+        private readonly IDataExtractionService _dataExtractionService;
 
         public ConnectorDataService(
             IDataMappingFactory dataMappingFactory,
@@ -54,7 +53,8 @@ namespace Zurich.Connector.Data.Services
             IMapper mapper, ICosmosService cosmosService,
             IDataMappingService dataMappingService,
             IConnectorDataSourceOperationsFactory dataSourceOperationsFactory,
-            IRegistrationService registrationService)
+            IRegistrationService registrationService,
+            IDataExtractionService dataExtractionService)
         {
             _dataMappingFactory = dataMappingFactory;
             _dataMappingRepo = dataMappingRepo;
@@ -64,6 +64,7 @@ namespace Zurich.Connector.Data.Services
             _dataMappingService = dataMappingService;
             _dataSourceOperationsFactory = dataSourceOperationsFactory;
             _registrationService = registrationService;
+            _dataExtractionService = dataExtractionService;
         }
 
         /// <summary>
@@ -84,17 +85,12 @@ namespace Zurich.Connector.Data.Services
                 return null;
             }
 
-            NameValueCollection mappedQueryParameters;
-            mappedQueryParameters = MapQueryParametersFromDB(queryParameters, connectorModel);
-
-            ConnectorDocument connectorDocument = _mapper.Map<ConnectorDocument>(connectorModel);
-
-            //UpdateUrl
-            connectorDocument.Request.EndpointPath = await this.UpdateUrl(connectorDocument.Request.EndpointPath, hostname);
-
+            NameValueCollection mappedQueryParameters = MapQueryParametersFromDB(queryParameters, connectorModel);
+            ConnectorDocument connectorDocument = _mapper.Map<ConnectorDocument>(connectorModel);           
+            Dictionary<string, string> headerParameters = await _dataExtractionService.ExtractDataSource(mappedQueryParameters, queryParameters, hostname, connectorDocument);
             IDataMapping service = _dataMappingFactory.GetImplementation(connectorModel?.DataSource?.SecurityDefinition?.Type);
 
-            var data = await service.GetAndMapResults<dynamic>(connectorDocument, transferToken, mappedQueryParameters);
+            var data = await service.GetAndMapResults<dynamic>(connectorDocument, transferToken, mappedQueryParameters, headerParameters, queryParameters);
             data = await EnrichConnectorData(connectorModel, data);
             if (retrieveFilters == true)
             {
@@ -121,7 +117,7 @@ namespace Zurich.Connector.Data.Services
                     queryParameters = (from param in cdmQueryParameters
                                        join requestParam in connectorModel.Request?.Parameters
                                        on param.Key.ToString().ToLower() equals requestParam.CdmName.ToLower()
-                                       where requestParam.InClause != ODataConstants.OData
+                                       where requestParam.InClause != ODataConstants.OData && requestParam.InClause != InClauseConstants.Child
                                        select new { name = requestParam.Name, value = param.Value.ToString() }).ToDictionary(c => c.name, c => c.value);
 
 
@@ -162,52 +158,15 @@ namespace Zurich.Connector.Data.Services
 
             return modifiedQueryParameters;
         }
-
-        public async virtual Task<string> UpdateUrl(string urlPath, string hostName)
-        {
-            string newUrlPath = urlPath;
-            // Find all areas that have { } in url. ie. /work/api/v2/customers/{UserInfo.customer_id}/documents
-            var regexMatch = Regex.Match(urlPath, @"{([^}]*)}");
-            foreach (var capture in regexMatch.Captures)
-            {
-                //probably a better way to do this
-                string stringFormat = capture.ToString();
-                string stringFormatTrimmed = stringFormat.Trim('{', '}');
-                string[] splitString = stringFormatTrimmed.Split(".");
-
-                if (splitString.Length > 1)
-                {
-                    string id = splitString.First();
-                    ConnectorModel connectorModel = await _cosmosService.GetConnector(id, true);
-                    ConnectorDocument connectorDocument = _mapper.Map<ConnectorDocument>(connectorModel);
-                    if (!string.IsNullOrEmpty(hostName))
-                    {
-                        connectorDocument.HostName = hostName;
-                    }
-
-                    // Make api call to get the information for the url variable inside { }
-                    // Shouldn't be a need to pass transfer token, because after it is used it will be invalid
-                    IDataMapping service = _dataMappingFactory.GetImplementation(connectorModel?.DataSource?.SecurityDefinition?.Type);
-                    JToken result = await service.GetAndMapResults<JToken>(connectorDocument, null);
-                    for (int i = 1; i < splitString.Count(); i++)
-                    {
-                        result = result[splitString[i]];
-                    }
-
-                    // Replace the url variable inside { }
-                    string value = result.Value<string>();
-                    newUrlPath = Regex.Replace(newUrlPath, stringFormat, value);
-                }
-            }
-            return newUrlPath;
-        }
+         
         private bool DefaultParametersCheck(ConnectorRequestParameterModel request, Dictionary<string, string> queryParameters)
         {
             return !String.IsNullOrWhiteSpace(request.DefaultValue) 
                 && !queryParameters.ContainsKey(request.Name) 
-                && request.InClause != ODataConstants.OData;
+                && request.InClause != ODataConstants.OData
+                && request.InClause != InClauseConstants.Headers;
         }
-
+     
         private Dictionary<string, string> SetupPagination(ConnectorModel connectorModel, Dictionary<string, string> cdmQueryParameters)
         {
             // Ex: Office 365 uses 0 based offset numbering.

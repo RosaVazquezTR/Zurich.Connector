@@ -4,23 +4,30 @@
     "name": "Practical Law Connect",
     "description": "This is connecting to Practical Law Connect API ",
     "infoURL": "",
-    "appCode": "PracticalLawConnect",
+    "appCode": "CBTPRACPT",
     "appType": "0",
     "locale": "US",
-    "extraRequestContext": "",
-    "securityDefinition": {
-        "type": "oauth2",
-        "flow": "",
-        "defaultSecurityDefinition": {
-            "authorizationURL": "",
-            "authorizationPath": "",
-            "tokenURL": "",
-            "tokenPath": "",
-            "keyVaultClientId": "",
-            "keyVaultSecret": "",
-            "sendCredentialsInBody": true,
-            "grantType": "client_credentials"
-        },
-        "scopes": {}
-    }
+	"extraRequestContext": "",
+	"registrationInfo": {
+	  "registrationMode": "Automatic",
+	  "domainRequired": "false",
+	  "clientAndSecretRequired": "false",
+	  "connectionMessage": "",
+	  "registrationFileRequired": "false"
+	},
+	"securityDefinition": {
+	  "type": "oauth2",
+	  "flow": "",
+	  "defaultSecurityDefinition": {
+		"authorizationURL": "",
+		"authorizationPath": "",
+		"tokenURL": "",
+		"tokenPath": "",
+		"keyVaultClientId": "",
+		"keyVaultSecret": "",
+		"sendCredentialsInBody": true,
+		"grantType": "client_credentials"
+	  },
+	  "scopes": {}
+	}
 }

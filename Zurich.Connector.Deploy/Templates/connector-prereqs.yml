@@ -39,6 +39,8 @@ parameters:
     type: string
   - name: legalTrackerSecret
     type: string
+  - name: legalTrackerActionItemsSecret
+    type: string
   - name: ltioL1ActionGroupName
     type: string
   - name: ltioL1EmailAddress
@@ -70,6 +72,8 @@ parameters:
   - name: subnetPreFix
     type: string
   - name: subnetConnectorBackend
+    type: string
+  - name: subnetFunctionBackend
     type: string
   - name: subscriptionId
     type: string
@@ -130,7 +134,7 @@ steps:
       inlineScript: |
         Import-Module  -Name "$(Build.SourcesDirectory)/Zurich.Deploy/Scripts/V2/AddSubnetandNSG.psm1"
 
-        $subnets = @(${{ parameters.subnetConnectorBackend }})
+        $subnets = @(${{ parameters.subnetConnectorBackend }}, ${{ parameters.subnetFunctionBackend }})
 
         Add-SubNets -removeDelegations $true -CleanupOldNsgs $true -ResourceGroup "${{ parameters.vnetResourceGroup }}" -nsgResourceGroup "${{ parameters.resourceGroup }}" -subnetPreFix "${{ parameters.subnetPreFix }}" -env "${{ parameters.environmentName }}" -Location "${{ parameters.resourceLocation }}" -RouteTableName "${{ parameters.routeTableName }}" -VirtualNetworkName "${{ parameters.vnetName }}" -subNets $subNets -armTemplateFolderLocation "$(Build.SourcesDirectory)/Zurich.Deploy/ArmTemplates"
   - task: AzurePowerShell@5
@@ -180,7 +184,7 @@ steps:
     inputs:
       azureSubscription: ${{ parameters.subscriptionName }}
       ScriptPath: '$(Build.SourcesDirectory)/Zurich.Deploy/Scripts/PopulateKeyVault.ps1'
-      ScriptArguments: '-vaultName "${{ parameters.keyVault }}${{ parameters.environmentName }}" -nameValuePairsJson ''{"AzureAd--ClientId": "${{ parameters.azureAdClientId }}", "PartnerOAuthApps--Connections--PracticalLaw--Secret": "${{ parameters.practicalLawSecret }}", "PartnerOAuthApps--Connections--PLCUS--Secret": "${{ parameters.practicalLawSecret }}", "PartnerOAuthApps--Connections--PLCUK--Secret": "${{ parameters.practicalLawSecret }}", "PartnerOAuthApps--Connections--PLCCA--Secret": "${{ parameters.practicalLawSecret }}", "PartnerOAuthApps--Connections--CBTPRACPT--Secret": "${{ parameters.practicalLawSecret }}", "PartnerOAuthApps--Connections--PracticalLawConnect--Secret": "${{ parameters.practicalLawSecret }}", "PartnerOAuthApps--Connections--TRACKR--Secret": "${{ parameters.legalTrackerSecret }}"}'''
+      ScriptArguments: '-vaultName "${{ parameters.keyVault }}${{ parameters.environmentName }}" -nameValuePairsJson ''{"AzureAd--ClientId": "${{ parameters.azureAdClientId }}", "PartnerOAuthApps--Connections--PracticalLaw--Secret": "${{ parameters.practicalLawSecret }}", "PartnerOAuthApps--Connections--PLCUS--Secret": "${{ parameters.practicalLawSecret }}", "PartnerOAuthApps--Connections--PLCUK--Secret": "${{ parameters.practicalLawSecret }}", "PartnerOAuthApps--Connections--PLCCA--Secret": "${{ parameters.practicalLawSecret }}", "PartnerOAuthApps--Connections--CBTPRACPT--Secret": "${{ parameters.practicalLawSecret }}", "PartnerOAuthApps--Connections--PracticalLawConnect--Secret": "${{ parameters.practicalLawSecret }}", "PartnerOAuthApps--Connections--TRACKR--Secret": "${{ parameters.legalTrackerSecret }}", "PartnerOAuthApps--Connections--TRACKRACTIONITEMS--Secret": "${{ parameters.legalTrackerActionItemsSecret }}"}'''
       azurePowerShellVersion: LatestVersion
   
 # this can eventually get removed when we no longer need to go directly to db to get tokens

@@ -2,9 +2,7 @@ using System;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 using System.Net;
-using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
-using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
 using Zurich.Connector.Durable.Service;
 
@@ -22,7 +20,7 @@ namespace Zurich.Connector.Durable
 
 
         [Function("UpdateDynamicFilter")]
-        public async void UpdateDynamicFilter([TimerTrigger("%schedule%")] DurableInfo durableTimer, FunctionContext context)
+        public async void UpdateDynamicFilter([TimerTrigger("0 0 2 * * *")] DurableInfo durableTimer, FunctionContext context)
         {
             var logger = context.GetLogger("Function1");
 
@@ -58,6 +56,8 @@ namespace Zurich.Connector.Durable
             foreach (var connector in dynamicFilterConnectors)
             {
                 var dynamicFilter = await _plService.GetPLDynamicFilterList(connector.DataSource.Locale);
+                //Clear the data source object so it doesn't get set on the connector
+                connector.DataSource = null;
                 await _cosmosService.UpdateDynamicFilter(connector, dynamicFilter);
             }
         }

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text.Json.Serialization;
 using Zurich.Common.Cosmos;
 using Zurich.Common.Models.Connectors;
 using Zurich.Common.Services.Security;
@@ -36,10 +32,12 @@ namespace Zurich.Connector.Data.Repositories.CosmosDocuments
         /// Extra request context. Ex: "iManageCustomerId"
         /// </summary>
         public string extraRequestContext { get; set; }
+
         /// <summary>
-        /// Flag for registrationMode. ex:"Automatic"
+        /// Define registration Information
         /// </summary>
-        public RegistrationEntityMode registrationMode { get; set; }
+        public RegistrationInfo registrationInfo { get; set; }
+
         /// <summary>
         /// Define security definition
         /// </summary>
@@ -68,6 +66,11 @@ namespace Zurich.Connector.Data.Repositories.CosmosDocuments
         /// Locale (ex: US / UK etc).
         /// </summary>
         public string locale { get; set; }
+
+        /// <summary>
+        /// TODO: Remove this, needed for a work around at the moment
+        /// </summary>
+        public string productType { get; set; }
     }
 
     /// <summary>
@@ -142,4 +145,60 @@ namespace Zurich.Connector.Data.Repositories.CosmosDocuments
         public bool? sendCredentialsInBody { get; set; }
 
     }
+
+    public class RegistrationInfo
+    {
+        /// <summary>
+        /// Flag for registrationMode. ex:"Automatic"
+        /// </summary>
+        public RegistrationEntityMode registrationMode { get; set; }
+
+        /// <summary>
+        /// domain Required ex: true or false
+        /// </summary>
+        public bool domainRequired { get; set; }
+
+        /// <summary>
+        /// client And Secret Required boolean value ex: true or false.
+        /// </summary>
+        public bool clientAndSecretRequired { get; set; }
+
+        /// <summary>
+        /// connection Message
+        /// </summary>
+        public string connectionMessage { get; set; }
+
+        /// <summary>
+        /// registration File Required 
+        /// </summary>
+        public bool registrationFileRequired { get; set; }
+
+
+        /// <summary>
+        /// domain Specific Information
+        /// </summary>
+        public DomainSpecificInformation domainSpecificInformation { get; set; }
+
+
+    }
+
+    public class DomainSpecificInformation
+    {
+        /// <summary>
+        /// Client And Secret Required 
+        /// </summary>
+        public bool clientAndSecretRequired { get; set; }
+
+        /// <summary>
+        /// connection Message
+        /// </summary>
+        public string connectionMessage { get; set; }
+
+        /// <summary>
+        /// Registration File Required
+        /// </summary>
+        public bool registrationFileRequired { get; set; }
+
+    }
+
 }

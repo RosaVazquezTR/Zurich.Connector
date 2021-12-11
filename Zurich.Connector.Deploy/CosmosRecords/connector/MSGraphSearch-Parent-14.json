@@ -36,7 +36,7 @@
         "inClause": "Body",
         "required": false,
         "type": "string",
-        "defaultValue": "Name,CreatedDateTime,LastModifiedDateTime,LastModifiedBy,WebUrl,ParentReference"
+        "defaultValue": "Name,CreatedDateTime,LastModifiedDateTime,LastModifiedBy,WebUrl,ParentReference,CreatedBy"
       },
 	  {
         "cdmName": "ResultSize",
@@ -59,6 +59,22 @@
         "tags": [
           "pagination"
         ]
+      },
+	  {
+        "cdmName": "SortName",
+        "name": "requests.[].sortProperties.[].name",
+        "inClause": "Body",
+        "required": true,
+        "type": "string",
+        "defaultValue": "rank"
+      },
+	  {
+        "cdmName": "SortDescending",
+        "name": "requests.[].sortProperties.[].isDescending",
+        "inClause": "Body",
+        "required": true,
+        "type": "string",
+        "defaultValue": "false"
       }
     ],
     "sorting": {
@@ -71,7 +87,76 @@
     },
 	"type": "JSON"
   },
-  "filters": [],
+  "filters": [
+	{
+		"name": "LastModifiedStartDate",
+		"description": "The end date for the Modified date",
+		"isMultiselect": "false",
+		"requestParameter": "LastModifiedStartDate"
+	  },
+	  {
+		"name": "LastModifiedEndDate",
+		"description": "The end date for the Modified date",
+		"isMultiselect": "false",
+		"requestParameter": "LastModifiedEndDate"
+	  },
+	  {
+		"name": "Type",
+		"description": "The allowed file types for MSGraph",
+		"isMultiselect": "true",
+		"requestParameter": "fileType",
+		"filterlist": [
+			{
+				"name": "Word",
+				"id": "docx,doc"
+			},
+			{
+				"name": "PDF",
+				"id": "pdf"
+			},
+			{
+				"name": "PowerPoint",
+				"id": "pps,ppt,pptx"
+			},
+			{
+				"name": "Excel",
+				"id": "xlr,xls,xlsx"
+			},
+			{
+				"name": "Access",
+				"id": "accdb"
+			},
+			{
+				"name": "Audio",
+				"id": "aif,iff,m3u,m4a,mid,mp3,mpa,wav,wma"
+			},
+			{
+				"name": "CSV",
+				"id": "csv"
+			},
+			{
+				"name": "Mail",
+				"id": "msg,eml"
+			},
+			{
+				"name": "OneNote",
+				"id": "one"
+			},
+			{
+				"name": "Text",
+				"id": "odt,pages,rtf,tex,txt,wpd,wps"
+			},
+			{
+				"name": "Video",
+				"id": "3g2,3gp,afg,asf,avi,avchd,flv,m4v,mov,mp4,mpg,rm,srt,swf,vob,wmv"
+			},
+			{
+				"name": "XML",
+				"id": "xml"
+			}
+		]
+	  }
+  ],
   "resultLocation": "value.hitsContainers.[]",
   "cdmMapping": {
     "structured": [
@@ -79,6 +164,12 @@
         "name": "Count",
         "type": "short",
         "responseElement": "total",
+        "_comment": ""
+      },
+      {
+        "name": "SourceDirectoryUrl",
+        "type": "interpolationString",
+        "responseElement": "https://www.office.com/search/files?q=(%Query)",
         "_comment": ""
       },
       {

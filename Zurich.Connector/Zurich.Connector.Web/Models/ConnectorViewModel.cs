@@ -43,6 +43,10 @@ namespace Zurich.Connector.Web.Models
         /// CDM Mapping of properties
         /// </summary>
         public CDMMappingViewModel CDMMapping { get; set; }
+        /// <summary>
+        /// Determines whether to show pre release connectors 
+        /// </summary>
+        public bool PreRelease { get; set; }
     }
 
     /// <summary>

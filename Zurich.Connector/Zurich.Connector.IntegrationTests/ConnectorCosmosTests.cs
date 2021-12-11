@@ -1,11 +1,14 @@
 using FluentAssertions;
 using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Xunit;
+using Zurich.Connector.App;
+using Zurich.Connector.Data.Model;
 using Zurich.Connector.Data.Repositories.CosmosDocuments;
 
 namespace Zurich.Connector.IntegrationTests
@@ -20,7 +23,7 @@ namespace Zurich.Connector.IntegrationTests
         private List<string> dataSourceTypes = new List<string>() { "oauth2", "transferToken" };
         private List<string> parameterTypes = new List<string>() { "array", "date", "int", "object", "short", "string" };
         private List<string> requestMethodTypes = new List<string>() { "GET", "POST" };
-        private List<string> requestInClauseTypes = new List<string>() { "Body", "OData", "Query" };
+        private List<string> requestInClauseTypes = new List<string>() { "Child", "Body", "OData", "Query", "Headers" };
 
         public ConnectorCosmosTests(CustomWebApplicationFactory fixture) : base(fixture)
         {
@@ -49,7 +52,7 @@ namespace Zurich.Connector.IntegrationTests
 
         public static List<ConnectorDocument> GetConnectors(string entityType, string subType)
         {
-            List<ConnectorDocument> connectors = new List<ConnectorDocument>();
+            List <ConnectorDocument> connectors = new List<ConnectorDocument>();
             string[] fileEntries = Directory.GetFiles($"{folderLocation}\\connector");
 
             foreach (var fileLocation in fileEntries)
@@ -64,7 +67,7 @@ namespace Zurich.Connector.IntegrationTests
                 {
                     if (string.IsNullOrEmpty(entityType) || connector.Info.EntityType.ToString() == entityType)
                     {
-                        if (string.IsNullOrEmpty(subType) || string.IsNullOrEmpty(connector.Info.SubType) || connector.Info.SubType == subType)
+                        if (string.IsNullOrEmpty(subType) || connector.Info.SubType == subType)
                         {
                             connectors.Add(connector);
                         }
@@ -139,7 +142,7 @@ namespace Zurich.Connector.IntegrationTests
             connector.Info.EntityType.ToString().Should().NotBeNullOrWhiteSpace();
             connector.Info.DataSourceId.Should().NotBeNullOrWhiteSpace();
             connector.Info.Version.Should().NotBeNull();
-            if (string.IsNullOrEmpty(connector.Info.SubType) || connector.Info.SubType.Equals("Parent"))
+            if (string.IsNullOrEmpty(connector.Info.SubType) || connector.Info.SubType == SubType.Parent)
             {
                 connector.Alias.Should().NotBeNull();
                 connector.Request.Should().NotBeNull();
@@ -148,7 +151,13 @@ namespace Zurich.Connector.IntegrationTests
                 connector.Request.Method.Should().ContainAny(requestMethodTypes);
                 foreach (var param in connector.Request.Parameters)
                 {
-                    param.Cdmname.Should().NotBeNullOrWhiteSpace();
+                    if (param.DefaultValue.ToString().StartsWith("{"))
+                    {
+                       param.CdmName.Should().BeNullOrWhiteSpace();
+                    } else
+                    {
+                        param.CdmName.Should().NotBeNullOrWhiteSpace();
+                    }
                     param.Name.Should().NotBeNullOrWhiteSpace();
                     param.InClause.Should().ContainAny(requestInClauseTypes);
                     param.Type.Should().ContainAny(parameterTypes);
@@ -169,10 +178,13 @@ namespace Zurich.Connector.IntegrationTests
                     filterValue.Name.Should().NotBeNullOrWhiteSpace();
                     filterValue.Description.Should().NotBeNullOrWhiteSpace();
                     filterValue.RequestParameter.Should().NotBeNull();
-                    foreach(var filter in filterValue.FilterList)
+                    if (filterValue.FilterList != null)
                     {
-                        filter.Name.Should().NotBeNullOrWhiteSpace();
-                        filter.Id.Should().NotBeNullOrWhiteSpace();
+                        foreach (var filter in filterValue.FilterList)
+                        {
+                            filter.Name.Should().NotBeNullOrWhiteSpace();
+                            filter.Id.Should().NotBeNullOrWhiteSpace();
+                        }
                     }
                 }
             }
@@ -207,6 +219,12 @@ namespace Zurich.Connector.IntegrationTests
                     childConnector.Should().NotBeNull();
                 }
             }
+            foreach (var param in connector.CdmMapping.unstructured)
+            {
+                //should be camelCased
+                bool nameCamelCased = !char.IsUpper(param.name[0]);
+                nameCamelCased.Should().BeTrue("Should be camel cased");
+            }
 
         }
 
@@ -219,7 +237,7 @@ namespace Zurich.Connector.IntegrationTests
         {
             dataSource.Should().NotBeNull();
             // Assert
-            if (string.IsNullOrEmpty(connector.Info.SubType) || connector.Info.SubType.Equals("Parent"))
+            if (connector.Info.SubType == SubType.Parent)
             {
                 connector.Alias.Should().StartWith($"{dataSource.appCode}.{connector.Info.EntityType}".ToLower());
             }
