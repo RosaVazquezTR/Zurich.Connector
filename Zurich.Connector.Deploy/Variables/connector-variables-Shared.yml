@@ -10,7 +10,7 @@ variables:
   - name: connectorCosmosDatabaseName
     value: "connectordb"
   - name: connectorCosmosExcludedComparisonProperties
-    value: '["_*", "createdDateTime", "ModifiedDateTime"]'
+    value: '@("_*", "createdDateTime", "ModifiedDateTime")'
   - name: connectorCosmosName
     value: "connectorcosmos"
   - name: connectorCosmoskeyVaultPrefix

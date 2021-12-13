@@ -5,9 +5,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 using Zurich.Connector.App.Model;
 using Zurich.Connector.Data.Repositories.CosmosDocuments;
 using Zurich.Connector.Data.Services;
+using Microsoft.Azure.Cosmos.Linq;
 
 namespace Zurich.Connector.App.Services
 {
@@ -16,13 +18,15 @@ namespace Zurich.Connector.App.Services
 		private readonly ConnectorCosmosContext _cosmosContext;
 		private readonly ILogger _logger;
 		private readonly IMapper _mapper;
+        private readonly IConfiguration _configuration;
 
-		public CosmosService(ConnectorCosmosContext connectorCosmosContext, IMapper mapper, ILogger<CosmosService> logger)
+        public CosmosService(ConnectorCosmosContext connectorCosmosContext, IMapper mapper, ILogger<CosmosService> logger, IConfiguration configuration)
 		{
 			_cosmosContext = connectorCosmosContext;
 			_logger = logger;
 			_mapper = mapper;
-		}
+            _configuration = configuration;
+        }
 
         /// <summary>
         /// Fetch connector from Cosmos by ID
@@ -84,6 +88,35 @@ namespace Zurich.Connector.App.Services
             }
 
             return connectors;
+        }
+
+        /// <summary>
+        /// Fetch all connectors from Cosmos
+        /// </summary>
+        /// <returns>Connector document list.</returns> 
+        public async Task<ConnectorModel> GetConnectorUsingPreRelease(string connectorId, bool includeDataSource = false)
+        {
+            var showPreReleaseConnectors = _configuration.GetValue<string>(AppSettings.ShowPreReleaseConnectors);
+            bool blnShowPreReleaseConnectors;
+            Boolean.TryParse(showPreReleaseConnectors, out blnShowPreReleaseConnectors);
+            Expression<Func<ConnectorDocument, bool>> condition;
+            condition = connector => (connector.Id == connectorId && (blnShowPreReleaseConnectors || (!connector.PreRelease.IsDefined() || !connector.PreRelease)));
+
+            var connectorDocuments = _cosmosContext.GetDocuments(CosmosConstants.ConnectorContainerId, CosmosConstants.ConnectorPartitionKey, condition);
+            var connectors = _mapper.Map<List<ConnectorModel>>(connectorDocuments);
+            var connector = connectors.SingleOrDefault();
+
+            if (includeDataSource && connectors != null)
+            {
+                var dataSourceIDs = connectors.Select(t => t.Info.DataSourceId).Distinct();
+
+                //Expression<Func<DataSourceDocument, bool>> dsCondition = dataSources => dataSourceIDs.Contains(dataSources.Id);
+                var dataSourceResult = await GetDataSources();
+                connector.DataSource = dataSourceResult.Where(d => d.Id == connector.Info.DataSourceId).FirstOrDefault();
+               
+            }
+
+            return connector;
         }
 
         /// <summary>

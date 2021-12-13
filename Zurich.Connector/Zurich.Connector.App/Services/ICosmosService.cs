@@ -19,6 +19,16 @@ namespace Zurich.Connector.App.Services
 		/// </summary>
 		/// <returns>Connector document list.</returns> 
 		public Task<IEnumerable<ConnectorModel>> GetConnectors(bool includeDataSource = false, Expression<Func<ConnectorDocument, bool>> condition = null);
+
+		/// <summary>
+		/// Fetch connector from Cosmos
+		/// </summary>
+		/// <param name="connectorId">Connector Id</param>
+		/// <param name="includeDataSource">DataSource to be included or not</param>
+		/// <param name="condition">condition</param>
+		/// <returns>Retturns connector</returns>
+		public Task<ConnectorModel> GetConnectorUsingPreRelease(string connectorId, bool includeDataSource = false);
+
 		/// <summary>
 		/// Fetch connector from Cosmos by ID
 		/// </summary>

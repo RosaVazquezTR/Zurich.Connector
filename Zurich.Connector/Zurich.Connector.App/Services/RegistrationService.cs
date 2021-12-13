@@ -4,12 +4,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using Zurich.Common.Models.Connectors;
-using Zurich.Common.Services;
+using CommonModel = Zurich.Common.Models.Connectors;
+using CommonServices = Zurich.Common.Services;
 using Zurich.Connector.Data;
 using Zurich.Connector.Data.Model;
 using Zurich.Connector.Data.Repositories.CosmosDocuments;
-using Zurich.Connector.Data.Services;
+using DataServices = Zurich.Connector.Data.Services;
+using AppModel = Zurich.Connector.App.Model;
 using Zurich.TenantData;
 
 namespace Zurich.Connector.App.Services
@@ -20,10 +21,17 @@ namespace Zurich.Connector.App.Services
         /// Registers a datasource to a given user
         /// </summary>
         /// <param name="connectorId">The connector id</param>
-        /// <returns>Boolean indicating success</returns>
-        Task<bool> RegisterConnector(string connectorId, string applicationCode, RegistrationEntityMode registrationMode);
+        /// <returns>DataSourceRegistration</returns>
+        Task<DataSourceRegistration> RegisterConnector(string connectorId);
 
-        Task<DataSourceRegistration> RegisterDataSource(string applicationCode, string domain);
+        /// <summary>
+        /// Registers data source
+        /// </summary>
+        /// <param name="applicationCode">The application code</param>
+        /// <param name="domain">The Domain</param>
+        /// <param name="dataSourceModel">The DataSource of the connector</param>
+        /// <returns></returns>
+        Task<DataSourceRegistration> RegisterDataSource(string applicationCode, string domain, AppModel.DataSourceModel dataSourceModel);
 
         /// <summary>
         /// Remove user from cosmosdb
@@ -46,10 +54,10 @@ namespace Zurich.Connector.App.Services
         private readonly ISessionAccessor _sessionAccesor;
         private readonly IOAuthServices _OAuthService;
         private readonly IConfiguration _configuration;
-        private readonly ITenantService _tenantService;
+        private readonly CommonServices.ITenantService _tenantService;
         private readonly ILegalHomeAccessCheck _legalHomeAccess;
 
-        public RegistrationService(ICosmosService cosmosService, ISessionAccessor sessionAccesor, IOAuthServices OAuthService, IConfiguration configuration, ITenantService tenantService, ILegalHomeAccessCheck legalHomeAccess)
+        public RegistrationService(ICosmosService cosmosService, ISessionAccessor sessionAccesor, IOAuthServices OAuthService, IConfiguration configuration, CommonServices.ITenantService tenantService, ILegalHomeAccessCheck legalHomeAccess)
         {
             _cosmosService = cosmosService;
             _sessionAccesor = sessionAccesor;
@@ -59,32 +67,21 @@ namespace Zurich.Connector.App.Services
             _legalHomeAccess = legalHomeAccess;
         }
 
-        public async Task<bool> RegisterConnector(string connectorId, string applicationCode, RegistrationEntityMode registrationMode)
+        public async Task<DataSourceRegistration> RegisterConnector(string connectorId)
         {
             if (string.IsNullOrEmpty(connectorId))
             {
-                return false;
+                return null;
             }
 
-            ConnectorRegistrationDocument cosmosDocument = new ConnectorRegistrationDocument()
-            {
-                ConnectorId = connectorId,
-                partitionkey = _sessionAccesor.UserId.ToString(),
-                UserId = _sessionAccesor.UserId,
-                TenantId = _sessionAccesor.TenantId,
-                Id = $"{_sessionAccesor.UserId}-{connectorId}"
-            };
+            var connector = await _cosmosService.GetConnectorUsingPreRelease(connectorId, true);
 
-            await _cosmosService.StoreConnectorRegistration(cosmosDocument);
-            if (registrationMode == RegistrationEntityMode.Automatic)
-            {
-                bool result = await _OAuthService.AutomaticRegistration(applicationCode);
-                return result;
-            }
-            return true;
+            var dataSourceRegistration = await RegisterDataSource(connector.DataSource.AppCode, connector.DataSource.Domain, connector.DataSource);
+
+            return dataSourceRegistration;
         }
 
-        public async Task<DataSourceRegistration> RegisterDataSource(string applicationCode, string domain)
+        public async Task<DataSourceRegistration> RegisterDataSource(string applicationCode, string domain, AppModel.DataSourceModel dataSource = null)
         {
             DataSourceRegistration response = new DataSourceRegistration();
 
@@ -97,8 +94,12 @@ namespace Zurich.Connector.App.Services
             }
 
             // Get the datasource from Cosmos
-            Expression<Func<DataSourceDocument, bool>> dsCondition = dataSource => dataSource.appCode.Equals(applicationCode, StringComparison.OrdinalIgnoreCase);
-            var dataSource = (await _cosmosService.GetDataSources(dsCondition)).SingleOrDefault();
+            if(dataSource == null)
+            {
+                Expression<Func<DataSourceDocument, bool>> dsCondition = dataSource => dataSource.appCode.Equals(applicationCode, StringComparison.OrdinalIgnoreCase);
+                dataSource = (await _cosmosService.GetDataSources(dsCondition)).SingleOrDefault();
+            }
+           
             if (dataSource == null || (dataSource.RegistrationInfo.DomainRequired && string.IsNullOrEmpty(domain)))
             {
                 return response;
@@ -112,7 +113,7 @@ namespace Zurich.Connector.App.Services
                 return response;
             }
 
-            if (dataSource.RegistrationInfo.RegistrationMode == RegistrationEntityMode.Automatic)
+            if (dataSource.RegistrationInfo.RegistrationMode == CommonModel.RegistrationEntityMode.Automatic)
             {
                 response.Registered = await _OAuthService.AutomaticRegistration(applicationCode);
                 return response;
@@ -153,7 +154,7 @@ namespace Zurich.Connector.App.Services
 
                 var dataSources = await _cosmosService.GetDataSources();
                 // TODO figure out why condition does not work enums
-                dataSources = dataSources.Where(x => x.RegistrationInfo?.RegistrationMode == RegistrationEntityMode.Automatic);
+                dataSources = dataSources.Where(x => x.RegistrationInfo?.RegistrationMode == CommonModel.RegistrationEntityMode.Automatic);
 
                 dataSourceAppCodes.AddRange(dataSources.Where(x=>!string.IsNullOrEmpty(x.AppCode)).Select(x => x.AppCode).Distinct());
 

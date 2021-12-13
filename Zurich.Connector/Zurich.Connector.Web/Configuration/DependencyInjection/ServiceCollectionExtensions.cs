@@ -24,6 +24,7 @@ using Zurich.Connector.Data;
 using Zurich.Connector.Data.Repositories;
 using Zurich.Connector.Data.Services;
 using Zurich.Connector.Web.Configuration;
+using WebConfigurationSupportedTokenTypes =  Zurich.Connector.Web.Configuration.SupportedTokenTypes;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
