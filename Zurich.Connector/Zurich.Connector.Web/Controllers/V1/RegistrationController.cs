@@ -53,7 +53,7 @@ namespace Zurich.Connector.Web.Controllers
                 return BadRequest("applicationCode must be included");
             }
 
-            var registrationResult = await _registrationService.RegisterDataSource(applicationCode, registrationModel?.Domain);
+            var registrationResult = await _registrationService.RegisterDataSource(applicationCode, registrationModel?.Domain, null);
             var result = _mapper.Map<DataSourceRegistrationResponseViewModel>(registrationResult);
 
             if (result.Registered || !string.IsNullOrEmpty(result.AuthorizeUrl))

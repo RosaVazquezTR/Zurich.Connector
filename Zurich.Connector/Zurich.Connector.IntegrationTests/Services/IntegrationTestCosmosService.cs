@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.Extensions.Logging;
+using Microsoft.Azure.Cosmos.Linq;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -112,6 +113,38 @@ namespace Zurich.Connector.App.Services
             }
 
             return connectors;
+        }
+
+        public async Task<ConnectorModel> GetConnectorUsingPreRelease(string connectorId, bool includeDataSource = false)
+        {
+            var showPreReleaseConnectors = "true";
+            bool blnShowPreReleaseConnectors;
+            Boolean.TryParse(showPreReleaseConnectors, out blnShowPreReleaseConnectors);
+
+            Expression<Func<ConnectorDocument, bool>> condition;
+            condition = connector => (connector.Id == connectorId && (blnShowPreReleaseConnectors || (!connector.PreRelease.IsDefined() || !connector.PreRelease)));
+
+            if (condition.ToString().Contains("blnShowPreReleaseConnectors"))
+            {
+                //var test = condition.Compile();
+                //var test2 = ((dynamic)test.Target).Constants[0];
+                condition = connector => (connector.Id == connectorId);
+            }
+
+            var connectorDocuments = _connectors.AsQueryable().Where(condition);
+            var connectors = _mapper.Map<List<ConnectorModel>>(connectorDocuments);
+            var connector = connectors.SingleOrDefault();
+
+            if (includeDataSource && connectors != null)
+            {
+                var dataSourceIDs = connectors.Select(t => t.Info.DataSourceId).Distinct();
+
+                var dataSourceResult = await GetDataSources();
+                connector.DataSource = dataSourceResult.Where(d => d.Id == connector.Info.DataSourceId).FirstOrDefault();
+                
+            }
+
+            return connector;
         }
 
         /// <summary>

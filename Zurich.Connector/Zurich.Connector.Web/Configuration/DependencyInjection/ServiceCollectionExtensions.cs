@@ -24,6 +24,7 @@ using Zurich.Connector.Data;
 using Zurich.Connector.Data.Repositories;
 using Zurich.Connector.Data.Services;
 using Zurich.Connector.Web.Configuration;
+using WebConfigurationSupportedTokenTypes =  Zurich.Connector.Web.Configuration.SupportedTokenTypes;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -97,7 +98,7 @@ namespace Microsoft.Extensions.DependencyInjection
 			{
 				options.Authority = authority;
 				options.Audience = audience;
-				options.TokenValidationParameters.ValidTypes = new[] { SupportedTokenTypes.AccessTokenJwt };
+				options.TokenValidationParameters.ValidTypes = new[] { WebConfigurationSupportedTokenTypes.AccessTokenJwt };
 				options.RequireHttpsMetadata = true;
 			})
 			.AddJwtBearer(AuthSchemes.CIAM, options =>
