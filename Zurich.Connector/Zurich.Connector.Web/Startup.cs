@@ -38,7 +38,7 @@ namespace Zurich.Connector.Web
         private ClientCredential _clientCredential;
         private CosmosDbOptions _connectorCosmosDbOptions;
         private CosmosClientSettings _connectorCosmosClientOptions;
-        private AuthIssuerOptions _authOptions;
+        private AuthIssuerOptions _legalPlatformAuthOptions;
         private CIAMAuthOptions _ciamAuthOptions;
 
         public Startup(IConfiguration configuration, IHostEnvironment environment)
@@ -127,17 +127,17 @@ namespace Zurich.Connector.Web
                     // can also be used to control the format of the API version in route templates
                     options.SubstituteApiVersionInUrl = true;
                 });
-            services.AddPartnerAppAuth(tenantConnectionString, _authOptions.TokenIssuer, _oAuthOptions, _microServOptions);
+            services.AddPartnerAppAuth(tenantConnectionString, _legalPlatformAuthOptions.TokenIssuer, _oAuthOptions, _microServOptions);
             services.AddAutoMapper(typeof(Startup), typeof(CommonMappingsProfile), typeof(ServiceMappingRegistrar), typeof(MappingRegistrar));
             services.AddConnectorCosmosServices(_connectorCosmosDbOptions, _connectorCosmosClientOptions);
             services.ConfigureExceptonhandler();
             services.AddOAuthHttpClient(Configuration.GetValue<string>(AppSettings.OAuthUrl));
-            AddAuthServices(services, _authOptions, _ciamAuthOptions);
+            AddAuthServices(services, _legalPlatformAuthOptions, _ciamAuthOptions);
         }
 
-        public virtual void AddAuthServices(IServiceCollection services, AuthIssuerOptions authOptions, CIAMAuthOptions ciamOptions)
+        public virtual void AddAuthServices(IServiceCollection services, AuthIssuerOptions legalPlatformAuthOptions, CIAMAuthOptions ciamOptions)
         {
-            services.AddAuthenticationServices(authOptions, ciamOptions);
+            services.AddAuthenticationServices(legalPlatformAuthOptions, ciamOptions);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -217,8 +217,8 @@ namespace Zurich.Connector.Web
             _connectorCosmosClientOptions = new CosmosClientSettings();
             Configuration.Bind("Connector:CosmosClientOptions", _connectorCosmosClientOptions);
 
-            _authOptions = new AuthIssuerOptions();
-            Configuration.Bind("LegalPlatform", _authOptions);
+            _legalPlatformAuthOptions = new AuthIssuerOptions();
+            Configuration.Bind("LegalPlatform", _legalPlatformAuthOptions);
 
             _ciamAuthOptions = new CIAMAuthOptions();
             Configuration.Bind("CIAM", _ciamAuthOptions);
