@@ -87,7 +87,7 @@ namespace Zurich.Connector.App.Services
 
             // if a user already registered just return true
             List<DataSourceInformation> currentUserRegistrations = await _OAuthService.GetUserRegistrations();
-            if (currentUserRegistrations.Any(x => x.AppCode.Equals(applicationCode, StringComparison.OrdinalIgnoreCase)))
+            if (currentUserRegistrations != null && currentUserRegistrations.Any(x => x.AppCode.Equals(applicationCode, StringComparison.OrdinalIgnoreCase)))
             {
                 response.Registered = true;
                 return response;
