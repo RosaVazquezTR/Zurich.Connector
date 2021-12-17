@@ -186,7 +186,7 @@ namespace Zurich.Connector.Tests.ServiceTests
             _mockCosmosClientStore.Setup(x => x.GetDocuments<ConnectorDocument>(CosmosConstants.ConnectorContainerId, CosmosConstants.ConnectorPartitionKey, null))
                                     .Returns((testConnectors));
             IConfiguration config = Utility.CreateConfiguration(AppSettings.ShowPreReleaseConnectors, "true");
-            var cosmostService = new CosmosService(_mockCosmosClientStore.Object, _mapper, null, config);
+            var cosmostService = new CosmosService(_mockCosmosClientStore.Object, _mapper, config);
 
             //Act
             var connectors = (await cosmostService.GetConnectors()).ToList();
@@ -208,7 +208,7 @@ namespace Zurich.Connector.Tests.ServiceTests
             _mockCosmosClientStore.Setup(x => x.GetDocument<ConnectorDocument>(CosmosConstants.ConnectorContainerId, testId, CosmosConstants.ConnectorPartitionKey))
                                         .Returns(Task.FromResult(testConnector));
             IConfiguration config = Utility.CreateConfiguration(AppSettings.ShowPreReleaseConnectors, "true");
-            var cosmostService = new CosmosService(_mockCosmosClientStore.Object, _mapper, null,config);
+            var cosmostService = new CosmosService(_mockCosmosClientStore.Object, _mapper, config);
 
             //Act
             var connector = await cosmostService.GetConnector(testId);
@@ -232,7 +232,7 @@ namespace Zurich.Connector.Tests.ServiceTests
                                     .Returns(testConnectors);
 
             IConfiguration config = Utility.CreateConfiguration(AppSettings.ShowPreReleaseConnectors, "true");
-            var cosmosService = new CosmosService(_mockCosmosClientStore.Object, _mapper, null, config);
+            var cosmosService = new CosmosService(_mockCosmosClientStore.Object, _mapper, config);
 
             //Act
             var connector = await cosmosService.GetConnectorByAlias(testAlias);
@@ -252,7 +252,7 @@ namespace Zurich.Connector.Tests.ServiceTests
             _mockCosmosClientStore.Setup(x => x.GetDocuments(CosmosConstants.ConnectorContainerId, CosmosConstants.ConnectorPartitionKey, condition))
                                     .Returns(testConnectors);
             IConfiguration config = Utility.CreateConfiguration(AppSettings.ShowPreReleaseConnectors, "true");
-            var cosmostService = new CosmosService(_mockCosmosClientStore.Object, _mapper, null, config);
+            var cosmostService = new CosmosService(_mockCosmosClientStore.Object, _mapper, config);
 
             //Act
             var connectors = (await cosmostService.GetConnectors(false, condition)).ToList();
@@ -274,7 +274,7 @@ namespace Zurich.Connector.Tests.ServiceTests
             _mockCosmosClientStore.Setup(x => x.GetDocuments<DataSourceDocument>(CosmosConstants.DataSourceContainerId, CosmosConstants.DataSourcePartitionKey, null))
                                 .Returns(testDataSources);
             IConfiguration config = Utility.CreateConfiguration(AppSettings.ShowPreReleaseConnectors, "true");
-            var cosmostService = new CosmosService(_mockCosmosClientStore.Object, _mapper, null, config);
+            var cosmostService = new CosmosService(_mockCosmosClientStore.Object, _mapper, config);
 
             //Act
             var dataSources = (await cosmostService.GetDataSources()).ToList();
@@ -297,7 +297,7 @@ namespace Zurich.Connector.Tests.ServiceTests
                                         (CosmosConstants.DataSourceContainerId, testId, CosmosConstants.DataSourcePartitionKey))
                                         .Returns(Task.FromResult(testDataSource));
             IConfiguration config = Utility.CreateConfiguration(AppSettings.ShowPreReleaseConnectors, "true");
-            var cosmostService = new CosmosService(_mockCosmosClientStore.Object, _mapper, null, config);
+            var cosmostService = new CosmosService(_mockCosmosClientStore.Object, _mapper, config);
 
             //Act
             var dataSource = await cosmostService.GetDataSource(testId);
@@ -318,7 +318,7 @@ namespace Zurich.Connector.Tests.ServiceTests
             var testId = "1";
             var testConnector = SetupConnectors().Where(p => p.Id == testId).FirstOrDefault();
             IConfiguration config = Utility.CreateConfiguration(AppSettings.ShowPreReleaseConnectors, "true");
-            var cosmostService = new CosmosService(_mockCosmosClientStore.Object, _mapper, null, config);
+            var cosmostService = new CosmosService(_mockCosmosClientStore.Object, _mapper, config);
 
             //Act
             await cosmostService.StoreConnector(testConnector);
@@ -334,7 +334,7 @@ namespace Zurich.Connector.Tests.ServiceTests
             var testId = "101";
             var testDataSource = SetupDataSources().Where(p => p.Id == testId).FirstOrDefault();
             IConfiguration config = Utility.CreateConfiguration(AppSettings.ShowPreReleaseConnectors, "true");
-            var cosmostService = new CosmosService(_mockCosmosClientStore.Object, _mapper, null, config);
+            var cosmostService = new CosmosService(_mockCosmosClientStore.Object, _mapper, config);
 
             //Act
             await cosmostService.StoreDataSource(testDataSource);
@@ -350,7 +350,7 @@ namespace Zurich.Connector.Tests.ServiceTests
             var testId = "101";
             var testDataSource = SetupConnectorRegistration().Where(p => p.Id == testId).FirstOrDefault();
             IConfiguration config = Utility.CreateConfiguration(AppSettings.ShowPreReleaseConnectors, "true");
-            var cosmostService = new CosmosService(_mockCosmosClientStore.Object, _mapper, null, config);
+            var cosmostService = new CosmosService(_mockCosmosClientStore.Object, _mapper, config);
 
             //Act
             await cosmostService.StoreConnectorRegistration(testDataSource);
@@ -369,7 +369,7 @@ namespace Zurich.Connector.Tests.ServiceTests
             _mockCosmosClientStore.Setup(x => x.GetDocument<ConnectorRegistrationDocument>(CosmosConstants.ConnectorRegistrationContainerId, testId, UserId));
 
             IConfiguration config = Utility.CreateConfiguration(AppSettings.ShowPreReleaseConnectors, "true");
-            var cosmosService = new CosmosService(_mockCosmosClientStore.Object, _mapper, null, config);
+            var cosmosService = new CosmosService(_mockCosmosClientStore.Object, _mapper, config);
 
             //Act
             var connectors = await cosmosService.GetUserRegistration(testId, UserId);
@@ -387,7 +387,7 @@ namespace Zurich.Connector.Tests.ServiceTests
             _mockCosmosClientStore.Setup(x => x.GetDocuments<ConnectorRegistrationDocument>(CosmosConstants.ConnectorRegistrationContainerId, UserId, null));
 
             IConfiguration config = Utility.CreateConfiguration(AppSettings.ShowPreReleaseConnectors, "true");
-            var cosmosService = new CosmosService(_mockCosmosClientStore.Object, _mapper, null, config);
+            var cosmosService = new CosmosService(_mockCosmosClientStore.Object, _mapper, config);
 
             //Act
             var connectors = cosmosService.GetConnectorRegistrations(UserId);
@@ -406,7 +406,7 @@ namespace Zurich.Connector.Tests.ServiceTests
             _mockCosmosClientStore.Setup(x => x.GetDocuments(CosmosConstants.ConnectorContainerId, CosmosConstants.ConnectorPartitionKey, condition))
                                     .Returns(testConnectors);
             IConfiguration config = Utility.CreateConfiguration(AppSettings.ShowPreReleaseConnectors, "true");
-            var cosmostService = new CosmosService(_mockCosmosClientStore.Object, _mapper, null, config);
+            var cosmostService = new CosmosService(_mockCosmosClientStore.Object, _mapper, config);
 
             //Act
             var connectors = (await cosmostService.GetConnectors(false, condition)).ToList();

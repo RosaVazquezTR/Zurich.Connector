@@ -16,14 +16,12 @@ namespace Zurich.Connector.App.Services
     public class CosmosService: ICosmosService
 	{
 		private readonly ConnectorCosmosContext _cosmosContext;
-		private readonly ILogger _logger;
 		private readonly IMapper _mapper;
         private readonly IConfiguration _configuration;
 
-        public CosmosService(ConnectorCosmosContext connectorCosmosContext, IMapper mapper, ILogger<CosmosService> logger, IConfiguration configuration)
+        public CosmosService(ConnectorCosmosContext connectorCosmosContext, IMapper mapper, IConfiguration configuration)
 		{
 			_cosmosContext = connectorCosmosContext;
-			_logger = logger;
 			_mapper = mapper;
             _configuration = configuration;
         }

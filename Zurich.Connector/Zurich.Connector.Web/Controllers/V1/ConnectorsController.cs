@@ -28,14 +28,12 @@ namespace Zurich.Connector.Web.Controllers
         private readonly IConnectorDataService _connectorDataService;
         private readonly IRegistrationService _registrationService;
         private readonly IMapper _mapper;
-        private readonly ILogger<ConnectorsController> _logger;
 
-        public ConnectorsController(IConnectorService connectorService, IConnectorDataService connectorDataService, ILogger<ConnectorsController> logger, IMapper mapper, IRegistrationService registrationService)
+        public ConnectorsController(IConnectorService connectorService, IConnectorDataService connectorDataService, IMapper mapper, IRegistrationService registrationService)
         {
             _connectorService = connectorService;
             _connectorDataService = connectorDataService;
             _registrationService = registrationService;
-            _logger = logger;
             _mapper = mapper;
         }
 

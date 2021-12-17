@@ -128,7 +128,7 @@ namespace Zurich.Connector.Web
                     options.SubstituteApiVersionInUrl = true;
                 });
             services.AddPartnerAppAuth(tenantConnectionString, _legalPlatformAuthOptions.TokenIssuer, _oAuthOptions, _microServOptions);
-            services.AddAutoMapper(typeof(Startup), typeof(CommonMappingsProfile), typeof(ServiceMappingRegistrar), typeof(MappingRegistrar));
+            services.AddAutoMapper(typeof(CommonMappingsProfile), typeof(ServiceMappingRegistrar), typeof(MappingRegistrar));
             services.AddConnectorCosmosServices(_connectorCosmosDbOptions, _connectorCosmosClientOptions);
             services.ConfigureExceptonhandler();
             services.AddOAuthHttpClient(Configuration.GetValue<string>(AppSettings.OAuthUrl));
