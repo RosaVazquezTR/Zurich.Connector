@@ -291,8 +291,8 @@ namespace Zurich.Connector.Tests.ControllerTests
 
 			// ASSERT
 			_mockConnectorDataService.Verify(x => x.GetConnectorData(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<bool>()), Times.Exactly(1));
-			var result = (ObjectResult)response.Result;
-			Assert.AreEqual("Connector or data not found", ((Exception)result.Value).Message);
+			var result = (ContentResult)response.Result;
+			Assert.AreEqual("Connector or data not found", result.Content);
 		}
 
 		[TestMethod]
