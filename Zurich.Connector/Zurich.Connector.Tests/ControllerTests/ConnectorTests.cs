@@ -303,7 +303,7 @@ namespace Zurich.Connector.Tests.ControllerTests
             Zurich.Common.Models.Connectors.ConnectorFilterModel filters = new Zurich.Common.Models.Connectors.ConnectorFilterModel();
 			_mockConnectorservice.Setup(x => x.GetConnectors(It.IsAny<Zurich.Common.Models.Connectors.ConnectorFilterModel>())).Returns(Task.FromResult(connections.ToList()));
 
-            ConnectorsController connector = new ConnectorsController(_mockConnectorservice.Object, _mockConnectorDataService.Object, null, _mapper,null);
+            ConnectorsController connector = new ConnectorsController(_mockConnectorservice.Object, _mockConnectorDataService.Object, _mapper,null);
 
 			// ACT
 			var response = await connector.Connectors(filters);
@@ -371,7 +371,7 @@ namespace Zurich.Connector.Tests.ControllerTests
 			var connections = MockConnectorData.SetupConnectorModel_Version2().ToList()[0];
 			_mockConnectorservice.Setup(x => x.GetConnector(It.IsAny<string>())).Returns(Task.FromResult(connections));
 
-			ConnectorsController connector = new ConnectorsController(_mockConnectorservice.Object, _mockConnectorDataService.Object, null, _mapper, null);
+			ConnectorsController connector = new ConnectorsController(_mockConnectorservice.Object, _mockConnectorDataService.Object, _mapper, null);
 
 			// ACT
 			var response = await connector.Connectors("44");
@@ -389,7 +389,7 @@ namespace Zurich.Connector.Tests.ControllerTests
 			var connections = MockConnectorData.SetupConnectorModel_Version2().ToList()[3];
 			_mockConnectorservice.Setup(x => x.GetConnector(It.IsAny<string>())).Returns(Task.FromResult(connections));
 
-			ConnectorsController connector = new ConnectorsController(_mockConnectorservice.Object, _mockConnectorDataService.Object, null, _mapper, null);
+			ConnectorsController connector = new ConnectorsController(_mockConnectorservice.Object, _mockConnectorDataService.Object, _mapper, null);
 
 			// ACT
 			dynamic response = await connector.Connectors("44");
@@ -411,7 +411,7 @@ namespace Zurich.Connector.Tests.ControllerTests
 				HttpContext = httpContext,
 			};
 
-			return new ConnectorsController(_mockConnectorservice.Object, _mockConnectorDataService.Object, null, _mockmapper.Object,null) { ControllerContext = controllerContext };
+			return new ConnectorsController(_mockConnectorservice.Object, _mockConnectorDataService.Object, _mockmapper.Object,null) { ControllerContext = controllerContext };
 		}
 	}
 }

@@ -19,13 +19,8 @@ namespace Zurich.Connector.App
 
             CreateMap<PaginationInfo, PaginationModel>();
             CreateMap<ConnectorRequest, ConnectorRequestModel>();
-            CreateMap<ConnectorResponse, ConnectorResponseModel>();
-            CreateMap<ConnectorReponseSchema, ConnectorReponseSchemaModel>();
-            CreateMap<ConnectorReponseProperties, ConnectorReponsePropertiesModel> ();
 
-            CreateMap<ConnectorFilter, ConnectorsFiltersModel>();
             CreateMap<FilterList, FilterListModel>();
-            CreateMap<FilterListModel, FilterList>();
 
             CreateMap<CDMMapping, CDMMappingModel>();
             CreateMap<CDMElement, CDMElementModel>();
@@ -36,20 +31,6 @@ namespace Zurich.Connector.App
 
             CreateMap<RegistrationInfo, RegistrationInfoModel>();
             CreateMap<DomainSpecificInformation, DomainSpecificInformationModel>();
-            CreateMap<SecurityDefinition, SecurityDefinitionModel>()
-                .ForMember(dest => dest.Type, opt => opt.MapFrom(src => src.type))
-                .ForMember(dest => dest.Flow, opt => opt.MapFrom(src => src.flow))
-                .ForMember(dest => dest.DefaultSecurityDefinition, opt => opt.MapFrom(src => src.defaultSecurityDefinition))
-                .ForAllOtherMembers(opt => opt.Ignore());
-
-            CreateMap<SecurityDefinitionDetails, SecurityDefinitionDetailsModel>()
-                .ForMember(dest => dest.AuthorizationURL, opt => opt.MapFrom(src => src.authorizationURL))
-                .ForMember(dest => dest.AuthorizationPath, opt => opt.MapFrom(src => src.authorizationPath))
-                .ForMember(dest => dest.TokenURL, opt => opt.MapFrom(src => src.tokenURL))
-                .ForMember(dest => dest.TokenPath, opt => opt.MapFrom(src => src.tokenPath))
-                .ForMember(dest => dest.KeyVaultClientId, opt => opt.MapFrom(src => src.keyVaultClientId))
-                .ForMember(dest => dest.KeyVaultSecret, opt => opt.MapFrom(src => src.keyVaultSecret))
-                .ForAllOtherMembers(opt => opt.Ignore());
 
             CreateMap<ConnectorRegistrationDocument, ConnectorRegistration>()
                 .ForMember(dest => dest.ConnectorId, opt => opt.MapFrom(src => src.ConnectorId))

@@ -135,6 +135,10 @@ namespace Zurich.Connector.Data.Repositories
             }
             else
             {
+                if(result.StatusCode == System.Net.HttpStatusCode.NotFound)
+                {
+                    return string.Empty;
+                }
                 _logger.LogError("Unable to retrieve data. Server returned: {code} - {message}", result.StatusCode.ToString(), requestContent ?? "");
                 throw new ApplicationException($"Connectors returned status code {result.StatusCode} - {requestContent}");
             }

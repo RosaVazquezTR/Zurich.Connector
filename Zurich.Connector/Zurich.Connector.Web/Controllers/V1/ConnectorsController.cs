@@ -28,14 +28,12 @@ namespace Zurich.Connector.Web.Controllers
         private readonly IConnectorDataService _connectorDataService;
         private readonly IRegistrationService _registrationService;
         private readonly IMapper _mapper;
-        private readonly ILogger<ConnectorsController> _logger;
 
-        public ConnectorsController(IConnectorService connectorService, IConnectorDataService connectorDataService, ILogger<ConnectorsController> logger, IMapper mapper, IRegistrationService registrationService)
+        public ConnectorsController(IConnectorService connectorService, IConnectorDataService connectorDataService, IMapper mapper, IRegistrationService registrationService)
         {
             _connectorService = connectorService;
             _connectorDataService = connectorDataService;
             _registrationService = registrationService;
-            _logger = logger;
             _mapper = mapper;
         }
 
@@ -161,27 +159,30 @@ namespace Zurich.Connector.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<ConnectorRegistrationViewModel>> ConnectorRegistration([FromBody] ConnectorRegistrationModel registrationModel)
+        public async Task<ActionResult<DataSourceRegistrationResponseViewModel>> ConnectorRegistration([FromBody] ConnectorRegistrationModel registrationModel)
         {
-
+            
             if (string.IsNullOrEmpty(registrationModel.ConnectorId))
             {
                 return BadRequest("Connector Id must be defined");
             }
 
-            var connector = await _connectorService.GetConnector(registrationModel.ConnectorId);
-            ConnectorListViewModel connectorResults = _mapper.Map<ConnectorListViewModel>(connector);
-            if (connectorResults == null)
-            {
-                return BadRequest("Connector Id must point to a valid connector");
-            }
-            var registered = await _registrationService.RegisterConnector(connectorResults.Id, connectorResults.DataSource.AppCode, connectorResults.DataSource.RegistrationInfo.RegistrationMode);
-            if (!registered)
+            var registrationResult = await _registrationService.RegisterConnector(registrationModel.ConnectorId);
+            if (registrationResult == null)
             {
                 return BadRequest();
             }
 
-            return Ok(RegistrationStatus.Registered);
+            var result = _mapper.Map<DataSourceRegistrationResponseViewModel>(registrationResult);
+
+            if (result.Registered || !string.IsNullOrEmpty(result.AuthorizeUrl))
+            {
+                return Ok(result);
+            }
+            else
+            {
+                return BadRequest();
+            }
         }
 
         [HttpDelete("{id}/user")]
