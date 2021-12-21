@@ -77,7 +77,12 @@ namespace Zurich.Connector.Web.Controllers
             }
             catch (Exception e)
             {
-                return StatusCode(500, new Exception(e.Message));
+                return new ContentResult
+                {
+                    Content = e.Message,
+                    ContentType = System.Net.Mime.MediaTypeNames.Application.Json,
+                    StatusCode = StatusCodes.Status500InternalServerError
+                };
             }
 
         }
