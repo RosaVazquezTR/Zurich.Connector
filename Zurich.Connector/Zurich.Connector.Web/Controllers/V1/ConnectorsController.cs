@@ -38,7 +38,7 @@ namespace Zurich.Connector.Web.Controllers
         }
 
         [HttpGet("{id}/data")]
-        public async Task<ActionResult<dynamic>> ConnectorData(string id, [FromQuery] string hostName, [FromQuery] string transferToken, bool retrieveFilters)
+        public async Task<ActionResult<dynamic>> ConnectorData(string id, [FromQuery] string hostName, [FromQuery] string transferToken, bool retrieveFilters, string domain)
         {
             dynamic results;
             try
@@ -50,7 +50,7 @@ namespace Zurich.Connector.Web.Controllers
                     && !param.Equals("retrievefilters", StringComparison.InvariantCultureIgnoreCase))
                     .ToDictionary(k => k, v => HttpContext?.Request.Query[v].ToString(), StringComparer.OrdinalIgnoreCase);
 
-                results = await _connectorDataService.GetConnectorData(id, hostName, transferToken, parameters, retrieveFilters);
+                results = await _connectorDataService.GetConnectorData(id, hostName, domain, transferToken, parameters, retrieveFilters);
                 if (results == null)
                 {
                     throw new ResourceNotFoundException("Connector or data not found");
