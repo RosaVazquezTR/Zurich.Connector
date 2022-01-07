@@ -1,0 +1,32 @@
+parameters:
+  - name: alertActionGroups
+    type: string
+  - name: environmentName
+    type: string
+  - name: functionName
+    type: string
+  - name: functionAlertCondition
+    type: string
+  - name: functionAlertDescription
+    type: string
+  - name: functionAlertEvaluationFrequency
+    type: string
+  - name: functionAlertName
+    type: string
+  - name: functionAlertThreshold
+    type: string
+  - name: functionAlertWindowSize
+    type: string
+  - name: resourceGroup
+    type: string
+  - name: subscriptionName
+    type: string
+
+steps:
+  - task: AzureCLI@2
+    displayName: 'Create Function Metric Alerts'
+    inputs:
+      azureSubscription: ${{ parameters.subscriptionName }}
+      scriptPath: '$(Build.SourcesDirectory)/Zurich.Connector.Deploy/Scripts/AddMonitorAlert.ps1'
+      arguments: '-env "${{ parameters.environmentName }}" -subscription "${{ parameters.subscriptionName }}" -resourceGroup "${{ parameters.resourceGroup }}" -appServiceName "${{ parameters.functionName }}" -alertName "${{ parameters.functionAlertName }}" -threshold ${{ parameters.functionAlertThreshold }} -windowSize "${{ parameters.functionAlertWindowSize }}" -evaluationFrequency "${{ parameters.functionAlertEvaluationFrequency }}" -condition "${{ parameters.functionAlertCondition }}" -actionGroups ${{ parameters.alertActionGroups }} -description "${{ parameters.functionAlertDescription }}"'
+      scriptType: 'pscore'

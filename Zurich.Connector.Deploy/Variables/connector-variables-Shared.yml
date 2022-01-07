@@ -27,6 +27,18 @@ variables:
     value: "Zurich.Deploy/ArmTemplates"
   - name: deployScriptFolder
     value: "Zurich.Deploy/Scripts"
+  - name: functionAlertCondition
+    value: "total FunctionExecutionCount < 1"
+  - name: functionAlertDescription
+    value: "Checks if the nightly connector function has ran in that last 24 hours"
+  - name: functionAlertEvaluationFrequency
+    value: "1h"
+  - name: functionAlertName
+    value: "VerifyNightlyFunctionRan"
+  - name: functionAlertThreshold
+    value: "1"
+  - name: functionAlertWindowSize
+    value: "24h"
   - name: functionAppServicePlanName
     value: "connectorsFunctionPlan"
   - name: functionArmTemplate
