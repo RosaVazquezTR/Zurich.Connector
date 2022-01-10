@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -36,6 +37,13 @@ namespace Zurich.Connector.App.Services
         /// <param name="applicationCode">The application to get the authorize url for</param>
         /// <returns>Authorize url</returns>
         Task<AuthorizeUrlResponse> GetAuthorizeUrl(string applicationCode);
+
+        /// <summary>
+        /// Revoke client Id and Secret for the appropriate connector 
+        /// </summary>
+        /// <param name="applicationCode">The application code of the connector</param>
+        /// <returns>ActionResult Response</returns>
+        Task<ActionResult> RevokeTenantApplication(string applicationCode);
     }
     public class OAuthServices :IOAuthServices
     {
@@ -60,6 +68,11 @@ namespace Zurich.Connector.App.Services
         public async Task<AuthorizeUrlResponse> GetAuthorizeUrl(string applicationCode)
         {
             return await _OAuthRespository.GetAuthorizeUrl(applicationCode);
+        }
+
+        public async Task<ActionResult> RevokeTenantApplication(string applicationCode)
+        {
+            return await _OAuthRespository.RevokeTenantApplication(applicationCode);
         }
     }
 }

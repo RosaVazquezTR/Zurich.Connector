@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -41,6 +43,13 @@ namespace Zurich.Connector.Data.Repositories
         /// <param name="applicationCode">The application to get the authorize url for</param>
         /// <returns>Authorize url</returns>
         Task<AuthorizeUrlResponse> GetAuthorizeUrl(string applicationCode);
+
+        /// <summary>
+        /// Revoke client Id and Secret for the appropriate connector
+        /// </summary>
+        /// <param name="applicationCode">The application code of the connector</param>
+        /// <returns>ActionResult response</returns>
+        Task<ActionResult> RevokeTenantApplication(string applicationCode);
     }
 
 
@@ -63,12 +72,12 @@ namespace Zurich.Connector.Data.Repositories
                 {
                     var httpContent = await MakeRequest(requestMessage);
 
-                   result = JsonConvert.DeserializeObject(httpContent);
+                    result = JsonConvert.DeserializeObject(httpContent);
                 }
             }
-            if(result == null)
-            { 
-                return true; 
+            if (result == null)
+            {
+                return true;
             }
             else
             {
@@ -118,6 +127,38 @@ namespace Zurich.Connector.Data.Repositories
             return result;
         }
 
+        public async Task<ActionResult> RevokeTenantApplication(string applicationCode)
+        {
+            ActionResult actionResult = null;
+            string path = $"api/v1/{applicationCode}/all";
+            using (var requestMessage = new HttpRequestMessage(HttpMethod.Delete, path))
+            {
+                var result = await _httpClient.SendAsync(requestMessage);
+                var requestContent = await result.Content.ReadAsStringAsync();
+
+                if (result.IsSuccessStatusCode)
+                {
+                    actionResult = new ContentResult()
+                    {
+                        Content = result.Content.ReadAsStringAsync().Result,
+                        ContentType = result.Content.Headers.ContentType.MediaType,
+                        StatusCode = Convert.ToInt32(result.StatusCode)
+                    };
+                }
+                else
+                {
+                    actionResult = new ContentResult()
+                    {
+                        Content = result.Content.ReadAsStringAsync().Result,
+                        ContentType = result.Content.Headers.ContentType.MediaType,
+                        StatusCode = ((int?)StatusCodes.Status400BadRequest)
+                    };
+                }
+            }
+
+            return actionResult;
+        }
+
 
         /// <summary>
         /// Makes HTTP requests to a OAuth endpoint
@@ -135,7 +176,7 @@ namespace Zurich.Connector.Data.Repositories
             }
             else
             {
-                if(result.StatusCode == System.Net.HttpStatusCode.NotFound)
+                if (result.StatusCode == System.Net.HttpStatusCode.NotFound)
                 {
                     return string.Empty;
                 }

@@ -12,6 +12,7 @@ using Zurich.Connector.App.Model;
 using Zurich.Connector.App.Services;
 using Zurich.Connector.Data.Model;
 using Zurich.Connector.Data.Repositories.CosmosDocuments;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Zurich.Connector.Data.Services
 {
@@ -28,6 +29,8 @@ namespace Zurich.Connector.Data.Services
         Task<List<ConnectorModel>> GetConnectors(Common.Models.Connectors.ConnectorFilterModel filters);
 
         Task<ConnectorModel> GetConnector(string connectorId);
+
+        Task<ActionResult> RevokeTenantApplication(string connectorId);
     }
 
     public class ConnectorService : IConnectorService
@@ -36,17 +39,20 @@ namespace Zurich.Connector.Data.Services
         private readonly ILogger<ConnectorService> _logger;
         private readonly IRegistrationService _registrationService;
         private readonly IConfiguration _configuration;
+        private readonly IOAuthServices _OAuthService;
 
         public ConnectorService(
             ILogger<ConnectorService> logger,
             ICosmosService cosmosService,
             IRegistrationService registrationService,
-            IConfiguration configuration)
+            IConfiguration configuration, 
+            IOAuthServices OAuthService)
         {
             _cosmosService = cosmosService;
             _logger = logger;
             _registrationService = registrationService;
             _configuration = configuration;
+            _OAuthService = OAuthService;
         }
 
         /// <summary>
@@ -134,6 +140,19 @@ namespace Zurich.Connector.Data.Services
             var connector = await _cosmosService.GetConnectors(true, condition);
             var connectorDetails = connector.SingleOrDefault();
             return connectorDetails;
+        }
+
+        public async Task<ActionResult> RevokeTenantApplication(string connectorId)
+        {
+            var showPreReleaseConnectors = _configuration.GetValue<string>(AppSettings.ShowPreReleaseConnectors);
+            bool blnShowPreReleaseConnectors;
+            Boolean.TryParse(showPreReleaseConnectors, out blnShowPreReleaseConnectors);
+            Expression<Func<ConnectorDocument, bool>> condition;
+            condition = connector => (connector.Id == connectorId && (blnShowPreReleaseConnectors || (!connector.PreRelease.IsDefined() || !connector.PreRelease)));
+            var connector = await _cosmosService.GetConnectors(true, condition);
+            var connectorDetails = connector.SingleOrDefault();
+            var result = await _OAuthService.RevokeTenantApplication(connectorDetails.DataSource.AppCode);
+            return result;
         }
 
     }

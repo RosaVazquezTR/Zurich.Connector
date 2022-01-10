@@ -130,7 +130,7 @@ namespace Zurich.Connector.Web.Controllers
         /// Get connector definition - Returns the configuration of the connector, configuration is generic for all users
         /// </summary>
         /// <remarks>
-        /// Sample reque3st:
+        /// Sample request:
         ///     GET /connectors/<ID>
         /// </remarks>
         /// <param name="id">
@@ -151,6 +151,43 @@ namespace Zurich.Connector.Web.Controllers
             }
             var responsedata = _mapper.Map<ConnectorViewModel>(results);
             return Ok(responsedata);
+        }
+
+        /// <summary>
+        /// Revoke Tenant Application by Connector Id - for all users
+        /// </summary>
+        /// <remarks>
+        /// Sample request:
+        ///     DELETE /connectors/<ID>/all
+        /// </remarks>
+        /// <param name="id">
+        /// Connector ID
+        /// </param>
+        /// <returns>
+        /// A <see cref="ActionResult"/>ActionResult response</returns>
+        /// </returns>
+        [HttpDelete("{id}/all")]
+        public async Task<ActionResult> RevokeTenantApplication(string id)
+        {
+            var results = await _connectorService.RevokeTenantApplication(id);
+            if (results != null && (results as ContentResult).StatusCode == StatusCodes.Status200OK)
+            {
+                return new ContentResult()
+                {
+                    Content = (results as ContentResult).Content,
+                    ContentType = (results as ContentResult).ContentType,
+                    StatusCode = ((int?)(results as ContentResult).StatusCode)
+                };
+            }
+            else
+            {
+                return new ContentResult()
+                {
+                    Content = (results as ContentResult).Content,
+                    ContentType = (results as ContentResult).ContentType,
+                    StatusCode = ((int?)(results as ContentResult).StatusCode)
+                };
+            }
         }
 
         [HttpPost]
