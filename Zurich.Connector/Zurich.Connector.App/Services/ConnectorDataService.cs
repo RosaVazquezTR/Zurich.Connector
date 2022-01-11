@@ -34,7 +34,7 @@ namespace Zurich.Connector.Data.Services
         /// <param name="queryParameters">The query string parameters of request</param>
         /// <param name="domain">The domain of the api</param>
         /// <returns>Mapped data for the connector</returns>
-        Task<dynamic> GetConnectorData(string connectorIdentifier, string hostname, string domain, string transferToken, Dictionary<string, string> queryParameters, bool retrievefilters);
+        Task<dynamic> GetConnectorData(string connectorIdentifier, string hostname, string transferToken, Dictionary<string, string> queryParameters, bool retrievefilters);
     }
 
     public class ConnectorDataService : IConnectorDataService
@@ -85,14 +85,14 @@ namespace Zurich.Connector.Data.Services
         /// <param name="queryParameters"></param>
         /// <param name="retrievefilters"></param>
         /// <returns>Connector data</returns>
-        public async Task<dynamic> GetConnectorData(string connectionIdentifier, string hostname, string domain, string transferToken, Dictionary<string, string> queryParameters, bool retrieveFilters)
+        public async Task<dynamic> GetConnectorData(string connectionIdentifier, string hostname, string transferToken, Dictionary<string, string> queryParameters, bool retrieveFilters)
         {
             ConnectorModel connectorModel = await _dataMappingService.RetrieveProductInformationMap(connectionIdentifier, hostname, retrieveFilters);
             // TODO: This is a legalhome workaround until legalhome uses OAuth
-            if (connectorModel.DataSource.Domain == null)
-            {
-                domain = await GetBaseUrl(connectorModel);
-            }
+           if (string.IsNullOrEmpty(connectorModel.DataSource.Domain) && string.IsNullOrEmpty(hostname))
+           {
+                hostname = await GetBaseUrl(connectorModel);
+           }
 
             if (connectorModel == null)
             {
@@ -101,7 +101,7 @@ namespace Zurich.Connector.Data.Services
 
             NameValueCollection mappedQueryParameters = MapQueryParametersFromDB(queryParameters, connectorModel);
             ConnectorDocument connectorDocument = _mapper.Map<ConnectorDocument>(connectorModel);
-            Dictionary<string, string> headerParameters = await _dataExtractionService.ExtractDataSource(mappedQueryParameters, queryParameters, hostname, domain, connectorDocument);
+            Dictionary<string, string> headerParameters = await _dataExtractionService.ExtractDataSource(mappedQueryParameters, queryParameters, hostname, connectorDocument);
             IDataMapping service = _dataMappingFactory.GetImplementation(connectorModel?.DataSource?.SecurityDefinition?.Type);
 
             var data = await service.GetAndMapResults<dynamic>(connectorDocument, transferToken, mappedQueryParameters, headerParameters, queryParameters);
