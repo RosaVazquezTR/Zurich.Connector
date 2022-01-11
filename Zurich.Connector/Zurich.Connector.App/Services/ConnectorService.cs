@@ -12,7 +12,6 @@ using Zurich.Connector.App.Model;
 using Zurich.Connector.App.Services;
 using Zurich.Connector.Data.Model;
 using Zurich.Connector.Data.Repositories.CosmosDocuments;
-using Microsoft.AspNetCore.Mvc;
 
 namespace Zurich.Connector.Data.Services
 {
