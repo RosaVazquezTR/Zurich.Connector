@@ -169,31 +169,32 @@ namespace Zurich.Connector.Web.Controllers
         [HttpDelete("{id}/all")]
         public async Task<ActionResult> RevokeTenantApplication(string id)
         {
-            var results = await _connectorService.RevokeTenantApplication(id);
-            if (results != null && (results as ContentResult).StatusCode == StatusCodes.Status200OK)
+            if (string.IsNullOrEmpty(id))
             {
-                return new ContentResult()
-                {
-                    Content = (results as ContentResult).Content,
-                    ContentType = (results as ContentResult).ContentType,
-                    StatusCode = ((int?)(results as ContentResult).StatusCode)
-                };
+                return StatusCode((int)System.Net.HttpStatusCode.BadRequest, string.Empty);
             }
-            else
+            try
             {
-                return new ContentResult()
+                var results = await _connectorService.RevokeTenantApplication(id);
+                if (results)
                 {
-                    Content = (results as ContentResult).Content,
-                    ContentType = (results as ContentResult).ContentType,
-                    StatusCode = ((int?)(results as ContentResult).StatusCode)
-                };
+                    return StatusCode((int)System.Net.HttpStatusCode.OK, string.Empty);
+                }
+                else
+                {
+                    return StatusCode((int)System.Net.HttpStatusCode.BadRequest, string.Empty);
+                }
+            }
+            catch (Exception)
+            {
+                return StatusCode((int)System.Net.HttpStatusCode.BadRequest, string.Empty);
             }
         }
 
         [HttpPost]
         public async Task<ActionResult<DataSourceRegistrationResponseViewModel>> ConnectorRegistration([FromBody] ConnectorRegistrationModel registrationModel)
         {
-            
+
             if (string.IsNullOrEmpty(registrationModel.ConnectorId))
             {
                 return BadRequest("Connector Id must be defined");

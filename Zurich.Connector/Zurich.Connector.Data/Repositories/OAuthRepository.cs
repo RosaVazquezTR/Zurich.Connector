@@ -48,8 +48,8 @@ namespace Zurich.Connector.Data.Repositories
         /// Revoke client Id and Secret for the appropriate connector
         /// </summary>
         /// <param name="applicationCode">The application code of the connector</param>
-        /// <returns>ActionResult response</returns>
-        Task<ActionResult> RevokeTenantApplication(string applicationCode);
+        /// <returns>Revoking of Tenanat application success or failure status</returns>
+        Task<bool> RevokeTenantApplication(string applicationCode);
     }
 
 
@@ -127,36 +127,33 @@ namespace Zurich.Connector.Data.Repositories
             return result;
         }
 
-        public async Task<ActionResult> RevokeTenantApplication(string applicationCode)
+        public async Task<bool> RevokeTenantApplication(string applicationCode)
         {
-            ActionResult actionResult = null;
+            bool response = false;
             string path = $"api/v1/{applicationCode}/all";
             using (var requestMessage = new HttpRequestMessage(HttpMethod.Delete, path))
             {
-                var result = await _httpClient.SendAsync(requestMessage);
-                var requestContent = await result.Content.ReadAsStringAsync();
+                try
+                {
+                    var result = await _httpClient.SendAsync(requestMessage);
+                    var requestContent = await result.Content.ReadAsStringAsync();
 
-                if (result.IsSuccessStatusCode)
-                {
-                    actionResult = new ContentResult()
+                    if (result.IsSuccessStatusCode)
                     {
-                        Content = result.Content.ReadAsStringAsync().Result,
-                        ContentType = result.Content.Headers.ContentType.MediaType,
-                        StatusCode = Convert.ToInt32(result.StatusCode)
-                    };
+                        response = true;
+                    }
+                    else
+                    {
+                        response = false;
+                    }
                 }
-                else
+                catch (Exception ex)
                 {
-                    actionResult = new ContentResult()
-                    {
-                        Content = result.Content.ReadAsStringAsync().Result,
-                        ContentType = result.Content.Headers.ContentType.MediaType,
-                        StatusCode = ((int?)StatusCodes.Status400BadRequest)
-                    };
+                    _logger.LogError("Unable to retrieve data. Server returned: {message}", ex.Message);
+                    response = false;
                 }
             }
-
-            return actionResult;
+            return response;
         }
 
 

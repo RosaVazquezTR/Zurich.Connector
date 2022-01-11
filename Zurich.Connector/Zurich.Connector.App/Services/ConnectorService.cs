@@ -30,7 +30,7 @@ namespace Zurich.Connector.Data.Services
 
         Task<ConnectorModel> GetConnector(string connectorId);
 
-        Task<ActionResult> RevokeTenantApplication(string connectorId);
+        Task<bool> RevokeTenantApplication(string connectorId);
     }
 
     public class ConnectorService : IConnectorService
@@ -142,7 +142,7 @@ namespace Zurich.Connector.Data.Services
             return connectorDetails;
         }
 
-        public async Task<ActionResult> RevokeTenantApplication(string connectorId)
+        public async Task<bool> RevokeTenantApplication(string connectorId)
         {
             var showPreReleaseConnectors = _configuration.GetValue<string>(AppSettings.ShowPreReleaseConnectors);
             bool blnShowPreReleaseConnectors;

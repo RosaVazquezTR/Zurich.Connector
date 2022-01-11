@@ -39,11 +39,11 @@ namespace Zurich.Connector.App.Services
         Task<AuthorizeUrlResponse> GetAuthorizeUrl(string applicationCode);
 
         /// <summary>
-        /// Revoke client Id and Secret for the appropriate connector 
+        /// Revoke Tenanat Application for the appropriate connector 
         /// </summary>
         /// <param name="applicationCode">The application code of the connector</param>
-        /// <returns>ActionResult Response</returns>
-        Task<ActionResult> RevokeTenantApplication(string applicationCode);
+        /// <returns>Revoking of Tenanat application success or failure status</returns>
+        Task<bool> RevokeTenantApplication(string applicationCode);
     }
     public class OAuthServices :IOAuthServices
     {
@@ -70,7 +70,7 @@ namespace Zurich.Connector.App.Services
             return await _OAuthRespository.GetAuthorizeUrl(applicationCode);
         }
 
-        public async Task<ActionResult> RevokeTenantApplication(string applicationCode)
+        public async Task<bool> RevokeTenantApplication(string applicationCode)
         {
             return await _OAuthRespository.RevokeTenantApplication(applicationCode);
         }
