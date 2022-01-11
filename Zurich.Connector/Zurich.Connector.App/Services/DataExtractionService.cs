@@ -24,7 +24,7 @@ namespace Zurich.Connector.App.Services
         /// <param name="connectorDocument"></param>
         /// <param name="domain">The domain of the api</param>
         /// <returns>Extracted data for the connector</returns>
-        Task<Dictionary<string, string>> ExtractDataSource(NameValueCollection mappedQueryParameters, Dictionary<string, string> queryParameters, string hostname, string domain, ConnectorDocument connectorDocument);
+        Task<Dictionary<string, string>> ExtractDataSource(NameValueCollection mappedQueryParameters, Dictionary<string, string> queryParameters, string hostname, ConnectorDocument connectorDocument);
 
         /// <summary>
         /// Extracts the header params of a given user
@@ -48,7 +48,7 @@ namespace Zurich.Connector.App.Services
             _dataMappingFactory = dataMappingFactory;
         }
 
-        public async Task<Dictionary<string, string>> ExtractDataSource(NameValueCollection mappedQueryParameters, Dictionary<string, string> queryParameters, string hostname, string domain, ConnectorDocument connectorDocument)
+        public async Task<Dictionary<string, string>> ExtractDataSource(NameValueCollection mappedQueryParameters, Dictionary<string, string> queryParameters, string hostname, ConnectorDocument connectorDocument)
         {        
             var headerParameters = ExtractHeadersParams(queryParameters, connectorDocument);
             var extractIds = headerParameters.Values.Append(connectorDocument.Request.EndpointPath);
