@@ -28,27 +28,28 @@ namespace Zurich.Connector.IntegrationTests
             Host.CreateDefaultBuilder()
                 .ConfigureAppConfiguration((HostBuilderContext context, IConfigurationBuilder configBuilder) =>
                 {
-                    string json = "integrationsettings.json";
+                string json = "integrationsettings.json";
 
-                    configBuilder = configBuilder.AddJsonFile(json, optional: true);
-                    
-                    _configuration = configBuilder.Build();
+                configBuilder = configBuilder.AddJsonFile(json, optional: true);
 
-                    string env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? _configuration["ASPNETCORE_ENVIRONMENT"];
+                _configuration = configBuilder.Build();
 
-                    string envJson = $"integrationsettings.{env}.json";
+                string env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? _configuration["ASPNETCORE_ENVIRONMENT"] ?? "Development";
 
-                    // TODO: arguably we should be able to use the same builder as above but the tests seem to break when running on hte build machine
-                    _configuration = new ConfigurationBuilder()
-                        .AddJsonFile(json, optional: true)
-                        .AddJsonFile(envJson, optional: true)
-                        .AddUserSecrets(Assembly.GetExecutingAssembly())
-                        .Build();
+                string envJson = $"integrationsettings.{env}.json";
 
-                    configBuilder.AddAzureKeyVault(
-                        _configuration["KeyVault:Endpoint"],
-                        _configuration["AzureAd:ClientId"],
-                        _configuration["AzureAd:ClientSecret"]);
+                // TODO: arguably we should be able to use the same builder as above but the tests seem to break when running on hte build machine
+                _configuration = new ConfigurationBuilder()
+                    .AddJsonFile(json, optional: true)
+                    .AddJsonFile(envJson, optional: true)
+                    .AddUserSecrets(Assembly.GetExecutingAssembly())
+                    .Build();
+
+                configBuilder.AddAzureKeyVault(
+                    _configuration["KeyVault:Endpoint"],
+                    _configuration["AzureAd:ClientId"],
+                    _configuration["AzureAd:ClientSecret"])
+                    .AddJsonFile(envJson, optional: true);
 
                     _configuration = configBuilder.Build();
 

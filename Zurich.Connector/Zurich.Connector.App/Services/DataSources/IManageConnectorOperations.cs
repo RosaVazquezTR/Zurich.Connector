@@ -70,6 +70,16 @@ namespace Zurich.Connector.App.Services.DataSources
                             }
                         }
                         break;
+                        case ConnectorEntityType.Search:
+                           if (item is JObject searchResult && searchResult.ContainsKey("Count"))
+                           {
+                                if (searchResult.ContainsKey("Documents") && searchResult["Documents"].HasValues)
+                                {
+                                    var documents = searchResult["Documents"] as JArray;
+                                    searchResult["Count"] = documents.Count;
+                                }
+                           }
+                        break;
                 }
             }
             catch (UriFormatException ex)

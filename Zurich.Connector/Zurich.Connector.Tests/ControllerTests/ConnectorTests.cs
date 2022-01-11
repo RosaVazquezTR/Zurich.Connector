@@ -248,7 +248,7 @@ namespace Zurich.Connector.Tests.ControllerTests
 		public async Task CallConnectorDataReturnObject()
 		{
 			// ARRANGE
-			_mockConnectorDataService.Setup(x => x.GetConnectorData(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(),It.IsAny<Dictionary<string, string>>(), It.IsAny<bool>())).Returns(Task.FromResult<dynamic>(JsonConvert.DeserializeObject(TwoDocumentsListJson)));
+			_mockConnectorDataService.Setup(x => x.GetConnectorData(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<bool>())).Returns(Task.FromResult<dynamic>(JsonConvert.DeserializeObject(TwoDocumentsListJson)));
 
 			ConnectorsController connector = CreateConnectorsController();
 
@@ -398,6 +398,23 @@ namespace Zurich.Connector.Tests.ControllerTests
 			_mockConnectorservice.Verify(x => x.GetConnector(It.IsAny<string>()), Times.Exactly(1));
 			var result = response.Result.Value;
 			Assert.AreEqual(connections.CDMMapping.Unstructured.Count, result.CDMMapping.Unstructured.Count);
+		}
+
+		[TestMethod]
+		public async Task TestiManageDomainValue()
+		{
+			// ARRANGE
+			var connections = MockConnectorData.SetupConnectorModel_Version2().ToList()[3];
+			_mockConnectorservice.Setup(x => x.GetConnector(It.IsAny<string>())).Returns(Task.FromResult(connections));
+
+			ConnectorsController connector = new ConnectorsController(_mockConnectorservice.Object, _mockConnectorDataService.Object, _mapper, null);
+
+			// ACT
+			dynamic response = await connector.Connectors("44");
+
+			// ASSERT
+			_mockConnectorservice.Verify(x => x.GetConnector(It.IsAny<string>()), Times.Exactly(1));
+			Assert.AreEqual(connections.DataSource.Domain, "TestDomain.com");
 		}
 
 		private ConnectorsController CreateConnectorsController()

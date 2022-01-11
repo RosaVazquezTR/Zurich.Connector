@@ -290,7 +290,8 @@ namespace Zurich.Connector.Tests.Common
                         Id = "10",
                         Name = "DataSource10",
                         AppCode = "DataSource10",
-                        Description = "DataSource 10 desc"
+                        Description = "DataSource 10 desc",
+                        Domain = "TestDomain.com"
                     },
                     CDMMapping = new CDMMappingModel()
                     {

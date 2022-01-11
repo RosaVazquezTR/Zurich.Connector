@@ -22,6 +22,7 @@ namespace Zurich.Connector.App.Services
         /// <param name="queryParameters">The query string parameters of request</param>
         /// <param name="hostname">The domain of the api being called</param>
         /// <param name="connectorDocument"></param>
+        /// <param name="domain">The domain of the api</param>
         /// <returns>Extracted data for the connector</returns>
         Task<Dictionary<string, string>> ExtractDataSource(NameValueCollection mappedQueryParameters, Dictionary<string, string> queryParameters, string hostname, ConnectorDocument connectorDocument);
 
