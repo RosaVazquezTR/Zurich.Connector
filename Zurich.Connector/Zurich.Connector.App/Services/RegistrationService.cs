@@ -155,7 +155,7 @@ namespace Zurich.Connector.App.Services
                 var dataSources = await _cosmosService.GetDataSources();
                 // TODO figure out why condition does not work enums
                 dataSources = dataSources.Where(x => x.RegistrationInfo?.RegistrationMode == CommonModel.RegistrationEntityMode.Automatic);
-                // NOTE
+                // NOTE returning RequiresNewToken as false for Legal Home Users until Legal Home incorporates new OAuth flow updates.
                 dataSourceAppCodes.AddRange(dataSources.Where(x=>!string.IsNullOrEmpty(x.AppCode)).Select(x => new DataSourceInformation() { AppCode = x.AppCode, RequiresNewToken = false }).Distinct());
 
                 return dataSourceAppCodes;
