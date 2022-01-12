@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
 using System;
+using System.Globalization;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
@@ -267,6 +268,18 @@ namespace Zurich.Connector.Data.DataMap
         private dynamic ModifyResult(CDMElement property, dynamic tempResult, Dictionary<string, string> requestParameters)
         {
 			dynamic response = tempResult;
+			DateTime startDate;
+
+			if (!string.IsNullOrEmpty(property.type) && property.type.Equals(DataTypes.DateTime, StringComparison.OrdinalIgnoreCase))
+			{
+				if (property.format != null)
+				{
+					if (DateTime.TryParseExact((string)response, property.format, CultureInfo.InvariantCulture, DateTimeStyles.None, out startDate))
+						response = startDate;
+					else
+						response = default(DateTime);
+				}
+			}
 
 			if (!string.IsNullOrEmpty(property.type) && property.type.Equals(DataTypes.Bool, StringComparison.OrdinalIgnoreCase))
             {

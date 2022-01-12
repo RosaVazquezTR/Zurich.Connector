@@ -262,6 +262,75 @@ namespace Zurich.Connector.Tests
 					}
 				]";
 
+		private const string OneDocumentJson = @"{
+			""data"": {
+				""results"": [{
+						""author_description"": ""Ryan Hunecke"",
+						""author"": ""RYAN.HUNECKE"",
+						""checksum"": ""SHA256:601CB91FD88ABF97135C25A25CC078A668AE40AFD55B393358BC6C5B0C41B5C4"",
+						""class"": ""DOC"",
+						""class_description"": ""Document"",
+						""content_type"": ""D"",
+						""create_date"": ""20150421"",
+						""database"": ""DATABASE2"",
+						""default_security"": ""public"",
+						""document_number"": 1678,
+						""edit_date"": ""2021-02-05T22:09:07Z"",
+						""edit_profile_date"": ""2021-02-05T22:09:41.386Z"",
+						""file_create_date"": ""2021-02-05T22:09:07Z"",
+						""file_edit_date"": ""2021-02-05T22:09:07Z"",
+						""id"": ""Database2!1678.1"",
+						""is_checked_out"": false,
+						""is_declared"": false,
+						""is_external"": false,
+						""is_external_as_normal"": false,
+						""is_hipaa"": false,
+						""is_in_use"": false,
+						""is_restorable"": true,
+						""iwl"": ""iwl:dms=cloudimanage.com&&lib=Database2&&num=1678&&ver=1"",
+						""last_user"": ""RYAN.HUNECKE"",
+						""last_user_description"": ""Ryan Hunecke"",
+						""name"": ""TestWordDoc"",
+						""operator"": ""RYAN.HUNECKE"",
+						""operator_description"": ""Ryan Hunecke"",
+						""retain_days"": 10,
+						""size"": 18733,
+						""subclass_description"": """",
+						""type"": ""WORDX"",
+						""boolTest"": ""true"",
+						""type_description"": ""WORD 2007"",
+						""extension"": ""DOCX"",
+						""version"": 1,
+						""workspace_name"": ""Matter1"",
+						""workspace_id"": ""Database2!3650"",
+						""wstype"": ""document"",
+						""complexObject"": {
+							""testItem1"": ""fakeDescription1"",
+							""testItem2"": ""fakeDescription2"",
+							""testItem3"": {
+								""level2"": ""level 2 variable""
+							}
+						},
+						""testArray"": [
+							{
+								""name"": ""testIndex1"",
+								""description"": ""fakeDesc""
+							},
+							{
+								""name"": ""testIndex2"",
+								""description"": ""fakeDesc2""
+							},
+							{
+								""name"": ""testIndex3"",
+								""description"": ""fakeDesc3""
+							}
+						],
+						""wstype"": ""document""
+					}
+				]
+			}
+}";
+
 		private const string userInfoJson = @"
 		{
 			""name"": ""Ryan Hunecke"",
@@ -874,6 +943,80 @@ namespace Zurich.Connector.Tests
 			Assert.AreEqual(2, documents.Count);
 			Assert.AreEqual(true, (bool)documents[0].boolean);
 			Assert.AreEqual(@"https://fakeurl.tr.com/not/encoded/files?q=this+is+a+fake+search&t=", (string)documents[0].url);
+		}
+
+		[TestMethod]
+		public async Task VerifyModifyResultForDateTimeFormat()
+		{
+			// ARRANGE
+			string appCode = "TestApp";
+
+			_mockRepository.Setup(x => x.MakeRequest(It.IsAny<ApiInformation>(), It.IsAny<NameValueCollection>(), It.IsAny<string>())).Returns(Task.FromResult(OneDocumentJson));
+
+			ConnectorDocument connectorDocument = new ConnectorDocument()
+			{
+				ResultLocation = "data.results",
+				Request = new ConnectorRequest()
+				{ EndpointPath = "https://fakeaddress.thomsonreuters.com" },
+				Response = new ConnectorResponse()
+				{
+					Type = ResponseContentType.JSON
+				}
+			};
+			connectorDocument.CdmMapping = new CDMMapping()
+			{
+				structured = new List<CDMElement>() {
+							{
+								new CDMElement(){ name="Name", responseElement ="name", type = "string"}
+							},
+							{
+								new CDMElement(){ name="Id", responseElement ="id", type = "string"}
+							},
+							{
+								new CDMElement(){ name="url", responseElement ="https://fakeurl.tr.com/(notEncoded)/files?q=(%Query)&t=(doesntExist)", type = DataTypes.InterpolationString}
+							},
+							{
+								new CDMElement(){ name="boolean", responseElement ="boolTest", type = DataTypes.Bool}
+							},
+							{
+								new CDMElement(){ name="creationDate", responseElement ="create_date", type = DataTypes.DateTime, format="yyyyMMdd"}
+							}
+				}
+			};
+
+			connectorDocument.DataSource = new DataSourceDocument()
+			{
+				appCode = appCode,
+				securityDefinition = new SecurityDefinition()
+				{
+					defaultSecurityDefinition = new SecurityDefinitionDetails()
+					{
+						authorizationHeader = "differentAuthHeader"
+					}
+				}
+			};
+
+			Mock<IHttpBodyService> mockBodyService = new Mock<IHttpBodyService>();
+			_mockHttpBodyFactory.Setup(x => x.GetImplementation(It.IsAny<string>())).Returns(mockBodyService.Object);
+
+			Mock<IHttpResponseService> mockResponseService = new Mock<IHttpResponseService>();
+			mockResponseService.Setup(x => x.GetJTokenResponse(It.IsAny<string>(), It.IsAny<ConnectorResponse>())).Returns(JToken.Parse(OneDocumentJson));
+			_mockHttpResponseFactory.Setup(x => x.GetImplementation(It.IsAny<string>())).Returns(mockResponseService.Object);
+
+			DataMappingOAuth documentMap = CreateDataMapping();
+
+			Dictionary<string, string> fakeRequestparams = new Dictionary<string, string>();
+			fakeRequestparams.Add("Query", "this is a fake search");
+			fakeRequestparams.Add("notEncoded", "not/encoded");
+
+			// ACT
+			dynamic documents = await documentMap.GetAndMapResults<dynamic>(connectorDocument, null, null, null, fakeRequestparams);
+			JToken jToken = JToken.FromObject(documents);
+
+			// ASSERT
+			Assert.IsNotNull(documents);
+			Assert.AreEqual(true, jToken.Last["creationDate"].ToString().Contains("4/21/2015 12:00:00 AM"));
+			
 		}
 	}
 }

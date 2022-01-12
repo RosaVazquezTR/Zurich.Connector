@@ -54,5 +54,6 @@
     {
         public const string Bool = "bool";
         public const string InterpolationString = "interpolationString";
+        public const string DateTime = "dateTime";
     }
 }

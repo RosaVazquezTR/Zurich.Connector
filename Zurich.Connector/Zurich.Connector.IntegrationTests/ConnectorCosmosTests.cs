@@ -21,7 +21,7 @@ namespace Zurich.Connector.IntegrationTests
     {
         private const string folderLocation = @"..\..\..\..\..\Zurich.Connector.Deploy\CosmosRecords";
         private List<string> dataSourceTypes = new List<string>() { "oauth2", "transferToken" };
-        private List<string> parameterTypes = new List<string>() { "array", "date", "int", "object", "short", "string" };
+        private List<string> parameterTypes = new List<string>() { "array", "date", "int", "object", "short", "string", "DateTime" };
         private List<string> requestMethodTypes = new List<string>() { "GET", "POST" };
         private List<string> requestInClauseTypes = new List<string>() { "Child", "Body", "OData", "Query", "Headers" };
 
