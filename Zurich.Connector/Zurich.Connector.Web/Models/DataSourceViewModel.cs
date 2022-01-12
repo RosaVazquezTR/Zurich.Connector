@@ -21,6 +21,10 @@ namespace Zurich.Connector.Web.Models
         /// </summary>
         public string Name { get; set; }
         /// <summary>
+        /// Requires New Refresh Token
+        /// </summary>
+        public bool RequiresNewToken { get; set; }
+        /// <summary>
         /// Data source description
         /// </summary>
         public string Description { get; set; }

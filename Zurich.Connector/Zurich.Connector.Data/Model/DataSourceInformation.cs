@@ -14,5 +14,9 @@
         /// Domain. Ex: "graph.microsoft.com"
         /// </summary>
         public string Domain { get; set; }
+        /// <summary>
+        /// Requires New Refresh Token
+        /// </summary>
+        public bool RequiresNewToken { get; set; }
     }
 }

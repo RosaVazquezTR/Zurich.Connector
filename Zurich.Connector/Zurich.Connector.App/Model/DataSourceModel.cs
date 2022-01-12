@@ -37,7 +37,10 @@ namespace Zurich.Connector.App.Model
         /// Application Type.
         /// </summary>
         public OAuthApplicationType? appType { get; set; }
-
+        /// <summary>
+        /// Requires New Refresh Token
+        /// </summary>
+        public bool RequiresNewToken { get; set; }
         /// <summary>
         /// Locale (ex: US / UK etc).
         /// </summary>

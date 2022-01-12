@@ -62,7 +62,7 @@ namespace Zurich.Connector.Data.Services
                 bool isDataSourceFilter = false;
                 IEnumerable<string> entityTypeFilter = Enumerable.Empty<string>();
                 IEnumerable<string> dataSourceFilter = Enumerable.Empty<string>();
-                IEnumerable<string> registeredDataSources = Enumerable.Empty<string>();
+                IEnumerable<DataSourceInformation> registeredDataSources = Enumerable.Empty<DataSourceInformation>();
                 if (filters?.EntityTypes?.Count > 0)
                 {
                     isEntityTypeFilter = true;
@@ -104,7 +104,7 @@ namespace Zurich.Connector.Data.Services
 
                 registeredDataSources = await _registrationService.GetUserDataSources();
                 List<ConnectorModel> registeredConnectors = new List<ConnectorModel>();
-                foreach (var connector in connectors.Where(connector => registeredDataSources.Contains(connector.DataSource.AppCode)))
+                foreach (var connector in connectors.Where(connector => registeredDataSources.Select(x => x.AppCode).Contains(connector.DataSource.AppCode)))
                 {
                     connector.RegistrationStatus = RegistrationStatus.Registered;
                     registeredConnectors.Add(connector);
