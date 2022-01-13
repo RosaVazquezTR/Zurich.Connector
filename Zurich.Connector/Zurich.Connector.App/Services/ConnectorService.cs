@@ -107,6 +107,7 @@ namespace Zurich.Connector.Data.Services
                 foreach (var connector in connectors.Where(connector => registeredDataSources.Select(x => x.AppCode).Contains(connector.DataSource.AppCode)))
                 {
                     connector.RegistrationStatus = RegistrationStatus.Registered;
+                    connector.DataSource.RequiresNewToken = registeredDataSources.Where(x => x.AppCode == connector.DataSource.AppCode).First().RequiresNewToken;
                     registeredConnectors.Add(connector);
                 }
                 // Can't stick this in the cosmos query because it is looking at connectors not datasources.
