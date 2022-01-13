@@ -143,13 +143,7 @@ namespace Zurich.Connector.Data.Services
 
         public async Task<bool> RevokeTenantApplication(string connectorId)
         {
-            var showPreReleaseConnectors = _configuration.GetValue<string>(AppSettings.ShowPreReleaseConnectors);
-            bool blnShowPreReleaseConnectors;
-            Boolean.TryParse(showPreReleaseConnectors, out blnShowPreReleaseConnectors);
-            Expression<Func<ConnectorDocument, bool>> condition;
-            condition = connector => (connector.Id == connectorId && (blnShowPreReleaseConnectors || (!connector.PreRelease.IsDefined() || !connector.PreRelease)));
-            var connector = await _cosmosService.GetConnectors(true, condition);
-            var connectorDetails = connector.SingleOrDefault();
+            var connectorDetails = await GetConnector(connectorId);
             var result = await _OAuthService.RevokeTenantApplication(connectorDetails.DataSource.AppCode);
             return result;
         }

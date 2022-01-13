@@ -136,14 +136,7 @@ namespace Zurich.Connector.Data.Repositories
                     var result = await _httpClient.SendAsync(requestMessage);
                     var requestContent = await result.Content.ReadAsStringAsync();
 
-                    if (result.IsSuccessStatusCode)
-                    {
-                        response = true;
-                    }
-                    else
-                    {
-                        response = false;
-                    }
+                    response = result.IsSuccessStatusCode;
                 }
                 catch (Exception ex)
                 {

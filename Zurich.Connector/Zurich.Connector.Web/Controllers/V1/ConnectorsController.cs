@@ -171,24 +171,25 @@ namespace Zurich.Connector.Web.Controllers
         {
             if (string.IsNullOrEmpty(id))
             {
-                return StatusCode((int)System.Net.HttpStatusCode.BadRequest, string.Empty);
+                return BadRequest();
             }
-            try
+            if (!string.IsNullOrEmpty(id))
             {
-                var results = await _connectorService.RevokeTenantApplication(id);
-                if (results)
+                try
                 {
-                    return StatusCode((int)System.Net.HttpStatusCode.OK, string.Empty);
+                    var results = await _connectorService.RevokeTenantApplication(id);
+                    if (results)
+                    {
+                        return Ok();
+                    }
                 }
-                else
+                catch (Exception)
                 {
-                    return StatusCode((int)System.Net.HttpStatusCode.BadRequest, string.Empty);
+                    return BadRequest();
                 }
+
             }
-            catch (Exception)
-            {
-                return StatusCode((int)System.Net.HttpStatusCode.BadRequest, string.Empty);
-            }
+            return BadRequest();
         }
 
         [HttpPost]
