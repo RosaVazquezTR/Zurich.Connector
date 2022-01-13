@@ -250,6 +250,21 @@ stages:
                     functionAlertWindowSize: ${{ variables.functionAlertWindowSize }}
                     resourceGroup: ${{ variables.resourceGroup }}
                     subscriptionName: ${{ variables.subscriptionName }}
+## Testing is not currently possible because we can't get a token for prod from identity server
+# - stage: CompatibilityTesting
+#   pool: AutomationTestAgentPool
+#   dependsOn: Prod
+#   jobs:
+#   - job: 'RegressionTests'
+#     timeoutInMinutes: ${{ variables.regressionTestTimeout }} # how long to run the job before automatically cancelling
+#     displayName: 'Regression Tests (Backwards Compatibility Tests)'
+#     steps: 
+#       - checkout: ZurichTesting
+#       - template: pipelines\Templates\legal-home-regression-tests.yml@ZurichTesting
+#         parameters:
+#           environment: ${{ variables.environmentStorageName }}
+#           azureAdClientSecret: $(azureAdClientSecret)
+#           testTags: ${{ variables.regressionTestTags }}
 - stage: Swap_Slots
   dependsOn: Prod
   jobs:
