@@ -156,7 +156,8 @@ namespace Zurich.Connector.App.Services
                 // TODO figure out why condition does not work enums
                 dataSources = dataSources.Where(x => x.RegistrationInfo?.RegistrationMode == CommonModel.RegistrationEntityMode.Automatic);
                 // NOTE returning RequiresNewToken as false for Legal Home Users until Legal Home incorporates new OAuth flow updates.
-                dataSourceAppCodes.AddRange(dataSources.Where(x=>!string.IsNullOrEmpty(x.AppCode)).Select(x => new DataSourceInformation() { AppCode = x.AppCode, RequiresNewToken = false }).Distinct());
+                // Applying Distinct couldn't drop duplicate datasource entries, Changed to GroupBy and selected the first element.  
+                dataSourceAppCodes.AddRange(dataSources.Where(x => !string.IsNullOrEmpty(x.AppCode)).Select(x => new DataSourceInformation() { AppCode = x.AppCode, RequiresNewToken = false }).GroupBy(x => x.AppCode).Select(x => x.First()));
 
                 return dataSourceAppCodes;
             }
