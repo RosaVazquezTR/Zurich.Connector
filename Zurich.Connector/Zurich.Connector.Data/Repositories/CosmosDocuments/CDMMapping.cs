@@ -39,5 +39,9 @@ namespace Zurich.Connector.Data.Repositories.CosmosDocuments
         /// Name of the response element
         /// </summary>
         public string responseElement { get; set; }
+        /// <summary>
+        /// Format to be used
+        /// </summary>
+        public string format { get; set; }
     }
 }

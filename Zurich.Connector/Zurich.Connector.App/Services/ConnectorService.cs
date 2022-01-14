@@ -28,6 +28,8 @@ namespace Zurich.Connector.Data.Services
         Task<List<ConnectorModel>> GetConnectors(Common.Models.Connectors.ConnectorFilterModel filters);
 
         Task<ConnectorModel> GetConnector(string connectorId);
+
+        Task<bool> RevokeTenantApplication(string connectorId);
     }
 
     public class ConnectorService : IConnectorService
@@ -36,17 +38,20 @@ namespace Zurich.Connector.Data.Services
         private readonly ILogger<ConnectorService> _logger;
         private readonly IRegistrationService _registrationService;
         private readonly IConfiguration _configuration;
+        private readonly IOAuthServices _OAuthService;
 
         public ConnectorService(
             ILogger<ConnectorService> logger,
             ICosmosService cosmosService,
             IRegistrationService registrationService,
-            IConfiguration configuration)
+            IConfiguration configuration, 
+            IOAuthServices OAuthService)
         {
             _cosmosService = cosmosService;
             _logger = logger;
             _registrationService = registrationService;
             _configuration = configuration;
+            _OAuthService = OAuthService;
         }
 
         /// <summary>
@@ -135,6 +140,13 @@ namespace Zurich.Connector.Data.Services
             var connector = await _cosmosService.GetConnectors(true, condition);
             var connectorDetails = connector.SingleOrDefault();
             return connectorDetails;
+        }
+
+        public async Task<bool> RevokeTenantApplication(string connectorId)
+        {
+            var connectorDetails = await GetConnector(connectorId);
+            var result = await _OAuthService.RevokeTenantApplication(connectorDetails.DataSource.AppCode);
+            return result;
         }
 
     }

@@ -1,7 +1,7 @@
 {
   "id": "10",
   "partitionkey": "DataSourceList",
-  "name": "iManage",
+  "name": "iManage Work",
   "description": "Connects to the iManage APIS",
   "appCode": "iManage",
   "infoURL": "",

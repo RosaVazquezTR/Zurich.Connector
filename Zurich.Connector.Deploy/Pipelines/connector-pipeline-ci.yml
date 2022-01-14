@@ -204,9 +204,49 @@ stages:
                     vnetName: ${{ variables.vnetName }}
                     vnetResourceGroup: ${{ variables.vnetResourceGroup }}
                     zipFileLocation: ${{ variables.functionZipLocation }}
-- stage: Swap_Slots
+    - deployment: PostReqs
+      environment: CI
+      pool:
+        vmImage: 'windows-latest'
+      dependsOn: 
+        - Connector
+        - DurableFunction
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+              - checkout: self
+              - template: ../Templates/connector-postreqs.yml
+                parameters:
+                    alertActionGroups: ${{ variables.monitorAlertGroups }}
+                    environmentName: ${{ variables.environmentName }}
+                    functionName: ${{ variables.functionNamePrefix }}${{ variables.functionName }}
+                    functionAlertCondition: ${{ variables.functionAlertCondition }}
+                    functionAlertDescription: ${{ variables.functionAlertDescription }}
+                    functionAlertEvaluationFrequency: ${{ variables.functionAlertEvaluationFrequency }}
+                    functionAlertName: ${{ variables.functionAlertName }}
+                    functionAlertThreshold: ${{ variables.functionAlertThreshold }}
+                    functionAlertWindowSize: ${{ variables.functionAlertWindowSize }}
+                    resourceGroup: ${{ variables.resourceGroup }}
+                    subscriptionName: ${{ variables.subscriptionName }}
+- stage: CompatibilityTesting
+  pool: AutomationTestAgentPool
   dependsOn: CI
   condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'master'))
+  jobs:
+  - job: 'RegressionTests'
+    timeoutInMinutes: ${{ variables.regressionTestTimeout }} # how long to run the job before automatically cancelling
+    displayName: 'Regression Tests (Backwards Compatibility Tests)'
+    steps: 
+      - checkout: ZurichTesting
+      - template: pipelines\Templates\legal-home-regression-tests.yml@ZurichTesting
+        parameters:
+          environment: ${{ variables.environmentStorageName }}
+          azureAdClientSecret: $(azureAdClientSecret)
+          testTags: ${{ variables.regressionTestTags }}
+- stage: Swap_Slots
+  dependsOn: CompatibilityTesting
+  condition: and(in(dependencies.CompatibilityTesting.result, 'Succeeded', 'Failed'), eq(variables['Build.SourceBranchName'], 'master'))
   jobs:
     - template: ../Templates/connector-swap-slots.yml
       parameters:

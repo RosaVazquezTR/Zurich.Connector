@@ -14,12 +14,14 @@ using Zurich.Connector.App.Model;
 using Zurich.Connector.App.Services;
 using Zurich.Connector.App.Services.DataSources;
 using Zurich.Connector.App.Utils;
+using Zurich.Connector.Data;
 using Zurich.Connector.Data.DataMap;
 using Zurich.Connector.Data.Factories;
 using Zurich.Connector.Data.Repositories;
 using Zurich.Connector.Data.Repositories.CosmosDocuments;
 using Zurich.Connector.Data.Services;
 using Zurich.Connector.Tests.Common;
+using CommonServices = Zurich.Common.Services;
 
 namespace Zurich.Connector.Tests.ServiceTests
 {
@@ -36,6 +38,8 @@ namespace Zurich.Connector.Tests.ServiceTests
 		private Mock<IConnectorDataSourceOperationsFactory> _mockDataSourceOperationsFactory;
 		private Mock<IRegistrationService> _mockRegistrationService;
 		private Mock<IDataExtractionService> _mockDataExtractionService;
+		private Mock<ILegalHomeAccessCheck> _mockLegalHomeAccess;
+		private Mock<CommonServices.ITenantService> _mockTenantService;
 
 		[TestInitialize]
 		public void TestInitialize()
@@ -55,6 +59,8 @@ namespace Zurich.Connector.Tests.ServiceTests
 			_mockDataSourceOperationsFactory = new Mock<IConnectorDataSourceOperationsFactory>();
 			_mockRegistrationService = new Mock<IRegistrationService>();
 			_mockDataExtractionService = new Mock<IDataExtractionService>();
+			_mockLegalHomeAccess = new Mock<ILegalHomeAccessCheck>();
+			_mockTenantService = new Mock<ITenantService>();
 		}
 
 		[TestMethod]
@@ -65,7 +71,7 @@ namespace Zurich.Connector.Tests.ServiceTests
 			var connector = MockConnectorData.SetupConnectorModel().Where(t => t.Id == "1").FirstOrDefault();
 
 			ConnectorDataService service = new ConnectorDataService(_mockDataMappingFactory.Object, _mockDataMappingRepo.Object, null, _mapper, _mockCosmosService.Object, _mockdataMappingService.Object,
-				_mockDataSourceOperationsFactory.Object, _mockRegistrationService.Object, _mockDataExtractionService.Object);
+				_mockDataSourceOperationsFactory.Object, _mockRegistrationService.Object, _mockDataExtractionService.Object, _mockLegalHomeAccess.Object, _mockTenantService.Object);
 
 			// ACT
 			var mappedResult = service.MapQueryParametersFromDB(cdmQueryParameters, connector);
@@ -109,7 +115,7 @@ namespace Zurich.Connector.Tests.ServiceTests
 			arrangePagination(connector.Pagination);
 
 			ConnectorDataService service = new ConnectorDataService(_mockDataMappingFactory.Object, _mockDataMappingRepo.Object, null, _mapper, _mockCosmosService.Object, _mockdataMappingService.Object,
-				_mockDataSourceOperationsFactory.Object, _mockRegistrationService.Object, _mockDataExtractionService.Object);
+				_mockDataSourceOperationsFactory.Object, _mockRegistrationService.Object, _mockDataExtractionService.Object, _mockLegalHomeAccess.Object, _mockTenantService.Object);
 
 			// ACT
 			var mappedResult = service.MapQueryParametersFromDB(cdmQueryParameters, connector);
@@ -128,7 +134,7 @@ namespace Zurich.Connector.Tests.ServiceTests
 			var connector = MockConnectorData.SetupConnectorModel().Where(t => t.Id == "3").FirstOrDefault();
 
 			ConnectorDataService service = new ConnectorDataService(_mockDataMappingFactory.Object, _mockDataMappingRepo.Object, null, _mapper, _mockCosmosService.Object, _mockdataMappingService.Object,
-				_mockDataSourceOperationsFactory.Object, _mockRegistrationService.Object, _mockDataExtractionService.Object);
+				_mockDataSourceOperationsFactory.Object, _mockRegistrationService.Object, _mockDataExtractionService.Object, _mockLegalHomeAccess.Object, _mockTenantService.Object);
 
 			// ACT
 			var mappedResult = service.MapQueryParametersFromDB(cdmQueryParameters, connector);
@@ -148,7 +154,7 @@ namespace Zurich.Connector.Tests.ServiceTests
 			var connector = MockConnectorData.SetupConnectorModel().Where(t => t.Id == "4").FirstOrDefault();
 
 			ConnectorDataService service = new ConnectorDataService(_mockDataMappingFactory.Object, _mockDataMappingRepo.Object, null, _mapper, _mockCosmosService.Object, _mockdataMappingService.Object,
-				_mockDataSourceOperationsFactory.Object, _mockRegistrationService.Object, _mockDataExtractionService.Object);
+				_mockDataSourceOperationsFactory.Object, _mockRegistrationService.Object, _mockDataExtractionService.Object, _mockLegalHomeAccess.Object, _mockTenantService.Object);
 
 			// ACT
 			var mappedResult = service.MapQueryParametersFromDB(cdmQueryParameters, connector);
@@ -165,7 +171,7 @@ namespace Zurich.Connector.Tests.ServiceTests
 			var connector = MockConnectorData.SetupConnectorModel_Version2().Where(t => t.Id == "1").FirstOrDefault();
 
 			ConnectorDataService service = new ConnectorDataService(_mockDataMappingFactory.Object, _mockDataMappingRepo.Object, null, _mapper, _mockCosmosService.Object, _mockdataMappingService.Object,
-				_mockDataSourceOperationsFactory.Object, _mockRegistrationService.Object, _mockDataExtractionService.Object);
+				_mockDataSourceOperationsFactory.Object, _mockRegistrationService.Object, _mockDataExtractionService.Object, _mockLegalHomeAccess.Object, _mockTenantService.Object);
 
 			// ACT
 			var mappedResult = service.MapQueryParametersFromDB(cdmQueryParameters, connector);
@@ -184,7 +190,7 @@ namespace Zurich.Connector.Tests.ServiceTests
 			var connector = MockConnectorData.SetupConnectorModel_Version2().Where(t => t.Id == "2").FirstOrDefault();
 
 			ConnectorDataService service = new ConnectorDataService(_mockDataMappingFactory.Object, _mockDataMappingRepo.Object, null, _mapper, _mockCosmosService.Object, _mockdataMappingService.Object,
-				_mockDataSourceOperationsFactory.Object, _mockRegistrationService.Object, _mockDataExtractionService.Object);
+				_mockDataSourceOperationsFactory.Object, _mockRegistrationService.Object, _mockDataExtractionService.Object, _mockLegalHomeAccess.Object, _mockTenantService.Object);
 
 			// ACT
 			var mappedResult = service.MapQueryParametersFromDB(cdmQueryParameters, connector);
@@ -201,7 +207,7 @@ namespace Zurich.Connector.Tests.ServiceTests
 			var connector = MockConnectorData.SetupConnectorModel_Version2().Where(t => t.Id == "3").FirstOrDefault();
 
 			ConnectorDataService service = new ConnectorDataService(_mockDataMappingFactory.Object, _mockDataMappingRepo.Object, null, _mapper, _mockCosmosService.Object, _mockdataMappingService.Object,
-				_mockDataSourceOperationsFactory.Object, _mockRegistrationService.Object, _mockDataExtractionService.Object);
+				_mockDataSourceOperationsFactory.Object, _mockRegistrationService.Object, _mockDataExtractionService.Object, _mockLegalHomeAccess.Object, _mockTenantService.Object);
 
 			// ACT
 			var mappedResult = service.MapQueryParametersFromDB(cdmQueryParameters, connector);

@@ -47,8 +47,9 @@
       },
       {
         "name": "CreationDate",
-        "type": "string",
+        "type": "DateTime",
         "responseElement": "publicationDate",
+        "format": "yyyyMMdd",
         "_comment": ""
       }
 

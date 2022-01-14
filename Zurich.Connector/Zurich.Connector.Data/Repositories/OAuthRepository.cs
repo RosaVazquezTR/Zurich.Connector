@@ -41,6 +41,13 @@ namespace Zurich.Connector.Data.Repositories
         /// <param name="applicationCode">The application to get the authorize url for</param>
         /// <returns>Authorize url</returns>
         Task<AuthorizeUrlResponse> GetAuthorizeUrl(string applicationCode);
+
+        /// <summary>
+        /// Revoke client Id and Secret for the appropriate connector
+        /// </summary>
+        /// <param name="applicationCode">The application code of the connector</param>
+        /// <returns>Revoking of Tenanat application success or failure status</returns>
+        Task<bool> RevokeTenantApplication(string applicationCode);
     }
 
 
@@ -63,12 +70,12 @@ namespace Zurich.Connector.Data.Repositories
                 {
                     var httpContent = await MakeRequest(requestMessage);
 
-                   result = JsonConvert.DeserializeObject(httpContent);
+                    result = JsonConvert.DeserializeObject(httpContent);
                 }
             }
-            if(result == null)
-            { 
-                return true; 
+            if (result == null)
+            {
+                return true;
             }
             else
             {
@@ -118,6 +125,28 @@ namespace Zurich.Connector.Data.Repositories
             return result;
         }
 
+        public async Task<bool> RevokeTenantApplication(string applicationCode)
+        {
+            bool response = false;
+            string path = $"api/v1/{applicationCode}/all";
+            using (var requestMessage = new HttpRequestMessage(HttpMethod.Delete, path))
+            {
+                try
+                {
+                    var result = await _httpClient.SendAsync(requestMessage);
+                    var requestContent = await result.Content.ReadAsStringAsync();
+
+                    response = result.IsSuccessStatusCode;
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError("Unable to retrieve data. Server returned: {message}", ex.Message);
+                    response = false;
+                }
+            }
+            return response;
+        }
+
 
         /// <summary>
         /// Makes HTTP requests to a OAuth endpoint
@@ -135,7 +164,7 @@ namespace Zurich.Connector.Data.Repositories
             }
             else
             {
-                if(result.StatusCode == System.Net.HttpStatusCode.NotFound)
+                if (result.StatusCode == System.Net.HttpStatusCode.NotFound)
                 {
                     return string.Empty;
                 }

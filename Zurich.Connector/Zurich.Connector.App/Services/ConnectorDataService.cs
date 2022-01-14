@@ -15,6 +15,8 @@ using Zurich.Connector.Data.DataMap;
 using Zurich.Connector.Data.Factories;
 using Zurich.Connector.Data.Repositories;
 using Zurich.Connector.Data.Repositories.CosmosDocuments;
+using CommonServices = Zurich.Common.Services;
+using Zurich.TenantData;
 
 namespace Zurich.Connector.Data.Services
 {
@@ -30,6 +32,7 @@ namespace Zurich.Connector.Data.Services
         /// <param name="hostname">The domain of the api being called</param>
         /// <param name="transferToken">The transfer token to pass with the api call, if needed</param>
         /// <param name="queryParameters">The query string parameters of request</param>
+        /// <param name="domain">The domain of the api</param>
         /// <returns>Mapped data for the connector</returns>
         Task<dynamic> GetConnectorData(string connectorIdentifier, string hostname, string transferToken, Dictionary<string, string> queryParameters, bool retrievefilters);
     }
@@ -45,6 +48,8 @@ namespace Zurich.Connector.Data.Services
         private readonly IConnectorDataSourceOperationsFactory _dataSourceOperationsFactory;
         private readonly IRegistrationService _registrationService;
         private readonly IDataExtractionService _dataExtractionService;
+        private readonly ILegalHomeAccessCheck _legalHomeAccess;
+        private readonly CommonServices.ITenantService _tenantService;
 
         public ConnectorDataService(
             IDataMappingFactory dataMappingFactory,
@@ -54,7 +59,9 @@ namespace Zurich.Connector.Data.Services
             IDataMappingService dataMappingService,
             IConnectorDataSourceOperationsFactory dataSourceOperationsFactory,
             IRegistrationService registrationService,
-            IDataExtractionService dataExtractionService)
+            IDataExtractionService dataExtractionService,
+            ILegalHomeAccessCheck legalHomeAccess,
+            CommonServices.ITenantService tenantService)
         {
             _dataMappingFactory = dataMappingFactory;
             _dataMappingRepo = dataMappingRepo;
@@ -65,6 +72,8 @@ namespace Zurich.Connector.Data.Services
             _dataSourceOperationsFactory = dataSourceOperationsFactory;
             _registrationService = registrationService;
             _dataExtractionService = dataExtractionService;
+            _legalHomeAccess = legalHomeAccess;
+            _tenantService = tenantService;
         }
 
         /// <summary>
@@ -79,6 +88,11 @@ namespace Zurich.Connector.Data.Services
         public async Task<dynamic> GetConnectorData(string connectionIdentifier, string hostname, string transferToken, Dictionary<string, string> queryParameters, bool retrieveFilters)
         {
             ConnectorModel connectorModel = await _dataMappingService.RetrieveProductInformationMap(connectionIdentifier, hostname, retrieveFilters);
+            // TODO: This is a legalhome workaround until legalhome uses OAuth
+           if (string.IsNullOrEmpty(connectorModel.DataSource.Domain) && string.IsNullOrEmpty(hostname))
+           {
+                hostname = await GetBaseUrl(connectorModel);
+           }
 
             if (connectorModel == null)
             {
@@ -86,7 +100,7 @@ namespace Zurich.Connector.Data.Services
             }
 
             NameValueCollection mappedQueryParameters = MapQueryParametersFromDB(queryParameters, connectorModel);
-            ConnectorDocument connectorDocument = _mapper.Map<ConnectorDocument>(connectorModel);           
+            ConnectorDocument connectorDocument = _mapper.Map<ConnectorDocument>(connectorModel);
             Dictionary<string, string> headerParameters = await _dataExtractionService.ExtractDataSource(mappedQueryParameters, queryParameters, hostname, connectorDocument);
             IDataMapping service = _dataMappingFactory.GetImplementation(connectorModel?.DataSource?.SecurityDefinition?.Type);
 
@@ -97,7 +111,7 @@ namespace Zurich.Connector.Data.Services
                 JToken mappingFilters = JToken.FromObject(connectorDocument.Filters);
                 data[Constants.filters] = mappingFilters;
             }
-            return data;
+            return data;            
         }
 
         public NameValueCollection MapQueryParametersFromDB(Dictionary<string, string> cdmQueryParameters, ConnectorModel connectorModel)
@@ -158,7 +172,20 @@ namespace Zurich.Connector.Data.Services
 
             return modifiedQueryParameters;
         }
-         
+        private async Task<dynamic> GetBaseUrl(ConnectorModel connectorModel)
+        {
+            if (_legalHomeAccess.isLegalHomeUser())
+            {
+                if (connectorModel.DataSource.AppCode == KnownDataSources.iManage)
+                {
+
+                    var tenantApps = await _tenantService.GetTenantApplication(connectorModel.DataSource.AppCode);
+                    return connectorModel.DataSource.Domain = new Uri(tenantApps.BaseUrl).Authority;
+                }
+            }
+            return null;
+        }
+
         private bool DefaultParametersCheck(ConnectorRequestParameterModel request, Dictionary<string, string> queryParameters)
         {
             return !String.IsNullOrWhiteSpace(request.DefaultValue) 

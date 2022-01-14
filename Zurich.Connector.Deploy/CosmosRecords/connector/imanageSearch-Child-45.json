@@ -42,7 +42,7 @@
       },
       {
         "name": "CreationDate",
-        "type": "string",
+        "type": "DateTime",
         "responseElement": "file_create_date",
         "_comment": ""
       }
