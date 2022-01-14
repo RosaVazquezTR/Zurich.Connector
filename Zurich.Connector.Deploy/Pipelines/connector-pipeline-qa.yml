@@ -280,6 +280,7 @@ stages:
         subscriptionName: ${{ variables.subscriptionName }}
 - stage: Update_APIM_Product
   dependsOn: Swap_Slots
+  condition: eq(dependencies.Swap_Slots.result, 'Succeeded')
   jobs:
   - job: 'UpdateApim'
     displayName: 'Update Apim Connector Service'
@@ -315,6 +316,7 @@ stages:
 - stage: Testing
   pool: AutomationTestAgentPool
   dependsOn: Swap_Slots
+  condition: eq(dependencies.Swap_Slots.result, 'Succeeded')
   jobs:
   - job: 'RegressionTests'
     timeoutInMinutes: ${{ variables.regressionTestTimeout }} # how long to run the job before automatically cancelling
@@ -336,6 +338,7 @@ stages:
 - stage: KickOffProd
   # dependsOn: BusinessApproval
   # condition: eq(dependencies.BusinessApproval.result,'Succeeded')
+  condition: in(dependencies.Testing.result, 'Succeeded', 'SucceededWithIssues', 'Failed')
   jobs:
     - deployment: KickOffProd
       environment: QA
