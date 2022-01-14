@@ -162,7 +162,7 @@ namespace Zurich.Connector.Tests.ServiceTests
             //Assert
             Assert.IsNotNull(returnedDataSources);
             Assert.AreEqual(4, returnedDataSources.Count);
-            Assert.IsFalse(returnedDataSources.Contains("NotReturned"));
+            Assert.IsFalse(returnedDataSources.Contains(new DataModel.DataSourceInformation() { AppCode = "NotReturned" }));
         }
 
         [TestMethod]
@@ -190,8 +190,8 @@ namespace Zurich.Connector.Tests.ServiceTests
             //Assert
             Assert.IsNotNull(returnedDataSources);
             Assert.AreEqual(3, returnedDataSources.Count);
-            Assert.IsFalse(returnedDataSources.Contains("NotReturned"));
-            Assert.IsFalse(returnedDataSources.Contains("fakeApp"));
+            Assert.IsFalse(returnedDataSources.Contains(new DataModel.DataSourceInformation() { AppCode = "NotReturned" }));
+            Assert.IsFalse(returnedDataSources.Contains(new DataModel.DataSourceInformation() { AppCode = "fakeApp" }));
         }
 
         [TestMethod]
@@ -218,8 +218,8 @@ namespace Zurich.Connector.Tests.ServiceTests
             //Assert
             Assert.IsNotNull(returnedDataSources);
             Assert.AreEqual(3, returnedDataSources.Count);
-            Assert.IsFalse(returnedDataSources.Contains("NotReturned"));
-            Assert.IsFalse(returnedDataSources.Contains("newApp"));
+            Assert.IsFalse(returnedDataSources.Contains(new DataModel.DataSourceInformation() { AppCode = "NotReturned" }));
+            Assert.IsFalse(returnedDataSources.Contains(new DataModel.DataSourceInformation() { AppCode = "newApp" }));
         }
 
         [TestMethod]

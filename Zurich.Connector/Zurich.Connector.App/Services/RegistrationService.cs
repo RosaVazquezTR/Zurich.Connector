@@ -45,7 +45,7 @@ namespace Zurich.Connector.App.Services
         /// </summary>
         /// <param name="registrationModes">List of registration modes to provide additional filtering</param>
         /// <returns>List of connector ids</returns>
-        Task<IEnumerable<string>> GetUserDataSources();
+        Task<IEnumerable<DataSourceInformation>> GetUserDataSources();
     }
 
     public class RegistrationService : IRegistrationService
@@ -145,27 +145,25 @@ namespace Zurich.Connector.App.Services
             return true;
         }
 
-        public async Task<IEnumerable<string>> GetUserDataSources()
+        public async Task<IEnumerable<DataSourceInformation>> GetUserDataSources()
         {
             if (_legalHomeAccess.isLegalHomeUser())
             {
                 var tenantApps = await _tenantService.GetTenantMemberApps();
-                var dataSourceAppCodes = tenantApps.Where(x=>x.CurrentToken_Id != null).Select(tenantApp => tenantApp.ApplicationCode).ToList();
+                var dataSourceAppCodes = tenantApps.Where(x=>x.CurrentToken_Id != null).Select(tenantApp => new DataSourceInformation() { AppCode = tenantApp.ApplicationCode }).ToList();
 
                 var dataSources = await _cosmosService.GetDataSources();
                 // TODO figure out why condition does not work enums
                 dataSources = dataSources.Where(x => x.RegistrationInfo?.RegistrationMode == CommonModel.RegistrationEntityMode.Automatic);
-
-                dataSourceAppCodes.AddRange(dataSources.Where(x=>!string.IsNullOrEmpty(x.AppCode)).Select(x => x.AppCode).Distinct());
+                // NOTE returning RequiresNewToken as false for Legal Home Users until Legal Home incorporates new OAuth flow updates.
+                dataSourceAppCodes.AddRange(dataSources.Where(x=>!string.IsNullOrEmpty(x.AppCode)).Select(x => new DataSourceInformation() { AppCode = x.AppCode, RequiresNewToken = false }).Distinct());
 
                 return dataSourceAppCodes;
             }
             else
             {
                 List<DataSourceInformation> currentUserRegistrations = await _OAuthService.GetUserRegistrations();
-                var dataSourceAppCodes = currentUserRegistrations.Select(datasource => datasource.AppCode);
-
-                return dataSourceAppCodes;
+                return currentUserRegistrations;
             }
         }
     }
