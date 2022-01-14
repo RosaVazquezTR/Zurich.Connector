@@ -36,6 +36,13 @@ namespace Zurich.Connector.App.Services
         /// <param name="applicationCode">The application to get the authorize url for</param>
         /// <returns>Authorize url</returns>
         Task<AuthorizeUrlResponse> GetAuthorizeUrl(string applicationCode);
+
+        /// <summary>
+        /// Revoke Tenanat Application for the appropriate connector 
+        /// </summary>
+        /// <param name="applicationCode">The application code of the connector</param>
+        /// <returns>Revoking of Tenanat application success or failure status</returns>
+        Task<bool> RevokeTenantApplication(string applicationCode);
     }
     public class OAuthServices :IOAuthServices
     {
@@ -60,6 +67,11 @@ namespace Zurich.Connector.App.Services
         public async Task<AuthorizeUrlResponse> GetAuthorizeUrl(string applicationCode)
         {
             return await _OAuthRespository.GetAuthorizeUrl(applicationCode);
+        }
+
+        public async Task<bool> RevokeTenantApplication(string applicationCode)
+        {
+            return await _OAuthRespository.RevokeTenantApplication(applicationCode);
         }
     }
 }

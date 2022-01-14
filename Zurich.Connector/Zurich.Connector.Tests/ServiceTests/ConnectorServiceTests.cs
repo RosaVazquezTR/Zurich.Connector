@@ -38,6 +38,7 @@ namespace Zurich.Connector.Tests.ServiceTests
 		private Mock<IDataMappingService> _mockdataMappingService;
 		private Mock<IConnectorDataSourceOperationsFactory> _mockDataSourceOperationsFactory;
 		private Mock<IRegistrationService> _mockRegistrationService;
+		private Mock<IOAuthServices> _mockOAuthService;
 
 		[TestInitialize]
 		public void TestInitialize()
@@ -56,6 +57,7 @@ namespace Zurich.Connector.Tests.ServiceTests
 			_mockdataMappingService = new Mock<IDataMappingService>();
 			_mockDataSourceOperationsFactory = new Mock<IConnectorDataSourceOperationsFactory>();
 			_mockRegistrationService = new Mock<IRegistrationService>();
+			_mockOAuthService = new Mock<IOAuthServices>();
 		}
 
 		#region Data Setup
@@ -109,7 +111,7 @@ namespace Zurich.Connector.Tests.ServiceTests
 			_mockCosmosService.Setup(x => x.GetDataSources(It.IsAny<Expression<Func<DataSourceDocument, bool>>>())).Returns(Task.FromResult(testDataSources));
 			IConfiguration config = Utility.CreateConfiguration(AppSettings.ShowPreReleaseConnectors, "true");
 
-			ConnectorService service = new ConnectorService(null, _mockCosmosService.Object, _mockRegistrationService.Object, config);
+			ConnectorService service = new ConnectorService(null, _mockCosmosService.Object, _mockRegistrationService.Object, config, _mockOAuthService.Object);
 
 			// ACT
 			var connectors = await service.GetConnectors(filters);
@@ -144,7 +146,7 @@ namespace Zurich.Connector.Tests.ServiceTests
             _mockCosmosService.Setup(x => x.GetDataSources(It.IsAny<Expression<Func<DataSourceDocument, bool>>>())).Returns(Task.FromResult(testDataSources));
             IConfiguration config = Utility.CreateConfiguration(AppSettings.ShowPreReleaseConnectors, "false");
 
-			ConnectorService service = new ConnectorService(null, _mockCosmosService.Object, _mockRegistrationService.Object, config);
+			ConnectorService service = new ConnectorService(null, _mockCosmosService.Object, _mockRegistrationService.Object, config, _mockOAuthService.Object);
 
             // ACT
             var connectors = await service.GetConnectors(filters);
@@ -187,7 +189,7 @@ namespace Zurich.Connector.Tests.ServiceTests
 			_mockCosmosService.Setup(x => x.GetDataSources(It.IsAny<Expression<Func<DataSourceDocument, bool>>>())).Returns(Task.FromResult(testDataSources));
 			IConfiguration config = Utility.CreateConfiguration(AppSettings.ShowPreReleaseConnectors, "true");
 
-			ConnectorService service = new ConnectorService(null, _mockCosmosService.Object, _mockRegistrationService.Object, config);
+			ConnectorService service = new ConnectorService(null, _mockCosmosService.Object, _mockRegistrationService.Object, config, _mockOAuthService.Object);
 
 			// ACT
 			var connectors = await service.GetConnectors(filters);
@@ -221,7 +223,7 @@ namespace Zurich.Connector.Tests.ServiceTests
 			_mockCosmosService.Setup(x => x.GetDataSources(It.IsAny<Expression<Func<DataSourceDocument, bool>>>())).Returns(Task.FromResult(testDataSources));
 			IConfiguration config = Utility.CreateConfiguration(AppSettings.ShowPreReleaseConnectors, "true");
 
-			ConnectorService service = new ConnectorService(null, _mockCosmosService.Object, _mockRegistrationService.Object, config);
+			ConnectorService service = new ConnectorService(null, _mockCosmosService.Object, _mockRegistrationService.Object, config, _mockOAuthService.Object);
 
 			// ACT
 			var connectors = await service.GetConnectors(filters);
@@ -250,7 +252,7 @@ namespace Zurich.Connector.Tests.ServiceTests
             _mockRegistrationService.Setup(x => x.GetUserDataSources()).Returns(Task.FromResult<IEnumerable<DataSourceInformation>>(registeredDataSources));
             IConfiguration config = Utility.CreateConfiguration(AppSettings.ShowPreReleaseConnectors, "true");
 
-			ConnectorService service = new ConnectorService(null, _mockCosmosService.Object, _mockRegistrationService.Object, config);
+			ConnectorService service = new ConnectorService(null, _mockCosmosService.Object, _mockRegistrationService.Object, config, _mockOAuthService.Object);
 
             // ACT
             var connectors = await service.GetConnectors(filters);
@@ -287,7 +289,7 @@ namespace Zurich.Connector.Tests.ServiceTests
 																																				new DataSourceInformation() { AppCode = "4" } }));
             IConfiguration config = Utility.CreateConfiguration(AppSettings.ShowPreReleaseConnectors, "true");
 
-			ConnectorService service = new ConnectorService(null, _mockCosmosService.Object, _mockRegistrationService.Object, config);
+			ConnectorService service = new ConnectorService(null, _mockCosmosService.Object, _mockRegistrationService.Object, config, _mockOAuthService.Object);
 
             // ACT
             var connectors = await service.GetConnectors(filters);

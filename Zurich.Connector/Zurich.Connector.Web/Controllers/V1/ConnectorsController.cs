@@ -135,7 +135,7 @@ namespace Zurich.Connector.Web.Controllers
         /// Get connector definition - Returns the configuration of the connector, configuration is generic for all users
         /// </summary>
         /// <remarks>
-        /// Sample reque3st:
+        /// Sample request:
         ///     GET /connectors/<ID>
         /// </remarks>
         /// <param name="id">
@@ -158,10 +158,49 @@ namespace Zurich.Connector.Web.Controllers
             return Ok(responsedata);
         }
 
+        /// <summary>
+        /// Revoke Tenant Application by Connector Id - for all users
+        /// </summary>
+        /// <remarks>
+        /// Sample request:
+        ///     DELETE /connectors/<ID>/all
+        /// </remarks>
+        /// <param name="id">
+        /// Connector ID
+        /// </param>
+        /// <returns>
+        /// A <see cref="ActionResult"/>ActionResult response</returns>
+        /// </returns>
+        [HttpDelete("{id}/all")]
+        public async Task<ActionResult> RevokeTenantApplication(string id)
+        {
+            if (string.IsNullOrEmpty(id))
+            {
+                return BadRequest();
+            }
+            if (!string.IsNullOrEmpty(id))
+            {
+                try
+                {
+                    var results = await _connectorService.RevokeTenantApplication(id);
+                    if (results)
+                    {
+                        return Ok();
+                    }
+                }
+                catch (Exception)
+                {
+                    return BadRequest();
+                }
+
+            }
+            return BadRequest();
+        }
+
         [HttpPost]
         public async Task<ActionResult<DataSourceRegistrationResponseViewModel>> ConnectorRegistration([FromBody] ConnectorRegistrationModel registrationModel)
         {
-            
+
             if (string.IsNullOrEmpty(registrationModel.ConnectorId))
             {
                 return BadRequest("Connector Id must be defined");
