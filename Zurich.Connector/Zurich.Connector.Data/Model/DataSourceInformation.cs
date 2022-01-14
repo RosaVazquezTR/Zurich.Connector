@@ -15,7 +15,9 @@
         /// </summary>
         public string Domain { get; set; }
         /// <summary>
-        /// Requires New Refresh Token
+        /// Requires New Token
+        /// returns true if token is expired
+        /// returns false if token is not expired
         /// </summary>
         public bool RequiresNewToken { get; set; }
     }
