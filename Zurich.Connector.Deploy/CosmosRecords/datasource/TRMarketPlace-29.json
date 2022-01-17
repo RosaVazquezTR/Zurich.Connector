@@ -1,0 +1,33 @@
+{
+  "id": "29",
+  "partitionkey": "DataSourceList",
+  "name": "TR Marketplace",
+  "description": "This is connecting to TR Marketplace",
+  "appcode": "TRMarketPlace",
+  "domain": "marketplace.thomsonreuters.com",
+  "infoURL": "",
+  "appType": "0",
+  "extraRequestContext": "",
+  "registrationInfo": {
+    "registrationMode": "Automatic",
+    "domainRequired": "false",
+    "clientAndSecretRequired": "false",
+    "connectionMessage": "Install the application in the TR Marketplace Center. Look for Thomson Reuters Legal home",
+    "registrationFileRequired": "false"
+  },
+  "securityDefinition": {
+    "type": "oauth2",
+    "flow": "accessCode",
+    "defaultSecurityDefinition": {
+      "authorizationURL": "https://market.openchannel.io/",
+      "authorizationPath": "",
+      "tokenURL": "https://market.openchannel.io/auth/external/token",
+      "tokenPath": "",
+      "keyVaultClientId": "",
+      "keyVaultSecret": "",
+	  "sendCredentialsInBody": true,
+      "grantType": "client_credentials"
+	},
+    "scopes": {}
+  }
+}
