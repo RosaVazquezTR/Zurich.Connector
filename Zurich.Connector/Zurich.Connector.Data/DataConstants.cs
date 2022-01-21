@@ -14,6 +14,7 @@
         public const string DesktopUrl = "DesktopUrl";
         public const string Snippet = "Snippet";
         public const string AdditionalProperties = "AdditionalProperties";
+        public const string ItemsCount = "Count";
     }
 
     /// <summary>

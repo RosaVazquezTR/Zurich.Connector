@@ -117,5 +117,21 @@ namespace Zurich.Connector.Tests.ServiceTests
             doc.ContainsKey(StructuredCDMProperties.DownloadUrl).Should().BeTrue();
             doc[StructuredCDMProperties.DownloadUrl].Value<string>().Should().Be(expectedUrl);
         }
+
+        [TestMethod]
+        public async Task SetItemLink_Should_SetCount()
+        {
+            //Arrange
+            var mockSearchResult = MockConnectorData.SetupSearchDocumentsModel();
+            short expectedCount = 2;
+            //Act
+            _mockDataMappingFactory.Setup(x => x.GetImplementation(Data.Model.AuthType.OAuth2.ToString())).Returns(_mockDataMapping.Object);
+            _mockCosmosService.Setup(x => x.GetConnector("1", true)).Returns(Task.FromResult(new ConnectorModel()));
+            var service = new IManageConnectorOperations(_mockLogger.Object, _mockDataMappingFactory.Object, _mapper, _mockCosmosService.Object);
+            var result = (await service.SetItemLink(Data.Model.ConnectorEntityType.Search, mockSearchResult, null, null) as JObject);
+            //Assert
+            result.Should().NotBeNull();
+            result[StructuredCDMProperties.ItemsCount].Value<short>().Should().Be(expectedCount);
+        }
     }
 }

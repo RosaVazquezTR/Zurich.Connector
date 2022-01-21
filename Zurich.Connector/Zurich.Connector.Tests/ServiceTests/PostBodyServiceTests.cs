@@ -139,5 +139,53 @@ namespace Zurich.Connector.Tests
             Assert.AreEqual("{\"requests\":[{\"query\":{\"queryString\":\"docs\"},\"entityTypes\":[\"driveItems\"],\"fields\":[]}]}", postBody);
         }
 
+        [TestMethod]
+        public void PostBodyService_Should_Support_Basic_JSON_Type_Map()
+        {
+            // ARRANGE
+            HttpPostBodyService postBodyService = new HttpPostBodyService();
+
+            ConnectorDocument document = new ConnectorDocument()
+            {
+                Request = new ConnectorRequest()
+                {
+                    Parameters = new List<ConnectorRequestParameter>()
+                    {
+                        new ConnectorRequestParameter() {
+                            CdmName = "Query",
+                            Name = "requests.[].query.queryString",
+                            InClause = "body"
+                        },
+                        new ConnectorRequestParameter() {
+                            CdmName = "ResultSize",
+                            Name = "limit",
+                            InClause = "body",
+                            Type = "int"                        },
+                        new ConnectorRequestParameter() {
+                            CdmName = "EntityType",
+                            Name = "requests.[].entityTypes.[]",
+                            InClause = "body"
+                        },
+                        new ConnectorRequestParameter() {
+                            CdmName = "Fields",
+                            Name = "requests.[].fields.[]",
+                            InClause = "body"
+                        }
+                    }
+                }
+            };
+
+            NameValueCollection collection = new NameValueCollection();
+            collection["requests.[].entityTypes.[]"] = "driveItems";
+            collection["requests.[].query.queryString"] = "docs";
+            collection["requests.[].fields.[]"] = null;
+            collection["limit"] = "100";
+
+            // ACT
+            var postBody = postBodyService.CreateBody(document, collection);
+
+            // ASSERT
+            Assert.AreEqual("{\"requests\":[{\"query\":{\"queryString\":\"docs\"},\"entityTypes\":[\"driveItems\"],\"fields\":[]}],\"limit\":100}", postBody);
+        }
     }
 }

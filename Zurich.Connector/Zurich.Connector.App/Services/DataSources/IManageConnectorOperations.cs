@@ -76,7 +76,11 @@ namespace Zurich.Connector.App.Services.DataSources
                                 if (searchResult.ContainsKey("Documents") && searchResult["Documents"].HasValues)
                                 {
                                     var documents = searchResult["Documents"] as JArray;
-                                    searchResult["Count"] = documents.Count;
+                                    searchResult[StructuredCDMProperties.ItemsCount] = (short)documents.Count;
+                                }
+                                else
+                                {
+                                    searchResult[StructuredCDMProperties.ItemsCount] = 0;
                                 }
                            }
                         break;

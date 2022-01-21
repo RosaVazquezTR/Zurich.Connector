@@ -393,7 +393,7 @@ namespace Zurich.Connector.Tests.Common
             dynamic result;
 
             result = JObject.Parse(@"{
-                ""TotalCount"": 2,
+                ""Count"": 2,
                 ""Documents"": [
                     {
                         ""Id"":""1"",

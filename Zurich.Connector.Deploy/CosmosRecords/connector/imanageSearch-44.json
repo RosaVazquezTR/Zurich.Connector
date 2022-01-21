@@ -17,11 +17,22 @@
     "parameters": [
       {
         "cdmName": "Query",
-        "name": "filters.Anywhere",
+        "name": "filters.anywhere",
         "inClause": "Body",
         "required": false,
         "type": "string",
         "defaultValue": ""
+      },
+      {
+        "cdmName": "ResultSize",
+        "name": "limit",
+        "inClause": "Body",
+        "required": true,
+        "type": "int",
+        "defaultValue": "100",
+        "tags": [
+          "pagination"
+        ]
       },
       {
         "cdmName": "Profile_fields",
