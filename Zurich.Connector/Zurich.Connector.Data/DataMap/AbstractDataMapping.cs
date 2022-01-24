@@ -11,6 +11,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web;
 using Zurich.Common.Models.OAuth;
+using Zurich.Common.Repositories;
 using Zurich.Common.Services.Security;
 using Zurich.Connector.Data.Factories;
 using Zurich.Connector.Data.Model;
