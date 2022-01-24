@@ -10,6 +10,7 @@ using System.Collections.Specialized;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Zurich.Common.Models.OAuth;
+using Zurich.Common.Repositories;
 using Zurich.Common.Services.Security;
 using Zurich.Connector.Data;
 using Zurich.Connector.Data.DataMap;
