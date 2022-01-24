@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using AutoMapper;
 using System.Threading.Tasks;
-using Zurich.Common.Models.OAuth;
-using Zurich.Connector.Data.Model;
+using Zurich.Connector.App.Model;
 using Zurich.Connector.Data.Repositories;
 
 namespace Zurich.Connector.App.Services
@@ -15,20 +11,24 @@ namespace Zurich.Connector.App.Services
         /// Gets the tenant aware partner app token from the data store
         /// </summary>
         /// <param name="appCode">The partner app code</param>
-        /// <returns>A <see cref="Token"/> containing the access_token and refresh_token(if available)</returns>
-        public Task<AppToken> GetToken(string appCode);
+        /// <returns>A <see cref="Token"/> containing the accessToken</returns>
+        public Task<Token> GetToken(string appCode);
     }
     public class OAuthApiServices : IOAuthApiServices
     {
         private readonly IOAuthApiRepository _OAuthApiRespository;
+        private readonly IMapper _mapper;
 
-        public OAuthApiServices(IOAuthApiRepository OAuthApiRepository)
+        public OAuthApiServices(IOAuthApiRepository OAuthApiRepository, IMapper mapper)
         {
             _OAuthApiRespository = OAuthApiRepository;
+            _mapper = mapper;
         }
-        public async Task<AppToken> GetToken(string appCode)
+        public async Task<Token> GetToken(string appCode)
         {
-            return await _OAuthApiRespository.GetToken(appCode);
+            var apiResponse = await _OAuthApiRespository.GetToken(appCode);
+            var mappedResponse = _mapper.Map<Token>(apiResponse);
+            return mappedResponse;
         }
     }
 }

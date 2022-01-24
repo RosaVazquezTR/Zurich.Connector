@@ -65,12 +65,12 @@ namespace Zurich.Connector.Data.DataMap
 			}
 		}
 
-		public async virtual Task<AppToken> RetrieveToken(string appCode, OAuthApplicationType? appType = null, 
+		public async virtual Task<OAuthAPITokenResponse> RetrieveToken(string appCode, OAuthApplicationType? appType = null, 
 														  string locale = null, string grandType = null, bool? sendCredentialsInBody = false, string productType = null)
 		{
-			AppToken token;
 			if (_legalHomeAccessCheck.isLegalHomeUser())
-            {
+			{
+				AppToken token;
 				if (locale != null && grandType != null && appType.HasValue && sendCredentialsInBody.HasValue)
 				{
 					token = await _oAuthService.RequestNewToken(appCode, grandType, appType.Value, sendCredentialsInBody: sendCredentialsInBody.Value, locale: locale);
@@ -79,11 +79,12 @@ namespace Zurich.Connector.Data.DataMap
 				{
 					token = await _oAuthService.GetToken(appCode, productType: string.IsNullOrEmpty(productType) ? null : new ProductType() { ProductTypeName = productType });
 				}
-				return token;
+				var result = _mapper.Map<OAuthAPITokenResponse>(token);
+				return result;
 			}
             else
             {
-				AppToken result = await _oAuthApirepository.GetToken(appCode);
+				OAuthAPITokenResponse result = await _oAuthApirepository.GetToken(appCode);
 				return result;
 
 			}

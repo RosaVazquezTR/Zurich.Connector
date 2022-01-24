@@ -98,16 +98,16 @@ namespace Zurich.Connector.Data.Repositories
 
         private void SetupRequestMessage(ApiInformation apiInformation, HttpRequestMessage requestMessage)
         {
-            if (!string.IsNullOrWhiteSpace(apiInformation.Token?.access_token))
+            if (!string.IsNullOrWhiteSpace(apiInformation.Token?.AccessToken))
             {
                 // Should we move this?
                 if (string.IsNullOrEmpty(apiInformation.AuthHeader))
                 {
-                    requestMessage.Headers.Authorization = new AuthenticationHeaderValue(apiInformation.Token.token_type, apiInformation.Token.access_token);
+                    requestMessage.Headers.Authorization = new AuthenticationHeaderValue(apiInformation.Token.TokenType, apiInformation.Token.AccessToken);
                 }
                 else
                 {
-                    requestMessage.Headers.Add(apiInformation.AuthHeader, apiInformation.Token.access_token);
+                    requestMessage.Headers.Add(apiInformation.AuthHeader, apiInformation.Token.AccessToken);
                 }
 			}
 			requestMessage.Headers.Add("accept", "application/json");

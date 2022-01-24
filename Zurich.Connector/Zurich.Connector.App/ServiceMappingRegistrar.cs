@@ -3,6 +3,7 @@ using System;
 using Zurich.Connector.App.Model;
 using Zurich.Connector.Data.Repositories.CosmosDocuments;
 using Zurich.Connector.Data.Model;
+using Zurich.Common.Models.OAuth;
 
 namespace Zurich.Connector.App
 {
@@ -80,6 +81,12 @@ namespace Zurich.Connector.App
 
 
             CreateMap<SecurityDefinitionDetailsModel, SecurityDefinitionDetails>();
+            CreateMap<AppToken, OAuthAPITokenResponse>()
+                .ForMember(dest => dest.AccessToken, opt => opt.MapFrom(src => src.access_token))
+                .ForMember(dest => dest.TokenType, opt => opt.MapFrom(src => src.token_type))
+                .ForMember(dest => dest.ExpiresOn, opt => opt.MapFrom(src => src.expires_on))
+                .ForAllOtherMembers(opt => opt.Ignore());
+            CreateMap<OAuthAPITokenResponse, Token>(MemberList.Destination);
         }
     }
 }

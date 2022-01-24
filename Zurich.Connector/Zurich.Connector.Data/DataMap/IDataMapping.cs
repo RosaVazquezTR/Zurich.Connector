@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Zurich.Common.Models.OAuth;
 using Zurich.Common.Services.Security;
 using Zurich.Connector.Data.Factories;
+using Zurich.Connector.Data.Model;
 using Zurich.Connector.Data.Repositories.CosmosDocuments;
 
 namespace Zurich.Connector.Data.DataMap
@@ -31,7 +32,7 @@ namespace Zurich.Connector.Data.DataMap
         /// </summary>
         /// <param name="appCode">Application code to get the data from</param>
         /// <returns>Token to use</returns>
-        Task<AppToken> RetrieveToken(string appCode, OAuthApplicationType? appType = null,
+        Task<OAuthAPITokenResponse> RetrieveToken(string appCode, OAuthApplicationType? appType = null,
                                      string locale = null, string grandType = null, bool? sendCredentialsInBody = false, string productType = null);
 
         /// <summary>

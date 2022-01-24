@@ -20,7 +20,7 @@ namespace Zurich.Connector.Data.Model
 		/// <summary>
 		/// The token that we will need to use
 		/// </summary>
-		public AppToken Token { get; set; }
+		public OAuthAPITokenResponse Token { get; set; }
 
 		/// <summary>
 		/// The Header that will be used for passing the token

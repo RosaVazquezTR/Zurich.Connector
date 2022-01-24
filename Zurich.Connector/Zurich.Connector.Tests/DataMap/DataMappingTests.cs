@@ -59,8 +59,9 @@ namespace Zurich.Connector.Tests
             _fakeOAuthOptions.Connections = new Dictionary<string, OAuthConnection>();
 
 			// feels like this won't change
-			AppToken token = new AppToken() { access_token = "fakeToken" };
-			_mockOAuthService.Setup(x => x.GetToken(It.IsAny<string>(), It.IsAny<OAuthApplicationType>(), It.IsAny<bool>(), It.IsAny<string>(), It.IsAny<ProductType>())).Returns(Task.FromResult(token));
+			OAuthAPITokenResponse token = new OAuthAPITokenResponse() { AccessToken = "fakeToken" };
+			AppToken appToken = new AppToken() { access_token = "fakeToken" };
+			_mockOAuthService.Setup(x => x.GetToken(It.IsAny<string>(), It.IsAny<OAuthApplicationType>(), It.IsAny<bool>(), It.IsAny<string>(), It.IsAny<ProductType>())).Returns(Task.FromResult(appToken));
 			_mockOAuthApirepository.Setup(x => x.GetToken(It.IsAny<string>())).Returns(Task.FromResult(token));
 			_mockCosmosDocumentReader = new Mock<ConnectorCosmosContext>(null, null);
 			_mockMapper = new Mock<IMapper>();

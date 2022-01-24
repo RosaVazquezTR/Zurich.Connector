@@ -46,7 +46,7 @@ namespace Zurich.Connector.Data.DataMap
                                                   connector?.DataSource?.securityDefinition?.defaultSecurityDefinition?.sendCredentialsInBody,
                                                   connector?.DataSource?.productType);         
             
-            if (!string.IsNullOrEmpty(token?.access_token))
+            if (!string.IsNullOrEmpty(token?.AccessToken))
             {
                 ApiInformation apiInfo = new ApiInformation()
                 {

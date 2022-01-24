@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Zurich.Common;
 using Zurich.Common.Models.OAuth;
+using Zurich.Connector.Data.Model;
 
 namespace Zurich.Connector.Data.Repositories
 {
@@ -15,8 +16,8 @@ namespace Zurich.Connector.Data.Repositories
         /// Makes a Get call
         /// </summary>
         /// <param name="appCode">The partner app code</param>
-        /// <returns>A <see cref="Token"/> containing the access_token and refresh_token(if available)</returns>
-        public Task<AppToken> GetToken(string appCode);
+        /// <returns>A <see cref="Token"/> contains information about the token including the access token, token type, and expires on information</returns>
+        public Task<OAuthAPITokenResponse> GetToken(string appCode);
 
     }
     public class OAuthApiRepository : IOAuthApiRepository
@@ -30,7 +31,7 @@ namespace Zurich.Connector.Data.Repositories
             _httpClient = httpClientFactory.CreateClient(HttpClientNames.OAuthAPI);
             _logger = logger;
         }
-        public async Task<AppToken> GetToken(string appCode)
+        public async Task<OAuthAPITokenResponse> GetToken(string appCode)
         {
             dynamic token = "";
             if (appCode != null)
@@ -40,7 +41,7 @@ namespace Zurich.Connector.Data.Repositories
                 {
                     var httpContent = await MakeRequest(requestMessage);
 
-                    token = JsonConvert.DeserializeObject(httpContent);
+                    token = JsonConvert.DeserializeObject<OAuthAPITokenResponse>(httpContent);
                 }
                 return token;
             }
