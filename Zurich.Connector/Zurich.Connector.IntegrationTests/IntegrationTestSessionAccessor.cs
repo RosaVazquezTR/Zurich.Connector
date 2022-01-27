@@ -27,10 +27,10 @@ namespace Zurich.Connector.IntegrationTests
 		public IntegrationTestSessionAccessor()
 		{
 			SessionId = "testSession";
-			UserId = new Guid("07fdf923-8dba-4491-854c-b9b4511a0d6c");
+			UserId = new Guid("f68281a6-f474-4069-a61f-1ff6e92e1655");
 			Email = "integrationTestUser@mailinator.com";
 			UserName = "integrationTestUser";
-			TenantId = new Guid("22657dbe-f5f4-4637-af94-08d919703e5c");
+			TenantId = new Guid("b891c0c2-cdef-453f-af8f-08d919703e5c");
 			OrgType = "Connector Integration Test";
 		}
 
