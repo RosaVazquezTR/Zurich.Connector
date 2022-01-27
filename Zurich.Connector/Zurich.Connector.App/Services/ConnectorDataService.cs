@@ -92,7 +92,11 @@ namespace Zurich.Connector.Data.Services
            if (string.IsNullOrEmpty(connectorModel.DataSource.Domain) && string.IsNullOrEmpty(hostname))
            {
                 hostname = await GetBaseUrl(connectorModel);
-           }
+                if (connectorModel != null)
+                {
+                    connectorModel.HostName = hostname;
+                }
+            }
 
             if (connectorModel == null)
             {

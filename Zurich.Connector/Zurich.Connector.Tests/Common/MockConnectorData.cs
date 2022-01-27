@@ -1,9 +1,5 @@
 ﻿using Newtonsoft.Json.Linq;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Zurich.Connector.App.Model;
 using Zurich.Connector.App.Utils;
 using Zurich.Connector.Data.Model;
@@ -410,6 +406,66 @@ namespace Zurich.Connector.Tests.Common
                         ""Snippet"":""xyc"",
                         ""PlcReference"":""4-000-4121"",
 
+                    }
+                ]
+            }");
+            return result;
+        }
+
+        internal static IEnumerable<dynamic> SetupIManageSearchDocumentsModel()
+        {
+            dynamic result;
+
+            result = JObject.Parse(@"{
+                ""Count"": 2,
+                ""Documents"": [{
+                        ""Snippet"": null,
+                        ""Title"": ""Test E1FB9D34614C361E"",
+                        ""CreationDate"": ""2021-04-23T15:01:04.634Z"",
+                        ""AdditionalProperties"": {
+                            ""id"": ""ContractExpress!2218.1"",
+                            ""dataBase"": ""CONTRACTEXPRESS"",
+                            ""document_Number"": 2218,
+                            ""version"": 1,
+                            ""alias"": null,
+                            ""author"": ""JOHN.FLYNN"",
+                            ""operator"": ""JOHN.FRANK"",
+                            ""class"": ""DOCUMENTS"",
+                            ""subClass"": null,
+                            ""retain_Days"": 10,
+                            ""size"": 774,
+                            ""indexable"": false,
+                            ""is_related"": false,
+                            ""default_security"": ""public"",
+                            ""last_user"": ""MOHTASHIM.EJAZZAFAR"",
+                            ""file_edit_date"": ""2021-04-23T15:01:04.634Z"",
+                            ""extension"": ""TXT""
+                        }
+                    },
+                    {
+                        ""Snippet"": null,
+                        ""Title"": ""Test 4D7C1D39EC2B2464"",
+                        ""CreationDate"": ""2021-04-23T14:44:57.188Z"",
+                        ""AdditionalProperties"": {
+                            ""id"": ""ContractExpress!2215.1"",
+                            ""dataBase"": ""CONTRACTEXPRESS"",
+                            ""document_Number"": 2215,
+                            ""version"": 1,
+                            ""alias"": null,
+                            ""author"": ""JOHN.FLYNN"",
+                            ""operator"": ""JOHN.FRANK"",
+                            ""class"": ""DOCUMENTS"",
+                            ""subClass"": null,
+                            ""retain_Days"": 10,
+                            ""size"": 774,
+                            ""indexable"": false,
+                            ""is_related"": false,
+                            ""default_security"": ""public"",
+                            ""last_user"": ""MOHTASHIM.EJAZZAFAR"",
+                            ""file_edit_date"": ""2021-04-23T14:44:57.189Z"",
+                            ""extension"": ""TXT""
+                        }
+                   
                     }
                 ]
             }");

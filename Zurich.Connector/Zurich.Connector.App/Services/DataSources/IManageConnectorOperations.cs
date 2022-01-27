@@ -70,19 +70,28 @@ namespace Zurich.Connector.App.Services.DataSources
                             }
                         }
                         break;
-                        case ConnectorEntityType.Search:
-                           if (item is JObject searchResult && searchResult.ContainsKey("Count"))
-                           {
-                                if (searchResult.ContainsKey("Documents") && searchResult["Documents"].HasValues)
+                    case ConnectorEntityType.Search:
+                        if (item is JObject searchResult && searchResult.ContainsKey("Count"))
+                        {
+                            if (searchResult.ContainsKey("Documents") && searchResult["Documents"].HasValues)
+                            {
+                                var documents = searchResult["Documents"] as JArray;
+                                searchResult[StructuredCDMProperties.ItemsCount] = (short)documents.Count;
+                                foreach (JObject doc in documents)
                                 {
-                                    var documents = searchResult["Documents"] as JArray;
-                                    searchResult[StructuredCDMProperties.ItemsCount] = (short)documents.Count;
+                                    if (doc.ContainsKey(StructuredCDMProperties.AdditionalProperties))
+                                    {
+                                        doc[StructuredCDMProperties.WebUrl] = BuildLink(entityType, doc, hostName);
+                                        var extension = ((JObject)doc[StructuredCDMProperties.AdditionalProperties]).ContainsKey(UnstructuredCDMProperties.Extension) ? doc[StructuredCDMProperties.AdditionalProperties][UnstructuredCDMProperties.Extension].Value<string>() : "";
+                                        doc[StructuredCDMProperties.Type] = ConnectorOperationsUtility.MapExtensionToDocumentType(extension);
+                                    }
                                 }
-                                else
-                                {
-                                    searchResult[StructuredCDMProperties.ItemsCount] = 0;
-                                }
-                           }
+                            }
+                            else
+                            {
+                                searchResult[StructuredCDMProperties.ItemsCount] = 0;
+                            }
+                        }
                         break;
                 }
             }
@@ -131,13 +140,21 @@ namespace Zurich.Connector.App.Services.DataSources
         private string BuildLink(ConnectorEntityType itemType, JObject item, string hostName)
         {
             string result = null;
+            string docId = null;
             switch (itemType)
             {
                 case ConnectorEntityType.Document:
-                    var docId = item.ContainsKey(StructuredCDMProperties.EntityId) ? item[StructuredCDMProperties.EntityId].Value<string>() : "";
-                    var builder = new UriBuilder("https", hostName, -1);
-                    result = $"{builder.Uri}{DocumentsEndpoint}{docId}";
+                    docId = item.ContainsKey(StructuredCDMProperties.EntityId) ? item[StructuredCDMProperties.EntityId].Value<string>() : "";
                     break;
+                case ConnectorEntityType.Search:
+                    var additionalProperties = (JObject)item[StructuredCDMProperties.AdditionalProperties];
+                    docId = additionalProperties.ContainsKey(UnstructuredCDMProperties.Id) ? additionalProperties[UnstructuredCDMProperties.Id].Value<string>() : "";
+                    break;
+            }
+            if (!string.IsNullOrEmpty(docId))
+            {
+                var builder = new UriBuilder("https", hostName, -1);
+                result = $"{builder.Uri}{DocumentsEndpoint}{docId}";
             }
             return result;
         }

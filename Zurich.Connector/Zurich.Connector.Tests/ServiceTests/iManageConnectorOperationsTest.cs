@@ -1,21 +1,20 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using AutoMapper;
+using FluentAssertions;
+using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using Zurich.Connector.App.Services.DataSources;
-using FluentAssertions;
 using Newtonsoft.Json.Linq;
-using Zurich.Connector.Tests.Common;
-using Zurich.Connector.Data;
 using System;
 using System.Threading.Tasks;
-using Zurich.Connector.Data.DataMap;
-using Zurich.Connector.Data.Services;
-using Zurich.Connector.Data.Repositories.CosmosDocuments;
-using Zurich.Connector.Data.Factories;
-using Zurich.Connector.App.Services;
-using AutoMapper;
 using Zurich.Connector.App;
 using Zurich.Connector.App.Model;
+using Zurich.Connector.App.Services;
+using Zurich.Connector.App.Services.DataSources;
+using Zurich.Connector.Data;
+using Zurich.Connector.Data.DataMap;
+using Zurich.Connector.Data.Factories;
+using Zurich.Connector.Data.Repositories.CosmosDocuments;
+using Zurich.Connector.Tests.Common;
 
 namespace Zurich.Connector.Tests.ServiceTests
 {
@@ -132,6 +131,58 @@ namespace Zurich.Connector.Tests.ServiceTests
             //Assert
             result.Should().NotBeNull();
             result[StructuredCDMProperties.ItemsCount].Value<short>().Should().Be(expectedCount);
+        }
+
+
+        [TestMethod]
+        public async Task SetItemLinkTest_Search_Should_SetWebUrlAndType()
+        {
+            //Arrange
+            var mockDocuments = MockConnectorData.SetupIManageSearchDocumentsModel();
+            var hostName = "my.cookieapp.com";
+            var appCode = "";
+            var expectedUrl = $"https://{hostName}/work/link/d/ContractExpress!2218.1";
+            var customerId = "1";
+            //Act
+            var token = new JObject();
+            token["customer_id"] = customerId;
+            _mockDataMapping.Setup(x => x.GetAndMapResults<JToken>(It.IsAny<ConnectorDocument>(), string.Empty, null, null, null)).Returns(Task.FromResult((JToken)token));
+            _mockDataMappingFactory.Setup(x => x.GetImplementation(Data.Model.AuthType.OAuth2.ToString())).Returns(_mockDataMapping.Object);
+            _mockCosmosService.Setup(x => x.GetConnector("1", true)).Returns(Task.FromResult(new ConnectorModel()));
+            var service = new IManageConnectorOperations(_mockLogger.Object, _mockDataMappingFactory.Object, _mapper, _mockCosmosService.Object);
+            var result = (await service.SetItemLink(Data.Model.ConnectorEntityType.Search, mockDocuments, appCode, hostName) as JObject);
+            //Assert
+            result.Should().NotBeNull();
+            var doc = result["Documents"][0] as JObject;
+            doc.ContainsKey(StructuredCDMProperties.WebUrl).Should().BeTrue();
+            doc[StructuredCDMProperties.WebUrl].Value<string>().Should().Be(expectedUrl);
+            doc[StructuredCDMProperties.Type].Value<string>().Should().Be(ConnectorOperationsUtility.MapExtensionToDocumentType("TXT"));
+        }
+
+
+        [TestMethod]
+        public async Task SetItemLinkTest_Search_Should_NoAdditionalProperties()
+        {
+            //Arrange
+            var mockDocuments = MockConnectorData.SetupSearchDocumentsModel();
+            var hostName = "my.cookieapp.com";
+            var appCode = "";
+            var expectedUrl = $"https://{hostName}/work/link/d/ContractExpress!2218.1";
+            var customerId = "1";
+            //Act
+            var token = new JObject();
+            token["customer_id"] = customerId;
+            _mockDataMapping.Setup(x => x.GetAndMapResults<JToken>(It.IsAny<ConnectorDocument>(), string.Empty, null, null, null)).Returns(Task.FromResult((JToken)token));
+            _mockDataMappingFactory.Setup(x => x.GetImplementation(Data.Model.AuthType.OAuth2.ToString())).Returns(_mockDataMapping.Object);
+            _mockCosmosService.Setup(x => x.GetConnector("1", true)).Returns(Task.FromResult(new ConnectorModel()));
+            var service = new IManageConnectorOperations(_mockLogger.Object, _mockDataMappingFactory.Object, _mapper, _mockCosmosService.Object);
+            var result = (await service.SetItemLink(Data.Model.ConnectorEntityType.Search, mockDocuments, appCode, hostName) as JObject);
+            //Assert
+            result.Should().NotBeNull();
+            var doc = result["Documents"][0] as JObject;
+            doc.ContainsKey(StructuredCDMProperties.WebUrl).Should().BeTrue();
+            doc[StructuredCDMProperties.WebUrl].Value<string>().Should().Be(string.Empty);
+            doc.ContainsKey(StructuredCDMProperties.Type).Should().BeFalse();
         }
     }
 }

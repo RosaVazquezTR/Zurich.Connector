@@ -24,6 +24,7 @@
     {
         public const string Extension = "extension";
         public const string ListItemUniqueId = "listItemUniqueId";
+        public const string Id = "id";
     }
 
     /// <summary>
