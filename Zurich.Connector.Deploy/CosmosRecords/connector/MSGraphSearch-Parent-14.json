@@ -23,7 +23,7 @@
         "defaultValue": ""
       },
       {
-        "cdmName": "EntityType",
+        "cdmName": "EntityType.default",
         "name": "requests.[].entityTypes.[]",
         "inClause": "Body",
         "required": false,
@@ -31,7 +31,7 @@
         "defaultValue": "driveItem"
       },
       {
-        "cdmName": "Fields",
+        "cdmName": "Fields.default",
         "name": "requests.[].fields.[]",
         "inClause": "Body",
         "required": false,
@@ -44,10 +44,7 @@
         "inClause": "Body",
         "required": true,
         "type": "string",
-        "defaultValue": "25",
-        "tags": [
-          "pagination"
-        ]
+        "defaultValue": "25"
       },
 	  {
         "cdmName": "Offset",
@@ -55,13 +52,10 @@
         "inClause": "Body",
         "required": true,
         "type": "string",
-        "defaultValue": "0",
-        "tags": [
-          "pagination"
-        ]
+        "defaultValue": "0"
       },
 	  {
-        "cdmName": "SortName",
+        "cdmName": "SortName.default",
         "name": "requests.[].sortProperties.[].name",
         "inClause": "Body",
         "required": true,
@@ -69,7 +63,7 @@
         "defaultValue": "rank"
       },
 	  {
-        "cdmName": "SortDescending",
+        "cdmName": "SortDescending.default",
         "name": "requests.[].sortProperties.[].isDescending",
         "inClause": "Body",
         "required": true,
@@ -82,9 +76,6 @@
     }
   },
   "response": {
-    "schema": {
-      "properties": {}
-    },
 	"type": "JSON"
   },
   "filters": [

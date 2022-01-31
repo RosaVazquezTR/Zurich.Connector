@@ -164,7 +164,7 @@ namespace Zurich.Connector.Tests.ServiceTests
         public async Task SetItemLinkTest_Search_Should_NoAdditionalProperties()
         {
             //Arrange
-            var mockDocuments = MockConnectorData.SetupSearchDocumentsModel();
+            var mockDocuments = MockConnectorData.SetupSearchDocumentsModel_NoAdditionalProperties();
             var hostName = "my.cookieapp.com";
             var appCode = "";
             var expectedUrl = $"https://{hostName}/work/link/d/ContractExpress!2218.1";

@@ -29,13 +29,10 @@
         "inClause": "Body",
         "required": true,
         "type": "int",
-        "defaultValue": "100",
-        "tags": [
-          "pagination"
-        ]
+        "defaultValue": "100"
       },
       {
-        "cdmName": "Profile_fields",
+        "cdmName": "Profile_fields.default",
         "name": "profile_fields.document.[]",
         "inClause": "Body",
         "required": false,
@@ -48,9 +45,6 @@
     }
   },
   "response": {
-    "schema": {
-      "properties": {}
-    },
     "type": "JSON"
   },
   "filters": [],

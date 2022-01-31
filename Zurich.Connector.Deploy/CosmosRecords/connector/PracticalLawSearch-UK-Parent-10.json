@@ -11,89 +11,51 @@
     "subType": "Parent",
     "isDynamicFilter": true
   },
-  "request": {
-    "endpointPath": "/v4/federatedsearch",
-    "method": "GET",
-    "parameters": [
-      {
-        "cdmName": "Query",
-        "name": "searchTerm",
-        "inClause": "Query",
-        "required": false,
-        "type": "string",
-        "defaultValue": "*"
-      },
-      {
-        "cdmName": "ResourceType",
-        "name": "ResourceType",
-        "inClause": "Query",
-        "required": false,
-        "type": "string",
-        "defaultValue": ""
-      },
-      {
-        "cdmName": "PracticeArea",
-        "name": "products",
-        "inClause": "Query",
-        "required": true,
-        "type": "string",
-        "defaultValue": ""
-      },
-      {
-        "cdmName": "JurisdictionIds",
-        "name": "JurisdictionIds",
-        "inClause": "Query",
-        "required": true,
-        "type": "string",
-        "defaultValue": ""
-      },
-      {
-        "cdmName": "Locale",
-        "name": "locale",
-        "inClause": "Query",
-        "required": true,
-        "type": "string",
-        "defaultValue": "UK"
-      },
-      {
-        "cdmName": "ResultSize",
-        "name": "resultsCount",
-        "inClause": "Query",
-        "required": true,
-        "type": "string",
-        "defaultValue": "25",
-        "tags": [
-          "pagination"
-        ]
-      },
-      {
-        "cdmName": "Offset",
-        "name": "resultsStartIndex",
-        "inClause": "Body",
-        "required": true,
-        "type": "string",
-        "defaultValue": "1",
-        "tags": [
-          "pagination"
-        ]
-      },
-      {
-        "cdmName": "SortOrder",
-        "name": "SortOrder",
-        "inClause": "Query",
-        "required": true,
-        "type": "string",
-        "defaultValue": ""
-      },
-      {
-        "cdmName": "StartDate",
-        "name": "StartDate",
-        "inClause": "Query",
-        "required": true,
-        "type": "string",
-        "defaultValue": ""
-      }
-    ],
+	"request": {
+		"endpointPath": "/v4/federatedsearch",
+		"method": "GET",
+		"parameters": [
+			{
+				"cdmName": "Query",
+				"name": "searchTerm",
+				"inClause": "Query",
+				"required": false,
+				"type": "string",
+				"defaultValue": "*"
+			},
+			{
+				"cdmName": "PracticeArea.filter",
+				"name": "products",
+				"inClause": "Query",
+				"required": true,
+				"type": "string",
+				"defaultValue": ""
+			},
+			{
+				"cdmName": "Locale.default",
+				"name": "locale",
+				"inClause": "Query",
+				"required": true,
+				"type": "string",
+				"defaultValue": "UK"
+			},
+			{
+				"cdmName": "ResultSize",
+				"name": "resultsCount",
+				"inClause": "Query",
+				"required": true,
+				"type": "string",
+				"defaultValue": "25"
+			},
+			{
+				"cdmName": "Offset",
+				"name": "resultsStartIndex",
+				"inClause": "Body",
+				"required": true,
+				"type": "string",
+				"defaultValue": "1"
+			}
+		],
     "sorting": {
       "properties": [
         {
@@ -112,9 +74,6 @@
     }
   },
   "response": {
-    "schema": {
-      "properties": {}
-    },
 	"type": "XML",
 	"xmlArrayAttribute": ["//searchResults/detail/document", "//searchResults/detail/document/jurisdictionList/jurisdiction"]
   },
@@ -123,7 +82,7 @@
 		"name": "PracticeArea",
 		"description": "The practice areas",
 		"isMultiselect": "false",
-		"requestParameter": "PracticeArea",
+		"requestParameter": "PracticeArea.filter",
 		"filterlist": [
 			{
 				"name": "Agriculture & Rural Land",
@@ -251,7 +210,6 @@
   ],
   "pagination": {
     "available": true,
-    "paginationType": "",
     "isZeroBasedOffset": false
   },
   "resultLocation": "searchResults.detail",

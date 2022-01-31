@@ -83,7 +83,7 @@ namespace Zurich.Connector.App.Services.DataSources
             if (!string.IsNullOrEmpty(configuredUrl))
             {
                 var builder = new UriBuilder("https", configuredUrl, -1);
-                return $"{builder.Uri}{item["PlcReference"]}";
+                return $"{builder.Uri}{item[StructuredCDMProperties.AdditionalProperties]["plcReference"]}";
             }
             else
             return "";

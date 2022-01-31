@@ -23,24 +23,8 @@
         "defaultValue": "*"
       },
       {
-        "cdmName": "ResourceType",
-        "name": "ResourceType",
-        "inClause": "Query",
-        "required": false,
-        "type": "string",
-        "defaultValue": ""
-      },
-      {
-        "cdmName": "PracticeArea",
+        "cdmName": "PracticeArea.filter",
         "name": "products",
-        "inClause": "Query",
-        "required": true,
-        "type": "string",
-        "defaultValue": ""
-      },
-      {
-        "cdmName": "JurisdictionIds",
-        "name": "JurisdictionIds",
         "inClause": "Query",
         "required": true,
         "type": "string",
@@ -60,10 +44,7 @@
         "inClause": "Query",
         "required": true,
         "type": "string",
-        "defaultValue": "25",
-        "tags": [
-          "pagination"
-        ]
+        "defaultValue": "25"
       },
       {
         "cdmName": "Offset",
@@ -71,26 +52,7 @@
         "inClause": "Body",
         "required": true,
         "type": "string",
-        "defaultValue": "1",
-        "tags": [
-          "pagination"
-        ]
-      },
-      {
-        "cdmName": "SortOrder",
-        "name": "SortOrder",
-        "inClause": "Query",
-        "required": true,
-        "type": "string",
-        "defaultValue": ""
-      },
-      {
-        "cdmName": "StartDate",
-        "name": "StartDate",
-        "inClause": "Query",
-        "required": true,
-        "type": "string",
-        "defaultValue": ""
+        "defaultValue": "1"
       }
     ],
     "sorting": {
@@ -111,9 +73,6 @@
     }
   },
   "response": {
-    "schema": {
-      "properties": {}
-    },
 	"type": "XML",
 	"xmlArrayAttribute": ["//searchResults/detail/document", "//searchResults/detail/document/jurisdictionList/jurisdiction"]
   },
@@ -122,7 +81,7 @@
 		"name": "PracticeArea",
 		"description": "The practice areas",
 		"isMultiselect": "false",
-		"requestParameter": "PracticeArea",
+		"requestParameter": "PracticeArea.filter",
 		"filterlist": [
 			{
 				"name": "Capital Markets & Securities",
@@ -165,7 +124,6 @@
   ],
   "pagination": {
     "available": true,
-    "paginationType": "",
     "isZeroBasedOffset": false
   },
   "resultLocation": "searchResults.detail",
