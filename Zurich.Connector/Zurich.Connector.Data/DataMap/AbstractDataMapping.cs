@@ -20,6 +20,7 @@ using Zurich.Connector.Data.Repositories;
 using Zurich.Connector.Data.Repositories.CosmosDocuments;
 using Zurich.Connector.Data.Services;
 using Zurich.ProductData.Models;
+using OAuthAPITokenResponse = Zurich.Common.Models.OAuth.OAuthAPITokenResponse;
 
 namespace Zurich.Connector.Data.DataMap
 {
@@ -68,9 +69,9 @@ namespace Zurich.Connector.Data.DataMap
 
 		public async virtual Task<OAuthAPITokenResponse> RetrieveToken(string appCode, OAuthApplicationType? appType = null, 
 														  string locale = null, string grandType = null, bool? sendCredentialsInBody = false, string productType = null)
-		{
+		{ 
 			if (_legalHomeAccessCheck.isLegalHomeUser())
-			{
+			{ 
 				AppToken token;
 				if (locale != null && grandType != null && appType.HasValue && sendCredentialsInBody.HasValue)
 				{
@@ -89,7 +90,7 @@ namespace Zurich.Connector.Data.DataMap
 				return result;
 
 			}
-
+			 
 		}
 
 		public async virtual Task<T> MapToCDM<T>(JToken jsonResponse, string resultLocation, ConnectorDocument connectorDocument, Dictionary<string, string> requestParameters)
