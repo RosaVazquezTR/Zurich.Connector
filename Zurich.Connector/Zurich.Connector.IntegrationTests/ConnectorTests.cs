@@ -94,6 +94,7 @@ namespace Zurich.Connector.IntegrationTests
             {
                 request = $"/Connectors/{connector.Id}/Data?Hostname=cloudimanage.com";
             }
+            // Note:- Work around to skip HighQ connector check
             if (connector.Info.DataSourceId != "10" && connector.Info.DataSourceId != "45")
             {
                 //Act
