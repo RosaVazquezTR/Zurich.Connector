@@ -1,0 +1,76 @@
+{
+  "id": "46",
+  "partitionkey": "ConnectorList",
+  "info": {
+    "title": "Get Search HighQ - Child connector for 45",
+    "description": "Pull HighQ - Child connector for 45",
+    "entityType": "Search",
+    "dataSourceId": "45",
+    "version": "1.0",
+    "subType": "Child"
+  },
+  "request": {},
+  "response": {},
+  "filters": [],
+  "resultLocation": "searchResults",
+  "cdmMapping": {
+    "structured": [
+      {
+        "name": "Snippet",
+        "type": "string",
+        "responseElement": "",
+        "_comment": ""
+      },
+      {
+        "name": "Title",
+        "type": "string",
+        "responseElement": "contextName",
+        "_comment": ""
+      },
+      {
+        "name": "WebUrl",
+        "type": "string",
+        "responseElement": "contextURL",
+        "_comment": ""
+      },
+      {
+        "name": "Type",
+        "type": "string",
+        "responseElement": "contextType",
+        "_comment": ""
+      },
+      {
+        "name": "CreationDate",
+        "type": "string",
+        "responseElement": "lastModifiedDate",
+        "_comment": ""
+      }
+    ],
+    "unstructured": [
+      {
+        "name": "site",
+        "type": "string",
+        "responseElement": "site.siteName",
+        "_comment": ""
+      },
+      {
+        "name": "folderPath",
+        "type": "string",
+        "responseElement": "documentMetaData.folderPath",
+        "_comment": ""
+      },
+      {
+        "name": "instance",
+        "type": "string",
+        "responseElement": "instance.instanceName",
+        "_comment": ""
+      },
+      {
+        "name": "author",
+        "type": "string",
+        "responseElement": "author.name",
+        "_comment": ""
+      }
+    ]
+  }
+}

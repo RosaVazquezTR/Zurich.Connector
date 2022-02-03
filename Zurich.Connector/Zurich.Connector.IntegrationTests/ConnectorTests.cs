@@ -135,14 +135,18 @@ namespace Zurich.Connector.IntegrationTests
         [MemberData(nameof(GetConnectorsTestCases), parameters: new object[] { "Search", true })]
         public async Task MakeSearchCalls(ConnectorDocument connector)
         {
-            // Arrange
-            var request = $"/Connectors/{connector.Id}/Data?Query=*";
+            // HighQ connector 
+            if(connector.Id != "45")
+            {
+                // Arrange
+                var request = $"/Connectors/{connector.Id}/Data?Query=*";
 
-            //Act
-            var response = await _client.GetAsync(request);
+                //Act
+                var response = await _client.GetAsync(request);
 
-            // Assert
-            await CheckResponse<SearchObject>(response);
+                // Assert
+                await CheckResponse<SearchObject>(response);
+            }
         }
 
         [Theory]

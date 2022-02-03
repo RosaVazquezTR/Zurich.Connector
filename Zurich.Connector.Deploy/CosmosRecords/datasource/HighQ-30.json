@@ -1,0 +1,30 @@
+{
+  "id": "45",
+  "partitionkey": "DataSourceList",
+  "name": "HighQ",
+  "description": "Connects to the HighQ APIS",
+  "appCode": "HighQ",
+  "infoURL": "",
+  "productType": "HighQ",
+  "extraRequestContext": "",
+  "registrationInfo": {
+    "registrationMode": "Automatic",
+    "domainRequired": "false",
+    "clientAndSecretRequired": "false",
+    "connectionMessage": "",
+    "registrationFileRequired": "false"
+  },
+  "securityDefinition": {
+    "type": "HighQ",
+    "flow": "accessCode",
+    "defaultSecurityDefinition": {
+      "authorizationURL": "https://hub1.hqdev.highq.com/hub1/restAPI/",
+      "authorizationPath": "/auth/oauth2/authorize",
+      "tokenURL": "",
+      "tokenPath": "https://hub1.hqdev.highq.com/hub1/restAPI/hubRestAPIService/token",
+      "keyVaultClientId": "",
+      "keyVaultSecret": ""
+    },
+    "scopes": {}
+  }
+}

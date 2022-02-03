@@ -1,0 +1,141 @@
+{
+  "id": "45",
+  "partitionkey": "ConnectorList",
+  "alias": "highq.search",
+  "info": {
+    "title": "Get Search HighQ documents",
+    "description": "Pull HighQ documents",
+    "entityType": "Search",
+    "dataSourceId": "45",
+    "version": "1.0",
+    "subType": "Parent",
+    "isDynamicFilter": true
+  },
+  "request": {
+    "endpointPath": "api/12/Search",
+    "method": "GET",
+    "parameters": [
+      {
+        "cdmName": "Query",
+        "name": "searchTerm",
+        "inClause": "Body",
+        "required": true,
+        "type": "string",
+        "defaultValue": "*"
+      },
+      {
+        "cdmName": "ResultSize",
+        "name": "rowCount",
+        "inClause": "Body",
+        "required": true,
+        "type": "string",
+        "defaultValue": "25"
+      },
+      {
+        "cdmName": "Offset",
+        "name": "startIndex",
+        "inClause": "Body",
+        "required": true,
+        "type": "string",
+        "defaultValue": "1"
+      },
+      {
+        "cdmName": "returnTotalResult.default",
+        "name": "returnTotalResult",
+        "inClause": "Body",
+        "required": true,
+        "type": "bool",
+        "defaultValue": true
+      }
+    ],
+    "sorting": {
+      "properties": [
+
+      ]
+    }
+  },
+  "response": {
+    "type": "JSON"
+  },
+  "filters": [
+    {
+      "name": "Type",
+      "description": "The allowed file types for HighQ",
+      "isMultiselect": "true",
+      "requestParameter": "fileTypes",
+      "filterlist": [
+        {
+          "name": "Word",
+          "id": "docx,doc"
+        },
+        {
+          "name": "PDF",
+          "id": "pdf"
+        },
+        {
+          "name": "PowerPoint",
+          "id": "pps,ppt,pptx"
+        },
+        {
+          "name": "Excel",
+          "id": "xlr,xls,xlsx"
+        },
+        {
+          "name": "Access",
+          "id": "accdb"
+        },
+        {
+          "name": "Audio",
+          "id": "aif,iff,m3u,m4a,mid,mp3,mpa,wav,wma"
+        },
+        {
+          "name": "CSV",
+          "id": "csv"
+        },
+        {
+          "name": "Mail",
+          "id": "msg,eml"
+        },
+        {
+          "name": "OneNote",
+          "id": "one"
+        },
+        {
+          "name": "Text",
+          "id": "odt,pages,rtf,tex,txt,wpd,wps"
+        },
+        {
+          "name": "Video",
+          "id": "3g2,3gp,afg,asf,avi,avchd,flv,m4v,mov,mp4,mpg,rm,srt,swf,vob,wmv"
+        },
+        {
+          "name": "XML",
+          "id": "xml"
+        }
+      ]
+    }
+  ],
+  "pagination": {
+    "available": true,
+    "paginationType": "",
+    "isZeroBasedOffset": false
+  },
+  "resultLocation": "",
+  "cdmMapping": {
+    "structured": [
+      {
+        "name": "Count",
+        "type": "short",
+        "responseElement": "searchResultCount",
+        "_comment": ""
+      },
+      {
+        "name": "Documents",
+        "type": "object",
+        "responseElement": "{46}",
+        "_comment": ""
+      }
+    ],
+    "unstructured": []
+  }
+}
