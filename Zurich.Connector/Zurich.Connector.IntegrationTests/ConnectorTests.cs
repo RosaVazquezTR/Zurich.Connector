@@ -94,7 +94,7 @@ namespace Zurich.Connector.IntegrationTests
             {
                 request = $"/Connectors/{connector.Id}/Data?Hostname=cloudimanage.com";
             }
-            if (connector.Info.DataSourceId != "10")
+            if (connector.Info.DataSourceId != "10" && connector.Info.DataSourceId != "45")
             {
                 //Act
                 var response = await _client.GetAsync(request);
@@ -135,8 +135,8 @@ namespace Zurich.Connector.IntegrationTests
         [MemberData(nameof(GetConnectorsTestCases), parameters: new object[] { "Search", true })]
         public async Task MakeSearchCalls(ConnectorDocument connector)
         {
-            // HighQ connector 
-            if(connector.Id != "45")
+            // Note:- Work around to skip HighQ connector check  
+            if (connector.Id != "45")
             {
                 // Arrange
                 var request = $"/Connectors/{connector.Id}/Data?Query=*";
