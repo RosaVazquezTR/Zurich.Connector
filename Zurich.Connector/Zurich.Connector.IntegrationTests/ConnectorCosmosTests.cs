@@ -110,7 +110,7 @@ namespace Zurich.Connector.IntegrationTests
         [MemberData(nameof(GetDataSourcesTestCases))]
         public async Task VerifyDataSources(DataSourceDocument dataSource)
         {
-            // Note:- Work around to skip HighQ connector check
+            // Note:- Workaround to skip HighQ connector check
             if (dataSource.Id != "45")
             {
                 // Assert
@@ -135,7 +135,7 @@ namespace Zurich.Connector.IntegrationTests
         [MemberData(nameof(GetConnectorsTestCases), parameters: "")]
         public async Task VerifyConnectors(ConnectorDocument connector)
         {
-            // Note:- Work around to skip HighQ connector check
+            // Note:- Workaround to skip HighQ connector check
             if (connector.Id != "45" && connector.Id != "46")
             {
                 // Assert
