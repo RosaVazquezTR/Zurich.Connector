@@ -4,7 +4,7 @@
   "alias": "highq.search",
   "info": {
     "title": "Get Search HighQ documents",
-    "description": "Pull HighQ documents",
+    "description": "Searches all instances of HighQ for a user to retrieve corresponding documents",
     "entityType": "Search",
     "dataSourceId": "45",
     "version": "1.0",
