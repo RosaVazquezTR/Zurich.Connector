@@ -20,8 +20,8 @@ namespace Zurich.Connector.IntegrationTests
     public class ConnectorCosmosTests : IntegrationTest
     {
         private const string folderLocation = @"..\..\..\..\..\Zurich.Connector.Deploy\CosmosRecords";
-        private List<string> dataSourceTypes = new List<string>() { "oauth2", "transferToken" };
-        private List<string> parameterTypes = new List<string>() { "array", "date", "int", "object", "short", "string", "DateTime" };
+        private List<string> dataSourceTypes = new List<string>() { "oauth2", "transferToken", "highq" };
+        private List<string> parameterTypes = new List<string>() { "array", "date", "int", "object", "short", "string", "DateTime", "bool" };
         private List<string> requestMethodTypes = new List<string>() { "GET", "POST" };
         private List<string> requestInClauseTypes = new List<string>() { "Child", "Body", "OData", "Query", "Headers" };
 
@@ -110,9 +110,6 @@ namespace Zurich.Connector.IntegrationTests
         [MemberData(nameof(GetDataSourcesTestCases))]
         public async Task VerifyDataSources(DataSourceDocument dataSource)
         {
-            // Note:- Workaround to skip HighQ connector check
-            if (dataSource.Id != "45")
-            {
                 // Assert
                 dataSource.Should().NotBeNull();
 
@@ -125,7 +122,6 @@ namespace Zurich.Connector.IntegrationTests
 
                 dataSource.securityDefinition.Should().NotBeNull();
                 dataSource.securityDefinition.type.Should().ContainAny(dataSourceTypes);
-            }
         }
 
         /// <summary>
@@ -135,9 +131,6 @@ namespace Zurich.Connector.IntegrationTests
         [MemberData(nameof(GetConnectorsTestCases), parameters: "")]
         public async Task VerifyConnectors(ConnectorDocument connector)
         {
-            // Note:- Workaround to skip HighQ connector check
-            if (connector.Id != "45" && connector.Id != "46")
-            {
                 // Assert
                 connector.Should().NotBeNull();
 
@@ -233,7 +226,6 @@ namespace Zurich.Connector.IntegrationTests
                     bool nameCamelCased = !char.IsUpper(param.name[0]);
                     nameCamelCased.Should().BeTrue("Should be camel cased");
                 }
-            }
         }
 
         /// <summary>

@@ -12,7 +12,7 @@
     "isDynamicFilter": true
   },
   "request": {
-    "endpointPath": "api/12/Search",
+    "endpointPath": "/api/12/Search",
     "method": "GET",
     "parameters": [
       {

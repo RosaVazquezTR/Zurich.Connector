@@ -15,7 +15,7 @@
     "registrationFileRequired": "false"
   },
   "securityDefinition": {
-    "type": "HighQ",
+    "type": "highq",
     "flow": "accessCode",
     "defaultSecurityDefinition": {
       "authorizationURL": "https://hub1.hqdev.highq.com/hub1/restAPI/",

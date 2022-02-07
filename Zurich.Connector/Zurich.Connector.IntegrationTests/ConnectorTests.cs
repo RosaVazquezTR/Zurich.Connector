@@ -49,7 +49,7 @@ namespace Zurich.Connector.IntegrationTests
                         {
                             //ToDo: Needs to remove this once iManage connector token generation sucessful.
                             if (connector.Id != "44")
-                            connectors.Add(connector);
+                                connectors.Add(connector);
                         }
                     }
                 }
@@ -94,8 +94,7 @@ namespace Zurich.Connector.IntegrationTests
             {
                 request = $"/Connectors/{connector.Id}/Data?Hostname=cloudimanage.com";
             }
-            // Note:- Workaround to skip HighQ connector check
-            if (connector.Info.DataSourceId != "10" && connector.Info.DataSourceId != "45")
+            if (connector.Info.DataSourceId != "10")
             {
                 //Act
                 var response = await _client.GetAsync(request);
