@@ -1,9 +1,9 @@
 {
-  "id": "46",
+  "id": "48",
   "partitionkey": "ConnectorList",
   "info": {
-    "title": "Get Search HighQ - Child connector for 45",
-    "description": "Pull HighQ - Child connector for 45",
+    "title": "Get Search HighQ - Child connector for 47",
+    "description": "Pull HighQ - Child connector for 47",
     "entityType": "Search",
     "dataSourceId": "45",
     "version": "1.0",

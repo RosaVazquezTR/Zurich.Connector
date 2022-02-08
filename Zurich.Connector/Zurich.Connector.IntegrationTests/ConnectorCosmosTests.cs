@@ -126,6 +126,29 @@ namespace Zurich.Connector.IntegrationTests
         }
 
         /// <summary>
+        /// Will check duplicate datasources
+        /// </summary>
+        [Fact]
+        public async Task VerifyDuplicateDataSources()
+        {
+            var datasources = GetDataSources();
+            // Assert
+            Assert.False(datasources.GroupBy(x => x.Id).Any(g => g.Count() > 1),"Data source duplicate id found");
+        }
+
+        /// <summary>
+        /// Will check duplicate connectors
+        /// </summary>
+        [Fact]
+        public async Task VerifyDuplicateConnectors()
+        {
+            var connectors = GetConnectors(null, null);
+            // Assert
+            Assert.False(connectors.GroupBy(x => x.Id).Any(g => g.Count() > 1), "Connector duplicate id found");
+        }
+
+
+        /// <summary>
         /// Will check specific things related to just the connectors
         /// </summary>
         [Theory]
