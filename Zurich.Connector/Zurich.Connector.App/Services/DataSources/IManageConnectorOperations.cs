@@ -60,12 +60,12 @@ namespace Zurich.Connector.App.Services.DataSources
                                 JToken userProfileResponse = await _dataMapping.GetAndMapResults<JToken>(connectorDocument, string.Empty, null, null, null);
                                 customerId = userProfileResponse["customer_id"].Value<string>();
 
-                                foreach (JObject doc in (result["Items"] as JArray))
-                                {
-                                    if (!doc.ContainsKey(StructuredCDMProperties.WebUrl))
-                                        doc[StructuredCDMProperties.WebUrl] = BuildLink(entityType, doc, hostName);
-                                    if (!doc.ContainsKey(StructuredCDMProperties.DownloadUrl))
-                                        doc[StructuredCDMProperties.DownloadUrl] = await BuildDownloadLink(entityType, doc, hostName);
+                                foreach (JObject doc in (result["Items"] as JArray) )
+                                { 
+                                        if (!doc.ContainsKey(StructuredCDMProperties.WebUrl))
+                                            doc[StructuredCDMProperties.WebUrl] = BuildLink(entityType, doc, hostName);
+                                        if (!doc.ContainsKey(StructuredCDMProperties.DownloadUrl))
+                                            doc[StructuredCDMProperties.DownloadUrl] = await BuildDownloadLink(entityType, doc, hostName);
                                 }
                             }
                         }
@@ -121,8 +121,6 @@ namespace Zurich.Connector.App.Services.DataSources
                     Uri uri = new Uri(desktopUrl);
                     var libraryId = HttpUtility.ParseQueryString(uri.AbsoluteUri).Get("lib");
                     var docId = item.ContainsKey(StructuredCDMProperties.EntityId) ? item[StructuredCDMProperties.EntityId].Value<string>() : "";
-                    var title = item.ContainsKey(StructuredCDMProperties.Title) ? item[StructuredCDMProperties.Title].Value<string>() : "";
-                    var fileName = Regex.Replace(title, @"\s+", ""); //Replaces all(+) space characters (\s) with empty("")
                     var builder = new UriBuilder("https", hostName, -1);
                     result = $"{builder.Uri}{DocumentsDowloadEndpoint}/customers/{customerId}/libraries/{libraryId}/documents/{docId}/download";
                     break;
