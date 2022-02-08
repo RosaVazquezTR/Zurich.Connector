@@ -20,8 +20,8 @@ namespace Zurich.Connector.IntegrationTests
     public class ConnectorCosmosTests : IntegrationTest
     {
         private const string folderLocation = @"..\..\..\..\..\Zurich.Connector.Deploy\CosmosRecords";
-        private List<string> dataSourceTypes = new List<string>() { "oauth2", "transferToken" };
-        private List<string> parameterTypes = new List<string>() { "array", "date", "int", "object", "short", "string", "DateTime" };
+        private List<string> dataSourceTypes = new List<string>() { "oauth2", "transferToken", "highq" };
+        private List<string> parameterTypes = new List<string>() { "array", "date", "int", "object", "short", "string", "DateTime", "bool" };
         private List<string> requestMethodTypes = new List<string>() { "GET", "POST" };
         private List<string> requestInClauseTypes = new List<string>() { "Child", "Body", "OData", "Query", "Headers" };
 
@@ -52,7 +52,7 @@ namespace Zurich.Connector.IntegrationTests
 
         public static List<ConnectorDocument> GetConnectors(string entityType, string subType)
         {
-            List <ConnectorDocument> connectors = new List<ConnectorDocument>();
+            List<ConnectorDocument> connectors = new List<ConnectorDocument>();
             string[] fileEntries = Directory.GetFiles($"{folderLocation}\\connector");
 
             foreach (var fileLocation in fileEntries)
@@ -110,12 +110,13 @@ namespace Zurich.Connector.IntegrationTests
         [MemberData(nameof(GetDataSourcesTestCases))]
         public async Task VerifyDataSources(DataSourceDocument dataSource)
         {
+
             // Assert
             dataSource.Should().NotBeNull();
-            
+
             dataSource.Id.Should().NotBeNullOrWhiteSpace();
             dataSource.partitionkey.Should().Be("DataSourceList");
-            
+
             dataSource.appCode.Should().NotBeNullOrWhiteSpace();
             dataSource.description.Should().NotBeNullOrWhiteSpace();
             dataSource.name.Should().NotBeNullOrWhiteSpace();
@@ -153,8 +154,9 @@ namespace Zurich.Connector.IntegrationTests
                 {
                     if (param.DefaultValue.ToString().StartsWith("{"))
                     {
-                       param.CdmName.Should().BeNullOrWhiteSpace();
-                    } else
+                        param.CdmName.Should().BeNullOrWhiteSpace();
+                    }
+                    else
                     {
                         param.CdmName.Should().NotBeNullOrWhiteSpace();
                     }
@@ -225,7 +227,6 @@ namespace Zurich.Connector.IntegrationTests
                 bool nameCamelCased = !char.IsUpper(param.name[0]);
                 nameCamelCased.Should().BeTrue("Should be camel cased");
             }
-
         }
 
         /// <summary>
