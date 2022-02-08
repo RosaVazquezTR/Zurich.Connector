@@ -85,7 +85,7 @@ namespace Zurich.Connector.IntegrationTests
 
         [Theory]
         [MemberData(nameof(GetConnectorsTestCases), parameters: new object[] { "Document", true })]
-        public async Task MakeDocumentCalls(ConnectorDocument connector)
+            public async Task MakeDocumentCalls(ConnectorDocument connector)
         {
             // Arrange
             var request = $"/Connectors/{connector.Id}/Data";
@@ -94,7 +94,7 @@ namespace Zurich.Connector.IntegrationTests
             {
                 request = $"/Connectors/{connector.Id}/Data?Hostname=cloudimanage.com";
             }
-            if (connector.Info.DataSourceId != "10")
+            if (connector.Info.DataSourceId != "10" && connector.Info.DataSourceId != "45")
             {
                 //Act
                 var response = await _client.GetAsync(request);
@@ -136,7 +136,7 @@ namespace Zurich.Connector.IntegrationTests
         public async Task MakeSearchCalls(ConnectorDocument connector)
         {
             // Note:- Workaround to skip HighQ connector check  
-            if (connector.Id != "45")
+            if (connector.Id != "45" && connector.Id != "46")
             {
                 // Arrange
                 var request = $"/Connectors/{connector.Id}/Data?Query=*";
