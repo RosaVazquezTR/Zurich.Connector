@@ -52,7 +52,7 @@ namespace Zurich.Connector.IntegrationTests
 
         public static List<ConnectorDocument> GetConnectors(string entityType, string subType)
         {
-            List <ConnectorDocument> connectors = new List<ConnectorDocument>();
+            List<ConnectorDocument> connectors = new List<ConnectorDocument>();
             string[] fileEntries = Directory.GetFiles($"{folderLocation}\\connector");
 
             foreach (var fileLocation in fileEntries)
@@ -110,22 +110,19 @@ namespace Zurich.Connector.IntegrationTests
         [MemberData(nameof(GetDataSourcesTestCases))]
         public async Task VerifyDataSources(DataSourceDocument dataSource)
         {
-            // Note:- Workaround to skip HighQ connector check
-            if (dataSource.Id != "45")
-            {
-                // Assert
-                dataSource.Should().NotBeNull();
 
-                dataSource.Id.Should().NotBeNullOrWhiteSpace();
-                dataSource.partitionkey.Should().Be("DataSourceList");
+            // Assert
+            dataSource.Should().NotBeNull();
 
-                dataSource.appCode.Should().NotBeNullOrWhiteSpace();
-                dataSource.description.Should().NotBeNullOrWhiteSpace();
-                dataSource.name.Should().NotBeNullOrWhiteSpace();
+            dataSource.Id.Should().NotBeNullOrWhiteSpace();
+            dataSource.partitionkey.Should().Be("DataSourceList");
 
-                dataSource.securityDefinition.Should().NotBeNull();
-                dataSource.securityDefinition.type.Should().ContainAny(dataSourceTypes);
-            }
+            dataSource.appCode.Should().NotBeNullOrWhiteSpace();
+            dataSource.description.Should().NotBeNullOrWhiteSpace();
+            dataSource.name.Should().NotBeNullOrWhiteSpace();
+
+            dataSource.securityDefinition.Should().NotBeNull();
+            dataSource.securityDefinition.type.Should().ContainAny(dataSourceTypes);
         }
 
         /// <summary>
@@ -135,104 +132,100 @@ namespace Zurich.Connector.IntegrationTests
         [MemberData(nameof(GetConnectorsTestCases), parameters: "")]
         public async Task VerifyConnectors(ConnectorDocument connector)
         {
-            // Note:- Workaround to skip HighQ connector check
-            if (connector.Id != "45" && connector.Id != "46")
+            // Assert
+            connector.Should().NotBeNull();
+
+            connector.Id.Should().NotBeNull();
+            connector.PartitionKey.Should().Be("ConnectorList");
+            connector.Info.Should().NotBeNull();
+            connector.Info.Title.Should().NotBeNullOrWhiteSpace();
+            connector.Info.Description.Should().NotBeNullOrWhiteSpace();
+            connector.Info.EntityType.ToString().Should().NotBeNullOrWhiteSpace();
+            connector.Info.DataSourceId.Should().NotBeNullOrWhiteSpace();
+            connector.Info.Version.Should().NotBeNull();
+            if (string.IsNullOrEmpty(connector.Info.SubType) || connector.Info.SubType == SubType.Parent)
             {
-                // Assert
-                connector.Should().NotBeNull();
-
-                connector.Id.Should().NotBeNull();
-                connector.PartitionKey.Should().Be("ConnectorList");
-                connector.Info.Should().NotBeNull();
-                connector.Info.Title.Should().NotBeNullOrWhiteSpace();
-                connector.Info.Description.Should().NotBeNullOrWhiteSpace();
-                connector.Info.EntityType.ToString().Should().NotBeNullOrWhiteSpace();
-                connector.Info.DataSourceId.Should().NotBeNullOrWhiteSpace();
-                connector.Info.Version.Should().NotBeNull();
-                if (string.IsNullOrEmpty(connector.Info.SubType) || connector.Info.SubType == SubType.Parent)
+                connector.Alias.Should().NotBeNull();
+                connector.Request.Should().NotBeNull();
+                connector.Request.EndpointPath.Should().NotBeNull();
+                connector.Request.EndpointPath.Should().StartWith("/");
+                connector.Request.Method.Should().ContainAny(requestMethodTypes);
+                foreach (var param in connector.Request.Parameters)
                 {
-                    connector.Alias.Should().NotBeNull();
-                    connector.Request.Should().NotBeNull();
-                    connector.Request.EndpointPath.Should().NotBeNull();
-                    connector.Request.EndpointPath.Should().StartWith("/");
-                    connector.Request.Method.Should().ContainAny(requestMethodTypes);
-                    foreach (var param in connector.Request.Parameters)
+                    if (param.DefaultValue.ToString().StartsWith("{"))
                     {
-                        if (param.DefaultValue.ToString().StartsWith("{"))
-                        {
-                            param.CdmName.Should().BeNullOrWhiteSpace();
-                        }
-                        else
-                        {
-                            param.CdmName.Should().NotBeNullOrWhiteSpace();
-                        }
-                        param.Name.Should().NotBeNullOrWhiteSpace();
-                        param.InClause.Should().ContainAny(requestInClauseTypes);
-                        param.Type.Should().ContainAny(parameterTypes);
+                        param.CdmName.Should().BeNullOrWhiteSpace();
                     }
-                    foreach (var sortParam in connector.Request.Sorting?.Properties)
+                    else
                     {
-                        sortParam.Name.Should().NotBeNullOrWhiteSpace();
-                        sortParam.Element.Should().NotBeNull();
-                        sortParam.ElementValue.Should().NotBeNull();
-                        sortParam.Type.Should().ContainAny(parameterTypes);
+                        param.CdmName.Should().NotBeNullOrWhiteSpace();
                     }
-                    if (connector.Response.Type == Data.Model.ResponseContentType.XML)
+                    param.Name.Should().NotBeNullOrWhiteSpace();
+                    param.InClause.Should().ContainAny(requestInClauseTypes);
+                    param.Type.Should().ContainAny(parameterTypes);
+                }
+                foreach (var sortParam in connector.Request.Sorting?.Properties)
+                {
+                    sortParam.Name.Should().NotBeNullOrWhiteSpace();
+                    sortParam.Element.Should().NotBeNull();
+                    sortParam.ElementValue.Should().NotBeNull();
+                    sortParam.Type.Should().ContainAny(parameterTypes);
+                }
+                if (connector.Response.Type == Data.Model.ResponseContentType.XML)
+                {
+                    connector.Response.XmlArrayAttribute.Should().NotBeNull();
+                }
+                foreach (var filterValue in connector.Filters)
+                {
+                    filterValue.Name.Should().NotBeNullOrWhiteSpace();
+                    filterValue.Description.Should().NotBeNullOrWhiteSpace();
+                    filterValue.RequestParameter.Should().NotBeNull();
+                    if (filterValue.FilterList != null)
                     {
-                        connector.Response.XmlArrayAttribute.Should().NotBeNull();
-                    }
-                    foreach (var filterValue in connector.Filters)
-                    {
-                        filterValue.Name.Should().NotBeNullOrWhiteSpace();
-                        filterValue.Description.Should().NotBeNullOrWhiteSpace();
-                        filterValue.RequestParameter.Should().NotBeNull();
-                        if (filterValue.FilterList != null)
+                        foreach (var filter in filterValue.FilterList)
                         {
-                            foreach (var filter in filterValue.FilterList)
-                            {
-                                filter.Name.Should().NotBeNullOrWhiteSpace();
-                                filter.Id.Should().NotBeNullOrWhiteSpace();
-                            }
+                            filter.Name.Should().NotBeNullOrWhiteSpace();
+                            filter.Id.Should().NotBeNullOrWhiteSpace();
                         }
                     }
                 }
-                else
-                {
-                    connector.Alias.Should().BeNull();
-                    connector.Request.EndpointPath.Should().BeNull();
-                    connector.Request.Method.Should().BeNull();
-                    connector.Request.Parameters.Should().BeNull();
-                    connector.Request.ResponseContentType.Should().BeNull();
-                    connector.Request.Sorting.Should().BeNull();
-                    connector.Response.XmlArrayAttribute.Should().BeNull();
-                    connector.Response.Schema.Should().BeNull();
-                    connector.Filters.Should().BeEmpty();
-                }
+            }
+            else
+            {
+                connector.Alias.Should().BeNull();
+                connector.Request.EndpointPath.Should().BeNull();
+                connector.Request.Method.Should().BeNull();
+                connector.Request.Parameters.Should().BeNull();
+                connector.Request.ResponseContentType.Should().BeNull();
+                connector.Request.Sorting.Should().BeNull();
+                connector.Response.XmlArrayAttribute.Should().BeNull();
+                connector.Response.Schema.Should().BeNull();
+                connector.Filters.Should().BeEmpty();
+            }
 
-                connector.CdmMapping.Should().NotBeNull();
-                connector.CdmMapping.structured.Should().NotBeNull();
-                foreach (var param in connector.CdmMapping.structured)
-                {
-                    param.name.Should().NotBeNull();
-                    param.type.Should().ContainAny(parameterTypes);
-                    param.responseElement.Should().NotBeNull();
+            connector.CdmMapping.Should().NotBeNull();
+            connector.CdmMapping.structured.Should().NotBeNull();
+            foreach (var param in connector.CdmMapping.structured)
+            {
+                param.name.Should().NotBeNull();
+                param.type.Should().ContainAny(parameterTypes);
+                param.responseElement.Should().NotBeNull();
 
-                    // Verify child connector exists
-                    if (param.type == "object")
-                    {
-                        var allEntityChildrenRecords = GetConnectors(connector.Info.EntityType.ToString(), "Child");
-                        var match = Regex.Match(param.responseElement, @"{(.*?)}");
-                        var connectionId = match.Groups[1].ToString();
-                        var childConnector = allEntityChildrenRecords.SingleOrDefault(x => x.Id == connectionId);
-                        childConnector.Should().NotBeNull();
-                    }
-                }
-                foreach (var param in connector.CdmMapping.unstructured)
+                // Verify child connector exists
+                if (param.type == "object")
                 {
-                    //should be camelCased
-                    bool nameCamelCased = !char.IsUpper(param.name[0]);
-                    nameCamelCased.Should().BeTrue("Should be camel cased");
+                    var allEntityChildrenRecords = GetConnectors(connector.Info.EntityType.ToString(), "Child");
+                    var match = Regex.Match(param.responseElement, @"{(.*?)}");
+                    var connectionId = match.Groups[1].ToString();
+                    var childConnector = allEntityChildrenRecords.SingleOrDefault(x => x.Id == connectionId);
+                    childConnector.Should().NotBeNull();
                 }
+            }
+            foreach (var param in connector.CdmMapping.unstructured)
+            {
+                //should be camelCased
+                bool nameCamelCased = !char.IsUpper(param.name[0]);
+                nameCamelCased.Should().BeTrue("Should be camel cased");
             }
         }
 
