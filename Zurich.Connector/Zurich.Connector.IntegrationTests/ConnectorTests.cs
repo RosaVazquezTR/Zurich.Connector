@@ -136,7 +136,7 @@ namespace Zurich.Connector.IntegrationTests
         public async Task MakeSearchCalls(ConnectorDocument connector)
         {
             // Note:- Workaround to skip HighQ connector check  
-            if (connector.Id != "45" && connector.Id != "46")
+            if (connector.Id != "47" && connector.Id != "48")
             {
                 // Arrange
                 var request = $"/Connectors/{connector.Id}/Data?Query=*";

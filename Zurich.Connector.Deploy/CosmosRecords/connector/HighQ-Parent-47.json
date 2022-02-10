@@ -1,5 +1,5 @@
 {
-  "id": "45",
+  "id": "47",
   "partitionkey": "ConnectorList",
   "alias": "highq.search",
   "info": {
@@ -132,7 +132,7 @@
       {
         "name": "Documents",
         "type": "object",
-        "responseElement": "{46}",
+        "responseElement": "{48}",
         "_comment": ""
       }
     ],
