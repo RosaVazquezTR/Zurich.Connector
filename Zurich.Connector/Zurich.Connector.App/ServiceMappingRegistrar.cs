@@ -1,9 +1,8 @@
 ﻿using AutoMapper;
-using System;
 using Zurich.Connector.App.Model;
 using Zurich.Connector.Data.Repositories.CosmosDocuments;
-using Zurich.Connector.Data.Model;
 using Zurich.Common.Models.OAuth;
+using Zurich.Common.Models.CommonDataModels;
 
 namespace Zurich.Connector.App
 {

@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Threading.Tasks;
 using Zurich.Common.Models.OAuth;
+using Zurich.Common.Repositories;
 using Zurich.Common.Services.Security;
 using Zurich.Connector.Data.Factories;
 using Zurich.Connector.Data.Model;

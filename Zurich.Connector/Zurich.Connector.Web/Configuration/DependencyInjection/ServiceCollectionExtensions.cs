@@ -16,7 +16,9 @@ using Zurich.Common.Middleware;
 using Zurich.Common.Models.Cosmos;
 using Zurich.Common.Models.HighQ;
 using Zurich.Common.Models.OAuth;
+using Zurich.Common.Repositories;
 using Zurich.Common.Repositories.Cosmos;
+using Zurich.Common.Services;
 using Zurich.Common.Services.Security;
 using Zurich.Common.Services.Security.CIAM;
 using Zurich.Connector.App.Services;
@@ -24,7 +26,6 @@ using Zurich.Connector.Data;
 using Zurich.Connector.Data.Repositories;
 using Zurich.Connector.Data.Services;
 using Zurich.Connector.Web.Configuration;
-using WebConfigurationSupportedTokenTypes =  Zurich.Connector.Web.Configuration.SupportedTokenTypes;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
