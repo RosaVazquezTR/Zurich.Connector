@@ -11,6 +11,7 @@
     "subType": "Parent",
     "isDynamicFilter": true
   },
+  "preRelease": true,
   "request": {
     "endpointPath": "/api/12/Search",
     "method": "GET",
