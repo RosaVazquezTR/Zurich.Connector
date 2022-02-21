@@ -61,5 +61,22 @@ namespace Zurich.Connector.Data.DataMap
             return await GetFromRepo<T>(apiInfo, connectorDocument, transferTokenParam, requestParameters);
 
         }
+        /// <summary>
+		/// Will make sure ApiInformation is setup correctly
+		/// </summary>
+		/// <param name="info">The apiInformation to check</param>
+		public override void CleanUpApiInformation(ApiInformation info)
+        {
+            // can probably get rid of this when OAuth is setup
+            if (string.IsNullOrEmpty(info.HostName))
+            {
+                if (_oAuthOptions.Connections.ContainsKey(info.AppCode))
+                {
+                    var appCodeBaseUrl = _oAuthOptions.Connections[info.AppCode].TransferUrl;
+                    //because we use a url builder we need to drop the https, however we need this for the token information
+                    info.HostName = appCodeBaseUrl.Replace("https://", "");
+                }
+            }
+        }
     }
 }

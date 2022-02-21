@@ -141,7 +141,7 @@ namespace Zurich.Connector.Data.DataMap
 		/// Will make sure ApiInformation is setup correctly
 		/// </summary>
 		/// <param name="info">The apiInformation to check</param>
-		public void CleanUpApiInformation(ApiInformation info)
+		public  virtual void CleanUpApiInformation(ApiInformation info)
         {
 			// can probably get rid of this when OAuth is setup
 			if (string.IsNullOrEmpty(info.HostName))
