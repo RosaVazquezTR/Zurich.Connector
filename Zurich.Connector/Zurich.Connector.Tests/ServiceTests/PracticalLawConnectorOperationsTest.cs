@@ -102,5 +102,31 @@ namespace Zurich.Connector.Tests.ServiceTests
             doc[StructuredCDMProperties.WebUrl].Value<string>().Should().Be(expectedUrl);
             doc[StructuredCDMProperties.AdditionalProperties]["plcReference"].Value<string>().Should().Be(PlcReference);
         }
+
+        [TestMethod]
+        public async Task Search_Document_Type_Should_select_FirstValue_incase_Type_values_passing_as_Array()
+        {
+            //Arrange
+            var mockDocuments = MockConnectorData.SetupSearchDocumentsModel_with_Document_Type_As_Array();
+            var appCode = "PracticalLawConnect";
+
+            //Act
+            var token = new JObject();
+            _mockConfiguration = Utility.CreateConfiguration("FakeKey", "practicallawconnect.com");
+
+            _mockDataMapping.Setup(x => x.GetAndMapResults<JToken>(It.IsAny<ConnectorDocument>(), string.Empty, null, null, null)).Returns(Task.FromResult((JToken)token));
+            _mockDataMappingFactory.Setup(x => x.GetImplementation(Data.Model.AuthType.OAuth2.ToString())).Returns(_mockDataMapping.Object);
+            var service = new PracticalLawConnectorOperation(_mockLogger.Object, _mockDataMappingFactory.Object, _mockConfiguration);
+            var result = (await service.SetItemLink(Data.Model.ConnectorEntityType.Search, mockDocuments, appCode, null) as JObject);
+            //Assert
+            result.Should().NotBeNull();
+            var doc = result["Documents"][0] as JObject;
+            doc.ContainsKey(StructuredCDMProperties.WebUrl).Should().BeTrue();
+            doc[StructuredCDMProperties.WebUrl].Value<string>().Should().Be("");
+            doc[StructuredCDMProperties.Type].Type.ToString().Should().Be("String");
+            doc[StructuredCDMProperties.Type].Value<string>().Should().Be("Practice notes");
+
+
+        }
     }
 }

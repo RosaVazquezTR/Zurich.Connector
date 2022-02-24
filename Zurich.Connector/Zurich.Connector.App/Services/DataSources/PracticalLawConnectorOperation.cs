@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Zurich.Common;
 using Zurich.Connector.Data;
@@ -46,6 +47,11 @@ namespace Zurich.Connector.App.Services.DataSources
                                 if (doc.ContainsKey(StructuredCDMProperties.WebUrl))
                                 {
                                     doc[StructuredCDMProperties.WebUrl] = CreateUrl(doc, appCode);
+                                }
+                                if(doc.ContainsKey(StructuredCDMProperties.Type) && doc[StructuredCDMProperties.Type].Type.ToString() is "Array")
+                                {
+                                    var docType = doc.SelectToken(StructuredCDMProperties.Type)?.ToObject<String []>();
+                                    doc[StructuredCDMProperties.Type] = docType.FirstOrDefault();
                                 }
                             }
                         }
