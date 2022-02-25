@@ -62,5 +62,17 @@ namespace Zurich.Connector.IntegrationTests
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         }
 
+        [Fact]
+        public async Task TestConnectorData_for_DocumentType_As_Array_With_SuccessStatus()
+        {
+            // Arrange
+            var request = "/Connectors/10/data/?query=test&retrieveFilters=true";
+            //Act
+            var response = await _client.GetAsync(request);
+
+            // Assert
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        }
+
     }
 }

@@ -511,5 +511,49 @@ namespace Zurich.Connector.Tests.Common
             }");
             return result;
         }
+
+        internal static IEnumerable<dynamic> SetupSearchDocumentsModel_with_Document_Type_As_Array()
+        {
+            dynamic result;
+
+            result = JObject.Parse(@"{
+                ""Count"": 2,
+                 ""Documents"": [
+                    {
+                        ""Id"":""1"",
+                        ""Title"":""Secret cookie recipe 1"",
+                        ""WebUrl"":"""",
+                        ""Type"": [ ""Practice notes"", ""Practice note"" ],
+                        ""Snippet"":""abc"",
+                        ""PlcReference"":""4-000-4131"",
+                 ""AdditionalProperties"": {
+                    ""jurisdictionList"": [
+                                 ""California""
+                     ],
+                        ""maintained"": ""true"",
+                        ""plcReference"":""4-000-4131""
+                    }
+
+                  },
+                    {
+                        ""Id"":""2"",
+                        ""Title"":""Secret cookie recipe 2"",
+                        ""WebUrl"":"""",
+                        ""Type"": ""Practice notes"",
+                        ""Snippet"":""xyc"",
+                        ""PlcReference"":""4-000-4121"",
+                      ""AdditionalProperties"": {
+                    ""jurisdictionList"": [
+                                 ""California""
+                     ],
+                        ""maintained"": ""true"",
+                        ""plcReference"":""4-000-4131""
+                    }
+                    }
+                ]
+            }");
+            return result;
+        }
+
     }
 }

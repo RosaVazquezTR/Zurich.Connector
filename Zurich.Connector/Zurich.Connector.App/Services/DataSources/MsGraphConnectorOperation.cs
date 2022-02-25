@@ -130,7 +130,7 @@ namespace Zurich.Connector.App.Services.DataSources
                 additionalProperties.ContainsKey(UnstructuredCDMProperties.Extension))
             {
                 var extension = additionalProperties[UnstructuredCDMProperties.Extension].Value<string>();
-                if (string.IsNullOrEmpty(extension) || extension.ToLower() == "pdf")
+                if (string.IsNullOrEmpty(extension) || extension.ToLower() == "pdf" || extension.ToLower() == "txt")
                     return returnUrl;
 
                 string containingFolder = "";
