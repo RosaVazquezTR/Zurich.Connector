@@ -171,6 +171,45 @@ namespace Zurich.Connector.Tests.Common
                             RegistrationMode = Zurich.Common.Models.Connectors.RegistrationEntityMode.Automatic
                         }
                     }
+                },
+                new ConnectorModel()
+                {
+                    Id = "5",
+                    Info = new ConnectorInfoModel()
+                    {
+                        Title = "Connector5",
+                        DataSourceId = "11",
+                        Description ="Connector 1 desc",
+                        EntityType = ConnectorEntityType.Search,
+                        Version = "v1"
+                    },
+                    Request = new ConnectorRequestModel()
+                    {
+                        Parameters = new List<ConnectorRequestParameterModel>()
+                        {
+                            new ConnectorRequestParameterModel() { CdmName = "Query", Name = "searchTerm", DefaultValue = "*"},
+                            new ConnectorRequestParameterModel() { CdmName = "Offset", Name = "resultsStartIndex", DefaultValue = "1"},
+                            new ConnectorRequestParameterModel() { CdmName = "ResultSize", Name = "resultsCount", DefaultValue = "25"},
+                        },
+                        Sorting = new ConnectorRequestSortingModel(){Properties = new List<ConnectorRequestSortingPropertiesModel>(){ }}
+                    },
+                    DataSource = new DataSourceModel()
+                    {
+                        Id = "11",
+                        Name = "DataSource11",
+                        AppCode = "DataSource11",
+                        Description = "DataSource 11 desc"
+                    },
+                    Filters = new List<ConnectorsFiltersModel>()
+                    { 
+                         new ConnectorsFiltersModel() { 
+                             Name = "PracticeArea", 
+                             Description ="The practice areas", 
+                             IsMultiSelect = "true",
+                             RequestParameter = "PracticeArea",
+                             FilterList = new List<FilterListModel>(){ new FilterListModel() { Id = "9-521-5538", Name = "Antitrust Litigation" } }
+                         }
+                    }
                 }
             };
         }

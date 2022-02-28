@@ -197,7 +197,7 @@ namespace Zurich.Connector.Tests.ServiceTests
 			// ASSERT
 			_mockCosmosService.Verify(x => x.GetConnectors(true, It.IsAny<Expression<Func<ConnectorDocument, bool>>>()), Times.Once());
 			Assert.IsNotNull(connectors);
-			Assert.AreEqual(1, connectors.Count);
+			Assert.AreEqual(2, connectors.Count);
 			Assert.AreEqual(connectors[0].Info.DataSourceId, testDataSourceId);
 			Assert.AreEqual(connectors[0].Info.EntityType, testEntityType);
 		}
@@ -231,7 +231,7 @@ namespace Zurich.Connector.Tests.ServiceTests
 			// ASSERT
 			_mockCosmosService.Verify(x => x.GetConnectors(true, It.IsAny<Expression<Func<ConnectorDocument, bool>>>()), Times.Once());
 			Assert.IsNotNull(connectors);
-			Assert.AreEqual(1, connectors.Count);
+			Assert.AreEqual(2, connectors.Count);
 			Assert.AreEqual(connectors[0].Info.DataSourceId, testDataSourceId);
 		}
 

@@ -10,5 +10,6 @@ namespace Zurich.Connector.App.Utils
     {
         public const string OData = "OData";
         public const string Filter = "$filter";
+        public const string ResultSize = "ResultSize";
     }
 }

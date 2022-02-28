@@ -216,5 +216,29 @@ namespace Zurich.Connector.Tests.ServiceTests
 			Assert.AreEqual(mappedResult.Count, 0);
 		}
 
+		[TestMethod]
+		public async Task TestFiltersForResultSizeAsZero()
+		{
+			// ARRANGE
+			Action<PaginationModel> arrangePagination = pagination => pagination = null;
+
+			Dictionary<string, string> cdmQueryParameters = new Dictionary<string, string>() { { "Offset", "0" } , { "ResultSize", "0" } } ;
+			var connector = MockConnectorData.SetupConnectorModel().Where(t => t.Id == "5").FirstOrDefault();
+			arrangePagination(connector.Pagination);
+
+			ConnectorDataService service = new ConnectorDataService(_mockDataMappingFactory.Object, _mockDataMappingRepo.Object, null, _mapper, _mockCosmosService.Object, _mockdataMappingService.Object,
+				_mockDataSourceOperationsFactory.Object, _mockRegistrationService.Object, _mockDataExtractionService.Object, _mockLegalHomeAccess.Object, _mockTenantService.Object);
+
+			
+			_mockdataMappingService.Setup(x => x.RetrieveProductInformationMap(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>())).Returns(Task.FromResult(connector));
+
+			// ACT
+			var mappedResult = await service.GetConnectorData("12", null, null, cdmQueryParameters, true);
+
+			// ASSERT
+			Assert.AreEqual( ((JObject)mappedResult)["filters"].Count() > 0, true );
+			
+		}
+
 	}
 }
