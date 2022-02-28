@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Newtonsoft.Json.Linq;
@@ -13,7 +14,6 @@ using Zurich.Connector.App;
 using Zurich.Connector.App.Model;
 using Zurich.Connector.App.Services;
 using Zurich.Connector.App.Services.DataSources;
-using Zurich.Connector.App.Utils;
 using Zurich.Connector.Data;
 using Zurich.Connector.Data.DataMap;
 using Zurich.Connector.Data.Factories;
@@ -25,7 +25,7 @@ using CommonServices = Zurich.Common.Services;
 
 namespace Zurich.Connector.Tests.ServiceTests
 {
-	[TestClass]
+    [TestClass]
     public class ConnectorDataServiceTests
 	{
         private Mock<IDataMapping> _mockDataMapping;
@@ -40,6 +40,7 @@ namespace Zurich.Connector.Tests.ServiceTests
 		private Mock<IDataExtractionService> _mockDataExtractionService;
 		private Mock<ILegalHomeAccessCheck> _mockLegalHomeAccess;
 		private Mock<CommonServices.ITenantService> _mockTenantService;
+		private Mock<ILogger<Data.Services.ConnectorService>> _mockLogger;
 
 		[TestInitialize]
 		public void TestInitialize()
@@ -61,6 +62,7 @@ namespace Zurich.Connector.Tests.ServiceTests
 			_mockDataExtractionService = new Mock<IDataExtractionService>();
 			_mockLegalHomeAccess = new Mock<ILegalHomeAccessCheck>();
 			_mockTenantService = new Mock<ITenantService>();
+			_mockLogger = new Mock<ILogger<Data.Services.ConnectorService>>();
 		}
 
 		[TestMethod]
@@ -238,6 +240,32 @@ namespace Zurich.Connector.Tests.ServiceTests
 			// ASSERT
 			Assert.AreEqual( ((JObject)mappedResult)["filters"].Count() > 0, true );
 			
+		}
+
+		[TestMethod]
+		public async Task TestResultSizeNotPassed()
+		{
+			// ARRANGE
+			Action<PaginationModel> arrangePagination = pagination => pagination = null;
+
+			Dictionary<string, string> cdmQueryParameters = new Dictionary<string, string>() { };
+			var connector = MockConnectorData.SetupConnectorModel().Where(t => t.Id == "5").FirstOrDefault();
+			arrangePagination(connector.Pagination);
+			var mockDataMappingImpl = new Mock<IDataMapping>();
+			
+			_mockDataMappingFactory.Setup(x => x.GetImplementation(It.IsAny<string>())).Returns(mockDataMappingImpl.Object);
+
+			ConnectorDataService service = new ConnectorDataService(_mockDataMappingFactory.Object, _mockDataMappingRepo.Object, _mockLogger.Object, _mapper, _mockCosmosService.Object, _mockdataMappingService.Object,
+				_mockDataSourceOperationsFactory.Object, _mockRegistrationService.Object, _mockDataExtractionService.Object, _mockLegalHomeAccess.Object, _mockTenantService.Object);
+
+			_mockdataMappingService.Setup(x => x.RetrieveProductInformationMap(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>())).Returns(Task.FromResult(connector));
+
+			// ACT
+			var mappedResult = await service.GetConnectorData("12", null, null, cdmQueryParameters, false);
+
+			// ASSERT
+			mockDataMappingImpl.Verify(x => x.GetAndMapResults<dynamic>(It.IsAny<ConnectorDocument>(), It.IsAny<string>(), It.IsAny<NameValueCollection>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, string>>()), Times.Once, "GetAndMapResults should be called once if no ResultSize");
+
 		}
 
 	}

@@ -109,11 +109,11 @@ namespace Zurich.Connector.Data.Services
             IDataMapping service = _dataMappingFactory.GetImplementation(connectorModel?.DataSource?.SecurityDefinition?.Type);
 
             var data = new JObject();
-            int resultSize = 0;
+            int? resultSize = null;
             if (queryParameters.ContainsKey(ODataConstants.ResultSize) && !string.IsNullOrEmpty(queryParameters[ODataConstants.ResultSize]))
                 resultSize = Convert.ToInt32(queryParameters[ODataConstants.ResultSize]);
 
-            if (resultSize > 0)
+            if (!resultSize.HasValue || resultSize.Value > 0)
             {
                 data = await service.GetAndMapResults<dynamic>(connectorDocument, transferToken, mappedQueryParameters, headerParameters, queryParameters);
                 data = await EnrichConnectorData(connectorModel, data);
