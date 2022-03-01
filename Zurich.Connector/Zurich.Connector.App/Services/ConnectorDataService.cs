@@ -108,7 +108,8 @@ namespace Zurich.Connector.Data.Services
             Dictionary<string, string> headerParameters = await _dataExtractionService.ExtractDataSource(mappedQueryParameters, queryParameters, hostname, connectorDocument);
             IDataMapping service = _dataMappingFactory.GetImplementation(connectorModel?.DataSource?.SecurityDefinition?.Type);
 
-            var data = new JObject();
+            // Needs to be dynamic because we can return an JToken or JArray
+            dynamic data = null;
             int? resultSize = null;
             if (queryParameters.ContainsKey(ODataConstants.ResultSize) && !string.IsNullOrEmpty(queryParameters[ODataConstants.ResultSize]))
                 resultSize = Convert.ToInt32(queryParameters[ODataConstants.ResultSize]);
@@ -118,9 +119,14 @@ namespace Zurich.Connector.Data.Services
                 data = await service.GetAndMapResults<dynamic>(connectorDocument, transferToken, mappedQueryParameters, headerParameters, queryParameters);
                 data = await EnrichConnectorData(connectorModel, data);
             }
-
+            // if no data default to a JObject
+            if (data == null)
+            {
+                data = new JObject();
+            }
             if (retrieveFilters == true)
             {
+                
                 JToken mappingFilters = JToken.FromObject(connectorDocument.Filters);
                 data[Constants.filters] = mappingFilters;
             }
