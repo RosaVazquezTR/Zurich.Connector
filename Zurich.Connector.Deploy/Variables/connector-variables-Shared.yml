@@ -70,7 +70,7 @@ variables:
   - name: projectName
     value: 'Zurich.Connector'
   - name: regressionTestTags
-    value: "ConnectorsSmokeTest"
+    value: "Connectors-SmokeTest"
   - name: regressionTestTimeout
     value: 30
   - name: tenantDbConnStringKey
