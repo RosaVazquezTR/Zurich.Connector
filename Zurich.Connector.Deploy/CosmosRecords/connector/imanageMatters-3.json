@@ -24,72 +24,73 @@
 	"type": "JSON"
   },
   "filters": [],
+  "resultLocation": "data.results",
   "CDMmapping": {
     "structured": [
       {
         "name": "Name",
         "type": "string",
-        "responseElement": "data.results.name",
+        "responseElement": "name",
         "_comment": ""
       },
       {
         "name": "Id",
         "type": "string",
-        "responseElement": "data.results.id",
+        "responseElement": "id",
         "_comment": ""
       },
       {
         "name": "Client",
         "type": "string",
-        "responseElement": "data.results.custom1",
+        "responseElement": "custom1",
         "_comment": ""
       },
       {
         "name": "ClientDescription",
         "type": "string",
-        "responseElement": "data.results.custom1_description",
+        "responseElement": "custom1_description",
         "_comment": ""
       },
       {
         "name": "WebLink",
         "type": "string",
-        "responseElement": "data.results.iwl",
+        "responseElement": "iwl",
         "_comment": ""
       },
       {
         "name": "Library",
         "type": "string",
-        "responseElement": "data.results.database",
+        "responseElement": "database",
         "_comment": ""
       },
       {
         "name": "Description",
         "type": "string",
-        "responseElement": "data.results.description",
+        "responseElement": "description",
         "_comment": ""
       },
       {
         "name": "Owner",
         "type": "string",
-        "responseElement": "data.results.owner_description",
+        "responseElement": "owner_description",
         "_comment": ""
       },
       {
         "name": "LastUpdated",
         "type": "string",
-        "responseElement": "data.results.edit_date",
+        "responseElement": "edit_date",
         "_comment": ""
       },
       {
         "name": "LastModifiedUser",
         "type": "string",
-        "responseElement": "data.results.last_user_description",
+        "responseElement": "last_user_description",
         "_comment": ""
       },
       {
         "name": "CreatedDate",
         "type": "string",
-        "responseElement": "data.results.create_date",
+        "responseElement": "create_date",
         "_comment": ""
       }
     ],
