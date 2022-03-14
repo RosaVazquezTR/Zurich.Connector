@@ -1,0 +1,99 @@
+{
+  "id": "49",
+  "partitionkey": "ConnectorList",
+  "alias": "msgraph.searchexternal",
+  "info": {
+    "title": "Get External Search",
+    "description": "Get External Item Search Results from MS Graph",
+    "entityType": "Search",
+    "dataSourceId": "13",
+    "version": "1.0",
+    "subType": "Parent"
+  },
+  "preRelease": true,
+  "request": {
+    "endpointPath": "/v1.0/search/microsoft.graph.query",
+    "method": "POST",
+    "parameters": [
+      {
+        "cdmName": "Query",
+        "name": "requests.[].query.queryString",
+        "inClause": "Body",
+        "required": true,
+        "type": "string",
+        "defaultValue": ""
+      },
+	  {
+        "cdmName": "SearchSpace",
+        "name": "requests.[].contentSources.[]",
+        "inClause": "Body",
+        "required": true,
+        "type": "string",
+        "defaultValue": "/external/connections/con2"
+      },
+      {
+        "cdmName": "EntityType.default",
+        "name": "requests.[].entityTypes.[]",
+        "inClause": "Body",
+        "required": false,
+        "type": "string",
+        "defaultValue": "externalItem"
+      },
+      {
+        "cdmName": "Fields.default",
+        "name": "requests.[].fields.[]",
+        "inClause": "Body",
+        "required": false,
+        "type": "string",
+        "defaultValue": "Title,CourtName,JurisdictionName,ClassificationDescription,WebUrl"
+      },
+	  {
+        "cdmName": "ResultSize",
+        "name": "requests.[].size",
+        "inClause": "Body",
+        "required": true,
+        "type": "string",
+        "defaultValue": "25"
+      },
+	  {
+        "cdmName": "Offset",
+        "name": "requests.[].from",
+        "inClause": "Body",
+        "required": true,
+        "type": "string",
+        "defaultValue": "0"
+      }
+    ],
+    "sorting": {
+      "properties": []
+    }
+  },
+  "response": {
+	"type": "JSON"
+  },
+  "filters": [],
+  "resultLocation": "value.hitsContainers.[]",
+  "cdmMapping": {
+    "structured": [
+      {
+        "name": "Count",
+        "type": "short",
+        "responseElement": "total",
+        "_comment": ""
+      },
+      {
+        "name": "SourceDirectoryUrl",
+        "type": "interpolationString",
+        "responseElement": "https://www.office.com/search/1639676234504_b16a5siq8?q=(%Query)",
+        "_comment": ""
+      },
+      {
+        "name": "Documents",
+        "type": "object",
+        "responseElement": "{50}",
+        "_comment": ""
+      }
+    ],
+    "unstructured": []
+  }
+}

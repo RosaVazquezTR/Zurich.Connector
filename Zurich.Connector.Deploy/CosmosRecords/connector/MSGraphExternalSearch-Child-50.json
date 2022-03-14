@@ -1,0 +1,77 @@
+{
+    "id": "50",
+    "partitionkey": "ConnectorList",
+    "info": {
+        "title": "Get External Search",
+        "description": "Get External Item Search Results from MS Graph",
+        "entityType": "Search",
+        "dataSourceId": "13",
+        "version": "1.0",
+		"subType": "Child"
+    },
+	"preRelease": true,
+    "request": {},
+    "response": {},
+    "filters": [],
+    "resultLocation": "hits",
+    "cdmMapping": {
+        "structured": [
+            {
+                "name": "Snippet",
+                "type": "string",
+                "responseElement": "resource.properties.classificationDescription",
+                "_comment": ""
+            },
+            {
+                "name": "Title",
+                "type": "string",
+                "responseElement": "resource.properties.title",
+                "_comment": ""
+            },
+          {
+            "name": "Type",
+            "type": "string",
+            "responseElement": "",
+            "_comment": ""
+          },
+          {
+            "name": "WebUrl",
+            "type": "string",
+            "responseElement": "resource.properties.webUrl",
+            "_comment": ""
+          },
+          {
+            "name": "CreationDate",
+            "type": "DateTime",
+            "responseElement": "resource.createdDateTime",
+            "_comment": ""
+          }
+        ],
+      "unstructured": [
+        {
+          "name": "classification",
+          "type": "string",
+          "responseElement": "resource.properties.classificationDescription",
+          "_comment": ""
+        },
+        {
+          "name": "jurisdictionName",
+          "type": "string",
+          "responseElement": "resource.properties.jurisdictionName",
+          "_comment": ""
+        },
+        {
+          "name": "courtName",
+          "type": "string",
+          "responseElement": "resource.properties.courtName",
+          "_comment": ""
+        },
+        {
+          "name": "listItemUniqueId",
+          "type": "string",
+          "responseElement": "resource.parentReference.sharepointIds.listItemUniqueId",
+          "_comment": ""
+        }
+      ]
+    }
+}
