@@ -25,7 +25,6 @@
 		"tokenPath": "",
 		"keyVaultClientId": "",
 		"keyVaultSecret": "",
-		"sendCredentialsInBody": true,
 		"grantType": "client_credentials"
 	  },
 	  "scopes": {}
