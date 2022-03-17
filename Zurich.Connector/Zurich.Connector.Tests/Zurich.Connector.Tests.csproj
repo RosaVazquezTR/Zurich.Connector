@@ -4,6 +4,8 @@
     <TargetFramework>net5.0</TargetFramework>
 
     <IsPackable>false</IsPackable>
+	<!--ToDo: Take it out and put proper fix https://docs.microsoft.com/en-us/dotnet/core/project-sdk/msbuild-props#erroronduplicatepublishoutputfiles -->
+	<ErrorOnDuplicatePublishOutputFiles>false</ErrorOnDuplicatePublishOutputFiles>
   </PropertyGroup>
 
   <ItemGroup>
