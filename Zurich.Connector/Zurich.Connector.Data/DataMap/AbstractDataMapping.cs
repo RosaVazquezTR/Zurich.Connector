@@ -68,14 +68,14 @@ namespace Zurich.Connector.Data.DataMap
 		}
 
 		public async virtual Task<OAuthAPITokenResponse> RetrieveToken(string appCode, OAuthApplicationType? appType = null, 
-														  string locale = null, string grandType = null, bool? sendCredentialsInBody = false, string productType = null)
+														  string locale = null, string grandType = null, string productType = null)
 		{ 
 			if (_legalHomeAccessCheck.isLegalHomeUser())
 			{ 
 				AppToken token;
-				if (locale != null && grandType != null && appType.HasValue && sendCredentialsInBody.HasValue)
+				if (locale != null && grandType != null && appType.HasValue)
 				{
-					token = await _oAuthService.RequestNewToken(appCode, grandType, appType.Value, sendCredentialsInBody: sendCredentialsInBody.Value, locale: locale);
+					token = await _oAuthService.RequestNewToken(appCode, grandType, appType.Value, locale: locale);
 				}
 				else
 				{

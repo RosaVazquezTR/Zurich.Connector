@@ -33,7 +33,7 @@ namespace Zurich.Connector.Data.DataMap
         /// <param name="appCode">Application code to get the data from</param>
         /// <returns>Token to use</returns>
         Task<OAuthAPITokenResponse> RetrieveToken(string appCode, OAuthApplicationType? appType = null,
-                                     string locale = null, string grandType = null, bool? sendCredentialsInBody = false, string productType = null);
+                                     string locale = null, string grandType = null, string productType = null);
 
         /// <summary>
         /// Method will map a string json object to the CDM object passed in

@@ -44,7 +44,6 @@ namespace Zurich.Connector.Data.DataMap
                                                   connector?.DataSource?.appType,
                                                   connector?.DataSource?.locale,
                                                   connector?.DataSource?.securityDefinition?.defaultSecurityDefinition?.grantType,
-                                                  connector?.DataSource?.securityDefinition?.defaultSecurityDefinition?.sendCredentialsInBody,
                                                   connector?.DataSource?.productType);         
             
             if (!string.IsNullOrEmpty(token?.AccessToken))

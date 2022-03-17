@@ -97,7 +97,7 @@ namespace Zurich.Connector.Durable
             try
             {
                 OAuthApplicationType appType = OAuthApplicationType.ServiceApp;
-                var token = await _oAuthService.RequestNewToken(ServiceAppCodes.PracticalLaw, OAuthConstants.GrantTypes.ClientCredentials, appType, sendCredentialsInBody: true, locale: locale);
+                var token = await _oAuthService.RequestNewToken(ServiceAppCodes.PracticalLaw, OAuthConstants.GrantTypes.ClientCredentials, appType, locale: locale);
                 return token.access_token;
             }
             catch (Exception ex)
