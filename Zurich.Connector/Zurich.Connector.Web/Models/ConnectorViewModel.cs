@@ -47,6 +47,10 @@ namespace Zurich.Connector.Web.Models
         /// Determines whether to show pre release connectors 
         /// </summary>
         public bool PreRelease { get; set; }
+        /// <summary>
+        /// gets or sets the EntityType
+        /// </summary>
+        public string EntityType { get; set; }
     }
 
     /// <summary>
