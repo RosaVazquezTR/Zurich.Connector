@@ -64,10 +64,16 @@
           "elementValue": "DATE"
         },
         {
-          "name": "Title",
+          "name": "Alphabetical",
           "type": "string",
           "element": "sortOrder",
           "elementValue": "ARTICLE"
+        },
+        {
+          "name": "Relevance",
+          "type": "string",
+          "element": "sortOrder",
+          "elementValue": "RELEVANCE"
         }
       ]
     }

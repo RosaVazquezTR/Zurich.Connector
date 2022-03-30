@@ -18,11 +18,11 @@ using System.Linq.Expressions;
 using Zurich.Connector.App.Model;
 using Zurich.Connector.Tests.Common;
 using Zurich.Connector.App.Services.DataSources;
-using Zurich.Common.Models.Connectors;
 using Zurich.Connector.App.Enum;
 using Zurich.Connector.Data.Factories;
 using DataSourceModel = Zurich.Connector.App.Model.DataSourceModel;
 using ConnectorModel = Zurich.Connector.App.Model.ConnectorModel;
+using Zurich.Connector.Web.Models;
 
 namespace Zurich.Connector.Tests.ServiceTests
 {
@@ -277,7 +277,7 @@ namespace Zurich.Connector.Tests.ServiceTests
 
             ConnectorFilterModel filters = new ConnectorFilterModel()
             {
-                RegistrationModes = new List<Zurich.Common.Models.Connectors.RegistrationEntityMode>()
+                RegistrationMode = new List<Zurich.Common.Models.Connectors.RegistrationEntityMode>()
                 { Zurich.Common.Models.Connectors.RegistrationEntityMode.Automatic ,
                 { Zurich.Common.Models.Connectors.RegistrationEntityMode.Manual }
                 }

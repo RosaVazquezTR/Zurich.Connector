@@ -12,6 +12,7 @@ using Zurich.Connector.App.Model;
 using Zurich.Connector.App.Services;
 using Zurich.Connector.Data.Model;
 using Zurich.Connector.Data.Repositories.CosmosDocuments;
+using Zurich.Connector.Web.Models;
 
 namespace Zurich.Connector.Data.Services
 {
@@ -25,7 +26,7 @@ namespace Zurich.Connector.Data.Services
         /// </summary>
         /// <param name="filters">Filters to get different connections</param>
         /// <returns>List of Data Mapping Connections <see cref="DataMappingConnection"/></returns>
-        Task<List<ConnectorModel>> GetConnectors(Common.Models.Connectors.ConnectorFilterModel filters);
+        Task<List<ConnectorModel>> GetConnectors(ConnectorFilterModel filters);
 
         Task<ConnectorModel> GetConnector(string connectorId);
 
@@ -59,7 +60,7 @@ namespace Zurich.Connector.Data.Services
         /// </summary>
         /// <param name="filters">Filters to get different connections</param>
         /// <returns>List of Data Mapping Connections <see cref="DataMappingConnection"/></returns>
-        public async Task<List<ConnectorModel>> GetConnectors(Common.Models.Connectors.ConnectorFilterModel filters)
+        public async Task<List<ConnectorModel>> GetConnectors(ConnectorFilterModel filters)
         {
             try
             {
@@ -68,7 +69,7 @@ namespace Zurich.Connector.Data.Services
                 IEnumerable<string> entityTypeFilter = Enumerable.Empty<string>();
                 IEnumerable<string> dataSourceFilter = Enumerable.Empty<string>();
                 IEnumerable<DataSourceInformation> registeredDataSources = Enumerable.Empty<DataSourceInformation>();
-                if (filters?.EntityTypes?.Count > 0)
+                if (filters?.EntityTypes?.ToList().Count > 0)
                 {
                     isEntityTypeFilter = true;
                     entityTypeFilter = filters.EntityTypes.Select(t => t.ToString());
@@ -102,9 +103,9 @@ namespace Zurich.Connector.Data.Services
 
                 var connectors = await _cosmosService.GetConnectors(true, condition);
 
-                if (filters.RegistrationModes != null && filters.RegistrationModes.Any())
+                if (filters.RegistrationMode != null && filters.RegistrationMode.Any()) 
                 {
-                    connectors = connectors.Where(x => filters.RegistrationModes.Contains(x.DataSource.RegistrationInfo.RegistrationMode));
+                    connectors = connectors.Where(x => filters.RegistrationMode.Contains(x.DataSource.RegistrationInfo.RegistrationMode));
                 }
 
                 registeredDataSources = await _registrationService.GetUserDataSources();

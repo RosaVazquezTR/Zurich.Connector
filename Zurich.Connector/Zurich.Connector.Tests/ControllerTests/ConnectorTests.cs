@@ -15,6 +15,7 @@ using Zurich.Connector.Data.Services;
 using Zurich.Connector.Tests.Common;
 using Zurich.Connector.Web;
 using Zurich.Connector.Web.Controllers;
+using Zurich.Connector.Web.Models;
 
 namespace Zurich.Connector.Tests.ControllerTests
 {
@@ -300,8 +301,8 @@ namespace Zurich.Connector.Tests.ControllerTests
 		{
 			// ARRANGE
 			var connections = MockConnectorData.SetupConnectorModel();
-            Zurich.Common.Models.Connectors.ConnectorFilterModel filters = new Zurich.Common.Models.Connectors.ConnectorFilterModel();
-			_mockConnectorservice.Setup(x => x.GetConnectors(It.IsAny<Zurich.Common.Models.Connectors.ConnectorFilterModel>())).Returns(Task.FromResult(connections.ToList()));
+            ConnectorFilterViewModel filters = new ConnectorFilterViewModel();
+			_mockConnectorservice.Setup(x => x.GetConnectors(It.IsAny<ConnectorFilterModel>())).Returns(Task.FromResult(connections.ToList()));
 
             ConnectorsController connector = new ConnectorsController(_mockConnectorservice.Object, _mockConnectorDataService.Object, _mapper,null);
 
@@ -309,7 +310,7 @@ namespace Zurich.Connector.Tests.ControllerTests
 			var response = await connector.Connectors(filters);
 
 			// ASSERT
-			_mockConnectorservice.Verify(x => x.GetConnectors(It.IsAny<Zurich.Common.Models.Connectors.ConnectorFilterModel>()), Times.Exactly(1));
+			_mockConnectorservice.Verify(x => x.GetConnectors(It.IsAny<ConnectorFilterModel>()), Times.Exactly(1));
 			var result = (ContentResult)response.Result;
 			Assert.AreEqual(StatusCodes.Status200OK, result.StatusCode);
 		}

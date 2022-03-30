@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
@@ -10,7 +9,6 @@ using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
 using Zurich.Common.Exceptions;
-using Zurich.Connector.App.Enum;
 using Zurich.Connector.App.Model;
 using Zurich.Connector.App.Services;
 using Zurich.Connector.Data.Services;
@@ -108,9 +106,10 @@ namespace Zurich.Connector.Web.Controllers
         /// <response code="200">A <see cref="ConnectorListViewModel"/> representing the connectors</response>
 
         [HttpGet()]
-        public async Task<ActionResult<List<ConnectorListViewModel>>> Connectors([FromQuery] Common.Models.Connectors.ConnectorFilterModel filters)
+        public async Task<ActionResult<List<ConnectorListViewModel>>> Connectors([FromQuery] ConnectorFilterViewModel filters)
         {
-            List<ConnectorModel> connections = await _connectorService.GetConnectors(filters);
+            var filterRequest = _mapper.Map<ConnectorFilterModel>(filters);
+            List<ConnectorModel> connections = await _connectorService.GetConnectors(filterRequest);
             List<ConnectorListViewModel> results = _mapper.Map<List<ConnectorListViewModel>>(connections);
 
             if (results.Count == 0)

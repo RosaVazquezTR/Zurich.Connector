@@ -8,7 +8,13 @@
   "domain": "api-dev.thomsonreuters.com/legal-tracker",
   "appType": "0",
   "locale": "US",
-  "registrationMode ": "Automatic",
+  "registrationInfo": {
+    "registrationMode": "Automatic",
+    "domainRequired": "false",
+    "clientAndSecretRequired": "false",
+    "connectionMessage": "",
+    "registrationFileRequired": "false"
+  },
   "extraRequestContext": "",
   "securityDefinition": {
     "type": "oauth2",

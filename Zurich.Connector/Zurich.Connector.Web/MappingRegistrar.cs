@@ -56,6 +56,8 @@ namespace Zurich.Connector.Web
                 .ForMember(dest => dest.AuthorizeUrl, opt => opt.MapFrom(src => src.AuthorizeUrl))
                 .ForMember(dest => dest.Registered, opt => opt.MapFrom(src => src.Registered));
 
+            CreateMap<ConnectorFilterViewModel, Zurich.Connector.Web.Models.ConnectorFilterModel>();
+
         }
     }
 }

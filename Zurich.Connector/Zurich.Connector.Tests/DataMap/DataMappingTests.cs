@@ -1016,9 +1016,16 @@ namespace Zurich.Connector.Tests
 			JToken jToken = JToken.FromObject(documents);
 
 			// ASSERT
+
 			Assert.IsNotNull(documents);
-			Assert.AreEqual(true, jToken.Last["creationDate"].ToString().Contains("4/21/2015 12:00:00 AM"));
-			
+			var date = (System.DateTime)jToken.Last["creationDate"];
+			Assert.AreEqual(4, date.Month);
+			Assert.AreEqual(21, date.Day);
+			Assert.AreEqual(2015, date.Year);
+			Assert.AreEqual(0, date.Hour);
+			Assert.AreEqual(0, date.Minute);
+			Assert.AreEqual(0, date.Second);
+
 		}
 	}
 }
