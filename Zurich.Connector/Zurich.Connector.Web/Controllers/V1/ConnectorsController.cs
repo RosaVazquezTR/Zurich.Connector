@@ -17,7 +17,6 @@ using Zurich.Connector.Web.Models;
 namespace Zurich.Connector.Web.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
     [Route("api/v{version:apiVersion}/[controller]")]
     [ApiVersion("1.0")]
     public class ConnectorsController : ControllerBase
@@ -220,25 +219,6 @@ namespace Zurich.Connector.Web.Controllers
             else
             {
                 return BadRequest();
-            }
-        }
-
-        [HttpDelete("{id}/user")]
-        public async Task<ActionResult> RemoveConnectorRegistration(string id)
-        {
-            if (String.IsNullOrEmpty(id))
-            {
-                return BadRequest("Invalid Connector ID");
-            }
-
-            var status = await _registrationService.RemoveUserConnector(id);
-            if (status == true)
-            {
-                return NoContent();
-            }
-            else
-            {
-                return NotFound($"User registration with connector id {id} was not found");
             }
         }
 

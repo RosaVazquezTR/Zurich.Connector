@@ -88,11 +88,11 @@ namespace Zurich.Connector.IntegrationTests
             public async Task MakeDocumentCalls(ConnectorDocument connector)
         {
             // Arrange
-            var request = $"/Connectors/{connector.Id}/Data";
+            var request = $"/api/v1/Connectors/{connector.Id}/Data";
             // TODO: remove when we can find host and dont have to pass in
             if (connector.Info.DataSourceId == "10")
             {
-                request = $"/Connectors/{connector.Id}/Data?Hostname=cloudimanage.com";
+                request = $"/api/v1/Connectors/{connector.Id}/Data?Hostname=cloudimanage.com";
             }
             if (connector.Info.DataSourceId != "10" && connector.Info.DataSourceId != "45")
             {
@@ -140,7 +140,7 @@ namespace Zurich.Connector.IntegrationTests
             if (connector.Id != "47" && connector.Id != "48" && connector.Id != "49")
             {
                 // Arrange
-                var request = $"/Connectors/{connector.Id}/Data?Query=*";
+                var request = $"/api/v1/Connectors/{connector.Id}/Data?Query=*";
 
                 //Act
                 var response = await _client.GetAsync(request);
@@ -155,11 +155,11 @@ namespace Zurich.Connector.IntegrationTests
         public async Task MakeUserProfileCalls(ConnectorDocument connector)
         {
             // Arrange
-            var request = $"/Connectors/{connector.Id}/Data";
+            var request = $"/api/v1/Connectors/{connector.Id}/Data";
             // TODO: remove when we can find host and dont have to pass in
             if (connector.Info.DataSourceId == "10" && connector.Info.DataSourceId == "42")
             {
-                request = $"/Connectors/{connector.Id}/Data?Hostname=cloudimanage.com";
+                request = $"/api/v1/Connectors/{connector.Id}/Data?Hostname=cloudimanage.com";
             }
 
             if (connector.Info.DataSourceId != "10" && connector.Info.DataSourceId == "42")
