@@ -13,7 +13,9 @@ namespace Zurich.Connector.Web
 		public MappingRegistrar()
 		{
 
-            CreateMap<ConnectorModel, ConnectorViewModel>();
+            CreateMap<ConnectorModel, ConnectorViewModel>()
+                .ForMember(dest => dest.EntityType, opt => opt.MapFrom(src => src.Info.EntityType));
+
             CreateMap<ConnectorInfoModel, ConnectorDetailsInfoViewModel>();
             CreateMap<ConnectorRequestModel, ConnectorRequestViewModel>();
             CreateMap<ConnectorRequestParameterModel, ConnectorRequestParameterViewModel>();
