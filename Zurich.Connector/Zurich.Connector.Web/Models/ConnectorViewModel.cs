@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Zurich.Connector.Data.Model;
+using Zurich.Connector.Web.Enum;
 
 namespace Zurich.Connector.Web.Models
 {
@@ -51,6 +52,10 @@ namespace Zurich.Connector.Web.Models
         /// gets or sets the EntityType
         /// </summary>
         public string EntityType { get; set; }
+        /// <summary>
+        /// Sort type options
+        /// </summary>
+        public IEnumerable<SortType> Sort { get; set; }
     }
 
     /// <summary>

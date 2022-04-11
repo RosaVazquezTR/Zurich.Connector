@@ -5,16 +5,17 @@ using Zurich.Connector.App.Model;
 using Zurich.Connector.Data.Model;
 using Zurich.Connector.Data.Repositories.CosmosDocuments;
 using Zurich.Connector.Web.Models;
-
+using Zurich.Connector.Web.Enum;
 namespace Zurich.Connector.Web
 {
 	public class MappingRegistrar : Profile
 	{
-		public MappingRegistrar()
-		{
+        public MappingRegistrar()
+        {
 
             CreateMap<ConnectorModel, ConnectorViewModel>()
-                .ForMember(dest => dest.EntityType, opt => opt.MapFrom(src => src.Info.EntityType));
+                .ForMember(dest => dest.EntityType, opt => opt.MapFrom(src => src.Info.EntityType))
+                .ForMember(dest => dest.Sort, opt => opt.MapFrom(src => src.Request.Sorting.Properties.Select(x => SortType.Parse(typeof(SortType), x.Name, true)))); 
 
             CreateMap<ConnectorInfoModel, ConnectorDetailsInfoViewModel>();
             CreateMap<ConnectorRequestModel, ConnectorRequestViewModel>();
@@ -38,6 +39,7 @@ namespace Zurich.Connector.Web
                 .ForMember(dest => dest.DataSource, opt => opt.MapFrom(src => src.DataSource))
                 .ForMember(dest => dest.RegistrationStatus, opt => opt.MapFrom(src => src.RegistrationStatus))
                 .ForMember(dest => dest.Alias, opt => opt.MapFrom(src => src.Alias))
+                .ForMember(dest => dest.Sort, opt => opt.MapFrom(src => src.Request.Sorting.Properties.Select(x=> SortType.Parse(typeof(SortType), x.Name, true))))
                 .ForAllOtherMembers(opt => opt.Ignore());
 
             
@@ -59,6 +61,7 @@ namespace Zurich.Connector.Web
                 .ForMember(dest => dest.Registered, opt => opt.MapFrom(src => src.Registered));
 
             CreateMap<ConnectorFilterViewModel, Zurich.Connector.Web.Models.ConnectorFilterModel>();
+            
 
         }
     }

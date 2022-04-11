@@ -2,7 +2,9 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Dynamic;
@@ -118,7 +120,8 @@ namespace Zurich.Connector.Web.Controllers
 
             var jsonSettings = new JsonSerializerSettings
             {
-                ContractResolver = new Newtonsoft.Json.Serialization.CamelCasePropertyNamesContractResolver()
+                ContractResolver = new Newtonsoft.Json.Serialization.CamelCasePropertyNamesContractResolver(),
+                Converters = new List<JsonConverter> { new StringEnumConverter { NamingStrategy = new CamelCaseNamingStrategy() } }
             };
             var jsonResults = JsonConvert.SerializeObject(results, jsonSettings);
             return new ContentResult

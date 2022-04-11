@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Zurich.Connector.App.Enum;
 using Zurich.Connector.Data.Model;
-
+using Zurich.Connector.Web.Enum;
 namespace Zurich.Connector.Web.Models
 {
     /// <summary>
@@ -46,5 +47,10 @@ namespace Zurich.Connector.Web.Models
         /// Registration status
         /// </summary>
         public RegistrationStatus RegistrationStatus { get; set; }
+
+        /// <summary>
+        /// Sort type options
+        /// </summary>
+        public IEnumerable<SortType> Sort { get; set; }
     }
 }
