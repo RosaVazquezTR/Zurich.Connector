@@ -8,14 +8,19 @@ using Zurich.Connector.Web.Models;
 using Zurich.Connector.Web.Enum;
 namespace Zurich.Connector.Web
 {
-	public class MappingRegistrar : Profile
-	{
+    public class MappingRegistrar : Profile
+    {
         public MappingRegistrar()
         {
 
             CreateMap<ConnectorModel, ConnectorViewModel>()
                 .ForMember(dest => dest.EntityType, opt => opt.MapFrom(src => src.Info.EntityType))
-                .ForMember(dest => dest.Sort, opt => opt.MapFrom(src => src.Request.Sorting.Properties.Select(x => SortType.Parse(typeof(SortType), x.Name, true)))); 
+                .ForMember(dest => dest.Sort, opt => opt.MapFrom(src => src.Request.Sorting.Properties.Select(x => SortType.Parse(typeof(SortType), x.Name, true))));
+
+            // Mapping ResponseContentType to JSON by default, if response Type value doesn't exists in ResponseContentType enum
+            CreateMap<ConnectorResponse, ConnectorResponseModel>()
+            .ForMember(dest => dest.Type, opt => opt.MapFrom(
+                src => System.Enum.IsDefined(typeof(ResponseContentType), src.Type) ? System.Enum.Parse(typeof(ResponseContentType), src.Type.ToString()) : ResponseContentType.JSON));
 
             CreateMap<ConnectorInfoModel, ConnectorDetailsInfoViewModel>();
             CreateMap<ConnectorRequestModel, ConnectorRequestViewModel>();
@@ -39,10 +44,10 @@ namespace Zurich.Connector.Web
                 .ForMember(dest => dest.DataSource, opt => opt.MapFrom(src => src.DataSource))
                 .ForMember(dest => dest.RegistrationStatus, opt => opt.MapFrom(src => src.RegistrationStatus))
                 .ForMember(dest => dest.Alias, opt => opt.MapFrom(src => src.Alias))
-                .ForMember(dest => dest.Sort, opt => opt.MapFrom(src => src.Request.Sorting.Properties.Select(x=> SortType.Parse(typeof(SortType), x.Name, true))))
+                .ForMember(dest => dest.Sort, opt => opt.MapFrom(src => src.Request.Sorting.Properties.Select(x => SortType.Parse(typeof(SortType), x.Name, true))))
                 .ForAllOtherMembers(opt => opt.Ignore());
 
-            
+
             CreateMap<DataSourceModel, DataSourceViewModel>();
             CreateMap<RegistrationInfoModel, RegistrationInfoViewModel>();
             CreateMap<DomainSpecificInformationModel, DomainSpecificInformationViewModel>();
@@ -61,7 +66,7 @@ namespace Zurich.Connector.Web
                 .ForMember(dest => dest.Registered, opt => opt.MapFrom(src => src.Registered));
 
             CreateMap<ConnectorFilterViewModel, Zurich.Connector.Web.Models.ConnectorFilterModel>();
-            
+
 
         }
     }

@@ -18,10 +18,6 @@ namespace Zurich.Connector.Data.Repositories.CosmosDocuments
         /// </summary>
         public string Method { get; set; }
         /// <summary>
-        /// Reponse Content Type Ex: JSON, XML etc.
-        /// </summary>
-        public ResponseContentType? ResponseContentType { get; set; }
-        /// <summary>
         /// Request parameters
         /// </summary>
         public List<ConnectorRequestParameter> Parameters { get; set; }

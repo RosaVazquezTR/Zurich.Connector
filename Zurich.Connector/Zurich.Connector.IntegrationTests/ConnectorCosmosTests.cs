@@ -194,7 +194,7 @@ namespace Zurich.Connector.IntegrationTests
                     sortParam.ElementValue.Should().NotBeNull();
                     sortParam.Type.Should().ContainAny(parameterTypes);
                 }
-                if (connector.Response.Type == Data.Model.ResponseContentType.XML)
+                if (connector.Response.Type == Data.Model.ResponseContentType.XML.ToString())
                 {
                     connector.Response.XmlArrayAttribute.Should().NotBeNull();
                 }
@@ -219,7 +219,6 @@ namespace Zurich.Connector.IntegrationTests
                 connector.Request.EndpointPath.Should().BeNull();
                 connector.Request.Method.Should().BeNull();
                 connector.Request.Parameters.Should().BeNull();
-                connector.Request.ResponseContentType.Should().BeNull();
                 connector.Request.Sorting.Should().BeNull();
                 connector.Response.XmlArrayAttribute.Should().BeNull();
                 connector.Response.Schema.Should().BeNull();

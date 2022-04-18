@@ -50,6 +50,6 @@ namespace Zurich.Connector.Data.Model
     public enum ResponseContentType
     {
         JSON = 0,
-        XML = 1,
+        XML = 1
     }
 }

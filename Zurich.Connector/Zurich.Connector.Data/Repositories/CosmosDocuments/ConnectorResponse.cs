@@ -20,7 +20,7 @@ namespace Zurich.Connector.Data.Repositories.CosmosDocuments
         /// <summary>
         /// Define connector response Type
         /// </summary>
-        public ResponseContentType Type { get; set; }
+        public string Type { get; set; }
 
         /// <summary>
         /// Indicates if there is any array in the xml. 

@@ -361,7 +361,7 @@ namespace Zurich.Connector.Tests
 				{ EndpointPath = "https://fakeaddress.thomsonreuters.com" },
 				Response = new ConnectorResponse()
                 {
-					Type = ResponseContentType.JSON
+					Type = ResponseContentType.JSON.ToString()
                 }
 			};
 			connectorDocument.CdmMapping = new CDMMapping()
@@ -443,7 +443,7 @@ namespace Zurich.Connector.Tests
 				{ EndpointPath = "https://fakeaddress.thomsonreuters.com" },
 				Response = new ConnectorResponse()
 				{
-					Type = ResponseContentType.JSON
+					Type = ResponseContentType.JSON.ToString()
 				}
 			};
 			connectorDocument.CdmMapping = new CDMMapping()
@@ -527,7 +527,7 @@ namespace Zurich.Connector.Tests
 				{ EndpointPath = "https://fakeaddress.thomsonreuters.com" },
 				Response = new ConnectorResponse()
 				{
-					Type = ResponseContentType.JSON
+					Type = ResponseContentType.JSON.ToString()
 				}
 			};
 			connectorDocument.CdmMapping = new CDMMapping()
@@ -610,7 +610,7 @@ namespace Zurich.Connector.Tests
                 { EndpointPath = "https://fakeaddress.thomsonreuters.com" },
 				Response = new ConnectorResponse()
 				{
-					Type = ResponseContentType.JSON
+					Type = ResponseContentType.JSON.ToString()
 				}
 			};
             connectorDocument1.CdmMapping = new CDMMapping()
@@ -651,7 +651,7 @@ namespace Zurich.Connector.Tests
                 { EndpointPath = "https://fakeaddress.thomsonreuters.com" },
 				Response = new ConnectorResponse()
 				{
-					Type = ResponseContentType.JSON
+					Type = ResponseContentType.JSON.ToString()
 				}
 			};
             connectorDocument2.CdmMapping = new CDMMapping()
@@ -717,7 +717,7 @@ namespace Zurich.Connector.Tests
 				{ EndpointPath = "https://fakeaddress.thomsonreuters.com" },
 				Response = new ConnectorResponse()
 				{
-					Type = ResponseContentType.JSON
+					Type = ResponseContentType.JSON.ToString()
 				}
 			};
 			connectorDocument.CdmMapping = new CDMMapping()
@@ -807,7 +807,7 @@ namespace Zurich.Connector.Tests
 				{ EndpointPath = "https://fakeaddress.thomsonreuters.com" },
 				Response = new ConnectorResponse()
 				{
-					Type = ResponseContentType.JSON
+					Type = ResponseContentType.JSON.ToString()
 				}
 			};
 			connectorDocument.CdmMapping = new CDMMapping()
@@ -891,7 +891,7 @@ namespace Zurich.Connector.Tests
 				{ EndpointPath = "https://fakeaddress.thomsonreuters.com" },
 				Response = new ConnectorResponse()
 				{
-					Type = ResponseContentType.JSON
+					Type = ResponseContentType.JSON.ToString()
 				}
 			};
 			connectorDocument.CdmMapping = new CDMMapping()
@@ -962,7 +962,7 @@ namespace Zurich.Connector.Tests
 				{ EndpointPath = "https://fakeaddress.thomsonreuters.com" },
 				Response = new ConnectorResponse()
 				{
-					Type = ResponseContentType.JSON
+					Type = ResponseContentType.JSON.ToString()
 				}
 			};
 			connectorDocument.CdmMapping = new CDMMapping()
