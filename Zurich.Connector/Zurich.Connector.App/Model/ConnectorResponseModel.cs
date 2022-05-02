@@ -19,6 +19,11 @@ namespace Zurich.Connector.App.Model
         public ResponseContentType Type { get; set; }
 
         /// <summary>
+        /// Define connector XSLT transform record
+        /// </summary>
+        public string TransformationLocation { get; set; }
+
+        /// <summary>
         /// Indicates if there is any array in the xml. 
         /// </summary>
         public IEnumerable<string> XmlArrayAttribute { get; set; }

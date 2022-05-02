@@ -107,9 +107,9 @@ namespace Microsoft.Extensions.DependencyInjection
 				options.Audience = ciamOptions.Audience;
 			});
 
-			services.AddScoped<IClaimsTransformation, CIAMClaimsTransformation>();
+            services.AddScoped<IClaimsTransformation, ClaimsTransformation>();
 
-			services.AddAuthorization(options =>
+            services.AddAuthorization(options =>
 			{
 				var scopes = ciamOptions.Scopes.Append(LegalPlatformConnectorsScopes.Full);
 				//TODO - Add "search.full" when connector support it own token. At present connector use "legalhome.full" scope.

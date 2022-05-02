@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -57,7 +58,7 @@ namespace Zurich.Connector.Tests
 			_mockLegalHomeAccessCheck = new Mock<ILegalHomeAccessCheck>();
 			_fakeConfiguration = Utility.CreateConfiguration("fakeKey", "fakeValue");
 
-            _fakeOAuthOptions.Connections = new Dictionary<string, OAuthConnection>();
+			_fakeOAuthOptions.Connections = new Dictionary<string, OAuthConnection>();
 
 			// feels like this won't change
 			OAuthAPITokenResponse token = new OAuthAPITokenResponse() { AccessToken = "fakeToken" };
@@ -330,7 +331,9 @@ namespace Zurich.Connector.Tests
 						""wstype"": ""document""
 					}
 				]
-			}
+			},
+         ""SourceDirectoryUrl"" : ""https://(WestlawUKHost)/Search/Results.html?comp=wluk&query=(%Query)&saveJuris=False&contentType=RESEARCH_COMBINED_WLUK&querySubmissionGuid=(NewGuid())"",
+
 }";
 
 		private const string userInfoJson = @"
@@ -416,7 +419,8 @@ namespace Zurich.Connector.Tests
 			_mockHttpBodyFactory.Setup(x => x.GetImplementation(It.IsAny<string>())).Returns(mockBodyService.Object);
 
 			Mock<IHttpResponseService> mockResponseService = new Mock<IHttpResponseService>();
-			mockResponseService.Setup(x => x.GetJTokenResponse(It.IsAny<string>(), It.IsAny<ConnectorResponse>())).Returns(JToken.Parse(TwoDocumentsJson));
+			mockResponseService.Setup(x => x.GetJTokenResponse(It.IsAny<string>(), It.IsAny<ConnectorResponse>())).Returns(Task.FromResult(JToken.Parse(TwoDocumentsJson)));
+			mockResponseService.Setup(x => x.MapResponse).Returns(true);
 			_mockHttpResponseFactory.Setup(x => x.GetImplementation(It.IsAny<string>())).Returns(mockResponseService.Object);
 
 			DataMappingOAuth documentMap = CreateDataMapping();
@@ -499,7 +503,8 @@ namespace Zurich.Connector.Tests
 			_mockHttpBodyFactory.Setup(x => x.GetImplementation(It.IsAny<string>())).Returns(mockBodyService.Object);
 
 			Mock<IHttpResponseService> mockResponseService = new Mock<IHttpResponseService>();
-			mockResponseService.Setup(x => x.GetJTokenResponse(It.IsAny<string>(), It.IsAny<ConnectorResponse>())).Returns(JToken.Parse(TwoDocumentsListJson));
+			mockResponseService.Setup(x => x.GetJTokenResponse(It.IsAny<string>(), It.IsAny<ConnectorResponse>())).Returns(Task.FromResult(JToken.Parse(TwoDocumentsListJson)));
+			mockResponseService.Setup(x => x.MapResponse).Returns(true);
 			_mockHttpResponseFactory.Setup(x => x.GetImplementation(It.IsAny<string>())).Returns(mockResponseService.Object);
 
 			DataMappingOAuth documentMap = CreateDataMapping();
@@ -510,6 +515,65 @@ namespace Zurich.Connector.Tests
 			// ASSERT
 			Assert.IsNotNull(documents);
 			Assert.AreEqual(2, documents.Count);
+		}
+
+		[TestMethod]
+		public async Task TestMappingWithoutMappingResponse()
+		{
+			// ARRANGE
+			string appCode = "TestApp";
+
+			_mockRepository.Setup(x => x.MakeRequest(It.IsAny<ApiInformation>(), It.IsAny<NameValueCollection>(), It.IsAny<string>())).Returns(Task.FromResult(OneDocumentJson));
+
+			ConnectorDocument connectorDocument = new ConnectorDocument()
+			{
+				Request = new ConnectorRequest()
+				{ EndpointPath = "https://fakeaddress.thomsonreuters.com" },
+				Response = new ConnectorResponse()
+				{
+					Type = ResponseContentType.JSON.ToString()
+				}
+			};
+			connectorDocument.CdmMapping = new CDMMapping()
+			{
+				structured = new List<CDMElement>() {
+							{
+								new CDMElement(){ name="SourceDirectoryUrl", responseElement ="https://(WestlawUKHost)/Search/Results.html?comp=wluk&query=(%Query)&saveJuris=False&contentType=RESEARCH_COMBINED_WLUK&querySubmissionGuid=(NewGuid())", format=null, type = "interpolationString"}
+							}
+				}
+			};
+
+			connectorDocument.DataSource = new DataSourceDocument()
+			{
+				appCode = appCode,
+				securityDefinition = new SecurityDefinition()
+				{
+					defaultSecurityDefinition = new SecurityDefinitionDetails()
+					{
+						authorizationHeader = "differentAuthHeader"
+					}
+				}
+			};
+
+
+			Mock<IHttpBodyService> mockBodyService = new Mock<IHttpBodyService>();
+			_mockHttpBodyFactory.Setup(x => x.GetImplementation(It.IsAny<string>())).Returns(mockBodyService.Object);
+
+			Mock<IHttpResponseService> mockResponseService = new Mock<IHttpResponseService>();
+			mockResponseService.Setup(x => x.GetJTokenResponse(It.IsAny<string>(), It.IsAny<ConnectorResponse>())).Returns(Task.FromResult(JToken.Parse(OneDocumentJson)));
+			mockResponseService.Setup(x => x.MapResponse).Returns(false);
+			_mockHttpResponseFactory.Setup(x => x.GetImplementation(It.IsAny<string>())).Returns(mockResponseService.Object);
+			_fakeConfiguration = Utility.CreateConfiguration("WestlawUKHost", "uk.westlaw.com");
+
+			DataMappingOAuth documentMap = CreateDataMapping();
+
+			// ACT
+			JObject documents = await documentMap.GetAndMapResults<JObject>(connectorDocument, null, null, null, null);
+
+			// ASSERT
+			Assert.IsNotNull(documents);
+			Assert.AreEqual(2, documents.Count);
+			Assert.IsTrue(documents["SourceDirectoryUrl"].ToString().Contains(_fakeConfiguration["westlawUKHost"].ToString()));
 		}
 
 		[TestMethod]
@@ -576,7 +640,8 @@ namespace Zurich.Connector.Tests
 			_mockHttpBodyFactory.Setup(x => x.GetImplementation(It.IsAny<string>())).Returns(mockBodyService.Object);
 
 			Mock<IHttpResponseService> mockResponseService = new Mock<IHttpResponseService>();
-			mockResponseService.Setup(x => x.GetJTokenResponse(It.IsAny<string>(), It.IsAny<ConnectorResponse>())).Returns(JToken.Parse(TwoDocumentsJson));
+			mockResponseService.Setup(x => x.GetJTokenResponse(It.IsAny<string>(), It.IsAny<ConnectorResponse>())).Returns(Task.FromResult(JToken.Parse(TwoDocumentsJson)));
+			mockResponseService.Setup(x => x.MapResponse).Returns(true);
 			_mockHttpResponseFactory.Setup(x => x.GetImplementation(It.IsAny<string>())).Returns(mockResponseService.Object);
 
 			DataMappingOAuth documentMap = CreateDataMapping();
@@ -687,7 +752,8 @@ namespace Zurich.Connector.Tests
 			_mockHttpBodyFactory.Setup(x => x.GetImplementation(It.IsAny<string>())).Returns(mockBodyService.Object);
 
 			Mock<IHttpResponseService> mockResponseService = new Mock<IHttpResponseService>();
-			mockResponseService.Setup(x => x.GetJTokenResponse(It.IsAny<string>(), It.IsAny<ConnectorResponse>())).Returns(JToken.Parse(TwoDocumentsJson));
+			mockResponseService.Setup(x => x.GetJTokenResponse(It.IsAny<string>(), It.IsAny<ConnectorResponse>())).Returns(Task.FromResult(JToken.Parse(TwoDocumentsJson)));
+			mockResponseService.Setup(x => x.MapResponse).Returns(true);
 			_mockHttpResponseFactory.Setup(x => x.GetImplementation(It.IsAny<string>())).Returns(mockResponseService.Object);
 
 			DataMappingOAuth documentMap = CreateDataMapping();
@@ -773,7 +839,8 @@ namespace Zurich.Connector.Tests
 			_mockHttpBodyFactory.Setup(x => x.GetImplementation(It.IsAny<string>())).Returns(mockBodyService.Object);
 
 			Mock<IHttpResponseService> mockResponseService = new Mock<IHttpResponseService>();
-			mockResponseService.Setup(x => x.GetJTokenResponse(It.IsAny<string>(), It.IsAny<ConnectorResponse>())).Returns(JToken.Parse(TwoDocumentsListJson));
+			mockResponseService.Setup(x => x.GetJTokenResponse(It.IsAny<string>(), It.IsAny<ConnectorResponse>())).Returns(Task.FromResult(JToken.Parse(TwoDocumentsListJson)));
+			mockResponseService.Setup(x => x.MapResponse).Returns(true);
 			_mockHttpResponseFactory.Setup(x => x.GetImplementation(It.IsAny<string>())).Returns(mockResponseService.Object);
 			Mock<HttpContext> mockHttpContext = new Mock<HttpContext>();
 			var claims = new ClaimsPrincipal();
@@ -863,7 +930,8 @@ namespace Zurich.Connector.Tests
 			_mockHttpBodyFactory.Setup(x => x.GetImplementation(It.IsAny<string>())).Returns(mockBodyService.Object);
 
 			Mock<IHttpResponseService> mockResponseService = new Mock<IHttpResponseService>();
-			mockResponseService.Setup(x => x.GetJTokenResponse(It.IsAny<string>(), It.IsAny<ConnectorResponse>())).Returns(JToken.Parse(TwoDocumentsListJson));
+			mockResponseService.Setup(x => x.GetJTokenResponse(It.IsAny<string>(), It.IsAny<ConnectorResponse>())).Returns(Task.FromResult(JToken.Parse(TwoDocumentsListJson)));
+			mockResponseService.Setup(x => x.MapResponse).Returns(true);
 			_mockHttpResponseFactory.Setup(x => x.GetImplementation(It.IsAny<string>())).Returns(mockResponseService.Object);
 
 			DataMappingOAuth documentMap = CreateDataMapping();
@@ -928,7 +996,8 @@ namespace Zurich.Connector.Tests
 			_mockHttpBodyFactory.Setup(x => x.GetImplementation(It.IsAny<string>())).Returns(mockBodyService.Object);
 
 			Mock<IHttpResponseService> mockResponseService = new Mock<IHttpResponseService>();
-			mockResponseService.Setup(x => x.GetJTokenResponse(It.IsAny<string>(), It.IsAny<ConnectorResponse>())).Returns(JToken.Parse(TwoDocumentsJson));
+			mockResponseService.Setup(x => x.GetJTokenResponse(It.IsAny<string>(), It.IsAny<ConnectorResponse>())).Returns(Task.FromResult(JToken.Parse(TwoDocumentsJson)));
+			mockResponseService.Setup(x => x.MapResponse).Returns(true);
 			_mockHttpResponseFactory.Setup(x => x.GetImplementation(It.IsAny<string>())).Returns(mockResponseService.Object);
 
 			DataMappingOAuth documentMap = CreateDataMapping();
@@ -1002,7 +1071,8 @@ namespace Zurich.Connector.Tests
 			_mockHttpBodyFactory.Setup(x => x.GetImplementation(It.IsAny<string>())).Returns(mockBodyService.Object);
 
 			Mock<IHttpResponseService> mockResponseService = new Mock<IHttpResponseService>();
-			mockResponseService.Setup(x => x.GetJTokenResponse(It.IsAny<string>(), It.IsAny<ConnectorResponse>())).Returns(JToken.Parse(OneDocumentJson));
+			mockResponseService.Setup(x => x.GetJTokenResponse(It.IsAny<string>(), It.IsAny<ConnectorResponse>())).Returns(Task.FromResult(JToken.Parse(OneDocumentJson)));
+			mockResponseService.Setup(x => x.MapResponse).Returns(true);
 			_mockHttpResponseFactory.Setup(x => x.GetImplementation(It.IsAny<string>())).Returns(mockResponseService.Object);
 
 			DataMappingOAuth documentMap = CreateDataMapping();

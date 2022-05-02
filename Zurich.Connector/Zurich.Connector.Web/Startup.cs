@@ -98,6 +98,8 @@ namespace Zurich.Connector.Web
             services.AddScoped<IHttpResponseService, HttpJsonResponseService>(s => s.GetService<HttpJsonResponseService>());
             services.AddScoped<HttpXmlResponseService>();
             services.AddScoped<IHttpResponseService, HttpXmlResponseService>(s => s.GetService<HttpXmlResponseService>());
+            services.AddScoped<HttpXslResponseService>();
+            services.AddScoped<IHttpResponseService, HttpXslResponseService>(s => s.GetService<HttpXslResponseService>());
 
 
             services.AddServices();

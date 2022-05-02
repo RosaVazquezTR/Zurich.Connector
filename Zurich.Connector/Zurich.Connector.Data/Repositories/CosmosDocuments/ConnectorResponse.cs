@@ -23,6 +23,11 @@ namespace Zurich.Connector.Data.Repositories.CosmosDocuments
         public string Type { get; set; }
 
         /// <summary>
+        /// Define connector transform location
+        /// </summary>
+        public string TransformationLocation { get; set; }
+
+        /// <summary>
         /// Indicates if there is any array in the xml. 
         /// </summary>
         public IEnumerable<string> XmlArrayAttribute { get; set; }

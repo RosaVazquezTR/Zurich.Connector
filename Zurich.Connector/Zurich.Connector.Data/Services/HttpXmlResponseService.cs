@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Xml;
 using Zurich.Connector.Data.Repositories.CosmosDocuments;
 
@@ -10,11 +11,15 @@ namespace Zurich.Connector.Data.Services
     {
         public HttpXmlResponseService()
         {
+            MapResponse = true;
         }
 
-        public override JToken GetJTokenResponse(string response, ConnectorResponse connectorResponse)
+        public async override Task<JToken> GetJTokenResponse(string response, ConnectorResponse connectorResponse)
         {
+
             XmlDocument xmlDoc = new XmlDocument();
+            string jsonText = string.Empty;
+
             xmlDoc.LoadXml(response);
             if (connectorResponse.XmlArrayAttribute.Any())
             {
@@ -22,9 +27,10 @@ namespace Zurich.Connector.Data.Services
                 {
                     // if the search result has only one xml record, manually convert that into an array.
                     xmlDoc = AddJsonArrayAttributes(xmlDoc, arrayElement);
+
                 }
             }
-            string jsonText = JsonConvert.SerializeXmlNode(xmlDoc);
+            jsonText = JsonConvert.SerializeXmlNode(xmlDoc);
 
             return JToken.Parse(jsonText);
         }

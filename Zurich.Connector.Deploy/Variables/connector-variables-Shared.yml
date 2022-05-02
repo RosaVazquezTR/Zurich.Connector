@@ -6,7 +6,7 @@ variables:
   - name: applicationName
     value: 'Connectors'
   - name: connectorCosmosContainerNames
-    value: '["connector", "datasource","connectorRegistration"]'
+    value: '["connector", "datasource","connectorRegistration", "transform"]'
   - name: connectorCosmosDatabaseName
     value: "connectordb"
   - name: connectorCosmosExcludedComparisonProperties

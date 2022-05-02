@@ -1,0 +1,104 @@
+{
+  "id": "51",
+  "partitionkey": "ConnectorList",
+  "alias": "wluk.search",
+  "info": {
+    "title": "Get Search Westlaw documents - UK",
+    "description": "Pull Westlaw documents - UK",
+    "entityType": "Search",
+    "dataSourceId": "46",
+    "version": "1.0",
+    "subType": "Parent",
+    "isDynamicFilter": true
+  },
+  "preRelease": true,
+	"request": {
+		"endpointPath": "/v1/search",
+		"method": "POST",
+		"parameters": [
+			{
+				"cdmName": "Query",
+				"name": "frt",
+				"inClause": "Query",
+				"required": true,
+				"type": "string",
+				"defaultValue": "case"
+			},
+			{
+				"cdmName": "Content.default",
+				"name": "content",
+				"inClause": "Query",
+				"required": true,
+				"type": "string",
+				"defaultValue": "Home/WestlawUK"
+			},
+			{
+				"cdmName": "X-TR-API-APP-ID.default",
+				"name": "X-TR-API-APP-ID",
+				"inClause": "Query",
+				"required": true,
+				"type": "string",
+				"defaultValue": "pIRbm5ZJG2VuC1plXR5uPgc6LrjT31ay"
+			},
+			{
+				"cdmName": "sp.default",
+				"name": "sp",
+				"inClause": "Query",
+				"required": true,
+				"type": "string",
+				"defaultValue": "wlninter-0000"
+			},
+			{
+				"cdmName": "ResultSize",
+				"name": "resultsPerPage",
+				"inClause": "Query",
+				"required": true,
+				"type": "string",
+				"defaultValue": "50"
+			},
+			{
+				"cdmName": "Offset",
+				"name": "start",
+				"inClause": "Body",
+				"required": true,
+				"type": "string",
+				"defaultValue": "1"
+			}
+		],
+    "sorting": {
+      "properties": [
+        {
+          "name": "Date",
+          "type": "date",
+          "element": "sortType",
+          "elementValue": "UK_RESEARCH_DATE_DESC"
+        },
+        {
+          "name": "Relevance",
+          "type": "string",
+          "element": "sortType",
+          "elementValue": "UK_RESEARCH_RELEVANCE"
+        }
+      ]
+    }
+  },
+  "response": {
+	"type": "XSLT",
+	"TransformationLocation": "1"
+  },
+  "filters": [],
+  "pagination": {
+    "available": true,
+    "isZeroBasedOffset": false
+  },
+  "resultLocation": "",
+  "cdmMapping": {
+    "structured": [{
+		"name": "SourceDirectoryUrl",
+		"type": "interpolationString",
+		"responseElement": "https://(WestlawUKHost)/Search/Results.html?comp=wluk&query=(%Query)&saveJuris=False&contentType=RESEARCH_COMBINED_WLUK&querySubmissionGuid=(NewGuid())",
+		"_comment": ""
+	  }],
+    "unstructured": []
+  }
+}
