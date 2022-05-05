@@ -1,0 +1,32 @@
+{
+  "id": "46",
+  "partitionkey": "DataSourceList",
+  "name": "Westlaw UK",
+  "description": "This is connecting to Westlaw UK API ",
+  "infoURL": "",
+  "appCode": "WLUK",
+  "appType": "0",
+  "locale": "UK",
+  "extraRequestContext": "",
+  "registrationInfo": {
+    "registrationMode": "Automatic",
+    "domainRequired": "false",
+    "clientAndSecretRequired": "false",
+    "connectionMessage": "",
+    "registrationFileRequired": "false"
+  },
+  "securityDefinition": {
+    "type": "oauth2",
+    "flow": "",
+    "defaultSecurityDefinition": {
+      "authorizationURL": "",
+      "authorizationPath": "",
+      "tokenURL": "",
+      "tokenPath": "",
+      "keyVaultClientId": "",
+      "keyVaultSecret": "",
+      "grantType": "client_credentials"
+    },
+    "scopes": {}
+  }
+}

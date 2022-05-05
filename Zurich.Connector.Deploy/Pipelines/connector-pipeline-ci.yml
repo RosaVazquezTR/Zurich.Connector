@@ -112,6 +112,7 @@ stages:
                   vnetName: ${{ variables.vnetName }}
                   vnetResourceGroup: ${{ variables.vnetResourceGroup }}
                   webDnsServer: ${{ variables.webDnsServer }}
+                  westlawUKSecret: $(westlawUKSecret)
 
     - deployment: Connector
       environment: CI

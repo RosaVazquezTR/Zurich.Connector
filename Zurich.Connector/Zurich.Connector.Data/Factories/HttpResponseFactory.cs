@@ -22,6 +22,9 @@ namespace Zurich.Connector.Data.Factories
         {
             if (httpResponseType.Equals("XML", StringComparison.OrdinalIgnoreCase))
                 return (IHttpResponseService)serviceProvider.GetService(typeof(HttpXmlResponseService));
+            // XSLT
+            if (httpResponseType.Equals("XSLT", StringComparison.OrdinalIgnoreCase))
+                return (IHttpResponseService)serviceProvider.GetService(typeof(HttpXslResponseService));
             // JSON
             return (IHttpResponseService)serviceProvider.GetService(typeof(HttpJsonResponseService));
         }

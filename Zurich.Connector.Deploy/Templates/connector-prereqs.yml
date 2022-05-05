@@ -89,6 +89,8 @@ parameters:
     type: string
   - name: webDnsServer
     type: string
+  - name: westlawUKSecret
+    type: string    
 
 steps:
  
@@ -184,7 +186,7 @@ steps:
     inputs:
       azureSubscription: ${{ parameters.subscriptionName }}
       ScriptPath: '$(Build.SourcesDirectory)/Zurich.Deploy/Scripts/PopulateKeyVault.ps1'
-      ScriptArguments: '-vaultName "${{ parameters.keyVault }}${{ parameters.environmentName }}" -nameValuePairsJson ''{"AzureAd--ClientId": "${{ parameters.azureAdClientId }}", "PartnerOAuthApps--Connections--PracticalLaw--Secret": "${{ parameters.practicalLawSecret }}", "PartnerOAuthApps--Connections--PLCUS--Secret": "${{ parameters.practicalLawSecret }}", "PartnerOAuthApps--Connections--PLCUK--Secret": "${{ parameters.practicalLawSecret }}", "PartnerOAuthApps--Connections--PLCCA--Secret": "${{ parameters.practicalLawSecret }}", "PartnerOAuthApps--Connections--CBTPRACPT--Secret": "${{ parameters.practicalLawSecret }}", "PartnerOAuthApps--Connections--PracticalLawConnect--Secret": "${{ parameters.practicalLawSecret }}", "PartnerOAuthApps--Connections--TRACKR--Secret": "${{ parameters.legalTrackerSecret }}", "PartnerOAuthApps--Connections--TRACKRACTIONITEMS--Secret": "${{ parameters.legalTrackerActionItemsSecret }}"}'''
+      ScriptArguments: '-vaultName "${{ parameters.keyVault }}${{ parameters.environmentName }}" -nameValuePairsJson ''{"AzureAd--ClientId": "${{ parameters.azureAdClientId }}", "PartnerOAuthApps--Connections--PracticalLaw--Secret": "${{ parameters.practicalLawSecret }}", "PartnerOAuthApps--Connections--PLCUS--Secret": "${{ parameters.practicalLawSecret }}", "PartnerOAuthApps--Connections--PLCUK--Secret": "${{ parameters.practicalLawSecret }}", "PartnerOAuthApps--Connections--PLCCA--Secret": "${{ parameters.practicalLawSecret }}", "PartnerOAuthApps--Connections--CBTPRACPT--Secret": "${{ parameters.practicalLawSecret }}", "PartnerOAuthApps--Connections--PracticalLawConnect--Secret": "${{ parameters.practicalLawSecret }}", "PartnerOAuthApps--Connections--TRACKR--Secret": "${{ parameters.legalTrackerSecret }}", "PartnerOAuthApps--Connections--TRACKRACTIONITEMS--Secret": "${{ parameters.legalTrackerActionItemsSecret }}", "PartnerOAuthApps--Connections--WLUK--Secret": "${{ parameters.westlawUKSecret }}" }'''
       azurePowerShellVersion: LatestVersion
   
 # this can eventually get removed when we no longer need to go directly to db to get tokens

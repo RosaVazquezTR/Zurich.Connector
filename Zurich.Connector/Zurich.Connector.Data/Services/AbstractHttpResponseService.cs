@@ -1,11 +1,13 @@
 ﻿using Newtonsoft.Json.Linq;
+using System.Threading.Tasks;
 using Zurich.Connector.Data.Repositories.CosmosDocuments;
 
 namespace Zurich.Connector.Data.Services
 {
     public abstract class AbstractHttpResponseService
 	{
-        public virtual JToken GetJTokenResponse(string response, ConnectorResponse connectorResponse)
+		public virtual bool MapResponse { get; set; }
+		public async virtual Task<JToken> GetJTokenResponse(string response, ConnectorResponse connectorResponse)
 		{
 			return JToken.Parse(response);
 		}
