@@ -17,6 +17,7 @@ using Zurich.Connector.Data.Repositories;
 using Zurich.Connector.Data.Repositories.CosmosDocuments;
 using CommonServices = Zurich.Common.Services;
 using Zurich.TenantData;
+using Zurich.Connector.Data.Model;
 
 namespace Zurich.Connector.Data.Services
 {
@@ -50,6 +51,7 @@ namespace Zurich.Connector.Data.Services
         private readonly IDataExtractionService _dataExtractionService;
         private readonly ILegalHomeAccessCheck _legalHomeAccess;
         private readonly CommonServices.ITenantService _tenantService;
+        private readonly IOAuthServices _OAuthService;
 
         public ConnectorDataService(
             IDataMappingFactory dataMappingFactory,
@@ -61,7 +63,8 @@ namespace Zurich.Connector.Data.Services
             IRegistrationService registrationService,
             IDataExtractionService dataExtractionService,
             ILegalHomeAccessCheck legalHomeAccess,
-            CommonServices.ITenantService tenantService)
+            CommonServices.ITenantService tenantService,
+            IOAuthServices OAuthService)
         {
             _dataMappingFactory = dataMappingFactory;
             _dataMappingRepo = dataMappingRepo;
@@ -74,6 +77,7 @@ namespace Zurich.Connector.Data.Services
             _dataExtractionService = dataExtractionService;
             _legalHomeAccess = legalHomeAccess;
             _tenantService = tenantService;
+            _OAuthService = OAuthService;
         }
 
         /// <summary>
@@ -102,7 +106,8 @@ namespace Zurich.Connector.Data.Services
             {
                 return null;
             }
-
+            // Modify Offset
+            //List<DataSourceInformation> availableRegistrations = await _OAuthService.GetUserRegistrations();
             NameValueCollection mappedQueryParameters = MapQueryParametersFromDB(queryParameters, connectorModel);
             ConnectorDocument connectorDocument = _mapper.Map<ConnectorDocument>(connectorModel);
             Dictionary<string, string> headerParameters = await _dataExtractionService.ExtractDataSource(mappedQueryParameters, queryParameters, hostname, connectorDocument);
