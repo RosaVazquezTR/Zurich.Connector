@@ -1,3 +1,4 @@
+using Newtonsoft.Json.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Xunit;
@@ -32,7 +33,6 @@ namespace Zurich.Connector.IntegrationTests
             var response = await _client.GetAsync(request);
             // var response = Assert.ThrowsAsync<ResourceNotFoundException>(async () => await _client.GetAsync(request));
             await Task.Delay(5000);
-            var message = response;
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -50,16 +50,41 @@ namespace Zurich.Connector.IntegrationTests
             // Assert
            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         }
+
         [Fact]
-        public async Task TestConnectorDataById_With_SuccessStatus()
+        public async Task TestXMLConnectorDataById_With_SuccessStatus()
         {
             // Arrange
             var request = "/api/v1/Connectors/10/data/?query=query";
             //Act
             var response = await _client.GetAsync(request);
+            var contentString = await response.Content.ReadAsStringAsync();
+            var message = JToken.Parse(contentString);
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            // Some quick search specific checks on response
+            Assert.False(string.IsNullOrEmpty(message["count"].Value<string>()), "count property expected");
+            Assert.False(string.IsNullOrEmpty(message["sourceDirectoryUrl"].Value<string>()), "sourceDirectoryUrl property expected");
+            Assert.NotNull((JArray)message["documents"]);
+        }
+
+        [Fact]
+        public async Task TestJsonConnectorDataById_With_SuccessStatus()
+        {
+            // Arrange
+            var request = "/api/v1/Connectors/14/data/?query=query";
+            //Act
+            var response = await _client.GetAsync(request);
+            var contentString = await response.Content.ReadAsStringAsync();
+            var message = JToken.Parse(contentString);
+
+            // Assert
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            // Some quick search specific checks on response
+            Assert.False(string.IsNullOrEmpty(message["count"].Value<string>()), "count property expected");
+            Assert.False(string.IsNullOrEmpty(message["sourceDirectoryUrl"].Value<string>()), "sourceDirectoryUrl property expected");
+            Assert.NotNull((JArray)message["documents"]);
         }
 
         [Fact]
