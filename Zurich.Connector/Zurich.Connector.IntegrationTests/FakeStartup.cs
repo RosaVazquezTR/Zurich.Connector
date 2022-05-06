@@ -4,7 +4,12 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net.Http;
+using Zurich.Common.Factories;
+using Zurich.Common.Repositories;
+using Zurich.Common.Services;
 using Zurich.Common.Services.Security;
 using Zurich.Common.Services.Security.CIAM;
 using Zurich.Connector.App.Services;
@@ -45,7 +50,6 @@ namespace Zurich.Connector.IntegrationTests
             services.AddSingleton<ITokenAuthorityDiscoveryService, CIAMTokenAuthorityDiscoveryService>(s => new CIAMTokenAuthorityDiscoveryService(
                 ciamOptions.TokenIssuer, s.GetRequiredService<ILogger<CIAMTokenAuthorityDiscoveryService>>(), s.GetRequiredService<IOIDCAuthorityRepo>(), s.GetRequiredService<IHttpClientFactory>()));
             services.AddScoped<ITokenDiscoveryServiceFactory, TokenDiscoveryServiceFactory>();
-
         }
 
         public override void Configure(IApplicationBuilder app, IWebHostEnvironment env)
