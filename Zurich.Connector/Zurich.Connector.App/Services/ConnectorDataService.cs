@@ -108,6 +108,7 @@ namespace Zurich.Connector.Data.Services
             }
             // Modify Offset
             //List<DataSourceInformation> availableRegistrations = await _OAuthService.GetUserRegistrations();
+
             NameValueCollection mappedQueryParameters = MapQueryParametersFromDB(queryParameters, connectorModel);
             ConnectorDocument connectorDocument = _mapper.Map<ConnectorDocument>(connectorModel);
             Dictionary<string, string> headerParameters = await _dataExtractionService.ExtractDataSource(mappedQueryParameters, queryParameters, hostname, connectorDocument);

@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Zurich.Connector.App.Model;
 using AutoMapper;
+using System.Collections.Generic;
 
 namespace Zurich.Connector.App.Services
 {
@@ -16,10 +17,15 @@ namespace Zurich.Connector.App.Services
         /// <param name="hostname">Host name</param>
         /// <returns> Returns ConnectorModel</returns>
         public Task<ConnectorModel> RetrieveProductInformationMap(string connectionIdentifier, string hostname, bool retrieveFilters);
+
+        public Dictionary<string, string> UpdateOffset(Dictionary<string, string> queryParameters)
+        {
+            return queryParameters;
+        }
     }
 
     /// <summary>
-    /// DataMappingService gets data from cosmo db using Cosmo service and reorganizes the data
+    /// DataMappingService used to modify data mapping requests and responses
     /// </summary>
     public class DataMappingService : IDataMappingService
     {

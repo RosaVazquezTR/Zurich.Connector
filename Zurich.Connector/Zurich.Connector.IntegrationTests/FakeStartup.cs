@@ -11,6 +11,11 @@ using Zurich.Connector.App.Services;
 using Zurich.Connector.Data;
 using Zurich.Connector.Web;
 using Zurich.TenantData;
+using System.Net.Http;
+using Zurich.Common.Factories;
+using Zurich.Common.Repositories;
+using Zurich.Common.Services;
+using Microsoft.Extensions.Logging;
 
 namespace Zurich.Connector.IntegrationTests
 {
@@ -32,6 +37,15 @@ namespace Zurich.Connector.IntegrationTests
             services.AddScoped<ISessionAccessor, IntegrationTestSessionAccessor>();
             services.AddScoped<ICosmosService, IntegrationTestCosmosService>();
             services.AddScoped<ILegalHomeAccessCheck, IntegrationTestLegalHomeAccess>();
+
+            // Identity Server
+            services.AddSingleton<ITokenAuthorityDiscoveryService, IdentityServerTokenAuthorityDiscoveryService>(s => new IdentityServerTokenAuthorityDiscoveryService(
+                authOptions.TokenIssuer, s.GetRequiredService<ILogger<IdentityServerTokenAuthorityDiscoveryService>>(), s.GetRequiredService<IOIDCAuthorityRepo>(), s.GetRequiredService<IHttpClientFactory>()));
+            // CIAM
+            services.AddSingleton<ITokenAuthorityDiscoveryService, CIAMTokenAuthorityDiscoveryService>(s => new CIAMTokenAuthorityDiscoveryService(
+                ciamOptions.TokenIssuer, s.GetRequiredService<ILogger<CIAMTokenAuthorityDiscoveryService>>(), s.GetRequiredService<IOIDCAuthorityRepo>(), s.GetRequiredService<IHttpClientFactory>()));
+            services.AddScoped<ITokenDiscoveryServiceFactory, TokenDiscoveryServiceFactory>();
+
         }
 
         public override void Configure(IApplicationBuilder app, IWebHostEnvironment env)
