@@ -107,7 +107,7 @@ namespace Zurich.Connector.Data.Services
 
             if (Convert.ToInt64(queryParameters["resultSize"]) > MaxRecordSizePerInstance)
             {
-                throw new MaxResultSizeException(CustomExceptions.MaxResultSizeException);
+                throw new MaxResultSizeException(CustomExceptions.MaxResultSizeException + MaxRecordSizePerInstance);
             }
 
             // TODO: This is a legalhome workaround until legalhome uses OAuth

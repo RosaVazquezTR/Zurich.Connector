@@ -21,7 +21,7 @@ namespace Zurich.Connector.App
 
     public static class CustomExceptions
     {
-        public const string MaxResultSizeException = "Request exceeds maximum record size per instance of 1000";
+        public const string MaxResultSizeException = "Request exceeds maximum record size per instance of ";
     }
 
     public static class SubType
