@@ -2,6 +2,8 @@
 using Zurich.Connector.App.Model;
 using AutoMapper;
 using System.Collections.Generic;
+using Zurich.Connector.Data.Model;
+using System;
 
 namespace Zurich.Connector.App.Services
 {
@@ -18,10 +20,7 @@ namespace Zurich.Connector.App.Services
         /// <returns> Returns ConnectorModel</returns>
         public Task<ConnectorModel> RetrieveProductInformationMap(string connectionIdentifier, string hostname, bool retrieveFilters);
 
-        public Dictionary<string, string> UpdateOffset(Dictionary<string, string> queryParameters)
-        {
-            return queryParameters;
-        }
+        public Dictionary<string, string> UpdateOffset(string AppCode, List<DataSourceInformation> availableRegistrations, Dictionary<string, string> queryParameters);
     }
 
     /// <summary>
@@ -32,12 +31,11 @@ namespace Zurich.Connector.App.Services
         private readonly ICosmosService _cosmosService;
         private readonly IMapper _mapper;
 
-        public DataMappingService(ICosmosService cosmosService, IMapper mapper)
+        public DataMappingService(ICosmosService cosmosService, IMapper mapper, IOAuthServices oAuthService)
         {
 
             _cosmosService = cosmosService;
             _mapper = mapper;
-
         }
 
         /// <summary>
@@ -69,5 +67,19 @@ namespace Zurich.Connector.App.Services
             return connector;
         }
 
+        public Dictionary<string, string> UpdateOffset(string AppCode, List<DataSourceInformation> availableRegistrations, Dictionary<string, string> queryParameters)
+        {
+            var appRegistrations = availableRegistrations.FindAll(x => x.AppCode == AppCode);
+            if(appRegistrations.Count > 1)
+            {
+                if(queryParameters.ContainsKey("Offset") && queryParameters.ContainsKey("ResultSize"))
+                {
+                    queryParameters["Offset"] = "0";
+                    queryParameters["ResultSize"] = (Convert.ToInt32(queryParameters["Offset"]) + Convert.ToInt32(queryParameters["ResultSize"])).ToString()  ;
+                }
+                
+            }
+            return queryParameters;
+        }
     }
 }

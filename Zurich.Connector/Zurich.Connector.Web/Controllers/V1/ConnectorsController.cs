@@ -11,6 +11,7 @@ using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
 using Zurich.Common.Exceptions;
+using Zurich.Connector.App.Exceptions;
 using Zurich.Connector.App.Model;
 using Zurich.Connector.App.Services;
 using Zurich.Connector.Data.Services;
@@ -76,6 +77,10 @@ namespace Zurich.Connector.Web.Controllers
             }
             catch (Exception e)
             {
+                if(e is MaxResultSizeException)
+                {
+                    return BadRequest(e.Message);
+                }
                 return new ContentResult
                 {
                     Content = e.Message,

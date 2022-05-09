@@ -15,6 +15,13 @@ namespace Zurich.Connector.App
     {
         public const string OAuthUrl = "OAuthBaseUrl";
         public const string ShowPreReleaseConnectors = "ShowPreReleaseConnectors";
+        public const string InstanceLimit = "InstanceLimit";
+        public const string MaxRecordSizePerInstance = "MaxRecordSizePerInstance";
+    }
+
+    public static class CustomExceptions
+    {
+        public const string MaxResultSizeException = "Request exceeds maximum record size per instance of 1000";
     }
 
     public static class SubType
