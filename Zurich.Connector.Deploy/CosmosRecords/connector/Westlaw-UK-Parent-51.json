@@ -1,17 +1,16 @@
 {
-  "id": "51",
-  "partitionkey": "ConnectorList",
-  "alias": "wluk.search",
-  "info": {
-    "title": "Get Search Westlaw documents - UK",
-    "description": "Pull Westlaw documents - UK",
-    "entityType": "Search",
-    "dataSourceId": "46",
-    "version": "1.0",
-    "subType": "Parent",
-    "isDynamicFilter": true
-  },
-  "preRelease": true,
+	"id": "51",
+	"partitionkey": "ConnectorList",
+	"alias": "wluk.search",
+	"info": {
+		"title": "Get Search Westlaw documents - UK",
+		"description": "Pull Westlaw documents - UK",
+		"entityType": "Search",
+		"dataSourceId": "46",
+		"version": "1.0",
+		"subType": "Parent"
+	},
+	"preRelease": true,
 	"request": {
 		"endpointPath": "/v1/search",
 		"method": "POST",
@@ -65,40 +64,151 @@
 				"defaultValue": "1"
 			}
 		],
-    "sorting": {
-      "properties": [
-        {
-          "name": "Date",
-          "type": "date",
-          "element": "sortType",
-          "elementValue": "UK_RESEARCH_DATE_DESC"
-        },
-        {
-          "name": "Relevance",
-          "type": "string",
-          "element": "sortType",
-          "elementValue": "UK_RESEARCH_RELEVANCE"
-        }
-      ]
-    }
-  },
-  "response": {
-	"type": "XSLT",
-	"TransformationLocation": "1"
-  },
-  "filters": [],
-  "pagination": {
-    "available": true,
-    "isZeroBasedOffset": false
-  },
-  "resultLocation": "",
-  "cdmMapping": {
-    "structured": [{
-		"name": "SourceDirectoryUrl",
-		"type": "interpolationString",
-		"responseElement": "https://(WestlawUKHost)/Search/Results.html?comp=wluk&query=(%Query)&saveJuris=False&contentType=RESEARCH_COMBINED_WLUK&querySubmissionGuid=(NewGuid())",
-		"_comment": ""
-	  }],
-    "unstructured": []
-  }
+		"sorting": {
+			"properties": [
+				{
+					"name": "Date",
+					"type": "date",
+					"element": "sortType",
+					"elementValue": "UK_RESEARCH_DATE_DESC"
+				},
+				{
+					"name": "Relevance",
+					"type": "string",
+					"element": "sortType",
+					"elementValue": "UK_RESEARCH_RELEVANCE"
+				}
+			]
+		}
+	},
+	"response": {
+		"type": "XSLT",
+		"TransformationLocation": "1"
+	},
+	"filters": [
+		{
+			"name": "Topics",
+			"description": "WLUK Topics",
+			"isMultiselect": "false",
+			"requestParameter": "Content.default",
+			"filterlist": [
+				{
+					"name": "Commercial",
+					"id": "Home/WestlawUK/Topic/Commercial"
+				},
+				{
+					"name": "Companies and Partnerships",
+					"id": "Home/WestlawUK/Topic/Companies-and-partnerships"
+				},
+				{
+					"name": "Contract",
+					"id": "Home/WestlawUK/Topic/Contract"
+				},
+				{
+					"name": "Crime",
+					"id": "Home/WestlawUK/Topic/Crime"
+				},
+				{
+					"name": "Data and Communications",
+					"id": "Home/WestlawUK/Topic/Data-and-communications"
+				},
+				{
+					"name": "Employment and Work",
+					"id": "Home/WestlawUK/Topic/Employment-and-work"
+				},
+				{
+					"name": "Environment",
+					"id": "Home/WestlawUK/Topic/Environment"
+				},
+				{
+					"name": "Equality and human rights",
+					"id": "Home/WestlawUK/Topic/Equality-and-human-rights"
+				},
+				{
+					"name": "Family",
+					"id": "Home/WestlawUK/Topic/Family"
+				},
+				{
+					"name": "Finance",
+					"id": "Home/WestlawUK/Topic/Finance"
+				},
+				{
+					"name": "Health and social welfare",
+					"id": "Home/WestlawUK/Topic/Health-and-social-welfare"
+				},
+				{
+					"name": "Insolvency",
+					"id": "Home/WestlawUK/Topic/Insolvency"
+				},
+				{
+					"name": "Intellectual property",
+					"id": "Home/WestlawUK/Topic/Intellectual-property"
+				},
+				{
+					"name": "International",
+					"id": "Home/WestlawUK/Topic/International"
+				},
+				{
+					"name": "Land",
+					"id": "Home/WestlawUK/Topic/Land"
+				},
+				{
+					"name": "Legal system",
+					"id": "Home/WestlawUK/Topic/Legal-system"
+				},
+				{
+					"name": "Litigation and dispute resolution",
+					"id": "Home/WestlawUK/Topic/Litigation-and-dispute-resolution"
+				},
+				{
+					"name": "Local government",
+					"id": "Home/WestlawUK/Topic/Local-government"
+				},
+				{
+					"name": "Planning and construction",
+					"id": "Home/WestlawUK/Topic/Planning-and-construction"
+				},
+				{
+					"name": "Public and constitutional law",
+					"id": "Home/WestlawUK/Topic/Public-and-constitutional-law"
+				},
+				{
+					"name": "Social regulation",
+					"id": "Home/WestlawUK/Topic/Social-regulation"
+				},
+				{
+					"name": "Tax",
+					"id": "Home/WestlawUK/Topic/Tax"
+				},
+				{
+					"name": "Torts",
+					"id": "Home/WestlawUK/Topic/Torts"
+				},
+				{
+					"name": "Transport and shipping",
+					"id": "Home/WestlawUK/Topic/Transport-and-shipping"
+				},
+				{
+					"name": "Trusts and personal property",
+					"id": "Home/WestlawUK/Topic/Trusts-and-personal-property"
+				}
+			]
+		}
+	],
+	"pagination": {
+		"available": true,
+		"isZeroBasedOffset": false
+	},
+	"resultLocation": "",
+	"cdmMapping": {
+		"structured": [
+			{
+				"name": "SourceDirectoryUrl",
+				"type": "interpolationString",
+				"responseElement": "https://(WestlawUKHost)/Search/Results.html?comp=wluk&query=(%Query)&saveJuris=False&contentType=RESEARCH_COMBINED_WLUK&querySubmissionGuid=(NewGuid())",
+				"_comment": ""
+			}
+		],
+		"unstructured": []
+	}
 }
