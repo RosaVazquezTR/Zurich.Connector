@@ -96,18 +96,18 @@ namespace Zurich.Connector.Data.Services
         /// <returns>Connector data</returns>
         public async Task<dynamic> GetConnectorData(string connectionIdentifier, string hostname, string transferToken, Dictionary<string, string> queryParameters, bool retrieveFilters)
         {
-            int? instanceLimit = _configuration.GetValue<int>(AppSettings.InstanceLimit);
-            int? MaxRecordSizePerInstance = _configuration.GetValue<int>(AppSettings.MaxRecordSizePerInstance);
+            int instanceLimit = _configuration.GetValue<int>(AppSettings.InstanceLimit, 10);
+            int MaxRecordSizePerInstance = _configuration.GetValue<int>(AppSettings.MaxRecordSizePerInstance, 1000);
 
             ConnectorModel connectorModel = await _dataMappingService.RetrieveProductInformationMap(connectionIdentifier, hostname, retrieveFilters);
             List<DataSourceInformation> availableRegistrations = await _OAuthService.GetUserRegistrations();
-            if (instanceLimit > 0)
-                availableRegistrations = availableRegistrations.FindAll(x => x.AppCode == connectorModel.DataSource.AppCode).Take(instanceLimit.Value).ToList<DataSourceInformation>();
+            availableRegistrations = availableRegistrations.FindAll(x => x.AppCode == connectorModel.DataSource.AppCode).Take(instanceLimit).ToList<DataSourceInformation>();
             queryParameters = _dataMappingService.UpdateOffset(connectorModel.DataSource.AppCode, availableRegistrations, queryParameters);
 
-            if (Convert.ToInt64(queryParameters["resultSize"]) > MaxRecordSizePerInstance)
+            if (queryParameters.ContainsKey(QueryParameters.ResultSize))
             {
-                throw new MaxResultSizeException(CustomExceptions.MaxResultSizeException + MaxRecordSizePerInstance);
+                if (Convert.ToInt64(queryParameters[QueryParameters.ResultSize]) > MaxRecordSizePerInstance)
+                    throw new MaxResultSizeException("Request exceeds maximum record size per instance of 1000");
             }
 
             // TODO: This is a legalhome workaround until legalhome uses OAuth

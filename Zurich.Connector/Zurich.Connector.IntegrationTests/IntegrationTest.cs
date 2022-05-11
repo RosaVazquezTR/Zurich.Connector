@@ -14,10 +14,7 @@ namespace Zurich.Connector.IntegrationTests
         public IntegrationTest(CustomWebApplicationFactory fixture)
         {
             _factory = fixture;
-            _client = _factory.CreateClient(new WebApplicationFactoryClientOptions
-            {
-                AllowAutoRedirect = false,
-            });
+            _client = _factory.CreateClient();
 
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("IntegrationTest");
         }

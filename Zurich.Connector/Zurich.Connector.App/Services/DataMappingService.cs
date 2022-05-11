@@ -69,13 +69,13 @@ namespace Zurich.Connector.App.Services
 
         public Dictionary<string, string> UpdateOffset(string AppCode, List<DataSourceInformation> availableRegistrations, Dictionary<string, string> queryParameters)
         {
-            var appRegistrations = availableRegistrations.FindAll(x => x.AppCode == AppCode);
-            if(appRegistrations.Count > 1)
+
+            if(availableRegistrations.Count > 1)
             {
-                if(queryParameters.ContainsKey("Offset") && queryParameters.ContainsKey("ResultSize"))
+                if(queryParameters.ContainsKey(QueryParameters.Offset) && queryParameters.ContainsKey(QueryParameters.ResultSize))
                 {
-                    queryParameters["Offset"] = "0";
-                    queryParameters["ResultSize"] = (Convert.ToInt32(queryParameters["Offset"]) + Convert.ToInt32(queryParameters["ResultSize"])).ToString()  ;
+                    queryParameters[QueryParameters.Offset] = "0";
+                    queryParameters[QueryParameters.ResultSize] = (Convert.ToInt32(queryParameters[QueryParameters.Offset]) + Convert.ToInt32(queryParameters[QueryParameters.ResultSize])).ToString()  ;
                 }
                 
             }

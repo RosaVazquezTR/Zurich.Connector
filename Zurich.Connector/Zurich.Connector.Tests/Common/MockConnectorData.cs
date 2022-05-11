@@ -201,10 +201,10 @@ namespace Zurich.Connector.Tests.Common
                         Description = "DataSource 11 desc"
                     },
                     Filters = new List<ConnectorsFiltersModel>()
-                    { 
-                         new ConnectorsFiltersModel() { 
-                             Name = "PracticeArea", 
-                             Description ="The practice areas", 
+                    {
+                         new ConnectorsFiltersModel() {
+                             Name = "PracticeArea",
+                             Description ="The practice areas",
                              IsMultiSelect = "true",
                              RequestParameter = "PracticeArea",
                              FilterList = new List<FilterListModel>(){ new FilterListModel() { Id = "9-521-5538", Name = "Antitrust Litigation" } }
@@ -592,6 +592,34 @@ namespace Zurich.Connector.Tests.Common
                 ]
             }");
             return result;
+        }
+
+        internal static IEnumerable<DataSourceInformation> SetupAvailableUserRegistrations()
+        {
+            return new List<DataSourceInformation>
+            {
+                new DataSourceInformation()
+                {
+                    Name = "PracticalLaw Canada",
+                    AppCode = "PLCCA",
+                    Domain = "https://api-uat.thomsonreuters.com/practicallaw",
+                    RequiresNewToken = false
+                },
+                new DataSourceInformation()
+                {
+                    Name = "PracticalLaw US",
+                    AppCode = "PLCUS",
+                    Domain = "https://api-uat.thomsonreuters.com/practicallaw",
+                    RequiresNewToken = false
+                },
+                new DataSourceInformation()
+                {
+                    Name = "DataSource 11",
+                    AppCode = "DataSource11",
+                    Domain = "https://api-uat.thomsonreuters.com/practicallaw",
+                    RequiresNewToken = false
+                }
+            };
         }
 
     }

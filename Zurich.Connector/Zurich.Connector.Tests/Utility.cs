@@ -18,5 +18,12 @@ namespace Zurich.Connector.Tests
 				.AddInMemoryCollection(myConfiguration)
 				.Build();
 		}
+
+		public static IConfiguration CreateConfiguration(Dictionary<string, string> myConfiguration)
+		{
+			return new ConfigurationBuilder()
+				.AddInMemoryCollection(myConfiguration)
+				.Build();
+		}
 	}
 }

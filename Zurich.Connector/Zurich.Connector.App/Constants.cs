@@ -19,9 +19,10 @@ namespace Zurich.Connector.App
         public const string MaxRecordSizePerInstance = "MaxRecordSizePerInstance";
     }
 
-    public static class CustomExceptions
+    public static class QueryParameters
     {
-        public const string MaxResultSizeException = "Request exceeds maximum record size per instance of ";
+        public const string ResultSize = "ResultSize";
+        public const string Offset = "Offset";
     }
 
     public static class SubType

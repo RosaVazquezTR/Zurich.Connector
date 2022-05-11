@@ -1,11 +1,13 @@
 using FluentAssertions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Xunit;
 using Zurich.Common.Models.CommonDataModels;
@@ -88,16 +90,26 @@ namespace Zurich.Connector.IntegrationTests
             public async Task MakeDocumentCalls(ConnectorDocument connector)
         {
             // Arrange
-            var request = $"/api/v1/Connectors/{connector.Id}/Data";
+            var request = $"http://localhost/api/v1/Connectors/{connector.Id}/Data";
             // TODO: remove when we can find host and dont have to pass in
             if (connector.Info.DataSourceId == "10")
             {
-                request = $"/api/v1/Connectors/{connector.Id}/Data?Hostname=cloudimanage.com";
+                request = $"http://localhost//api/v1/Connectors/{connector.Id}/Data?Hostname=cloudimanage.com";
             }
             if (connector.Info.DataSourceId != "10" && connector.Info.DataSourceId != "45")
             {
+                Helper helper = new Helper();
+                var token = helper.GetAuthToken("RecentOptedInUser");
+
+                var getRequest = new HttpRequestMessage
+                {
+                    Method = HttpMethod.Get,
+                    RequestUri = new Uri(request),
+                };
+                getRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token.access_token);
+
                 //Act
-                var response = await _client.GetAsync(request);
+                var response = await _client.SendAsync(getRequest);
 
                 // Assert
                 await CheckResponse<List<DocumentEntity>>(response);
@@ -135,15 +147,27 @@ namespace Zurich.Connector.IntegrationTests
         [MemberData(nameof(GetConnectorsTestCases), parameters: new object[] { "Search", true })]
         public async Task MakeSearchCalls(ConnectorDocument connector)
         {
+            
+
             // Note:- Workaround to skip HighQ connector check
             //        and MS Graph External Search Connector (49) check (Test user didn't consent ExternalItem.Read therefore will get 403 forbidden on graph side)
             if (connector.Id != "47" && connector.Id != "48" && connector.Id != "49")
             {
                 // Arrange
-                var request = $"/api/v1/Connectors/{connector.Id}/Data?Query=*";
+                var request = $"http://localhost/api/v1/Connectors/{connector.Id}/Data?Query=*";
+
+                Helper helper = new Helper();
+                var token = helper.GetAuthToken("RecentOptedInUser");
+
+                var getRequest = new HttpRequestMessage
+                {
+                    Method = HttpMethod.Get,
+                    RequestUri = new Uri(request),
+                };
+                getRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token.access_token);
 
                 //Act
-                var response = await _client.GetAsync(request);
+                var response = await _client.SendAsync(getRequest);
 
                 // Assert
                 await CheckResponse<SearchObject>(response);
