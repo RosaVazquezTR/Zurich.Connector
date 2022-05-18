@@ -1,17 +1,21 @@
 using FluentAssertions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Xunit;
 using Zurich.Common.Models.CommonDataModels;
+using Zurich.Common;
 using Zurich.Connector.App;
 using Zurich.Connector.Data.Repositories.CosmosDocuments;
 using Zurich.Connector.IntegrationTests.Models;
+using Zurich.Common.Testing;
 
 namespace Zurich.Connector.IntegrationTests
 {
@@ -92,12 +96,14 @@ namespace Zurich.Connector.IntegrationTests
             // TODO: remove when we can find host and dont have to pass in
             if (connector.Info.DataSourceId == "10")
             {
-                request = $"/api/v1/Connectors/{connector.Id}/Data?Hostname=cloudimanage.com";
+                request = $"http://localhost//api/v1/Connectors/{connector.Id}/Data?Hostname=cloudimanage.com";
             }
             if (connector.Info.DataSourceId != "10" && connector.Info.DataSourceId != "45")
             {
+                HttpRequestMessage getRequest = new Helper().TokenRequest(request);
+
                 //Act
-                var response = await _client.GetAsync(request);
+                var response = await _client.SendAsync(getRequest);
 
                 // Assert
                 await CheckResponse<List<DocumentEntity>>(response);
@@ -135,6 +141,8 @@ namespace Zurich.Connector.IntegrationTests
         [MemberData(nameof(GetConnectorsTestCases), parameters: new object[] { "Search", true })]
         public async Task MakeSearchCalls(ConnectorDocument connector)
         {
+            
+
             // Note:- Workaround to skip HighQ connector check
             //        and MS Graph External Search Connector (49) check (Test user didn't consent ExternalItem.Read therefore will get 403 forbidden on graph side)
             if (connector.Id != "47" && connector.Id != "48" && connector.Id != "49")
@@ -142,8 +150,10 @@ namespace Zurich.Connector.IntegrationTests
                 // Arrange
                 var request = $"/api/v1/Connectors/{connector.Id}/Data?Query=*";
 
+                HttpRequestMessage getRequest = new Helper().TokenRequest(request);
+
                 //Act
-                var response = await _client.GetAsync(request);
+                var response = await _client.SendAsync(getRequest);
 
                 // Assert
                 await CheckResponse<SearchObject>(response);

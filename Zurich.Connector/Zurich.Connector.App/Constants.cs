@@ -15,6 +15,14 @@ namespace Zurich.Connector.App
     {
         public const string OAuthUrl = "OAuthBaseUrl";
         public const string ShowPreReleaseConnectors = "ShowPreReleaseConnectors";
+        public const string InstanceLimit = "InstanceLimit";
+        public const string MaxRecordSizePerInstance = "MaxRecordSizePerInstance";
+    }
+
+    public static class QueryParameters
+    {
+        public const string ResultSize = "ResultSize";
+        public const string Offset = "Offset";
     }
 
     public static class SubType

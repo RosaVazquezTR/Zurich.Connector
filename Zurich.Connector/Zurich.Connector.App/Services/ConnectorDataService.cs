@@ -17,6 +17,9 @@ using Zurich.Connector.Data.Repositories;
 using Zurich.Connector.Data.Repositories.CosmosDocuments;
 using CommonServices = Zurich.Common.Services;
 using Zurich.TenantData;
+using Zurich.Connector.Data.Model;
+using Microsoft.Extensions.Configuration;
+using Zurich.Connector.App.Exceptions;
 
 namespace Zurich.Connector.Data.Services
 {
@@ -50,6 +53,8 @@ namespace Zurich.Connector.Data.Services
         private readonly IDataExtractionService _dataExtractionService;
         private readonly ILegalHomeAccessCheck _legalHomeAccess;
         private readonly CommonServices.ITenantService _tenantService;
+        private readonly IOAuthServices _OAuthService;
+        private readonly IConfiguration _configuration;
 
         public ConnectorDataService(
             IDataMappingFactory dataMappingFactory,
@@ -61,7 +66,9 @@ namespace Zurich.Connector.Data.Services
             IRegistrationService registrationService,
             IDataExtractionService dataExtractionService,
             ILegalHomeAccessCheck legalHomeAccess,
-            CommonServices.ITenantService tenantService)
+            CommonServices.ITenantService tenantService,
+            IOAuthServices OAuthService,
+            IConfiguration configuration)
         {
             _dataMappingFactory = dataMappingFactory;
             _dataMappingRepo = dataMappingRepo;
@@ -74,6 +81,8 @@ namespace Zurich.Connector.Data.Services
             _dataExtractionService = dataExtractionService;
             _legalHomeAccess = legalHomeAccess;
             _tenantService = tenantService;
+            _OAuthService = OAuthService;
+            _configuration = configuration;
         }
 
         /// <summary>
@@ -87,10 +96,24 @@ namespace Zurich.Connector.Data.Services
         /// <returns>Connector data</returns>
         public async Task<dynamic> GetConnectorData(string connectionIdentifier, string hostname, string transferToken, Dictionary<string, string> queryParameters, bool retrieveFilters)
         {
+            int instanceLimit = _configuration.GetValue<int>(AppSettings.InstanceLimit, 10);
+            int MaxRecordSizePerInstance = _configuration.GetValue<int>(AppSettings.MaxRecordSizePerInstance, 1000);
+
             ConnectorModel connectorModel = await _dataMappingService.RetrieveProductInformationMap(connectionIdentifier, hostname, retrieveFilters);
+            List<DataSourceInformation> availableRegistrations = await _OAuthService.GetUserRegistrations();
+            availableRegistrations = availableRegistrations.FindAll(x => x.AppCode == connectorModel.DataSource.AppCode).Take(instanceLimit).ToList<DataSourceInformation>();
+
+            queryParameters = _dataMappingService.UpdateOffset(connectorModel.DataSource.AppCode, availableRegistrations, queryParameters);
+
+            if (queryParameters.ContainsKey(QueryParameters.ResultSize))
+            {
+                if (Convert.ToInt64(queryParameters[QueryParameters.ResultSize]) > MaxRecordSizePerInstance)
+                    throw new MaxResultSizeException("Request exceeds maximum record size per instance of 1000");
+            }
+
             // TODO: This is a legalhome workaround until legalhome uses OAuth
-           if (string.IsNullOrEmpty(connectorModel.DataSource.Domain) && string.IsNullOrEmpty(hostname))
-           {
+            if (string.IsNullOrEmpty(connectorModel.DataSource.Domain) && string.IsNullOrEmpty(hostname))
+            {
                 hostname = await GetBaseUrl(connectorModel);
                 if (connectorModel != null)
                 {
@@ -126,11 +149,11 @@ namespace Zurich.Connector.Data.Services
             }
             if (retrieveFilters == true)
             {
-                
+
                 JToken mappingFilters = JToken.FromObject(connectorDocument.Filters);
                 data[Constants.filters] = mappingFilters;
             }
-            return data;            
+            return data;
         }
 
         public NameValueCollection MapQueryParametersFromDB(Dictionary<string, string> cdmQueryParameters, ConnectorModel connectorModel)
@@ -169,7 +192,7 @@ namespace Zurich.Connector.Data.Services
             // Add default parameters if not present in the request. ex: locale, ResultSize etc
             var defaultParameters = connectorModel.Request?.Parameters?.Where(t => DefaultParametersCheck(t, queryParameters))
                                 .ToDictionary(c => c.Name, c => c.DefaultValue);
-            
+
             IEnumerable<KeyValuePair<string, string>> allParameters = new Dictionary<string, string>();
 
             if (queryParameters.Any())
@@ -207,17 +230,17 @@ namespace Zurich.Connector.Data.Services
 
         private bool DefaultParametersCheck(ConnectorRequestParameterModel request, Dictionary<string, string> queryParameters)
         {
-            return !String.IsNullOrWhiteSpace(request.DefaultValue) 
-                && !queryParameters.ContainsKey(request.Name) 
+            return !String.IsNullOrWhiteSpace(request.DefaultValue)
+                && !queryParameters.ContainsKey(request.Name)
                 && request.InClause != ODataConstants.OData
                 && request.InClause != InClauseConstants.Headers;
         }
-     
+
         private Dictionary<string, string> SetupPagination(ConnectorModel connectorModel, Dictionary<string, string> cdmQueryParameters)
         {
             // Ex: Office 365 uses 0 based offset numbering.
-            if (connectorModel.Pagination?.IsZeroBasedOffset.HasValue == true && 
-                connectorModel.Pagination?.IsZeroBasedOffset == false && 
+            if (connectorModel.Pagination?.IsZeroBasedOffset.HasValue == true &&
+                connectorModel.Pagination?.IsZeroBasedOffset == false &&
                 cdmQueryParameters.ContainsKey("Offset"))
             {
                 cdmQueryParameters["Offset"] = (int.Parse(cdmQueryParameters["Offset"]) + 1).ToString();

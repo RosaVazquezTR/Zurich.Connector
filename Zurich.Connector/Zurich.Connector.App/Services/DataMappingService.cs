@@ -1,6 +1,10 @@
 ﻿using System.Threading.Tasks;
 using Zurich.Connector.App.Model;
 using AutoMapper;
+using System.Collections.Generic;
+using Zurich.Connector.Data.Model;
+using System;
+using Zurich.Connector.App.Exceptions;
 
 namespace Zurich.Connector.App.Services
 {
@@ -16,22 +20,23 @@ namespace Zurich.Connector.App.Services
         /// <param name="hostname">Host name</param>
         /// <returns> Returns ConnectorModel</returns>
         public Task<ConnectorModel> RetrieveProductInformationMap(string connectionIdentifier, string hostname, bool retrieveFilters);
+
+        public Dictionary<string, string> UpdateOffset(string AppCode, List<DataSourceInformation> availableRegistrations, Dictionary<string, string> queryParameters);
     }
 
     /// <summary>
-    /// DataMappingService gets data from cosmo db using Cosmo service and reorganizes the data
+    /// DataMappingService used to modify data mapping requests and responses
     /// </summary>
     public class DataMappingService : IDataMappingService
     {
         private readonly ICosmosService _cosmosService;
         private readonly IMapper _mapper;
 
-        public DataMappingService(ICosmosService cosmosService, IMapper mapper)
+        public DataMappingService(ICosmosService cosmosService, IMapper mapper, IOAuthServices oAuthService)
         {
 
             _cosmosService = cosmosService;
             _mapper = mapper;
-
         }
 
         /// <summary>
@@ -63,5 +68,20 @@ namespace Zurich.Connector.App.Services
             return connector;
         }
 
+        public Dictionary<string, string> UpdateOffset(string AppCode, List<DataSourceInformation> availableRegistrations, Dictionary<string, string> queryParameters)
+        {
+            if(availableRegistrations.Count > 1)
+            {
+                if(queryParameters.ContainsKey(QueryParameters.Offset) && queryParameters.ContainsKey(QueryParameters.ResultSize))
+                {
+                    if (int.TryParse(queryParameters["Offset"], out int Offset) && int.TryParse(queryParameters["ResultSize"], out int ResultSize))
+                    {
+                        queryParameters[QueryParameters.ResultSize] = (Convert.ToInt32(queryParameters[QueryParameters.Offset]) + Convert.ToInt32(queryParameters[QueryParameters.ResultSize])).ToString();
+                        queryParameters[QueryParameters.Offset] = "0";
+                    }
+                }
+            }
+            return queryParameters;
+        }
     }
 }

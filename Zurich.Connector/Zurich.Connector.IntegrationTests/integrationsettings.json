@@ -1,10 +1,11 @@
 {
   "AzureAd": {
     "ClientId": "b4a0d298-06dd-4738-83be-9b57653980b1",
-    "ClientSecret": "DoNotSetHere"
+    "ClientSecret": "wSL.8nz-NCW5_9O8fJztPCa21GU~se~.CZ"
   },
   "KeyVault": {
-    "Endpoint": "https://connectorsKeyVaultCI.vault.azure.net/"
+    "Endpoint": "https://connectorsKeyVaultCI.vault.azure.net/",
+    "SearchEndpoint": "https://searchKeyVaultCI.vault.azure.net/"
   },
   "Audience": "legalhome",
   "AllowedCORSOrigins": [ "http://localhost:4200" ],
@@ -28,5 +29,19 @@
     "OfferThroughput": "400"
   },
   "OAuthBaseUrl": "https://ci.api.legalplatform.thomsonreuters.com/",
-  "ShowPreReleaseConnectors": true
+  "TokenIssuer": "https://ci.login.legalplatform.thomsonreuters.com/is",
+  "ShowPreReleaseConnectors": true,
+  "IntegrationTestHosts": {
+    "Host": "https://localhost:44328"
+  },
+  "onePassUsername": {
+    "RecentOptedInUser": "manualuser1.us",
+    "RecentOptedOutUser": "manualuser2.us"
+  },
+  "IdentityServer": {
+    "IdentityServerEndpoint": " https://ci.login.legalplatform.thomsonreuters.com/is/connect/token",
+    "ClientId": "LegalHomeAT",
+    "GrantType": "password",
+    "Scope": "legalhome.full legalhomests.user search.full connectors.full"
+  }
 }

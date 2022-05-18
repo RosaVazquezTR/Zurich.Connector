@@ -1,5 +1,5 @@
 {
-  "TokenIssuer": "https://ci.login.legalplatform.thomsonreuters.com/is/",
+  "TokenIssuer": "https://ci.login.legalplatform.thomsonreuters.com/is",
   "KeyVault": {
     "Endpoint": "https://connectorsKeyVaultCI.vault.azure.net/"
   },
@@ -7,5 +7,18 @@
     "ClientId": "b4a0d298-06dd-4738-83be-9b57653980b1",
     "ClientSecret": "DoNotSetHere"
   },
-  "OAuthBaseUrl": "https://ci.api.legalplatform.thomsonreuters.com/"
+  "OAuthBaseUrl": "https://ci.api.legalplatform.thomsonreuters.com/",
+  "IntegrationTestHosts": {
+    "Host": "https://localhost:44328"
+  },
+  "onePassUsername": {
+    "RecentOptedInUser": "manualuser1.us",
+    "RecentOptedOutUser": "manualuser2.us"
+  },
+  "IdentityServer": {
+    "IdentityServerEndpoint": " https://ci.login.legalplatform.thomsonreuters.com/is/connect/token",
+    "ClientId": "LegalHomeAT",
+    "GrantType": "password",
+    "Scope": "legalhome.full legalhomests.user search.full connectors.full"
+  }
 }
