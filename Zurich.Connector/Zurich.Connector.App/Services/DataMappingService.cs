@@ -4,6 +4,7 @@ using AutoMapper;
 using System.Collections.Generic;
 using Zurich.Connector.Data.Model;
 using System;
+using Zurich.Connector.App.Exceptions;
 
 namespace Zurich.Connector.App.Services
 {
@@ -69,15 +70,16 @@ namespace Zurich.Connector.App.Services
 
         public Dictionary<string, string> UpdateOffset(string AppCode, List<DataSourceInformation> availableRegistrations, Dictionary<string, string> queryParameters)
         {
-
             if(availableRegistrations.Count > 1)
             {
                 if(queryParameters.ContainsKey(QueryParameters.Offset) && queryParameters.ContainsKey(QueryParameters.ResultSize))
                 {
-                    queryParameters[QueryParameters.Offset] = "0";
-                    queryParameters[QueryParameters.ResultSize] = (Convert.ToInt32(queryParameters[QueryParameters.Offset]) + Convert.ToInt32(queryParameters[QueryParameters.ResultSize])).ToString()  ;
+                    if (int.TryParse(queryParameters["Offset"], out int Offset) && int.TryParse(queryParameters["ResultSize"], out int ResultSize))
+                    {
+                        queryParameters[QueryParameters.ResultSize] = (Convert.ToInt32(queryParameters[QueryParameters.Offset]) + Convert.ToInt32(queryParameters[QueryParameters.ResultSize])).ToString();
+                        queryParameters[QueryParameters.Offset] = "0";
+                    }
                 }
-                
             }
             return queryParameters;
         }

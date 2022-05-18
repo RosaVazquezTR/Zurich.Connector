@@ -7,6 +7,8 @@ using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Xunit;
 using Zurich.Common.Exceptions;
+using Zurich.Common;
+using Zurich.Common.Testing;
 
 namespace Zurich.Connector.IntegrationTests
 {
@@ -67,17 +69,8 @@ namespace Zurich.Connector.IntegrationTests
         public async Task TestConnectorDataById_With_Statucode_OK()
         {
             // Arrange
-            var request = configuration.GetValue<string>("IntegrationTestHosts:Host").ToString() + "/api/v1/Connectors/12/data";
-
-            Helper helper = new Helper();
-            var token = helper.GetAuthToken("RecentOptedInUser");
-
-            var getRequest = new HttpRequestMessage
-            {
-                Method = HttpMethod.Get,
-                RequestUri = new Uri(request),
-            };
-            getRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token.access_token);
+            var request = $"/api/v1/Connectors/12/data";
+            HttpRequestMessage getRequest = new Helper().TokenRequest(request);
 
             //Act
             var response= await _client.SendAsync(getRequest);
@@ -90,17 +83,8 @@ namespace Zurich.Connector.IntegrationTests
         public async Task TestXMLConnectorDataById_With_SuccessStatus()
         {
             // Arrange
-            var request = configuration.GetValue<string>("IntegrationTestHosts:Host").ToString() + "/api/v1/Connectors/10/data/?query=query";
-
-            Helper helper = new Helper();
-            var token = helper.GetAuthToken("RecentOptedInUser");
-
-            var getRequest = new HttpRequestMessage
-            {
-                Method = HttpMethod.Get,
-                RequestUri = new Uri(request),
-            };
-            getRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token.access_token);
+            var request = $"/api/v1/Connectors/10/data/?query=query";
+            HttpRequestMessage getRequest = new Helper().TokenRequest(request);
 
             //Act
             var response = await _client.SendAsync(getRequest);
@@ -119,17 +103,8 @@ namespace Zurich.Connector.IntegrationTests
         public async Task TestJsonConnectorDataById_With_SuccessStatus()
         {
             // Arrange
-            var request = configuration.GetValue<string>("IntegrationTestHosts:Host").ToString() +  "/api/v1/Connectors/14/data/?query=query";
-
-            Helper helper = new Helper();
-            var token = helper.GetAuthToken("RecentOptedInUser");
-
-            var getRequest = new HttpRequestMessage
-            {
-                Method = HttpMethod.Get,
-                RequestUri = new Uri(request),
-            };
-            getRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token.access_token);
+            var request = $"/api/v1/Connectors/14/data/?query=query";
+            HttpRequestMessage getRequest = new Helper().TokenRequest(request);
 
 
             //Act
@@ -145,22 +120,15 @@ namespace Zurich.Connector.IntegrationTests
             Assert.NotNull((JArray)message["documents"]);
         }
 
+        
+
         [Fact]
         public async Task TestConnectorData_for_DocumentType_As_Array_With_SuccessStatus()
         {
             // Arrange
-            string request = configuration.GetValue<string>("IntegrationTestHosts:Host").ToString() + "/api/v1/Connectors/10/data/?query=test&retrieveFilters=true";
+            var request = $"/api/v1/Connectors/10/data/?query=test&retrieveFilters=true";
+            HttpRequestMessage getRequest = new Helper().TokenRequest(request);
 
-            Helper helper = new Helper();
-            var token = helper.GetAuthToken("RecentOptedInUser");
-
-            var getRequest = new HttpRequestMessage
-            {
-                Method = HttpMethod.Get,
-                RequestUri = new Uri(request),
-            };
-            getRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token.access_token);
-            
             //Act
             var response = await _client.SendAsync(getRequest);
 

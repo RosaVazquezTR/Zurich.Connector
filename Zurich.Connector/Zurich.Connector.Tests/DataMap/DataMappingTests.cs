@@ -6,13 +6,16 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Zurich.Common.Models.OAuth;
 using Zurich.Common.Repositories;
 using Zurich.Common.Services.Security;
+using Zurich.Connector.App.Services;
 using Zurich.Connector.Data;
 using Zurich.Connector.Data.DataMap;
 using Zurich.Connector.Data.Factories;
@@ -20,6 +23,7 @@ using Zurich.Connector.Data.Model;
 using Zurich.Connector.Data.Repositories;
 using Zurich.Connector.Data.Repositories.CosmosDocuments;
 using Zurich.Connector.Data.Services;
+using Zurich.Connector.Tests.Common;
 using Zurich.ProductData.Models;
 
 namespace Zurich.Connector.Tests
@@ -41,6 +45,8 @@ namespace Zurich.Connector.Tests
         private Mock<IOAuthApiRepository> _mockOAuthApirepository;
 		private Mock<ILegalHomeAccessCheck> _mockLegalHomeAccessCheck;
 		private IConfiguration _fakeConfiguration;
+		private ICosmosService _cosmosService;
+		private Mock<IOAuthServices> _mockOAuthServices;
 
 		[TestInitialize]
 		public void TestInitialize()
@@ -67,6 +73,9 @@ namespace Zurich.Connector.Tests
 			_mockOAuthApirepository.Setup(x => x.GetToken(It.IsAny<string>())).Returns(Task.FromResult(token));
 			_mockCosmosDocumentReader = new Mock<ConnectorCosmosContext>(null, null);
 			_mockMapper = new Mock<IMapper>();
+			_cosmosService = new CosmosService(_mockCosmosDocumentReader.Object, _mockMapper.Object, _fakeConfiguration);
+			_mockOAuthServices = new Mock<IOAuthServices>();
+
 		}
 
 		#region json Strings
@@ -1097,5 +1106,20 @@ namespace Zurich.Connector.Tests
 			Assert.AreEqual(0, date.Second);
 
 		}
-	}
+
+        [TestMethod]
+        public void UpdateOffsetTest()
+        {
+            // ARRANGE
+            string AppCode = string.Empty;
+            var availableRegistrations = MockConnectorData.SetupAvailableUserRegistrations().ToList();
+            Dictionary<string, string> queryParameters = new Dictionary<string, string>() { { "Offset", "5" }, { "ResultSize", "10" } };
+            DataMappingService dataMappingService = new DataMappingService(_cosmosService, _mockMapper.Object, _mockOAuthServices.Object);
+
+            queryParameters = dataMappingService.UpdateOffset(AppCode, availableRegistrations, queryParameters);
+
+			Assert.IsNotNull(queryParameters);
+			Assert.AreEqual(queryParameters["ResultSize"], "15");
+		}
+    }
 }

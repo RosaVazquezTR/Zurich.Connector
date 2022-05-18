@@ -11,9 +11,11 @@ using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Xunit;
 using Zurich.Common.Models.CommonDataModels;
+using Zurich.Common;
 using Zurich.Connector.App;
 using Zurich.Connector.Data.Repositories.CosmosDocuments;
 using Zurich.Connector.IntegrationTests.Models;
+using Zurich.Common.Testing;
 
 namespace Zurich.Connector.IntegrationTests
 {
@@ -90,7 +92,7 @@ namespace Zurich.Connector.IntegrationTests
             public async Task MakeDocumentCalls(ConnectorDocument connector)
         {
             // Arrange
-            var request = $"http://localhost/api/v1/Connectors/{connector.Id}/Data";
+            var request = $"/api/v1/Connectors/{connector.Id}/Data";
             // TODO: remove when we can find host and dont have to pass in
             if (connector.Info.DataSourceId == "10")
             {
@@ -98,15 +100,7 @@ namespace Zurich.Connector.IntegrationTests
             }
             if (connector.Info.DataSourceId != "10" && connector.Info.DataSourceId != "45")
             {
-                Helper helper = new Helper();
-                var token = helper.GetAuthToken("RecentOptedInUser");
-
-                var getRequest = new HttpRequestMessage
-                {
-                    Method = HttpMethod.Get,
-                    RequestUri = new Uri(request),
-                };
-                getRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token.access_token);
+                HttpRequestMessage getRequest = new Helper().TokenRequest(request);
 
                 //Act
                 var response = await _client.SendAsync(getRequest);
@@ -154,17 +148,9 @@ namespace Zurich.Connector.IntegrationTests
             if (connector.Id != "47" && connector.Id != "48" && connector.Id != "49")
             {
                 // Arrange
-                var request = $"http://localhost/api/v1/Connectors/{connector.Id}/Data?Query=*";
+                var request = $"/api/v1/Connectors/{connector.Id}/Data?Query=*";
 
-                Helper helper = new Helper();
-                var token = helper.GetAuthToken("RecentOptedInUser");
-
-                var getRequest = new HttpRequestMessage
-                {
-                    Method = HttpMethod.Get,
-                    RequestUri = new Uri(request),
-                };
-                getRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token.access_token);
+                HttpRequestMessage getRequest = new Helper().TokenRequest(request);
 
                 //Act
                 var response = await _client.SendAsync(getRequest);

@@ -113,6 +113,7 @@ namespace Zurich.Connector.Data.Services
                 foreach (var connector in connectors.Where(connector => registeredDataSources.Select(x => x.AppCode).Contains(connector.DataSource.AppCode)))
                 {
                     connector.RegistrationStatus = RegistrationStatus.Registered;
+                    // FirstOrDefault is needed because we can get multiple app codes in the registered data sources. Eg: HighQ returns 2 app codes if a user is associated with 2 instances.
                     connector.DataSource.RequiresNewToken = registeredDataSources.Where(x => x.AppCode == connector.DataSource.AppCode).FirstOrDefault().RequiresNewToken;
                     registeredConnectors.Add(connector);
                 }

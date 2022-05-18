@@ -13,10 +13,12 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Xunit;
+using Zurich.Common;
+using Zurich.Common.Testing;
 
 namespace Zurich.Connector.IntegrationTests
 {
-    public class Helper : IClassFixture<CustomWebApplicationFactory>
+    public class Helper: IClassFixture<CustomWebApplicationFactory>
     {
         protected IConfiguration _configuration;
         protected IConfigurationBuilder _configBuilder;
@@ -55,62 +57,49 @@ namespace Zurich.Connector.IntegrationTests
 
             _configuration = builder.Build();
             _logger = LoggerFactory.Create(b => b.AddDebug()
-                                                 .AddConsole()).CreateLogger<Helper>();
+                                                 .AddConsole()).CreateLogger<TokenHelper>();
         }
 
-        public ISConnectToken GetAuthToken(string user)
+        public TokenRequest GetTokenRequestDetails(string user)
         {
-            int httpStatusCode = -1;
-            ISConnectToken returnResponse = null;
-            string errorMessage;
+            TokenRequest tokenRequest = null;
             try
             {
-                string IdentityServerUrl = _configuration.GetValue<string>("TokenIssuer");
-                string IdentityServerEndpointUrl = _configuration.GetValue<string>("IdentityServer:IdentityServerEndpoint");
-                _logger.LogDebug("Sending POST request: " + IdentityServerEndpointUrl);
-
-                var responseContent = string.Empty;
-
-                var keyVault = _configuration.GetValue<string>("KeyVault:Endpoint");
-                var clientId = _configuration.GetValue<string>("AzureAd:ClientId");
-                var clientSecret = _configuration.GetValue<string>("AzureAd:ClientSecret");
-                var onePassUsername = _configuration.GetValue<string>("onePassUsername:" + user);
-                var onePassPassword = _configuration.GetValue<string>("OnePassPassword:" + user);
-
-                var identityServerclientId = _configuration.GetValue<string>("IdentityServer:ClientId");
-                var identityServerclientSecret = _configuration.GetValue<string>("IdentityServer:ClientSecret");
-
-
-
-                string clientIdSecretPair = String.Format("{0}:{1}", identityServerclientId, identityServerclientSecret);
-                var byteArray = Encoding.ASCII.GetBytes(clientIdSecretPair);
-
-                using (var client = new HttpClient())
-                using (var request = new HttpRequestMessage(HttpMethod.Post, IdentityServerEndpointUrl))
+                if(_configuration !=null)
                 {
-                    request.Headers.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
-                    IDictionary<string, string> parameters = new Dictionary<string, string>();
-                    parameters.Add("username", onePassUsername.ToString());
-                    parameters.Add("password", onePassPassword.ToString());
-                    parameters.Add("grant_type", _configuration.GetValue<string>("IdentityServer:GrantType"));
-                    parameters.Add("scope", _configuration.GetValue<string>("IdentityServer:Scope"));
-                    var encodedContent = new FormUrlEncodedContent(parameters);
-                    // Set the content of the request message object to your paramaters
-                    request.Content = encodedContent;
-                    using var response = client.SendAsync(request).Result;
-                    response.EnsureSuccessStatusCode();
-                    responseContent = response.Content.ReadAsStringAsync().Result;
-                    httpStatusCode = (int)response.StatusCode;
-                    returnResponse = JsonConvert.DeserializeObject<ISConnectToken>(responseContent);
+                    tokenRequest = new TokenRequest();
+                    tokenRequest.IdentityServerEndpoint = _configuration.GetValue<string>("IdentityServer:IdentityServerEndpoint");
+                    tokenRequest.IdentityServerclientSecret = _configuration.GetValue<string>("AzureAd:ClientSecret");
+                    tokenRequest.Username = _configuration.GetValue<string>("onePassUsername:" + user);
+                    tokenRequest.Password = _configuration.GetValue<string>("OnePassPassword:" + user);
+                    tokenRequest.IdentityServerclientId = _configuration.GetValue<string>("IdentityServer:ClientId");
+                    tokenRequest.IdentityServerclientSecret = _configuration.GetValue<string>("IdentityServer:ClientSecret");
+                    tokenRequest.GrantType = _configuration.GetValue<string>("IdentityServer:GrantType");
+                    tokenRequest.Scope = _configuration.GetValue<string>("IdentityServer:Scope");
                 }
             }
-            catch (HttpRequestException ex)
+            catch (Exception ex)
             {
-                errorMessage = "Failed to access token from Identity Server using Identity Server Resource Owner Endpoint.";
-                _logger.LogError(errorMessage);
-                throw new Exception(errorMessage);
+                throw new Exception();
             }
-            return returnResponse;
+            return tokenRequest;
+        }
+
+
+        public HttpRequestMessage TokenRequest(string request)
+        {
+            var host = _configuration.GetValue<string>("IntegrationTestHosts:Host").ToString();
+            request = $"{host}{request}";
+
+            var token = new TokenHelper().GetAuthToken(new Helper().GetTokenRequestDetails("RecentOptedInUser"));
+
+            var getRequest = new HttpRequestMessage
+            {
+                Method = HttpMethod.Get,
+                RequestUri = new Uri(request),
+            };
+            getRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token.access_token);
+            return getRequest;
         }
 
     }

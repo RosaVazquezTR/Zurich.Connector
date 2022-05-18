@@ -102,6 +102,7 @@ namespace Zurich.Connector.Data.Services
             ConnectorModel connectorModel = await _dataMappingService.RetrieveProductInformationMap(connectionIdentifier, hostname, retrieveFilters);
             List<DataSourceInformation> availableRegistrations = await _OAuthService.GetUserRegistrations();
             availableRegistrations = availableRegistrations.FindAll(x => x.AppCode == connectorModel.DataSource.AppCode).Take(instanceLimit).ToList<DataSourceInformation>();
+
             queryParameters = _dataMappingService.UpdateOffset(connectorModel.DataSource.AppCode, availableRegistrations, queryParameters);
 
             if (queryParameters.ContainsKey(QueryParameters.ResultSize))
