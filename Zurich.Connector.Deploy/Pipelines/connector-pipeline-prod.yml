@@ -251,7 +251,6 @@ stages:
                     functionAlertWindowSize: ${{ variables.functionAlertWindowSize }}
                     resourceGroup: ${{ variables.resourceGroup }}
                     subscriptionName: ${{ variables.subscriptionName }}
-## Testing is not currently possible because we can't get a token for prod from identity server
 # - stage: CompatibilityTesting
 #   pool: AutomationTestAgentPool
 #   dependsOn: Prod
@@ -261,13 +260,14 @@ stages:
 #     displayName: 'Regression Tests (Backwards Compatibility Tests)'
 #     steps: 
 #       - checkout: ZurichTesting
-#       - template: pipelines\Templates\legal-home-regression-tests.yml@ZurichTesting
+#       - template: pipelines\Templates\postman-collection-tests.yml@ZurichTesting
 #         parameters:
-#           environment: ${{ variables.environmentStorageName }}
-#           azureAdClientSecret: $(azureAdClientSecret)
-#           testTags: ${{ variables.regressionTestTags }}
+#           collectionId: ${{ variables.regressionTestCollectionId }}
+#           environmentId: ${{ variables.regressionTestEnvironmentId }}
+#           xApiKey: ${{ variables.regressionTestXApiKey }}
 - stage: Swap_Slots
   dependsOn: Prod
+#  condition: in(dependencies.CompatibilityTesting.result, 'Succeeded', 'Failed')
   jobs:
     - template: ../Templates/connector-swap-slots.yml
       parameters:
@@ -279,6 +279,7 @@ stages:
         subscriptionName: ${{ variables.subscriptionName }}
 - stage: Update_APIM_Product
   dependsOn: Swap_Slots
+  condition: eq(dependencies.Swap_Slots.result, 'Succeeded')
   jobs:
   - job: 'UpdateApim'
     displayName: 'Update Apim Connector Service'
@@ -311,18 +312,18 @@ stages:
           serviceName: ${{ variables.connectorServiceName }}
           subscriptionName: ${{ variables.subscriptionName }}
           swaggerEndpoint: ${{ variables.swaggerEndpoint }}
-## Testing is not currently possible because we can't get a token for prod from identity server
 # - stage: Testing
 #   pool: AutomationTestAgentPool
-#   dependsOn: Swap_Slots
+#   dependsOn: Update_APIM_Product
+#   condition: eq(dependencies.Swap_Slots.result, 'Succeeded')
 #   jobs:
 #   - job: 'RegressionTests'
 #     timeoutInMinutes: ${{ variables.regressionTestTimeout }} # how long to run the job before automatically cancelling
 #     displayName: 'Regression Tests (Smoke Tests)'
 #     steps: 
 #       - checkout: ZurichTesting
-#       - template: pipelines\Templates\legal-home-regression-tests.yml@ZurichTesting
+#       - template: pipelines\Templates\postman-collection-tests.yml@ZurichTesting
 #         parameters:
-#           environment: ${{ variables.environmentStorageName }}
-#           azureAdClientSecret: $(azureAdClientSecret)
-#           testTags: ${{ variables.regressionTestTags }}
+#           collectionId: ${{ variables.regressionTestCollectionId }}
+#           environmentId: ${{ variables.regressionTestEnvironmentId }}
+#           xApiKey: ${{ variables.regressionTestXApiKey }}

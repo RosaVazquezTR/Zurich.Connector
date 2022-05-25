@@ -240,11 +240,11 @@ stages:
     displayName: 'Regression Tests (Backwards Compatibility Tests)'
     steps: 
       - checkout: ZurichTesting
-      - template: pipelines\Templates\legal-home-regression-tests.yml@ZurichTesting
+      - template: pipelines\Templates\postman-collection-tests.yml@ZurichTesting
         parameters:
-          environment: ${{ variables.environmentStorageName }}
-          azureAdClientSecret: $(azureAdClientSecret)
-          testTags: ${{ variables.regressionTestTags }}
+          collectionId: ${{ variables.regressionTestCollectionId }}
+          environmentId: ${{ variables.regressionTestEnvironmentId }}
+          xApiKey: ${{ variables.regressionTestXApiKey }}
 - stage: Swap_Slots
   dependsOn: CompatibilityTesting
   condition: and(in(dependencies.CompatibilityTesting.result, 'Succeeded', 'Failed'), eq(variables['Build.SourceBranchName'], 'master'))
@@ -294,7 +294,7 @@ stages:
           swaggerEndpoint: ${{ variables.swaggerEndpoint }}
 - stage: Testing
   pool: AutomationTestAgentPool
-  dependsOn: Swap_Slots
+  dependsOn: Update_APIM_Product
   condition: and(eq(dependencies.Swap_Slots.result, 'Succeeded'), eq(variables['Build.SourceBranchName'], 'master'))
   jobs:
   - job: 'RegressionTests'
@@ -302,8 +302,8 @@ stages:
     displayName: 'Regression Tests (Smoke Tests)'
     steps: 
       - checkout: ZurichTesting
-      - template: pipelines\Templates\legal-home-regression-tests.yml@ZurichTesting
+      - template: pipelines\Templates\postman-collection-tests.yml@ZurichTesting
         parameters:
-          environment: ${{ variables.environmentStorageName }}
-          azureAdClientSecret: $(azureAdClientSecret)
-          testTags: ${{ variables.regressionTestTags }}
+          collectionId: ${{ variables.regressionTestCollectionId }}
+          environmentId: ${{ variables.regressionTestEnvironmentId }}
+          xApiKey: ${{ variables.regressionTestXApiKey }}

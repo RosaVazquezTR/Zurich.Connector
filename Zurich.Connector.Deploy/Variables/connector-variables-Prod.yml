@@ -23,6 +23,8 @@ variables:
     value: "@('Administrators','Developers')"
   - name: keyVaultSubnets
     value: "@('connector-function-Prod-backend', 'connector-webApi-Prod-Backend','hqh-RelMgmtVM-PROD-backend')"
+  - name: regressionTestEnvironmentId
+    value: '10394399-be976a63-01da-4aff-a376-38ae77955c98'
   - name: resourceGroup
     value: 'centralus-connectors'
   - name: subnetConnectorBackend
