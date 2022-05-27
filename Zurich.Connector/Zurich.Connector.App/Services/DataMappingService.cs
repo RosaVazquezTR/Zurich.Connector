@@ -70,7 +70,7 @@ namespace Zurich.Connector.App.Services
 
         public Dictionary<string, string> UpdateOffset(string AppCode, List<DataSourceInformation> availableRegistrations, Dictionary<string, string> queryParameters)
         {
-            if(availableRegistrations.Count > 1)
+            if(availableRegistrations?.Count > 1)
             {
                 if(queryParameters.ContainsKey(QueryParameters.Offset) && queryParameters.ContainsKey(QueryParameters.ResultSize))
                 {
