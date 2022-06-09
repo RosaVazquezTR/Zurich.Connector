@@ -341,6 +341,18 @@ namespace Zurich.Connector.Tests
 					}
 				]
 			},
+         ""Count"": 1,
+		 ""Documents"": [{
+							""title"": ""Extradition: special cases"",
+							""webURL"": ""https://uk.westlaw.com/Document/I111C8210486311E3BB9A89B1597EA15E/View/FullText.html?navigationPath=Search%2Fv1%2Fresults%2Fnavigation%2Fi0ad6ad3b0000018149e3359b18a1486c%3Fppcid%3Di0115653351ea42de9d0a835d3715bac6%26Nav%3DRESEARCH_COMBINED_WLUK%26fragmentIdentifier%3DI111C8210486311E3BB9A89B1597EA15E%26parentRank%3D0%26startIndex%3D6%26transitionType%3DSearchItem&amp;listSource=Search&amp;list=RESEARCH_COMBINED_WLUK&amp;rank=6&amp;ppcid=i0115653351ea42de9d0a835d3715bac6&amp;originationContext=Search%20Result&amp;transitionType=SearchItem"",
+							""type"": ""Overviews"",
+							""creationDate"": """",
+							""snippet"": """",
+							""additionalProperties"": {
+									""document-guid"": ""I111C8210486311E3BB9A89B1597EA15E""
+
+							}
+                        }],
          ""SourceDirectoryUrl"" : ""https://(WestlawUKHost)/Search/Results.html?comp=wluk&query=(%Query)&saveJuris=False&contentType=RESEARCH_COMBINED_WLUK&querySubmissionGuid=(NewGuid())"",
 
 }";
@@ -528,7 +540,7 @@ namespace Zurich.Connector.Tests
 
 		[TestMethod]
 		public async Task TestMappingWithoutMappingResponse()
-		{
+	{
 			// ARRANGE
 			string appCode = "TestApp";
 
@@ -581,7 +593,7 @@ namespace Zurich.Connector.Tests
 
 			// ASSERT
 			Assert.IsNotNull(documents);
-			Assert.AreEqual(2, documents.Count);
+			Assert.AreEqual(4, documents.Count);
 			Assert.IsTrue(documents["SourceDirectoryUrl"].ToString().Contains(_fakeConfiguration["westlawUKHost"].ToString()));
 		}
 

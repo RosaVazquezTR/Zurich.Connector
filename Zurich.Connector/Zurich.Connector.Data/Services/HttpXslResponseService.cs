@@ -11,6 +11,8 @@ using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Xsl;
 using Zurich.Connector.Data.Repositories.CosmosDocuments;
+using System.Reflection;
+using Zurich.Connector.Data.Model;
 
 namespace Zurich.Connector.Data.Services
 {
@@ -44,14 +46,29 @@ namespace Zurich.Connector.Data.Services
             xmlTextWriter.Formatting = System.Xml.Formatting.Indented;
             objXslTrans.Transform(xmlDocument, null, xmlTextWriter);
             xmlTextWriter.Flush();
-            response = stringWriter.ToString();
+            response = await FormatResponse(stringWriter.ToString());
 
             string jsonText = JsonConvert.SerializeObject(JsonConvert.DeserializeObject(response));
             return JToken.Parse(jsonText);
         }
 
 
+        /// <summary>
+        /// Format connector response
+        /// </summary>
+        /// <returns>data source.</returns> 
+        public async Task<string> FormatResponse(string response)
+        {
+            SearchResponse searchObject = JsonConvert.DeserializeObject<SearchResponse>(response);
+            foreach (SearchItemEntity item in searchObject.Documents)
+            {
+                item.Title = item.Title.Replace("\"", string.Empty);
+                item.Snippet = item.Snippet.Replace("\"", string.Empty);
 
+            }
+            response = JsonConvert.SerializeObject(JsonConvert.DeserializeObject(response));
+            return response;
+        }
 
 
         /// <summary>

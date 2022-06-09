@@ -64,7 +64,7 @@ namespace Zurich.Connector.Data.DataMap
                     return await MapToCDM<T>(jsonResponse, connectorDocument.ResultLocation, connectorDocument, requestParameter);
                 else
                 {
-                    await ModifyResult(jsonResponse, connectorDocument);
+                    jsonResponse = await ModifyResult(jsonResponse, connectorDocument);
                     return jsonResponse.ToObject<T>();
 
                 }
@@ -77,11 +77,17 @@ namespace Zurich.Connector.Data.DataMap
 
         private async Task<JToken> ModifyResult(JToken jsonResponse, ConnectorDocument connectorDocument)
         {
-            JObject jobject = await MapProperties(connectorDocument.CdmMapping.structured, jsonResponse, null);
-
-            foreach (var item in jobject)
+            if (jsonResponse["Documents"].ToString() != "[]")
             {
-                jsonResponse[item.Key] = item.Value.ToString();
+                JObject jobject = await MapProperties(connectorDocument.CdmMapping.structured, jsonResponse, null);
+                foreach (var item in jobject)
+                {
+                    jsonResponse[item.Key] = item.Value.ToString();
+                }
+            }
+            else
+            {
+                jsonResponse["Count"] = 0;
             }
             return jsonResponse;
         }
