@@ -21,6 +21,7 @@ using Zurich.Connector.App;
 using Zurich.Connector.Data;
 using DataModels = Zurich.Connector.Data.Model;
 using AppConnectorModel = Zurich.Connector.App.Model.ConnectorModel;
+using Zurich.Common.Models.OAuth;
 
 namespace Zurich.Connector.Tests.ServiceTests
 {
@@ -33,7 +34,7 @@ namespace Zurich.Connector.Tests.ServiceTests
         private Mock<IConfiguration> _mockConfiguration;
         private Mock<ITenantService> _mockTenantService;
         private Mock<ILegalHomeAccessCheck> _mockLegalHomeAccess;
-        
+        private Mock<OAuthOptions> _mockOAuthOptions;
 
         #region Data Model
         List<ConnectorRegistration> registrations = new List<ConnectorRegistration>()
@@ -81,13 +82,14 @@ namespace Zurich.Connector.Tests.ServiceTests
             _mockConfiguration = new Mock<IConfiguration>();
             _mockTenantService = new Mock<ITenantService>();
             _mockLegalHomeAccess = new Mock<ILegalHomeAccessCheck>();
+            _mockOAuthOptions = new Mock<OAuthOptions>();
         }
 
         private RegistrationService CreateService(IConfiguration config = null)
         {
             if (config == null)
                 config = _mockConfiguration.Object;
-            return new RegistrationService(_mockCosmosService.Object, _mockSessionAccessor.Object, _mockOAuthService.Object, config, _mockTenantService.Object, _mockLegalHomeAccess.Object);
+            return new RegistrationService(_mockCosmosService.Object, _mockSessionAccessor.Object, _mockOAuthService.Object, config, _mockTenantService.Object, _mockLegalHomeAccess.Object, _mockOAuthOptions.Object);
         }
 
         [TestMethod]

@@ -212,7 +212,7 @@ namespace Zurich.Connector.Web.Controllers
                 return BadRequest("Connector Id must be defined");
             }
 
-            var registrationResult = await _registrationService.RegisterConnector(registrationModel.ConnectorId);
+            var registrationResult = await _registrationService.RegisterConnector(registrationModel.ConnectorId, registrationModel.Domain);
             if (registrationResult == null)
             {
                 return BadRequest();

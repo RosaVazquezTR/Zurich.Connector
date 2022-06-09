@@ -12,6 +12,7 @@ using Zurich.Connector.Data.Repositories.CosmosDocuments;
 using DataServices = Zurich.Connector.Data.Services;
 using AppModel = Zurich.Connector.App.Model;
 using Zurich.TenantData;
+using Zurich.Common.Models.OAuth;
 
 namespace Zurich.Connector.App.Services
 {
@@ -21,8 +22,9 @@ namespace Zurich.Connector.App.Services
         /// Registers a datasource to a given user
         /// </summary>
         /// <param name="connectorId">The connector id</param>
+        /// <param name="domain">The connector domain</param>
         /// <returns>DataSourceRegistration</returns>
-        Task<DataSourceRegistration> RegisterConnector(string connectorId);
+        Task<DataSourceRegistration> RegisterConnector(string connectorId, string domain);
 
         /// <summary>
         /// Registers data source
@@ -56,8 +58,9 @@ namespace Zurich.Connector.App.Services
         private readonly IConfiguration _configuration;
         private readonly CommonServices.ITenantService _tenantService;
         private readonly ILegalHomeAccessCheck _legalHomeAccess;
+        private readonly OAuthOptions _oAuthOptions;
 
-        public RegistrationService(ICosmosService cosmosService, ISessionAccessor sessionAccesor, IOAuthServices OAuthService, IConfiguration configuration, CommonServices.ITenantService tenantService, ILegalHomeAccessCheck legalHomeAccess)
+        public RegistrationService(ICosmosService cosmosService, ISessionAccessor sessionAccesor, IOAuthServices OAuthService, IConfiguration configuration, CommonServices.ITenantService tenantService, ILegalHomeAccessCheck legalHomeAccess, OAuthOptions oauthOptions)
         {
             _cosmosService = cosmosService;
             _sessionAccesor = sessionAccesor;
@@ -65,18 +68,24 @@ namespace Zurich.Connector.App.Services
             _configuration = configuration;
             _tenantService = tenantService;
             _legalHomeAccess = legalHomeAccess;
+            _oAuthOptions = oauthOptions;
         }
 
-        public async Task<DataSourceRegistration> RegisterConnector(string connectorId)
+        public async Task<DataSourceRegistration> RegisterConnector(string connectorId, string domain = null)
         {
             if (string.IsNullOrEmpty(connectorId))
             {
                 return null;
             }
-
+         
             var connector = await _cosmosService.GetConnectorUsingPreRelease(connectorId, true);
 
-            var dataSourceRegistration = await RegisterDataSource(connector.DataSource.AppCode, connector.DataSource.Domain, connector.DataSource);
+            if (string.IsNullOrEmpty(domain))
+            {
+                domain = connector.DataSource.Domain;
+            }
+
+            var dataSourceRegistration = await RegisterDataSource(connector.DataSource.AppCode, domain, connector.DataSource);
 
             return dataSourceRegistration;
         }
@@ -99,7 +108,15 @@ namespace Zurich.Connector.App.Services
                 Expression<Func<DataSourceDocument, bool>> dsCondition = dataSource => dataSource.appCode.Equals(applicationCode, StringComparison.OrdinalIgnoreCase);
                 dataSource = (await _cosmosService.GetDataSources(dsCondition)).SingleOrDefault();
             }
-           
+
+            // For the specific case of the iManage, if a private domain is not provided, populate it with the public stored in config
+            // As iManage is the only application that actually handle a different domain than the stored one, we explicitly validate it
+            if (applicationCode.Equals("iManage") && (dataSource.RegistrationInfo.DomainRequired && string.IsNullOrWhiteSpace(domain)))
+            {
+                var appinfoDetails = _oAuthOptions.Connections.SingleOrDefault(x => x.Key.Equals(applicationCode, StringComparison.OrdinalIgnoreCase));
+                domain = appinfoDetails.Value.BaseUrl;
+            }
+            // if datasource not exists or domain is required and not provided 
             if (dataSource == null || (dataSource.RegistrationInfo.DomainRequired && string.IsNullOrEmpty(domain)))
             {
                 return response;
@@ -107,11 +124,13 @@ namespace Zurich.Connector.App.Services
 
             // Check to see if we can register this value
             List<DataSourceInformation> availableRegistrations = await _OAuthService.GetAvailableRegistrations();
+            //As iManage can actually handle a different domain than the stored one, we exclude it from following validation
             if (!availableRegistrations.Any(x => x.AppCode.Equals(applicationCode, StringComparison.OrdinalIgnoreCase)
-                && (!dataSource.RegistrationInfo.DomainRequired || domain.Equals(x.Domain, StringComparison.OrdinalIgnoreCase))))
+                && (!dataSource.RegistrationInfo.DomainRequired || domain.Equals(x.Domain, StringComparison.OrdinalIgnoreCase)|| applicationCode.Equals("iManage"))))
             {
-                return response;
+                    return response;
             }
+
 
             if (dataSource.RegistrationInfo.RegistrationMode == CommonModel.RegistrationEntityMode.Automatic)
             {
@@ -123,7 +142,7 @@ namespace Zurich.Connector.App.Services
 
             var oAuthDomain = _configuration.GetValue<string>(AppSettings.OAuthUrl);
             response.Registered = false;
-            response.AuthorizeUrl = $"{oAuthDomain}api/v1/{applicationCode}/authorizeURL";
+            response.AuthorizeUrl = $"{oAuthDomain}api/v1/{applicationCode}/authorizeURL?domain={domain}";
             return response;
         }
 

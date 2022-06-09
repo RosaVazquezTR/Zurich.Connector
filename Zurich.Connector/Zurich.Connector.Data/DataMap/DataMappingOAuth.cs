@@ -57,7 +57,7 @@ namespace Zurich.Connector.Data.DataMap
                     Token = token,
                     Method = connector.Request.Method,
                     Headers = headers
-            };
+                };
 
                 CleanUpApiInformation(apiInfo);
 
