@@ -231,7 +231,7 @@ namespace Zurich.Connector.Tests.ServiceTests
 			// ARRANGE
 			Action<PaginationModel> arrangePagination = pagination => pagination = null;
 
-			Dictionary<string, string> cdmQueryParameters = new Dictionary<string, string>() { { "Offset", "0" } , { "ResultSize", "0" } } ;
+			Dictionary<string, string> cdmQueryParameters = new Dictionary<string, string>() { { "Offset", "0" } , { "ResultSize", "0" } };
 			var connector = MockConnectorData.SetupConnectorModel().Where(t => t.Id == "5").FirstOrDefault();
 			var availableRegistrations = MockConnectorData.SetupAvailableUserRegistrations().ToList();
 			arrangePagination(connector.Pagination);
@@ -292,6 +292,42 @@ namespace Zurich.Connector.Tests.ServiceTests
 
 			// ASSERT
 			mockDataMappingImpl.Verify(x => x.GetAndMapResults<dynamic>(It.IsAny<ConnectorDocument>(), It.IsAny<string>(), It.IsAny<NameValueCollection>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, string>>()), Times.Once, "GetAndMapResults should be called once if no ResultSize");
+
+		}
+
+		[TestMethod]
+		public async Task TestAvailableRegistrationseNotPassed()
+		{
+			// ARRANGE
+			Action<PaginationModel> arrangePagination = pagination => pagination = null;
+
+			Dictionary<string, string> cdmQueryParameters = new Dictionary<string, string>() { };
+			var connector = MockConnectorData.SetupConnectorModel().Where(t => t.Id == "5").FirstOrDefault();
+			List<DataSourceInformation> availableRegistrations = null;
+			arrangePagination(connector.Pagination);
+			var mockDataMappingImpl = new Mock<IDataMapping>();
+
+			var fakeConfigValues = new Dictionary<string, string>
+			{
+				{AppSettings.InstanceLimit, "10"},
+				{AppSettings.MaxRecordSizePerInstance, "1000"},
+			};
+			IConfiguration fakeConfig = Utility.CreateConfiguration(fakeConfigValues);
+
+			_mockDataMappingFactory.Setup(x => x.GetImplementation(It.IsAny<string>())).Returns(mockDataMappingImpl.Object);
+
+			ConnectorDataService service = new ConnectorDataService(_mockDataMappingFactory.Object, _mockDataMappingRepo.Object, _mockLogger.Object, _mapper, _mockCosmosService.Object, _mockdataMappingService.Object,
+				_mockDataSourceOperationsFactory.Object, _mockRegistrationService.Object, _mockDataExtractionService.Object, _mockLegalHomeAccess.Object, _mockTenantService.Object, _mockOAuthServices.Object, fakeConfig);
+
+			_mockdataMappingService.Setup(x => x.RetrieveProductInformationMap(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>())).Returns(Task.FromResult(connector));
+            _mockOAuthServices.Setup(x => x.GetUserRegistrations()).Returns(Task.FromResult(availableRegistrations));
+            _mockdataMappingService.Setup(x => x.UpdateOffset(It.IsAny<string>(), It.IsAny<List<DataSourceInformation>>(), It.IsAny<Dictionary<string, string>>())).Returns(cdmQueryParameters);
+
+            // ACT
+            var mappedResult = await service.GetConnectorData("14", null, null, cdmQueryParameters, false);
+
+			// ASSERT
+			Assert.IsNotNull(((JObject)mappedResult));
 
 		}
 
