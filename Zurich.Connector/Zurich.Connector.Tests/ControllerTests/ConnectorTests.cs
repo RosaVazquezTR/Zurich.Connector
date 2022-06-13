@@ -1,10 +1,10 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Primitives;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -85,6 +85,28 @@ namespace Zurich.Connector.Tests.ControllerTests
 					{
 						""name"": ""Agency, Distribution & Franchising"",
 						""id"": ""8-321-0007""
+
+					},
+							 ]
+			}]
+		}";
+
+		private const string StaticFilterJsonNotMultiselect = @"
+		{
+			""results"":[{
+				""name"": ""Available Filters"",
+				""description"": ""WLUK available filters"",
+				""isMultiselect"": ""false"",
+				""requestParameter"": ""Content.default"",
+				""filterlist"": [
+					{
+						""name"": ""Finance"",
+						""id"": ""Home/WestlawUK/Topic/Finance""
+
+					},
+					{
+						""name"": ""Cases"",
+						""id"": ""Home/WestlawUK/Cases""
 
 					},
 							 ]
@@ -243,6 +265,33 @@ namespace Zurich.Connector.Tests.ControllerTests
 			};
 		}
 
+		private ConnectorModel mockConnectorModel = new ConnectorModel()
+		{
+			Filters = new List<ConnectorsFiltersModel>()
+			{
+				new ConnectorsFiltersModel()
+				{
+					Name = "Topics",
+					Description = "WLUK topics",
+					IsMultiSelect = "false",
+					RequestParameter = "Content.default",
+					FilterList = new List<FilterListModel>()
+					{
+						new FilterListModel()
+						{
+							Name = "Cases",
+							Id = "Home/WestlawUK/Cases"
+						},
+						new FilterListModel()
+						{
+							Name = "Tax",
+							Id = "Home/WestlawUK/Topic/Tax"
+						}
+					}
+				}
+			}
+		};
+
 		#endregion
 
 		[TestMethod]
@@ -250,6 +299,7 @@ namespace Zurich.Connector.Tests.ControllerTests
 		{
 			// ARRANGE
 			_mockConnectorDataService.Setup(x => x.GetConnectorData(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<bool>())).Returns(Task.FromResult<dynamic>(JsonConvert.DeserializeObject(TwoDocumentsListJson)));
+			_mockConnectorservice.Setup(x => x.GetConnector(It.IsAny<string>())).Returns(Task.FromResult<ConnectorModel>(mockConnectorModel));
 
 			ConnectorsController connector = CreateConnectorsController();
 
@@ -267,6 +317,7 @@ namespace Zurich.Connector.Tests.ControllerTests
 		{
 			// ARRANGE
 			_mockConnectorDataService.Setup(x => x.GetConnectorData(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<bool>())).Returns(Task.FromResult<dynamic>(JsonConvert.DeserializeObject(TwoDocumentsListArrayJson)));
+			_mockConnectorservice.Setup(x => x.GetConnector(It.IsAny<string>())).Returns(Task.FromResult<ConnectorModel>(mockConnectorModel));
 
 			ConnectorsController connector = CreateConnectorsController();
 
@@ -284,6 +335,7 @@ namespace Zurich.Connector.Tests.ControllerTests
 		{
 			// ARRANGE
 			_mockConnectorDataService.Setup(x => x.GetConnectorData(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<bool>())).Returns(Task.FromResult<dynamic>(null));
+			_mockConnectorservice.Setup(x => x.GetConnector(It.IsAny<string>())).Returns(Task.FromResult<ConnectorModel>(mockConnectorModel));
 
 			ConnectorsController connector = CreateConnectorsController();
 
@@ -353,6 +405,7 @@ namespace Zurich.Connector.Tests.ControllerTests
 		{
 			// ARRANGE
 			_mockConnectorDataService.Setup(x => x.GetConnectorData(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<bool>())).Returns(Task.FromResult<dynamic>(JsonConvert.DeserializeObject(StaticFilterJson)));
+			_mockConnectorservice.Setup(x => x.GetConnector(It.IsAny<string>())).Returns(Task.FromResult<ConnectorModel>(mockConnectorModel));
 
 			ConnectorsController connector = CreateConnectorsController();
 
@@ -363,6 +416,27 @@ namespace Zurich.Connector.Tests.ControllerTests
 			_mockConnectorDataService.Verify(x => x.GetConnectorData(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<bool>()), Times.Exactly(1));
 			var result = (ContentResult)response.Result;
 			Assert.AreEqual(StatusCodes.Status200OK, result.StatusCode);
+		}
+
+		/// <summary>
+		/// Test to ensure that when sending multiple values for a filter that doesn't support it, it returns a bad request
+		/// </summary>
+		[TestMethod]
+		public async Task CallConnectorDataWithWrongStaticFilters()
+		{
+			// ARRANGE
+			_mockConnectorDataService.Setup(x => x.GetConnectorData(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<bool>())).Returns(Task.FromResult<dynamic>(JsonConvert.DeserializeObject(StaticFilterJsonNotMultiselect)));
+			_mockConnectorservice.Setup(x => x.GetConnector(It.IsAny<string>())).Returns(Task.FromResult<ConnectorModel>(mockConnectorModel));
+
+			ConnectorsController connector = CreateConnectorsControllerWithQuery();
+
+			// ACT
+			var response = await connector.ConnectorData("fakeId", "fakeHost", null, true);
+
+			// ASSERT
+			//_mockConnectorDataService.Verify(x => x.GetConnectorData(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<bool>()), Times.Exactly(1));
+			var result = (ContentResult)response.Result;
+			Assert.AreEqual(StatusCodes.Status400BadRequest, result.StatusCode);
 		}
 
 		[TestMethod]
@@ -422,14 +496,35 @@ namespace Zurich.Connector.Tests.ControllerTests
 		{
 			var httpContext = new DefaultHttpContext();
 			httpContext.Request.Headers["Authorization"] = "FakeToken";
-			httpContext.Request.Query = null;
+            httpContext.Request.Query = null;
 
-			var controllerContext = new ControllerContext()
+            var controllerContext = new ControllerContext()
 			{
 				HttpContext = httpContext,
 			};
 
 			return new ConnectorsController(_mockConnectorservice.Object, _mockConnectorDataService.Object, _mockmapper.Object,null) { ControllerContext = controllerContext };
+		}
+
+		private ConnectorsController CreateConnectorsControllerWithQuery()
+		{
+			var httpContext = new DefaultHttpContext();
+			httpContext.Request.Headers["Authorization"] = "FakeToken";
+            httpContext.Request.Query = new QueryCollection(new Dictionary<string, StringValues>()
+            {
+                { "retrieveFilters", "True" },
+                { "Query", "economic substance" },
+                { "Offset", "0" },
+                { "ResultSize", "25" },
+                { "Content.default", "Home/WestlawUK/WLLegislation/PolicyAndGuidance,Home/WestlawUK/Cases" }
+            });
+
+            var controllerContext = new ControllerContext()
+			{
+				HttpContext = httpContext,
+			};
+
+			return new ConnectorsController(_mockConnectorservice.Object, _mockConnectorDataService.Object, _mockmapper.Object, null) { ControllerContext = controllerContext };
 		}
 	}
 }

@@ -50,6 +50,32 @@ namespace Zurich.Connector.Web.Controllers
                     && !param.Equals("retrievefilters", StringComparison.InvariantCultureIgnoreCase))
                     .ToDictionary(k => k, v => HttpContext?.Request.Query[v].ToString(), StringComparer.OrdinalIgnoreCase);
 
+                var selectedConnector = _connectorService.GetConnector(id);
+
+                if (selectedConnector.Result.Filters != null)
+                {
+                    foreach(ConnectorsFiltersModel filter in selectedConnector.Result.Filters)
+                    {
+                        if (filter.IsMultiSelect == "false")
+                        {
+                            if(parameters.ContainsKey(filter.RequestParameter))
+                            {
+                                var filterContent = parameters[filter.RequestParameter];
+                                if (filterContent.Contains(","))
+                                {
+                                    return new ContentResult
+                                    {
+                                        Content = $"{filter.RequestParameter} doesn't support multiple values and received more than one",
+                                        ContentType = System.Net.Mime.MediaTypeNames.Application.Json,
+                                        StatusCode = StatusCodes.Status400BadRequest
+                                    };
+                                }
+                            }
+                        }
+
+                    }
+                }
+
                 results = await _connectorDataService.GetConnectorData(id, hostName, transferToken, parameters, retrieveFilters);
                 if (results == null)
                 {
@@ -110,7 +136,6 @@ namespace Zurich.Connector.Web.Controllers
         /// id (this is a generic id for the specific connector used by all users), entityType, dataSource, registrationMode(registered/autoReg/manualReg), registeredOn (optional date time), domain (optional)
         /// </returns>
         /// <response code="200">A <see cref="ConnectorListViewModel"/> representing the connectors</response>
-
         [HttpGet()]
         public async Task<ActionResult<List<ConnectorListViewModel>>> Connectors([FromQuery] ConnectorFilterViewModel filters)
         {
