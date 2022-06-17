@@ -141,13 +141,18 @@ namespace Zurich.Connector.Data.Services
             {
                 data = await service.GetAndMapResults<dynamic>(connectorDocument, transferToken, mappedQueryParameters, headerParameters, queryParameters);
                 data = await EnrichConnectorData(connectorModel, data);
+                
+                if (data == null)
+                    return data;
             }
-            // if no data default to a JObject
+
+            // if there is no data because resultSize = 0 default to a JObject
             if (data == null)
             {
                 data = new JObject();
             }
-            if (retrieveFilters == true)
+
+            if (retrieveFilters == true && data != null)
             {
 
                 JToken mappingFilters = JToken.FromObject(connectorDocument.Filters);

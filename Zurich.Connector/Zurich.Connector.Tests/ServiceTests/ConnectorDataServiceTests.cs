@@ -327,7 +327,7 @@ namespace Zurich.Connector.Tests.ServiceTests
             var mappedResult = await service.GetConnectorData("14", null, null, cdmQueryParameters, false);
 
 			// ASSERT
-			Assert.IsNotNull(((JObject)mappedResult));
+			Assert.IsNull(mappedResult);
 
 		}
 
