@@ -139,7 +139,9 @@ namespace Zurich.Connector.App.Services
             {
                 var dataSourceIDs = connectors.Select(t => t.Info.DataSourceId).Distinct();
 
-                var dataSourceResult = await GetDataSources();
+                Expression<Func<DataSourceDocument, bool>> dsCondition = dataSources => dataSourceIDs.Contains(dataSources.Id);
+
+                var dataSourceResult = await GetDataSources(dsCondition);
                 connector.DataSource = dataSourceResult.Where(d => d.Id == connector.Info.DataSourceId).FirstOrDefault();
                 
             }

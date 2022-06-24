@@ -28,6 +28,11 @@ namespace Zurich.Connector.Data.Services
         /// <returns>List of Data Mapping Connections <see cref="DataMappingConnection"/></returns>
         Task<List<ConnectorModel>> GetConnectors(ConnectorFilterModel filters);
 
+        /// <summary>
+        /// Gets the data of an especific conector by its id or alias
+        /// </summary>
+        /// <param name="connectorId"> The alias or id of a given connector </param>
+        /// <returns> Connector details </returns>
         Task<ConnectorModel> GetConnector(string connectorId);
 
         Task<bool> RevokeTenantApplication(string connectorId);
@@ -134,14 +139,20 @@ namespace Zurich.Connector.Data.Services
 
         public async Task<ConnectorModel> GetConnector(string connectorId)
         {
-            var showPreReleaseConnectors = _configuration.GetValue<string>(AppSettings.ShowPreReleaseConnectors);
-            bool blnShowPreReleaseConnectors;
-            Boolean.TryParse(showPreReleaseConnectors, out blnShowPreReleaseConnectors);
-            Expression<Func<ConnectorDocument, bool>> condition;
-            condition = connector => (connector.Id == connectorId && (blnShowPreReleaseConnectors || (!connector.PreRelease.IsDefined() || !connector.PreRelease)));
-            var connector = await _cosmosService.GetConnectors(true, condition);
-            var connectorDetails = connector.SingleOrDefault();
-            return connectorDetails;
+            ConnectorModel connector;
+            // Adding a validation to know wheter the call is being made providing connector id or connector alias
+            if (int.TryParse(connectorId, out var _))
+            {
+                // This means we passed connector id
+                 connector = await _cosmosService.GetConnectorUsingPreRelease(connectorId, true);
+            }
+            else
+            {
+                // This means we passed connector alias
+                connector = await _cosmosService.GetConnectorByAlias(connectorId, true);
+            }
+            
+            return connector;
         }
 
         public async Task<bool> RevokeTenantApplication(string connectorId)
