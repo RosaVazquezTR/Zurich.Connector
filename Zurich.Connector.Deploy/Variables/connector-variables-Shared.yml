@@ -69,13 +69,9 @@ variables:
     value: "legalApis"
   - name: projectName
     value: 'Zurich.Connector'
-  - name: regressionTestCollectionId
-    value: '19332282-54c6de96-7d34-4d16-a914-ece42db3d854'
   - name: regressionTestTags
     value: "Connectors-SmokeTest"
   - name: regressionTestTimeout
     value: 30
-  - name: regressionTestXApiKey
-    value: 'PMAK-62308d93c3371c3c6f0a6177-fa3af225b6be399432ec727f49521ce592'
   - name: tenantDbConnStringKey
     value: "ConnectionStrings--LegalHomeDB"

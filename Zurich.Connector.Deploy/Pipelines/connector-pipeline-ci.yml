@@ -28,6 +28,7 @@ variables:
   value: 'Release'
 - template: Variables\ZurichDeploy-variables-Shared.yml@ZurichDeploy
 - template: Variables\ZurichDeploy-variables-CI.yml@ZurichDeploy
+- template: pipelines\Variables\regression-variables.yml@ZurichTesting
 - template: ../Variables/connector-variables-Shared.yml   
 - template: ../Variables/connector-variables-CI.yml
 
@@ -242,9 +243,9 @@ stages:
       - checkout: ZurichTesting
       - template: pipelines\Templates\postman-collection-tests.yml@ZurichTesting
         parameters:
-          collectionId: ${{ variables.regressionTestCollectionId }}
-          environmentId: ${{ variables.regressionTestEnvironmentId }}
-          xApiKey: ${{ variables.regressionTestXApiKey }}
+          collectionId: ${{ variables.postmanCollectionIdConnectors }}
+          environmentId: ${{ variables.postmanEnvironmentIdCI }}
+          xApiKey: $(postmanXApiKey)
 - stage: Swap_Slots
   dependsOn: CompatibilityTesting
   condition: and(in(dependencies.CompatibilityTesting.result, 'Succeeded', 'Failed'), eq(variables['Build.SourceBranchName'], 'master'))
@@ -304,6 +305,6 @@ stages:
       - checkout: ZurichTesting
       - template: pipelines\Templates\postman-collection-tests.yml@ZurichTesting
         parameters:
-          collectionId: ${{ variables.regressionTestCollectionId }}
-          environmentId: ${{ variables.regressionTestEnvironmentId }}
-          xApiKey: ${{ variables.regressionTestXApiKey }}
+          collectionId: ${{ variables.postmanCollectionIdConnectors }}
+          environmentId: ${{ variables.postmanEnvironmentIdCI }}
+          xApiKey: $(postmanXApiKey)

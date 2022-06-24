@@ -27,6 +27,7 @@ variables:
   value: 'Release'
 - template: Variables\ZurichDeploy-variables-Shared.yml@ZurichDeploy
 - template: Variables\ZurichDeploy-variables-Prod.yml@ZurichDeploy
+- template: pipelines\Variables\regression-variables.yml@ZurichTesting
 - template: ../Variables/connector-variables-Shared.yml   
 - template: ../Variables/connector-variables-Prod.yml
 
@@ -251,6 +252,7 @@ stages:
                     functionAlertWindowSize: ${{ variables.functionAlertWindowSize }}
                     resourceGroup: ${{ variables.resourceGroup }}
                     subscriptionName: ${{ variables.subscriptionName }}
+# # Can't run in Prod until we get a CIAM refreshtoken enabled
 # - stage: CompatibilityTesting
 #   pool: AutomationTestAgentPool
 #   dependsOn: Prod
@@ -262,9 +264,9 @@ stages:
 #       - checkout: ZurichTesting
 #       - template: pipelines\Templates\postman-collection-tests.yml@ZurichTesting
 #         parameters:
-#           collectionId: ${{ variables.regressionTestCollectionId }}
-#           environmentId: ${{ variables.regressionTestEnvironmentId }}
-#           xApiKey: ${{ variables.regressionTestXApiKey }}
+#           collectionId: ${{ variables.postmanCollectionIdConnectors }}
+#           environmentId: ${{ variables.postmanEnvironmentIdPROD }}
+#           xApiKey: $(postmanXApiKey)
 - stage: Swap_Slots
   dependsOn: Prod
 #  condition: in(dependencies.CompatibilityTesting.result, 'Succeeded', 'Failed')
@@ -312,6 +314,7 @@ stages:
           serviceName: ${{ variables.connectorServiceName }}
           subscriptionName: ${{ variables.subscriptionName }}
           swaggerEndpoint: ${{ variables.swaggerEndpoint }}
+# # Can't run in Prod until we get a CIAM refreshtoken enabled
 # - stage: Testing
 #   pool: AutomationTestAgentPool
 #   dependsOn: Update_APIM_Product
@@ -324,6 +327,6 @@ stages:
 #       - checkout: ZurichTesting
 #       - template: pipelines\Templates\postman-collection-tests.yml@ZurichTesting
 #         parameters:
-#           collectionId: ${{ variables.regressionTestCollectionId }}
-#           environmentId: ${{ variables.regressionTestEnvironmentId }}
-#           xApiKey: ${{ variables.regressionTestXApiKey }}
+#           collectionId: ${{ variables.postmanCollectionIdConnectors }}
+#           environmentId: ${{ variables.postmanEnvironmentIdPROD }}
+#           xApiKey: $(postmanXApiKey)

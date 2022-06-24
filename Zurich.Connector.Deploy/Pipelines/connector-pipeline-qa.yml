@@ -30,6 +30,7 @@ variables:
   value: 'Release'
 - template: Variables\ZurichDeploy-variables-Shared.yml@ZurichDeploy
 - template: Variables\ZurichDeploy-variables-QA.yml@ZurichDeploy
+- template: pipelines\Variables\regression-variables.yml@ZurichTesting
 - template: ../Variables/connector-variables-Shared.yml   
 - template: ../Variables/connector-variables-QA.yml
 
@@ -264,9 +265,9 @@ stages:
       - checkout: ZurichTesting
       - template: pipelines\Templates\postman-collection-tests.yml@ZurichTesting
         parameters:
-          collectionId: ${{ variables.regressionTestCollectionId }}
-          environmentId: ${{ variables.regressionTestEnvironmentId }}
-          xApiKey: ${{ variables.regressionTestXApiKey }}
+          collectionId: ${{ variables.postmanCollectionIdConnectors }}
+          environmentId: ${{ variables.postmanEnvironmentIdQA }}
+          xApiKey: $(postmanXApiKey)
 - stage: Swap_Slots
   dependsOn: CompatibilityTesting
   condition: in(dependencies.CompatibilityTesting.result, 'Succeeded', 'Failed')
@@ -326,9 +327,9 @@ stages:
       - checkout: ZurichTesting
       - template: pipelines\Templates\postman-collection-tests.yml@ZurichTesting
         parameters:
-          collectionId: ${{ variables.regressionTestCollectionId }}
-          environmentId: ${{ variables.regressionTestEnvironmentId }}
-          xApiKey: ${{ variables.regressionTestXApiKey }}
+          collectionId: ${{ variables.postmanCollectionIdConnectors }}
+          environmentId: ${{ variables.postmanEnvironmentIdQA }}
+          xApiKey: $(postmanXApiKey)
 # This will probably end up being dev signoff.
 # - stage: QaApproval
 #   dependsOn: 
