@@ -54,11 +54,11 @@ namespace Zurich.Connector.Web.Controllers
 
                 if (selectedConnector.Result.Filters != null)
                 {
-                    foreach(ConnectorsFiltersModel filter in selectedConnector.Result.Filters)
+                    foreach (ConnectorsFiltersModel filter in selectedConnector.Result.Filters)
                     {
                         if (filter.IsMultiSelect == "false")
                         {
-                            if(parameters.ContainsKey(filter.RequestParameter))
+                            if (parameters.ContainsKey(filter.RequestParameter))
                             {
                                 var filterContent = parameters[filter.RequestParameter];
                                 if (filterContent.Contains(","))
