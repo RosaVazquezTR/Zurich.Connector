@@ -59,12 +59,22 @@ namespace Zurich.Connector.Data.Services
         /// <returns>data source.</returns> 
         public async Task<string> FormatResponse(string response)
         {
-            SearchResponse searchObject = JsonConvert.DeserializeObject<SearchResponse>(response);
-            foreach (SearchItemEntity item in searchObject.Documents)
+            try
             {
-                item.Title = item.Title.Replace("\"", string.Empty);
-                item.Snippet = item.Snippet.Replace("\"", string.Empty);
+                SearchResponse searchObject = JsonConvert.DeserializeObject<SearchResponse>(response);
+                if (searchObject.Documents != null)
+                {
+                    foreach (SearchItemEntity item in searchObject.Documents)
+                    {
+                        item.Title = item.Title.Replace("\"", string.Empty);
+                        item.Snippet = item.Snippet.Replace("\"", string.Empty);
 
+                    }
+                }
+            }
+            catch(Exception ex)
+            {
+                response = string.Empty;
             }
             response = JsonConvert.SerializeObject(JsonConvert.DeserializeObject(response));
             return response;

@@ -77,7 +77,7 @@ namespace Zurich.Connector.Data.DataMap
 
         private async Task<JToken> ModifyResult(JToken jsonResponse, ConnectorDocument connectorDocument)
         {
-            if (jsonResponse["Documents"].ToString() != "[]")
+            if (jsonResponse["Documents"] != null)
             {
                 JObject jobject = await MapProperties(connectorDocument.CdmMapping.structured, jsonResponse, null);
                 foreach (var item in jobject)
