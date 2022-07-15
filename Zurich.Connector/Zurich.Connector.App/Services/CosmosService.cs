@@ -104,7 +104,7 @@ namespace Zurich.Connector.App.Services
             var connectors = _mapper.Map<List<ConnectorModel>>(connectorDocuments);
             var connector = connectors.SingleOrDefault();
 
-            if (includeDataSource && connectors != null)
+            if (includeDataSource && connectors.Count > 0)
             {
                 var dataSourceIDs = connectors.Select(t => t.Info.DataSourceId).Distinct();
 
