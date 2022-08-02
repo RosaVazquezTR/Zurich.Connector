@@ -102,7 +102,7 @@ namespace Zurich.Connector.Data.Services
             ConnectorModel connectorModel = await _dataMappingService.RetrieveProductInformationMap(connectionIdentifier, hostname, retrieveFilters);
             List<DataSourceInformation> availableRegistrations = await _OAuthService.GetUserRegistrations();
             availableRegistrations = availableRegistrations?.FindAll(x => x.AppCode == connectorModel.DataSource.AppCode).Take(instanceLimit).ToList<DataSourceInformation>();
-
+             
             queryParameters = _dataMappingService.UpdateOffset(connectorModel.DataSource.AppCode, availableRegistrations, queryParameters);
 
             if (queryParameters.ContainsKey(QueryParameters.ResultSize))
@@ -183,12 +183,13 @@ namespace Zurich.Connector.Data.Services
 
 
                 if (connectorModel.Request?.Sorting != null)
+                {
                     sortParameters = (from param in cdmQueryParameters
                                       join requestParam in connectorModel.Request?.Sorting?.Properties
-                                      on param.Value.ToString().ToLower() equals requestParam.ElementValue.ToLower()
+                                      on param.Value.ToString().ToLower() equals requestParam.Name.ToLower()
                                       select new { name = requestParam.Element, value = requestParam.ElementValue.ToString() })
                                   .ToDictionary(c => c.name, c => c.value);
-
+                }
             }
 
             if (ODataHandler.HasODataParams(connectorModel))
@@ -197,6 +198,16 @@ namespace Zurich.Connector.Data.Services
             // Add default parameters if not present in the request. ex: locale, ResultSize etc
             var defaultParameters = connectorModel.Request?.Parameters?.Where(t => DefaultParametersCheck(t, queryParameters))
                                 .ToDictionary(c => c.Name, c => c.DefaultValue);
+
+
+            // Add the default sort parameter specified in connector if necessary if not present in the request
+            if (!sortParameters.Any() && connectorModel.Request?.Sorting != null)
+            {
+                sortParameters = (from requestParam in connectorModel.Request?.Sorting?.Properties
+                                  where requestParam?.IsDefault ?? false
+                                  select new { name = requestParam.Element, value = requestParam.ElementValue.ToString() })
+                          .ToDictionary(c => c.name, c => c.value);
+            }
 
             IEnumerable<KeyValuePair<string, string>> allParameters = new Dictionary<string, string>();
 
