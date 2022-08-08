@@ -71,7 +71,7 @@ namespace Zurich.Connector.Data.Repositories.CosmosDocuments
     /// </summary>
     public class ConnectorRequestSorting
     {
-        public List<ConnectorRequestSortingProperties> Properties { get; set; }
+        public List<ConnectorRequestSortingProperties> Properties { get; set; } = new List<ConnectorRequestSortingProperties>();
     }
 
     /// <summary>
@@ -95,9 +95,5 @@ namespace Zurich.Connector.Data.Repositories.CosmosDocuments
         /// Element Value
         /// </summary>
         public string ElementValue { get; set; }
-        /// <summary>
-        /// Indicates default sort type if any property was given.
-        /// </summary>
-        public bool? IsDefault { get; set; }
     }
 }

@@ -1,0 +1,70 @@
+{
+    "id": "28",
+    "partitionkey": "ConnectorList",
+    "info": {
+        "title": "Get Search TR Marketplace documents - Child connector for 29",
+        "description": "Pull TR Marketplac documents - Child connector for 29",
+        "entityType": "Search",
+        "dataSourceId": "29",
+        "version": "1.0",
+        "subType": "Child"
+    },
+    "request": {},
+    "response": {},
+    "filters": [],
+    "resultLocation": "list",
+    "cdmMapping": {
+        "structured": [
+            {
+                "name": "Snippet",
+                "type": "string",
+                "responseElement": "customData.summary",
+                "_comment": ""
+            },
+            {
+                "name": "Title",
+                "type": "string",
+                "responseElement": "name",
+                "_comment": ""
+            },
+            {
+                "name": "WebUrl",
+                "type": "string",
+                "responseElement": "https://marketplace.thomsonreuters.com/",
+                "_comment": ""
+            },
+            {
+                "name": "Type",
+                "type": "string",
+                "responseElement": "resourceTypeFolderList.resourceTypeFolder",
+                "_comment": ""
+            },
+            {
+                "name": "CreationDate",
+                "type": "DateTime",
+                "responseElement": "created",
+                "format": "yyyyMMdd",
+                "_comment": ""
+            }
+        ],
+        "unstructured": [
+            {
+                "name": "categories",
+                "type": "array",
+                "responseElement": "customData.categories",
+                "_comment": ""
+            },
+            {
+                "name": "icon",
+                "type": "bool",
+                "responseElement": "customData.icon",
+                "_comment": ""
+            }
+        ]
+    },
+    "_rid": "TnkcAJtTVT9FAAAAAAAAAA==",
+    "_self": "dbs/TnkcAA==/colls/TnkcAJtTVT8=/docs/TnkcAJtTVT9FAAAAAAAAAA==/",
+    "_etag": "\"0000fe2d-0000-0300-0000-61e6c0030000\"",
+    "_attachments": "attachments/",
+    "_ts": 1642512387
+}

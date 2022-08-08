@@ -20,7 +20,7 @@ namespace Zurich.Connector.IntegrationTests
     public class ConnectorCosmosTests : IntegrationTest
     {
         private const string folderLocation = @"..\..\..\..\..\Zurich.Connector.Deploy\CosmosRecords";
-        private List<string> dataSourceTypes = new List<string>() { "oauth2", "transferToken", "highq" };
+        private List<string> dataSourceTypes = new List<string>() { "oauth2", "transferToken", "highq", "basic" };
         private List<string> parameterTypes = new List<string>() { "array", "date", "int", "object", "short", "string", "DateTime", "bool" };
         private List<string> requestMethodTypes = new List<string>() { "GET", "POST" };
         private List<string> requestInClauseTypes = new List<string>() { "Child", "Body", "OData", "Query", "Headers" };
@@ -187,6 +187,7 @@ namespace Zurich.Connector.IntegrationTests
                     param.InClause.Should().ContainAny(requestInClauseTypes);
                     param.Type.Should().ContainAny(parameterTypes);
                 }
+                
                 foreach (var sortParam in connector.Request.Sorting?.Properties)
                 {
                     sortParam.Name.Should().NotBeNullOrWhiteSpace();
@@ -194,6 +195,7 @@ namespace Zurich.Connector.IntegrationTests
                     sortParam.ElementValue.Should().NotBeNull();
                     sortParam.Type.Should().ContainAny(parameterTypes);
                 }
+
                 if (connector.Response.Type == Data.Model.ResponseContentType.XML.ToString())
                 {
                     connector.Response.XmlArrayAttribute.Should().NotBeNull();

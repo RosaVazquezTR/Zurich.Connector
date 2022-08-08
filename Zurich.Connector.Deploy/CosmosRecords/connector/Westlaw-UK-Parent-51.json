@@ -69,15 +69,13 @@
 					"name": "Date",
 					"type": "date",
 					"element": "sortType",
-					"elementValue": "UK_RESEARCH_DATE_DESC",
-					"isDefault": false
+					"elementValue": "UK_RESEARCH_DATE_DESC"
 				},
 				{
 					"name": "Relevance",
 					"type": "string",
 					"element": "sortType",
-					"elementValue": "UK_RESEARCH_RELEVANCE",
-					"isDefault": true
+					"elementValue": "UK_RESEARCH_RELEVANCE"
 				}
 			]
 		}

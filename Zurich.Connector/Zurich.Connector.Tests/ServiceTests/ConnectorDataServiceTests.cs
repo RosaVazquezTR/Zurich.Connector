@@ -153,40 +153,6 @@ namespace Zurich.Connector.Tests.ServiceTests
 		}
 
 		[TestMethod]
-		public async Task CallMapQueryParametersFromDBWithouthDefaultSortParameterSpecified()
-		{
-			// ARRANGE
-			var cdmQueryParameters = new Dictionary<string, string>();
-			var connector = MockConnectorData.SetupConnectorModel().Where(t => t.Id == "3").FirstOrDefault();
-
-			ConnectorDataService service = new ConnectorDataService(_mockDataMappingFactory.Object, _mockDataMappingRepo.Object, null, _mapper, _mockCosmosService.Object, _mockdataMappingService.Object,
-				_mockDataSourceOperationsFactory.Object, _mockRegistrationService.Object, _mockDataExtractionService.Object, _mockLegalHomeAccess.Object, _mockTenantService.Object, _mockOAuthServices.Object, _mockConfiguration.Object);
-
-			// ACT
-			var mappedResult = service.MapQueryParametersFromDB(cdmQueryParameters, connector);
-
-			// ASSERT
-			Assert.AreEqual(mappedResult["sortOrder"], null);
-		}
-
-		[TestMethod]
-		public async Task CallMapQueryParametersFromDBUsingDefaultSortParameter()
-		{
-			// ARRANGE
-			var cdmQueryParameters = new Dictionary<string, string>();
-			var connector = MockConnectorData.SetupConnectorModel().Where(t => t.Id == "6").FirstOrDefault();
-
-			ConnectorDataService service = new ConnectorDataService(_mockDataMappingFactory.Object, _mockDataMappingRepo.Object, null, _mapper, _mockCosmosService.Object, _mockdataMappingService.Object,
-				_mockDataSourceOperationsFactory.Object, _mockRegistrationService.Object, _mockDataExtractionService.Object, _mockLegalHomeAccess.Object, _mockTenantService.Object, _mockOAuthServices.Object, _mockConfiguration.Object);
-
-			// ACT
-			var mappedResult = service.MapQueryParametersFromDB(cdmQueryParameters, connector);
-
-			// ASSERT
-			Assert.AreEqual(mappedResult["sortType"], "UK_RESEARCH_RELEVANCE");
-		}
-
-		[TestMethod]
 		public async Task CallMapQueryParametersWithODataParams()
 		{
 			// ARRANGE

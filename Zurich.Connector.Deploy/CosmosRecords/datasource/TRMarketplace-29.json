@@ -1,0 +1,38 @@
+{
+    "id": "29",
+    "partitionkey": "DataSourceList",
+    "name": "TR Marketplace",
+    "description": "This is connecting to TR Marketplace",
+    "appcode": "TRMarketPlace",
+    "domain": "marketplace-api-dev.thomsonreuters.com",
+    "infoURL": "",
+    "appType": "0",
+    "extraRequestContext": "",
+    "registrationInfo": {
+        "registrationMode": "Automatic",
+        "domainRequired": "false",
+        "clientAndSecretRequired": "false",
+        "connectionMessage": "Install the application in the TR Marketplace Center. Look for Thomson Reuters Legal home",
+        "registrationFileRequired": "false"
+    },
+    "securityDefinition": {
+        "type": "basic",
+        "flow": "accessCode",
+        "defaultSecurityDefinition": {
+            "authorizationURL": "https://marketplace-api-dev.thomsonreuters.com/",
+            "authorizationPath": "",
+            "tokenURL": "https://marketplace.thomsonreuters.com/auth/external/token",
+            "tokenPath": "",
+            "keyVaultClientId": "",
+            "keyVaultSecret": "",
+            "sendCredentialsInBody": true,
+            "grantType": "client_credentials"
+        },
+        "scopes": {}
+    },
+    "_rid": "TnkcAMUmoK0XAAAAAAAAAA==",
+    "_self": "dbs/TnkcAA==/colls/TnkcAMUmoK0=/docs/TnkcAMUmoK0XAAAAAAAAAA==/",
+    "_etag": "\"300dbe57-0000-0300-0000-62e05eab0000\"",
+    "_attachments": "attachments/",
+    "_ts": 1658871467
+}

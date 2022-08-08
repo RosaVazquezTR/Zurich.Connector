@@ -122,13 +122,6 @@ namespace Zurich.Connector.Tests.Common
                                                                                  ElementValue="DATE",
                                                                                  Name ="Date",
                                                                                  Type = "date"
-                                                                            },
-                                                                            new ConnectorRequestSortingPropertiesModel()
-                                                                            {
-                                                                                 Element ="sortOrder",
-                                                                                 ElementValue="RELEVANCE",
-                                                                                 Name ="Relevance",
-                                                                                 Type = "string"
                                                                             }
                                                                         }
                                                                     }
@@ -216,60 +209,6 @@ namespace Zurich.Connector.Tests.Common
                              RequestParameter = "PracticeArea",
                              FilterList = new List<FilterListModel>(){ new FilterListModel() { Id = "9-521-5538", Name = "Antitrust Litigation" } }
                          }
-                    }
-                },
-                new ConnectorModel()
-                {
-                    Id = "6",
-                    Info = new ConnectorInfoModel()
-                    {
-                        Title = "Connector6",
-                        DataSourceId = "66",
-                        Description ="Connector 6 desc",
-                        EntityType = ConnectorEntityType.Search,
-                        Version = "v1"
-                    },
-                    Pagination = new PaginationModel()
-                    {
-                        Available = true,
-                        IsZeroBasedOffset = true,
-                    },
-                    Request = new ConnectorRequestModel()
-                    {
-                        Parameters = new List<ConnectorRequestParameterModel>()
-                        {
-                            new ConnectorRequestParameterModel() { CdmName = "Query", Name = "searchTerm", DefaultValue = "*"},
-                            new ConnectorRequestParameterModel() { CdmName = "Offset", Name = "resultsStartIndex", DefaultValue = "1"},
-                            new ConnectorRequestParameterModel() { CdmName = "ResultSize", Name = "resultsCount", DefaultValue = "25"},
-                        },
-                        Sorting = new ConnectorRequestSortingModel(){
-                                                                        Properties = new List<ConnectorRequestSortingPropertiesModel>()
-                                                                        {
-                                                                            new ConnectorRequestSortingPropertiesModel()
-                                                                            {
-                                                                                 Element ="sortType",
-                                                                                 ElementValue="UK_RESEARCH_DATE_DESC",
-                                                                                 Name ="Date",
-                                                                                 Type = "date",
-                                                                                 IsDefault = false
-                                                                            },
-                                                                            new ConnectorRequestSortingPropertiesModel()
-                                                                            {
-                                                                                 Element ="sortType",
-                                                                                 ElementValue="UK_RESEARCH_RELEVANCE",
-                                                                                 Name ="Relevance",
-                                                                                 Type = "string",
-                                                                                 IsDefault=true
-                                                                            }
-                                                                        }
-                                                                    }
-                    },
-                    DataSource = new DataSourceModel()
-                    {
-                        Id = "66",
-                        Name = "DataSource66",
-                        AppCode = "DataSource66",
-                        Description = "DataSource 66 desc"
                     }
                 }
             };
