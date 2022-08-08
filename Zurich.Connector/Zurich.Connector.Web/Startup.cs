@@ -76,12 +76,12 @@ namespace Zurich.Connector.Web
             services.AddScoped<IDataMapping, DataMapping>(s => s.GetService<DataMapping>());
             services.AddScoped<DataMappingOAuth>();
             services.AddScoped<IDataMapping, DataMappingOAuth>(s => s.GetService<DataMappingOAuth>());
+            services.AddScoped<DataMappingBasic>();
+            services.AddScoped<IDataMapping, DataMappingBasic>(s => s.GetService<DataMappingBasic>());
             services.AddScoped<DataMappingTransfer>();
             services.AddScoped<IDataMapping, DataMappingTransfer>(s => s.GetService<DataMappingTransfer>());
             services.AddScoped<IDataMappingService, DataMappingService>();
             services.AddScoped<IConnectorService, ConnectorService>();
-            services.AddScoped<DataMappingOAuth>();
-            services.AddScoped<DataMappingTransfer>();
             services.AddScoped<IDataMappingRepository, DataMappingRepository>();
             services.AddScoped<IRepository, Repository>();
             services.AddScoped<IConnectorDataSourceOperations, IManageConnectorOperations>();

@@ -30,6 +30,8 @@ namespace Zurich.Connector.Data.Factories
                 return (IDataMapping)serviceProvider.GetService(typeof(DataMappingOAuth));
             else if (dataMappingType.Equals("transferToken", StringComparison.OrdinalIgnoreCase))
                 return (IDataMapping)serviceProvider.GetService(typeof(DataMappingTransfer));
+            else if (dataMappingType.Equals("basic", StringComparison.OrdinalIgnoreCase))
+                return (IDataMapping)serviceProvider.GetService(typeof(DataMappingBasic));
 
             return (IDataMapping)serviceProvider.GetService(typeof(DataMapping));
         }

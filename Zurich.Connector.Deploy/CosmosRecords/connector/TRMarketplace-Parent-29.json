@@ -1,0 +1,77 @@
+{
+  "id": "29",
+  "partitionkey": "ConnectorList",
+  "alias": "trmarketplace.search",
+  "info": {
+    "title": "Get Search TR Marketplace documents",
+    "description": "Pull TR Marketplace documents",
+    "entityType": "Search",
+    "dataSourceId": "29",
+    "version": "1.0",
+    "subType": "Parent"
+  },
+  "request": {
+    "endpointPath": "/v2/apps/textSearch",
+    "method": "GET",
+    "parameters": [
+      {
+        "cdmName": "Query",
+        "name": "text",
+        "inClause": "Query",
+        "required": true,
+        "type": "string",
+        "defaultValue": "*"
+      },
+      {
+        "cdmName": "fields",
+        "name": "fields",
+        "inClause": "QueryParams",
+        "required": true,
+        "type": "string",
+        "defaultValue": "['name']"
+      }
+    ],
+    "sorting": {}
+  },
+  "response": {
+    "schema": {
+      "properties": {}
+    },
+    "type": "JSON"
+  },
+  "filters": [],
+  "pagination": {
+    "available": true,
+    "paginationType": "pageNumber",
+    "isZeroBasedOffset": false
+  },
+  "resultLocation": "",
+  "cdmMapping": {
+    "structured": [
+      {
+        "name": "Count",
+        "type": "short",
+        "responseElement": "count",
+        "_comment": ""
+      },
+      {
+        "name": "SourceDirectoryUrl",
+        "type": "interpolationString",
+        "responseElement": "https://marketplace.thomsonreuters.com/apps/?query=(%Query)",
+        "_comment": ""
+      },
+      {
+        "name": "Documents",
+        "type": "object",
+        "responseElement": "{28}",
+        "_comment": ""
+      }
+    ],
+    "unstructured": []
+  },
+  "_rid": "TnkcAJtTVT9EAAAAAAAAAA==",
+  "_self": "dbs/TnkcAA==/colls/TnkcAJtTVT8=/docs/TnkcAJtTVT9EAAAAAAAAAA==/",
+  "_etag": "\"0100c39d-0000-0300-0000-62e7ebeb0000\"",
+  "_attachments": "attachments/",
+  "_ts": 1659366379
+}
