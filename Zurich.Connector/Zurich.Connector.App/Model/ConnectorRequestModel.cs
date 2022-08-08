@@ -107,5 +107,9 @@ namespace Zurich.Connector.App.Model
         /// Element Value
         /// </summary>
         public string ElementValue { get; set; }
+        /// <summary>
+        /// Indicates default sort type if any property was given.
+        /// </summary>
+        public bool? IsDefault { get; set; }
     }
 }

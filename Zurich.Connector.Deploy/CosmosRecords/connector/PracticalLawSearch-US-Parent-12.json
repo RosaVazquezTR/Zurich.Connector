@@ -61,19 +61,22 @@
           "name": "Date",
           "type": "date",
           "element": "sortOrder",
-          "elementValue": "DATE"
+          "elementValue": "DATE",
+          "isDefault": false
         },
         {
           "name": "Alphabetical",
           "type": "string",
           "element": "sortOrder",
-          "elementValue": "ARTICLE"
+          "elementValue": "ARTICLE",
+          "isDefault": false
         },
         {
           "name": "Relevance",
           "type": "string",
           "element": "sortOrder",
-          "elementValue": "RELEVANCE"
+          "elementValue": "RELEVANCE",
+          "isDefault": true
         }
       ]
     }

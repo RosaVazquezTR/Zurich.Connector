@@ -32,7 +32,7 @@
 				"defaultValue": ""
 			},
 			{
-				"cdmName": "Locale.default",
+				"cdmName": "Locale",
 				"name": "locale",
 				"inClause": "Query",
 				"required": true,
@@ -54,7 +54,15 @@
 				"required": true,
 				"type": "string",
 				"defaultValue": "1"
-			}
+			},
+            {
+                "cdmName": "MultivalueSingleFilter",
+                "name": "isFilterPlural",
+                "inClause": "Query",
+                "required": false,
+                "type": "string",
+                "defaultValue": "true"
+            }
 		],
     "sorting": {
       "properties": [
@@ -87,7 +95,7 @@
 	{
 		"name": "PracticeArea",
 		"description": "The practice areas",
-		"isMultiselect": "false",
+		"isMultiselect": "true",
 		"requestParameter": "PracticeArea.filter",
 		"filterlist": [
 			{

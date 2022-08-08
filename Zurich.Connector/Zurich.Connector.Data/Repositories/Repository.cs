@@ -92,7 +92,27 @@ namespace Zurich.Connector.Data.Repositories
             string scheme = "https";
 
             UriBuilder builder = new UriBuilder(scheme, apiInformation.HostName, -1, relativePath);
-            builder.Query = paramCollection.ToString();
+            string paramStr = paramCollection.ToString();
+            if (paramCollection.AllKeys.Contains("isFilterPlural"))
+            {
+                // The complicated but more reliable way to do it
+                if (paramStr.Contains("%2c"))
+                {
+                    string filterName = paramStr[..paramStr.IndexOf("%2c")];
+                    char[] strArray = filterName.ToCharArray();
+                    Array.Reverse(strArray);
+                    filterName = new String(strArray);
+                    filterName = filterName[..filterName.IndexOf("&")];
+                    strArray = filterName.ToCharArray();
+                    Array.Reverse(strArray);
+                    filterName = new String(strArray);
+                    filterName = filterName[..filterName.IndexOf("=")];
+                    paramStr = paramStr.Replace("%2c", $"&{filterName}=");
+                }
+                // The easiest not so realiable way to do it
+                //paramStr = paramStr.Replace("%2c", $"&{paramCollection.AllKeys[2]}=");
+            }
+            builder.Query = paramStr;
             return builder.ToString();
         }
 
