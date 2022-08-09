@@ -2,8 +2,10 @@
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Zurich.Connector.App.Model;
 using Zurich.Connector.Data;
 using Zurich.Connector.Data.DataMap;
 using Zurich.Connector.Data.Factories;
@@ -70,7 +72,10 @@ namespace Zurich.Connector.App.Services.DataSources
             return item;
         }
 
-        
+        public async Task<Dictionary<string, string>> SetSortParameters(Dictionary<string, string> allParameters)
+        {
+            return allParameters;
+        }
 
         /// <summary>
         /// Pulls the extention form the title so can be returned on type

@@ -220,6 +220,8 @@ namespace Zurich.Connector.Data.Services
             if (sortParameters.Any())
                 allParameters = allParameters.Concat(sortParameters);
 
+            allParameters = EnrichSortParametersSpecialCases(connectorModel, allParameters.ToDictionary(pair => pair.Key, pair => pair.Value)).Result;
+
             if (allParameters != null)
             {
                 foreach (var parameter in allParameters)
@@ -262,6 +264,22 @@ namespace Zurich.Connector.Data.Services
                 cdmQueryParameters["Offset"] = (int.Parse(cdmQueryParameters["Offset"]) + 1).ToString();
             }
             return cdmQueryParameters;
+        }
+
+        /// <summary>
+        /// Enriches the sort parameters using the app's corresponding data source operations service
+        /// </summary>
+        /// <param name="connector">The data connector</param>
+        /// <param name="allParameters">All final parameters that will be sent in the request</param>
+        /// <returns></returns>
+        private async Task<Dictionary<string, string>> EnrichSortParametersSpecialCases(ConnectorModel connector, Dictionary<string, string> allParameters)
+        {
+            var dataSourceOperationsService = _dataSourceOperationsFactory.GetDataSourceOperationsService(connector?.DataSource?.AppCode);
+            if (dataSourceOperationsService != null)
+                allParameters = await dataSourceOperationsService.SetSortParameters(allParameters);
+            else
+                _logger.LogInformation("No data source operations service found for {appCode}", connector?.DataSource?.AppCode ?? "");
+            return allParameters;
         }
 
         /// <summary>

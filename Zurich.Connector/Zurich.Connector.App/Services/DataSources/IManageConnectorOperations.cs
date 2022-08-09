@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
 using System;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web;
@@ -100,6 +101,11 @@ namespace Zurich.Connector.App.Services.DataSources
                 _logger.LogError("Unable to parse {entityType} web URL: {message}", entityType.ToString(), ex.Message ?? "");
             }
             return item;
+        }
+
+        public async Task<Dictionary<string, string>> SetSortParameters(Dictionary<string, string> allParameters)
+        {
+            return allParameters;
         }
 
         /// <summary>

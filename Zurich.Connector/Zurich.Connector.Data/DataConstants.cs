@@ -44,6 +44,7 @@
         public const string plcUKSearch = "PLCUK-Search";
         public const string plcCASearch = "PLCCA-Search";
         public const string msGraph = "MsGraph";
+        public const string westLawUK = "WLUK";
 
     }
     public static class DataConstants
