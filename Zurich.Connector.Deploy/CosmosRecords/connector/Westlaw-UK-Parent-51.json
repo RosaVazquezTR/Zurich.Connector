@@ -6887,5 +6887,37 @@
 			}
 		],
 		"unstructured": []
-	}
+	},
+	"advancedSyntax":{
+        "operators": [
+			{
+				"name": "and",
+				"value": "&"
+			},
+			{
+				"name": "or",
+				"value": "or"
+			},
+			{
+				"name": "textualOcurrence",
+				"value": "\"placeholder\""
+			},
+			{
+				"name": "not",
+				"value": "%"
+			},
+			{
+				"name": "wildcard",
+				"value": "*"
+			},
+			{
+				"name": "proximity",
+				"value": "/"
+			},
+			{
+				"name": "termGrouping",
+				"value": "("
+			}
+        ]
+}
 }

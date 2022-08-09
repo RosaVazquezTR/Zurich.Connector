@@ -62,6 +62,10 @@ namespace Zurich.Connector.App.Model
         /// Determines whether to show pre release connectors 
         /// </summary>
         public bool PreRelease { get; set; }
+        /// <summary>
+        /// Syntax for advanced search operators if supported
+        /// </summary>
+        public ConnectorAdvancedSyntaxModel AdvancedSyntax { get; set; }
 
     }
 

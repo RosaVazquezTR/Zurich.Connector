@@ -67,6 +67,10 @@ namespace Zurich.Connector.Data.Repositories.CosmosDocuments
         /// Determines whether to show pre release connectors 
         /// </summary>
         public bool PreRelease { get; set; }
+        /// <summary>
+        /// Syntax for advanced search operators if supported
+        /// </summary>
+        public ConnectorAdvancedSyntax AdvancedSyntax { get; set; }
     }
 
     public class ConnectorInfo

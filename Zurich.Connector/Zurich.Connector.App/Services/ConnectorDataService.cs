@@ -126,6 +126,8 @@ namespace Zurich.Connector.Data.Services
                 return null;
             }
 
+            queryParameters = MapQueryAdvancedSearch(queryParameters, connectorModel);
+
            NameValueCollection mappedQueryParameters = MapQueryParametersFromDB(queryParameters, connectorModel);
             ConnectorDocument connectorDocument = _mapper.Map<ConnectorDocument>(connectorModel);
             Dictionary<string, string> headerParameters = await _dataExtractionService.ExtractDataSource(mappedQueryParameters, queryParameters, hostname, connectorDocument);
@@ -161,7 +163,30 @@ namespace Zurich.Connector.Data.Services
             return data;
         }
 
-        public NameValueCollection MapQueryParametersFromDB(Dictionary<string, string> cdmQueryParameters, ConnectorModel connectorModel)
+        public Dictionary<string, string> MapQueryAdvancedSearch(Dictionary<string, string> cdmQueryParameters, ConnectorModel connectorModel)
+        { 
+            //if( isDavancedSearchSupported(connectorModel))
+            //{
+
+                //AdvancedSearchOperators federatedSearchOperators = getAdvancedSearchOperators("FederatedSearch");
+                List<AdvancedSyntaxOperatorModel> federatedSearchOperators = new List<AdvancedSyntaxOperatorModel>() { new AdvancedSyntaxOperatorModel { Name="and", Value="AND"}  };
+            //List<AdvancedSyntaxOperatorModel> connectorOperators = connectorModel.AdvancedSyntax.Operators;
+            List<AdvancedSyntaxOperatorModel> connectorOperators = new List<AdvancedSyntaxOperatorModel>() { new AdvancedSyntaxOperatorModel { Name = "and", Value = "&" } };
+            var connectorOperatorDict = connectorOperators.ToDictionary(op => op.Name, op => op.Value);
+
+                foreach(var fedOperator in federatedSearchOperators)
+                {
+                    switch (fedOperator.Name)
+                    {
+                        case AdvancedSyntaxOperatorConstants.And:
+                            cdmQueryParameters["Query"] = AdvancedSearchHandler.HandleAnd(cdmQueryParameters["Query"], fedOperator.Value, connectorOperatorDict[AdvancedSyntaxOperatorConstants.And]);
+                            break;
+                    }
+                }
+            //}
+            return cdmQueryParameters;
+        }
+            public NameValueCollection MapQueryParametersFromDB(Dictionary<string, string> cdmQueryParameters, ConnectorModel connectorModel)
         {
             NameValueCollection modifiedQueryParameters = new NameValueCollection();
             var queryParameters = new Dictionary<string, string>();
