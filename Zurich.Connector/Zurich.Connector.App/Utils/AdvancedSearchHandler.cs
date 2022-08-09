@@ -11,7 +11,7 @@ namespace Zurich.Connector.App.Utils
     {
         public static string HandleAnd(string query,string advancedOperator, string replacement)
         {
-            string pattern = @"(?<!\()\b\s?" + advancedOperator + @"\s?\b(?![\w\s]*[\)])";
+            string pattern = @"(?<!\(|\"")\b\s?" + advancedOperator + @"\s?\b(?![\w\s]*[\)|\""])";
 
             return Regex.Replace(query, pattern, " " + replacement + " ");
         }

@@ -11,18 +11,38 @@ namespace Zurich.Connector.App.Model
         /// <summary>
         /// Operators supported by the Connector
         /// </summary>
-        public List<AdvancedSyntaxOperatorModel> Operators { get; set; }
+        public AdvancedSyntaxOperatorModel Operators { get; set; }
     }
 
     public class AdvancedSyntaxOperatorModel
     {
         /// <summary>
-        /// Name of the operator
+        /// String representation of the or operator
         /// </summary>
-        public string Name { get; set; }
+        public string And { get; set; }
         /// <summary>
-        /// String representation of the connectors operator
+        /// String representation of the or operator
         /// </summary>
-        public string Value { get; set; }
+        public string Or { get; set; }
+        /// <summary>
+        /// String representation of the textual ocurrence operator
+        /// </summary>
+        public string TextualOcurrence { get; set; }
+        /// <summary>
+        /// String representation of the NOT operator
+        /// </summary>
+        public string Not { get; set; }
+        /// <summary>
+        /// String representation of the Wildcard operator
+        /// </summary>
+        public string Wildcard { get; set; }
+        /// <summary>
+        /// String representation of the Proximity operator
+        /// </summary>
+        public string Proximity { get; set; }
+        /// <summary>
+        /// String representation of the TermGrouping operator
+        /// </summary>
+        public string TermGrouping { get; set; }
     }
 }

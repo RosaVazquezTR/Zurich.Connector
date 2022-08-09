@@ -168,18 +168,17 @@ namespace Zurich.Connector.Data.Services
             //if( isDavancedSearchSupported(connectorModel))
             //{
 
-                //AdvancedSearchOperators federatedSearchOperators = getAdvancedSearchOperators("FederatedSearch");
-                List<AdvancedSyntaxOperatorModel> federatedSearchOperators = new List<AdvancedSyntaxOperatorModel>() { new AdvancedSyntaxOperatorModel { Name="and", Value="AND"}  };
+                //AdvancedSearchOperators federatedSearchOperators = appsettingoperators ->("FederatedSearch");
+                AdvancedSyntaxOperatorModel federatedSearchOperators =  new AdvancedSyntaxOperatorModel { And ="AND"};
             //List<AdvancedSyntaxOperatorModel> connectorOperators = connectorModel.AdvancedSyntax.Operators;
-            List<AdvancedSyntaxOperatorModel> connectorOperators = new List<AdvancedSyntaxOperatorModel>() { new AdvancedSyntaxOperatorModel { Name = "and", Value = "&" } };
-            var connectorOperatorDict = connectorOperators.ToDictionary(op => op.Name, op => op.Value);
+            AdvancedSyntaxOperatorModel connectorOperators =  new AdvancedSyntaxOperatorModel { And = "&" };
 
-                foreach(var fedOperator in federatedSearchOperators)
+                foreach(var fedOperator in federatedSearchOperators.GetType().GetProperties())
                 {
                     switch (fedOperator.Name)
                     {
-                        case AdvancedSyntaxOperatorConstants.And:
-                            cdmQueryParameters["Query"] = AdvancedSearchHandler.HandleAnd(cdmQueryParameters["Query"], fedOperator.Value, connectorOperatorDict[AdvancedSyntaxOperatorConstants.And]);
+                        case "And":
+                            cdmQueryParameters["Query"] = AdvancedSearchHandler.HandleAnd(cdmQueryParameters["Query"], federatedSearchOperators.And, connectorOperators.And);
                             break;
                     }
                 }
