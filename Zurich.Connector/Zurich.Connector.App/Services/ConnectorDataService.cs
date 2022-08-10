@@ -179,27 +179,13 @@ namespace Zurich.Connector.Data.Services
 
         public Dictionary<string, string> MapQueryAdvancedSearch(Dictionary<string, string> cdmQueryParameters, ConnectorModel connectorModel)
         { 
-            //if( isDavancedSearchSupported(connectorModel))
-            //{
-
-                //AdvancedSearchOperators federatedSearchOperators = appsettingoperators ->("FederatedSearch");
-                AdvancedSyntaxOperatorModel federatedSearchOperators =  new AdvancedSyntaxOperatorModel {};
-            //List<AdvancedSyntaxOperatorModel> connectorOperators = connectorModel.AdvancedSyntax.Operators;
-            AdvancedSyntaxOperatorModel connectorOperators =  new AdvancedSyntaxOperatorModel {};
-            AdvancedSyntaxOperatorConstants advancedSyntaxOperatorConstants;
-                foreach (var fedOperator in federatedSearchOperators.GetType().GetProperties())
-                {
+            AdvancedSyntaxOperatorModel federatedSearchOperators =  new AdvancedSyntaxOperatorModel {};
+            foreach (var fedOperator in federatedSearchOperators.GetType().GetProperties())
+            {
                 String targetOperator = typeof(AdvancedSyntaxOperatorConstants).GetField(fedOperator.Name).GetValue(null).ToString();
                 String standardOperator = connectorModel.AdvancedSyntax.Operators.GetType().GetProperty(fedOperator.Name).GetValue(connectorModel.AdvancedSyntax.Operators, null).ToString();
                 cdmQueryParameters["Query"] = AdvancedSearchHandler.HandleAnd(cdmQueryParameters["Query"], targetOperator, standardOperator);
-               /* switch (fedOperator.Name)
-                    {
-                        case "And":
-                            cdmQueryParameters["Query"] = AdvancedSearchHandler.HandleAnd(cdmQueryParameters["Query"], federatedSearchOperators.And, connectorOperators.And);
-                            break;
-                    }*/
-                }
-            //}
+            }
             return cdmQueryParameters;
         }
             public NameValueCollection MapQueryParametersFromDB(Dictionary<string, string> cdmQueryParameters, ConnectorModel connectorModel)
