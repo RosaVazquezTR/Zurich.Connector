@@ -182,9 +182,11 @@ namespace Zurich.Connector.Data.Services
             AdvancedSyntaxOperatorModel federatedSearchOperators =  new AdvancedSyntaxOperatorModel {};
             foreach (var fedOperator in federatedSearchOperators.GetType().GetProperties())
             {
-                String targetOperator = typeof(AdvancedSyntaxOperatorConstants).GetField(fedOperator.Name).GetValue(null).ToString();
-                String standardOperator = connectorModel.AdvancedSyntax.Operators.GetType().GetProperty(fedOperator.Name).GetValue(connectorModel.AdvancedSyntax.Operators, null).ToString();
-                cdmQueryParameters["Query"] = AdvancedSearchHandler.HandleAnd(cdmQueryParameters["Query"], targetOperator, standardOperator);
+                //Standard operator, used in FedSearch, this will be replaced
+                String standardOperator = typeof(AdvancedSyntaxOperatorConstants).GetField(fedOperator.Name).GetValue(null).ToString();
+                //Operator used in connector, this will be the replace
+                String connectorOperator = connectorModel.AdvancedSyntax.Operators.GetType().GetProperty(fedOperator.Name).GetValue(connectorModel.AdvancedSyntax.Operators, null).ToString();
+                cdmQueryParameters["Query"] = AdvancedSearchHandler.HandleOperator(cdmQueryParameters["Query"], standardOperator, connectorOperator,fedOperator.Name);
             }
             return cdmQueryParameters;
         }

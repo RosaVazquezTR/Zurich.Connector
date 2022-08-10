@@ -14,7 +14,7 @@ namespace Zurich.Connector.App.Utils
         public const string TextualOcurrence = "\"";
         public const string Not = "%NOT";
         public const string TermGrouping = "(";
-        public const string Proximity = "n(";
+        public const string Proximity = "/n";
 
     }
 }
