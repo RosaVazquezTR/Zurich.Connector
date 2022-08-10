@@ -139,6 +139,7 @@ namespace Zurich.Connector.Web.Controllers
         [HttpGet()]
         public async Task<ActionResult<List<ConnectorListViewModel>>> Connectors([FromQuery] ConnectorFilterViewModel filters)
         {
+            Console.Write("********************");
             var filterRequest = _mapper.Map<ConnectorFilterModel>(filters);
             List<ConnectorModel> connections = await _connectorService.GetConnectors(filterRequest);
             List<ConnectorListViewModel> results = _mapper.Map<List<ConnectorListViewModel>>(connections);

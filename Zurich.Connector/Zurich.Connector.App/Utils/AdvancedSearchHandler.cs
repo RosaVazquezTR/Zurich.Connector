@@ -11,6 +11,9 @@ namespace Zurich.Connector.App.Utils
     {
         public static string HandleAnd(string query,string advancedOperator, string replacement)
         {
+            if (advancedOperator.ToUpper()==(replacement.ToUpper())) {
+                return query;
+            }
             string pattern = @"(?<!\(|\"")\b\s?" + advancedOperator + @"\s?\b(?![\w\s]*[\)|\""])";
 
             return Regex.Replace(query, pattern, " " + replacement + " ");

@@ -125,8 +125,22 @@ namespace Zurich.Connector.Data.Services
             {
                 return null;
             }
-
-            queryParameters = MapQueryAdvancedSearch(queryParameters, connectorModel);
+            //Para pruebas solamente
+            if (connectorModel.Id == "51") { 
+                connectorModel.AdvancedSyntax = new ConnectorAdvancedSyntaxModel();
+                connectorModel.AdvancedSyntax.Operators = new AdvancedSyntaxOperatorModel();
+                connectorModel.AdvancedSyntax.Operators.And = "AND";
+                connectorModel.AdvancedSyntax.Operators.Or = "OR";
+                connectorModel.AdvancedSyntax.Operators.Wildcard = "*";
+                connectorModel.AdvancedSyntax.Operators.TextualOcurrence = "\"";
+                connectorModel.AdvancedSyntax.Operators.Not = "%NOT";
+                connectorModel.AdvancedSyntax.Operators.TermGrouping = "(";
+                connectorModel.AdvancedSyntax.Operators.Proximity = "n(";
+            }
+            if (connectorModel.AdvancedSyntax!= null && connectorModel.AdvancedSyntax.Operators != null) 
+            {
+                queryParameters = MapQueryAdvancedSearch(queryParameters, connectorModel);
+            }
 
            NameValueCollection mappedQueryParameters = MapQueryParametersFromDB(queryParameters, connectorModel);
             ConnectorDocument connectorDocument = _mapper.Map<ConnectorDocument>(connectorModel);
@@ -169,18 +183,21 @@ namespace Zurich.Connector.Data.Services
             //{
 
                 //AdvancedSearchOperators federatedSearchOperators = appsettingoperators ->("FederatedSearch");
-                AdvancedSyntaxOperatorModel federatedSearchOperators =  new AdvancedSyntaxOperatorModel { And ="AND"};
+                AdvancedSyntaxOperatorModel federatedSearchOperators =  new AdvancedSyntaxOperatorModel {};
             //List<AdvancedSyntaxOperatorModel> connectorOperators = connectorModel.AdvancedSyntax.Operators;
-            AdvancedSyntaxOperatorModel connectorOperators =  new AdvancedSyntaxOperatorModel { And = "&" };
-
-                foreach(var fedOperator in federatedSearchOperators.GetType().GetProperties())
+            AdvancedSyntaxOperatorModel connectorOperators =  new AdvancedSyntaxOperatorModel {};
+            AdvancedSyntaxOperatorConstants advancedSyntaxOperatorConstants;
+                foreach (var fedOperator in federatedSearchOperators.GetType().GetProperties())
                 {
-                    switch (fedOperator.Name)
+                String targetOperator = typeof(AdvancedSyntaxOperatorConstants).GetField(fedOperator.Name).GetValue(null).ToString();
+                String standardOperator = connectorModel.AdvancedSyntax.Operators.GetType().GetProperty(fedOperator.Name).GetValue(connectorModel.AdvancedSyntax.Operators, null).ToString();
+                cdmQueryParameters["Query"] = AdvancedSearchHandler.HandleAnd(cdmQueryParameters["Query"], targetOperator, standardOperator);
+               /* switch (fedOperator.Name)
                     {
                         case "And":
                             cdmQueryParameters["Query"] = AdvancedSearchHandler.HandleAnd(cdmQueryParameters["Query"], federatedSearchOperators.And, connectorOperators.And);
                             break;
-                    }
+                    }*/
                 }
             //}
             return cdmQueryParameters;
