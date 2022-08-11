@@ -133,9 +133,9 @@ namespace Zurich.Connector.Data.Services
                 connectorModel.AdvancedSyntax.Operators.Or = "OR";
                 connectorModel.AdvancedSyntax.Operators.Wildcard = "*";
                 connectorModel.AdvancedSyntax.Operators.TextualOcurrence = "\"";
-                connectorModel.AdvancedSyntax.Operators.Not = "%NOT";
+                connectorModel.AdvancedSyntax.Operators.Not = "NOT ";
                 connectorModel.AdvancedSyntax.Operators.TermGrouping = "(";
-                connectorModel.AdvancedSyntax.Operators.Proximity = "n(";
+                connectorModel.AdvancedSyntax.Operators.Proximity = "NEAR(n)";
             }
             if (connectorModel.AdvancedSyntax!= null && connectorModel.AdvancedSyntax.Operators != null) 
             {
@@ -178,19 +178,13 @@ namespace Zurich.Connector.Data.Services
         }
 
         public Dictionary<string, string> MapQueryAdvancedSearch(Dictionary<string, string> cdmQueryParameters, ConnectorModel connectorModel)
-        { 
+        {
+            string searchQuery = System.Web.HttpUtility.UrlDecode(cdmQueryParameters["Query"]);
             AdvancedSyntaxOperatorModel federatedSearchOperators =  new AdvancedSyntaxOperatorModel {};
-            foreach (var fedOperator in federatedSearchOperators.GetType().GetProperties())
-            {
-                //Standard operator, used in FedSearch, this will be replaced
-                String standardOperator = typeof(AdvancedSyntaxOperatorConstants).GetField(fedOperator.Name).GetValue(null).ToString();
-                //Operator used in connector, this will be the replace
-                String connectorOperator = connectorModel.AdvancedSyntax.Operators.GetType().GetProperty(fedOperator.Name).GetValue(connectorModel.AdvancedSyntax.Operators, null).ToString();
-                cdmQueryParameters["Query"] = AdvancedSearchHandler.HandleOperator(cdmQueryParameters["Query"], standardOperator, connectorOperator,fedOperator.Name);
-            }
+            cdmQueryParameters["Query"] = AdvancedSearchHandler.HandleOperator(searchQuery, federatedSearchOperators, connectorModel);
             return cdmQueryParameters;
         }
-            public NameValueCollection MapQueryParametersFromDB(Dictionary<string, string> cdmQueryParameters, ConnectorModel connectorModel)
+        public NameValueCollection MapQueryParametersFromDB(Dictionary<string, string> cdmQueryParameters, ConnectorModel connectorModel)
         {
             NameValueCollection modifiedQueryParameters = new NameValueCollection();
             var queryParameters = new Dictionary<string, string>();
