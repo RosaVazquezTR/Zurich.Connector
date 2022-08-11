@@ -132,8 +132,21 @@ namespace Zurich.Connector.Data.DataMap
                     {
                         if (jsonResponse is JArray)
                         {
-                            // Default to first value in array at the moment if passed in the location
-                            jsonResponse = jsonResponse.First();
+                            if (connectorDocument.Info.SubType == "Parent")
+                            {
+                                // Default to first value in array at the moment if passed in the location
+                                jsonResponse = jsonResponse.First();
+                            }
+                            else
+                            {
+                                // Mapping every value in the array at the moment if passed in a location
+                                JArray results = new JArray();
+                                foreach (var result in jsonResponse)
+                                {
+                                    results.Add(await PerformMapping(result, connectorDocument, requestParameters));
+                                }
+                                return (dynamic)results;
+                            }
                         }
                         if (location != "[]")
                         {
@@ -188,12 +201,20 @@ namespace Zurich.Connector.Data.DataMap
             }
             if (response is JArray)
             {
-                JArray results = new JArray();
-                foreach (var result in response)
+                if (connectorDocument.Info.SubType == "Parent")
                 {
-                    results.Add(await MapResult(result, connectorDocument, requestParameters));
+                    return await MapResult(response, connectorDocument, requestParameters);
                 }
-                return (dynamic)results;
+                else
+                {
+                    JArray results = new JArray();
+                    foreach (var result in response)
+                    {
+                        results.Add(await MapResult(result, connectorDocument, requestParameters));
+                    }
+                    return (dynamic)results;
+                }
+
             }
             else if (response is JObject)
             {

@@ -380,6 +380,10 @@ namespace Zurich.Connector.Tests
 
 			ConnectorDocument connectorDocument = new ConnectorDocument()
 			{
+				Info = new ConnectorInfo()
+				{
+					SubType = "Child"
+				},
 				ResultLocation = "data.results",
 				Request = new ConnectorRequest()
 				{ EndpointPath = "https://fakeaddress.thomsonreuters.com" },
@@ -464,6 +468,10 @@ namespace Zurich.Connector.Tests
 
 			ConnectorDocument connectorDocument = new ConnectorDocument()
 			{
+				Info = new ConnectorInfo()
+				{
+					SubType = "Child"
+				},
 				Request = new ConnectorRequest()
 				{ EndpointPath = "https://fakeaddress.thomsonreuters.com" },
 				Response = new ConnectorResponse()
@@ -607,6 +615,10 @@ namespace Zurich.Connector.Tests
 
 			ConnectorDocument connectorDocument = new ConnectorDocument()
 			{
+				Info = new ConnectorInfo()
+				{
+					SubType = "Child"
+				},
 				ResultLocation = "data.results",
 				Request = new ConnectorRequest()
 				{ EndpointPath = "https://fakeaddress.thomsonreuters.com" },
@@ -690,7 +702,11 @@ namespace Zurich.Connector.Tests
 
             ConnectorDocument connectorDocument1 = new ConnectorDocument()
             {
-                Id = "1",
+				Info = new ConnectorInfo()
+				{
+					SubType = "Child"
+				},
+				Id = "1",
                 ResultLocation = "data.results",
                 Request = new ConnectorRequest()
                 { EndpointPath = "https://fakeaddress.thomsonreuters.com" },
@@ -731,7 +747,11 @@ namespace Zurich.Connector.Tests
 
             ConnectorDocument connectorDocument2 = new ConnectorDocument()
             {
-                Id = "2",
+				Info = new ConnectorInfo()
+				{
+					SubType = "Child"
+				},
+				Id = "2",
                 ResultLocation = "testArray",
                 Request = new ConnectorRequest()
                 { EndpointPath = "https://fakeaddress.thomsonreuters.com" },
@@ -800,6 +820,10 @@ namespace Zurich.Connector.Tests
 
 			ConnectorDocument connectorDocument = new ConnectorDocument()
 			{
+				Info = new ConnectorInfo()
+				{
+					SubType = "Child"
+				},
 				Request = new ConnectorRequest()
 				{ EndpointPath = "https://fakeaddress.thomsonreuters.com" },
 				Response = new ConnectorResponse()
@@ -891,6 +915,10 @@ namespace Zurich.Connector.Tests
 
 			ConnectorDocument connectorDocument = new ConnectorDocument()
 			{
+				Info = new ConnectorInfo()
+				{
+					SubType = "Child"
+				},
 				Request = new ConnectorRequest()
 				{ EndpointPath = "https://fakeaddress.thomsonreuters.com" },
 				Response = new ConnectorResponse()
@@ -975,6 +1003,10 @@ namespace Zurich.Connector.Tests
 
 			ConnectorDocument connectorDocument = new ConnectorDocument()
 			{
+				Info = new ConnectorInfo()
+				{
+					SubType = "Child"
+				},
 				ResultLocation = "data.results",
 				Request = new ConnectorRequest()
 				{ EndpointPath = "https://fakeaddress.thomsonreuters.com" },
@@ -1047,6 +1079,10 @@ namespace Zurich.Connector.Tests
 
 			ConnectorDocument connectorDocument = new ConnectorDocument()
 			{
+				Info = new ConnectorInfo()
+				{
+					SubType = "Child"
+				},
 				ResultLocation = "data.results",
 				Request = new ConnectorRequest()
 				{ EndpointPath = "https://fakeaddress.thomsonreuters.com" },
