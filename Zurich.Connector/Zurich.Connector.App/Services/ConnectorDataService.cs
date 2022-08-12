@@ -125,7 +125,7 @@ namespace Zurich.Connector.Data.Services
             {
                 return null;
             }
-            if (connectorModel.advancedSearchSyntax != null && connectorModel.advancedSearchSyntax.Operators != null) 
+            if (connectorModel.AdvancedSearchSyntax != null && connectorModel.AdvancedSearchSyntax.Operators != null) 
             {
                 queryParameters = MapQueryAdvancedSearch(queryParameters, connectorModel);
             }

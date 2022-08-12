@@ -68,7 +68,7 @@ namespace Zurich.Connector.App.Utils
                     //Our own operator, used in FedSearch
                     String fedSearchOperator = _federatedSearchOperators.GetType().GetProperty(fedOperator.Name).GetValue(_federatedSearchOperators,null).ToString().ToUpper();
                     //Operator used in connector, this will be the replace
-                    String connectorOperator = connectorModel.advancedSearchSyntax.Operators.GetType().GetProperty(fedOperator.Name).GetValue(connectorModel.advancedSearchSyntax.Operators, null).ToString();
+                    String connectorOperator = connectorModel.AdvancedSearchSyntax.Operators.GetType().GetProperty(fedOperator.Name).GetValue(connectorModel.AdvancedSearchSyntax.Operators, null).ToString();
                     String operatorName = fedOperator.Name;
 
                     if ((fedSearchOperator.ToUpper() != (connectorOperator.ToUpper())) || fedSearchOperator == " & ")
