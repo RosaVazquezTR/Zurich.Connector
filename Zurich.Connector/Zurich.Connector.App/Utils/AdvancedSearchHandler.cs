@@ -50,6 +50,16 @@ namespace Zurich.Connector.App.Utils
         }
         public static string HandleOperator(string query, ConnectorModel connectorModel)
         {
+            // MsGraph connector adds some system parameters through query, we should not modify them
+            string systemQuery = "";
+            if (connectorModel.Id == "14")
+            {
+                MatchCollection modifyedQuery = Regex.Matches(query, @"\((.+?)\)");
+                
+                systemQuery = modifyedQuery[1].Value;
+                query = query.Replace(systemQuery, "");
+                query = query.Substring(1, query.Length - 3);
+            }
             if (validateQuery(query))
             {
                 string newQuery = query;
@@ -58,10 +68,10 @@ namespace Zurich.Connector.App.Utils
                     //Our own operator, used in FedSearch
                     String fedSearchOperator = _federatedSearchOperators.GetType().GetProperty(fedOperator.Name).GetValue(_federatedSearchOperators,null).ToString().ToUpper();
                     //Operator used in connector, this will be the replace
-                    String connectorOperator = connectorModel.AdvancedSyntax.Operators.GetType().GetProperty(fedOperator.Name).GetValue(connectorModel.AdvancedSyntax.Operators, null).ToString();
+                    String connectorOperator = connectorModel.advancedSearchSyntax.Operators.GetType().GetProperty(fedOperator.Name).GetValue(connectorModel.advancedSearchSyntax.Operators, null).ToString();
                     String operatorName = fedOperator.Name;
 
-                    if (fedSearchOperator.ToUpper() != (connectorOperator.ToUpper()))
+                    if ((fedSearchOperator.ToUpper() != (connectorOperator.ToUpper())) || fedSearchOperator == " & ")
                     {
                         // A simple replace of the fedSearch operator with the connector operator must work (with some considerations): 
                         newQuery = newQuery.Replace(fedSearchOperator, connectorOperator);
@@ -94,6 +104,8 @@ namespace Zurich.Connector.App.Utils
                         }
                     }      
                 }
+                if (connectorModel.Id == "14")
+                    return "(" + newQuery + ") " + systemQuery;
                 return newQuery;
             }
             else

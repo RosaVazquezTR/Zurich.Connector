@@ -70,7 +70,7 @@ namespace Zurich.Connector.Data.Repositories.CosmosDocuments
         /// <summary>
         /// Syntax for advanced search operators if supported
         /// </summary>
-        public ConnectorAdvancedSyntax AdvancedSyntax { get; set; }
+        public ConnectorAdvancedSyntax advancedSearchSyntax { get; set; }
     }
 
     public class ConnectorInfo
