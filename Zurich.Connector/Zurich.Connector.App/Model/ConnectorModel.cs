@@ -65,7 +65,7 @@ namespace Zurich.Connector.App.Model
         /// <summary>
         /// Syntax for advanced search operators if supported
         /// </summary>
-        public ConnectorAdvancedSyntaxModel AdvancedSyntax { get; set; }
+        public ConnectorAdvancedSyntaxModel advancedSearchSyntax { get; set; }
 
     }
 
