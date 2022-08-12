@@ -125,19 +125,7 @@ namespace Zurich.Connector.Data.Services
             {
                 return null;
             }
-            //Para pruebas solamente
-            if (connectorModel.Id == "51") { 
-                connectorModel.AdvancedSyntax = new ConnectorAdvancedSyntaxModel();
-                connectorModel.AdvancedSyntax.Operators = new AdvancedSyntaxOperatorModel();
-                connectorModel.AdvancedSyntax.Operators.And = "AND";
-                connectorModel.AdvancedSyntax.Operators.Or = "OR";
-                connectorModel.AdvancedSyntax.Operators.Wildcard = "*";
-                connectorModel.AdvancedSyntax.Operators.TextualOcurrence = "\"";
-                connectorModel.AdvancedSyntax.Operators.Not = "NOT ";
-                connectorModel.AdvancedSyntax.Operators.TermGrouping = "(";
-                connectorModel.AdvancedSyntax.Operators.Proximity = "NEAR(n)";
-            }
-            if (connectorModel.AdvancedSyntax!= null && connectorModel.AdvancedSyntax.Operators != null) 
+            if (connectorModel.advancedSearchSyntax != null && connectorModel.advancedSearchSyntax.Operators != null) 
             {
                 queryParameters = MapQueryAdvancedSearch(queryParameters, connectorModel);
             }
