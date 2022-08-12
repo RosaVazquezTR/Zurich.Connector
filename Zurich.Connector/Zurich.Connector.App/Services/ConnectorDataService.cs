@@ -180,10 +180,10 @@ namespace Zurich.Connector.Data.Services
         public Dictionary<string, string> MapQueryAdvancedSearch(Dictionary<string, string> cdmQueryParameters, ConnectorModel connectorModel)
         {
             string searchQuery = System.Web.HttpUtility.UrlDecode(cdmQueryParameters["Query"]);
-            AdvancedSyntaxOperatorModel federatedSearchOperators =  new AdvancedSyntaxOperatorModel {};
-            cdmQueryParameters["Query"] = AdvancedSearchHandler.HandleOperator(searchQuery, federatedSearchOperators, connectorModel);
+            cdmQueryParameters["Query"] = AdvancedSearchHandler.HandleOperator(searchQuery, connectorModel);
             return cdmQueryParameters;
         }
+
         public NameValueCollection MapQueryParametersFromDB(Dictionary<string, string> cdmQueryParameters, ConnectorModel connectorModel)
         {
             NameValueCollection modifiedQueryParameters = new NameValueCollection();

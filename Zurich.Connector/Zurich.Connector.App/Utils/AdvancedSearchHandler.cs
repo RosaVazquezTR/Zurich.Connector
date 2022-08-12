@@ -10,6 +10,17 @@ namespace Zurich.Connector.App.Utils
 {
     public class AdvancedSearchHandler
     {
+        private static readonly AdvancedSyntaxOperatorModel _federatedSearchOperators = new()
+        {
+            And = "&",
+            Or = "OR",
+            Wildcard = "*",
+            TextualOcurrence = "\"",
+            Not = "%",
+            TermGrouping = "(",
+            Proximity = "/"
+        };
+    
         public static bool validateQuery(string query)
         {
             // There is no nesting of any operator. The text inside () or " " must be query terms.
@@ -37,15 +48,15 @@ namespace Zurich.Connector.App.Utils
 
             return true;
         }
-        public static string HandleOperator(string query, AdvancedSyntaxOperatorModel federatedSearchOperators, ConnectorModel connectorModel)
+        public static string HandleOperator(string query, ConnectorModel connectorModel)
         {
             if (validateQuery(query))
             {
                 string newQuery = query;
-                foreach (var fedOperator in federatedSearchOperators.GetType().GetProperties())
+                foreach (var fedOperator in _federatedSearchOperators.GetType().GetProperties())
                 {
                     //Our own operator, used in FedSearch
-                    String fedSearchOperator = typeof(AdvancedSyntaxOperatorConstants).GetField(fedOperator.Name).GetValue(null).ToString().ToUpper();
+                    String fedSearchOperator = _federatedSearchOperators.GetType().GetProperty(fedOperator.Name).GetValue(_federatedSearchOperators,null).ToString().ToUpper();
                     //Operator used in connector, this will be the replace
                     String connectorOperator = connectorModel.AdvancedSyntax.Operators.GetType().GetProperty(fedOperator.Name).GetValue(connectorModel.AdvancedSyntax.Operators, null).ToString();
                     String operatorName = fedOperator.Name;
