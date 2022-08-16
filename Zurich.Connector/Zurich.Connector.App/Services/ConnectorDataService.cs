@@ -125,6 +125,10 @@ namespace Zurich.Connector.Data.Services
             {
                 return null;
             }
+            if (connectorModel.AdvancedSearchSyntax != null && connectorModel.AdvancedSearchSyntax.Operators != null) 
+            {
+                queryParameters = MapQueryAdvancedSearch(queryParameters, connectorModel);
+            }
 
            NameValueCollection mappedQueryParameters = MapQueryParametersFromDB(queryParameters, connectorModel);
             ConnectorDocument connectorDocument = _mapper.Map<ConnectorDocument>(connectorModel);
@@ -159,6 +163,13 @@ namespace Zurich.Connector.Data.Services
                 data[Constants.filters] = mappingFilters;
             }
             return data;
+        }
+
+        public Dictionary<string, string> MapQueryAdvancedSearch(Dictionary<string, string> cdmQueryParameters, ConnectorModel connectorModel)
+        {
+            string searchQuery = System.Web.HttpUtility.UrlDecode(cdmQueryParameters["Query"]);
+            cdmQueryParameters["Query"] = AdvancedSearchHandler.HandleOperator(searchQuery, connectorModel);
+            return cdmQueryParameters;
         }
 
         public NameValueCollection MapQueryParametersFromDB(Dictionary<string, string> cdmQueryParameters, ConnectorModel connectorModel)

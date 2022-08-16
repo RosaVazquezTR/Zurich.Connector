@@ -70,5 +70,16 @@
       }
     ],
     "unstructured": []
-  }
+  },
+  "advancedSearchSyntax":{
+		"operators": {
+			"and": "AND",
+			"or": "OR",
+			"textualOcurrence": "\"",
+			"not": "NOT ",
+			"wildcard": "*",
+			"proximity": "NEAR",
+			"termGrouping": "("
+		}
+	}
 }

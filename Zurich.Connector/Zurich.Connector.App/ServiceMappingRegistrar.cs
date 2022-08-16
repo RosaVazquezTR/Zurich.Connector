@@ -28,6 +28,8 @@ namespace Zurich.Connector.App
             CreateMap<ConnectorRequestParameter, ConnectorRequestParameterModel>();
             CreateMap<ConnectorRequestSorting, ConnectorRequestSortingModel>();
             CreateMap<ConnectorRequestSortingProperties, ConnectorRequestSortingPropertiesModel>();
+            CreateMap<ConnectorAdvancedSyntax, ConnectorAdvancedSyntaxModel>();
+            CreateMap<AdvancedSyntaxOperator, AdvancedSyntaxOperatorModel>();
 
             CreateMap<RegistrationInfo, RegistrationInfoModel>();
             CreateMap<DomainSpecificInformation, DomainSpecificInformationModel>();
@@ -65,6 +67,8 @@ namespace Zurich.Connector.App
             CreateMap<ConnectorRequestParameterModel, ConnectorRequestParameter>();
             CreateMap<ConnectorRequestSortingModel, ConnectorRequestSorting>();
             CreateMap<ConnectorRequestSortingPropertiesModel, ConnectorRequestSortingProperties>();
+            CreateMap<ConnectorAdvancedSyntaxModel, ConnectorAdvancedSyntax>();
+            CreateMap<AdvancedSyntaxOperatorModel, AdvancedSyntaxOperator>();
 
             CreateMap<ConnectorResponseModel, ConnectorResponse>();
             CreateMap<ConnectorReponseSchemaModel, ConnectorReponseSchema>();
