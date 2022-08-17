@@ -2,7 +2,7 @@ variables:
   - name: apiVersion 
     value: "v1" 
   - name: assignmentGroup
-    value: "APP-OPS-L1-ASE-LEGALSHARED"
+    value: "APP-OPS-ASE-LEGALSHARED"
   - name: azureAdClientId
     value: "3e1c6d20-9663-41bb-84fd-669fa96a1dc3"
   - name: connectorCosmosMaxThroughput
