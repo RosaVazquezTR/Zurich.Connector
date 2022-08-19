@@ -108,8 +108,9 @@ namespace Zurich.Connector.App.Utils
                         }
                     }      
                 }
-                if (connectorModel.Id == "14" & modifyedQuery.Count > 0)
-                    return "(" + newQuery + ") " + systemQuery;
+                if (connectorModel.Id == "14") 
+                    if (modifyedQuery.Count > 0)
+                        return "(" + newQuery + ") " + systemQuery;
                 return newQuery;
             }
             else

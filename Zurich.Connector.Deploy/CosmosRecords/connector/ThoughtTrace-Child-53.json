@@ -41,6 +41,25 @@
                 "_comment": ""
             }
         ],
-        "unstructured": []
+        "unstructured": [
+            {
+                "name": "lastModifiedOn",
+                "type": "DateTime",
+                "responseElement": "lastModifiedOn",
+                "_comment": ""
+            },
+            {
+                "name": "processingStatus",
+                "type": "string",
+                "responseElement": "processingStatus",
+                "_comment": ""
+            },
+            {
+                "name": "highlightedText",
+                "type": "string",
+                "responseElement": "highlightedText",
+                "_comment": ""
+            }
+        ]
     }
 }
