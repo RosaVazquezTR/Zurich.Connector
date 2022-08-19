@@ -63,14 +63,23 @@ namespace Zurich.Connector.Data.Services
 				WriteJsonObject(writer, paramParts.Skip(1).ToArray(), value, valueType);
 			else
 			{
-				var requestArray = value?.Split(',', StringSplitOptions.RemoveEmptyEntries);
-				if (requestArray != null)
+				if (isArray)
 				{
-					foreach (var requestValue in requestArray)
+					var requestArray = value?.Split(',', StringSplitOptions.RemoveEmptyEntries);
+					if (requestArray != null)
 					{
-						WriteTypedValue(writer, requestValue, valueType);
+						foreach (var requestValue in requestArray)
+						{
+							WriteTypedValue(writer, requestValue, valueType);
+						}
 					}
 				}
+				else
+				{
+					if (!String.IsNullOrEmpty(value))
+						WriteTypedValue(writer, value, valueType);
+				}
+				
 			}
 
 			if (isArray)

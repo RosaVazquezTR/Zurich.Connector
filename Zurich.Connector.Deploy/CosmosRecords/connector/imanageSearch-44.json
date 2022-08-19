@@ -38,6 +38,70 @@
         "required": false,
         "type": "string",
         "defaultValue": "database,document_number,version,name,alias,author,operator,type,class,subclass,file_create_date,create_date,retain_days,size,is_related,default_security,last_user,file_edit_date,extension"
+      },
+      {
+        "cdmName": "EditDate.filter",
+        "name": "filters.edit_date",
+        "inClause": "Body",
+        "required": false,
+        "type": "string",
+        "defaultValue": ""
+      },
+      {
+        "cdmName": "CreateDate.filter",
+        "name": "filters.create_date",
+        "inClause": "Body",
+        "required": false,
+        "type": "string",
+        "defaultValue": ""
+      },
+      {
+        "cdmName": "User.filter",
+        "name": "filters.user",
+        "inClause": "Body",
+        "required": false,
+        "type": "string",
+        "defaultValue": ""
+      },
+      {
+        "cdmName": "Author.filter",
+        "name": "filters.author",
+        "inClause": "Body",
+        "required": false,
+        "type": "string",
+        "defaultValue": ""
+      },
+      {
+        "cdmName": "Operator.filter",
+        "name": "filters.operator",
+        "inClause": "Body",
+        "required": false,
+        "type": "string",
+        "defaultValue": ""
+      },
+      {
+        "cdmName": "Owner.filter",
+        "name": "filters.owner",
+        "inClause": "Body",
+        "required": false,
+        "type": "string",
+        "defaultValue": ""
+      },
+      {
+        "cdmName": "ContainerId.filter",
+        "name": "filters.container_id",
+        "inClause": "Body",
+        "required": false,
+        "type": "string",
+        "defaultValue": ""
+      },
+      {
+        "cdmName": "Type.filter",
+        "name": "filters.type",
+        "inClause": "Body",
+        "required": false,
+        "type": "string",
+        "defaultValue": ""
       }
     ],
     "sorting": {
@@ -47,7 +111,74 @@
   "response": {
     "type": "JSON"
   },
-  "filters": [],
+  "filters": [
+    {
+      "name": "EditDate",
+      "description": "The format is [begin]:[end][timescale]. The time scale is 'd' for days, 'm' for months, 'y' for years. Example: -30:0d. These dates are relative to each other prior the current date.",
+      "isMultiselect": "false",
+      "requestParameter": "EditDate.filter"
+    },
+    {
+      "name": "CreateDate",
+      "description": "The format is [begin]:[end][timescale]. The time scale is 'd' for days, 'm' for months, 'y' for years. Example: -30:0d. These dates are relative to each other prior the current date.",
+      "isMultiselect": "false",
+      "requestParameter": "CreateDate.filter"
+    },
+    {
+      "name": "User",
+      "description": "Specifies the document's user ID.",
+      "isMultiselect": "false",
+      "requestParameter": "User.filter"
+    },
+    {
+      "name": "Author",
+      "description": "Specifies the user ID of the document's author.",
+      "isMultiselect": "false",
+      "requestParameter": "Author.filter"
+    },
+    {
+      "name": "Operator",
+      "description": "Specifies the user ID of the operator of the documents.",
+      "isMultiselect": "false",
+      "requestParameter": "Operator.filter"
+    },
+    {
+      "name": "Owner",
+      "description": "Specifies the user ID of the author or operator of the documents..",
+      "isMultiselect": "false",
+      "requestParameter": "Owner.filter"
+    },
+    {
+      "name": "ContainerId",
+      "description": "Returns documents or emails from the specified container_id only.",
+      "isMultiselect": "false",
+      "requestParameter": "ContainerId.filter"
+    },
+    {
+      "name": "Type",
+      "description": "Specifies documents of the document type. Values can be merge,example: WORD,EXCEL. Filter list is suggested use. Default retrieves all types.",
+      "isMultiselect": "true",
+      "requestParameter": "Type.filter",
+      "filterlist": [
+        {
+          "name": "Document",
+          "id": "WORD,WORDX,WORDXT,DOCM,DOTX,PAGES,RTF,WPF"
+        },
+        {
+          "name":"Spreadsheet",
+          "id": "EXCEL,EXCELX,EXCELM,XLSB,XLSM,NUMBERS"
+        },
+        {
+          "name":"Presentation",
+          "id": "PPT,PPTX,PPTM,KEY"
+        },
+        {
+          "name":"Pdf",
+          "id": "ACROBAT"
+        }
+      ]
+    }         
+  ],
   "CDMmapping": {
     "structured": [
       {
