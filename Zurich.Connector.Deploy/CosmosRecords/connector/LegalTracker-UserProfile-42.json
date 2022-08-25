@@ -7,7 +7,8 @@
     "description": "Get Legal Tracker User Profile",
     "entityType": "UserProfile",
     "dataSourceId": "26",
-    "version": "1.0"
+    "version": "1.0",
+    "subType": "Parent"
   },
   "request": {
     "endpointPath": "/user-mapping-api/v1/users",

@@ -43,7 +43,7 @@
       "properties": {}
     }
   },
-  "resultLocation": "value",
+  "resultLocation": "value.[]",
   "filters": [],
   "cdmMapping": {
     "structured": [
