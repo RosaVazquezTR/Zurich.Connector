@@ -129,8 +129,13 @@ namespace Zurich.Connector.Data.Services
             {
                 queryParameters = MapQueryAdvancedSearch(queryParameters, connectorModel);
             }
+            else
+            {
+                if (queryParameters.ContainsKey("Query"))
+                    queryParameters["Query"] = System.Web.HttpUtility.UrlDecode(queryParameters["Query"]);
+            }
 
-           NameValueCollection mappedQueryParameters = MapQueryParametersFromDB(queryParameters, connectorModel);
+            NameValueCollection mappedQueryParameters = MapQueryParametersFromDB(queryParameters, connectorModel);
             ConnectorDocument connectorDocument = _mapper.Map<ConnectorDocument>(connectorModel);
             Dictionary<string, string> headerParameters = await _dataExtractionService.ExtractDataSource(mappedQueryParameters, queryParameters, hostname, connectorDocument);
             IDataMapping service = _dataMappingFactory.GetImplementation(connectorModel?.DataSource?.SecurityDefinition?.Type);
