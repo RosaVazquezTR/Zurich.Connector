@@ -9,6 +9,8 @@ using Microsoft.Extensions.Logging;
 using Zurich.Connector.Data.Model;
 using System.Collections.Specialized;
 using System.Web;
+using Zurich.Common.Services;
+using Zurich.Common.Models.FeatureFlags;
 
 namespace Zurich.Connector.Data.Repositories
 {
@@ -16,12 +18,14 @@ namespace Zurich.Connector.Data.Repositories
 	{
 		private readonly HttpClient _httpClient;
 		private readonly ILogger<Repository> _logger;
+        private readonly IAppConfigService _appConfigService;
 
-		public Repository(HttpClient httpClient, ILogger<Repository> logger)
-		{
-			_httpClient = httpClient;
-			_logger = logger;
-		}
+        public Repository(HttpClient httpClient, ILogger<Repository> logger, IAppConfigService appConfigService)
+        {
+            _httpClient = httpClient;
+            _logger = logger;
+            _appConfigService = appConfigService;
+        }
 
         public async Task<string> MakeRequest(ApiInformation apiInformation, NameValueCollection parameters, string body)
         {
@@ -144,6 +148,16 @@ namespace Zurich.Connector.Data.Repositories
         private async Task<string> RetrieveResponse(ApiInformation apiInformation, HttpRequestMessage requestMessage)
         {
             var result = await _httpClient.SendAsync(requestMessage);
+
+            //Feature flag to simulate error in conectors requests to test puroposes
+            if (await _appConfigService.IsDynamicFeatureEnabled(Features.SimulateErrorDatasource, apiInformation.AppCode))
+            {
+                result.StatusCode = System.Net.HttpStatusCode.InternalServerError;
+            }
+            else if (await _appConfigService.IsDynamicFeatureEnabled(Features.SimulateTimeoutDatasource, apiInformation.AppCode))
+            {
+                result.StatusCode = System.Net.HttpStatusCode.GatewayTimeout;
+            }
 
             if (result.IsSuccessStatusCode)
             {

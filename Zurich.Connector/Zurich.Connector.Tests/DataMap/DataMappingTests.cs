@@ -70,7 +70,7 @@ namespace Zurich.Connector.Tests
 			OAuthAPITokenResponse token = new OAuthAPITokenResponse() { AccessToken = "fakeToken" };
 			AppToken appToken = new AppToken() { access_token = "fakeToken" };
 			_mockOAuthService.Setup(x => x.GetToken(It.IsAny<string>(), It.IsAny<OAuthApplicationType>(), It.IsAny<string>(), It.IsAny<ProductType>())).Returns(Task.FromResult(appToken));
-			_mockOAuthApirepository.Setup(x => x.GetToken(It.IsAny<string>())).Returns(Task.FromResult(token));
+			_mockOAuthApirepository.Setup(x => x.GetToken(It.IsAny<string>(), It.IsAny<string>())).Returns(Task.FromResult(token));
 			_mockCosmosDocumentReader = new Mock<ConnectorCosmosContext>(null, null);
 			_mockMapper = new Mock<IMapper>();
 			_cosmosService = new CosmosService(_mockCosmosDocumentReader.Object, _mockMapper.Object, _fakeConfiguration);

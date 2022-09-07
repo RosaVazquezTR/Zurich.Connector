@@ -135,6 +135,7 @@ namespace Zurich.Connector.Web
             services.AddConnectorCosmosServices(_connectorCosmosDbOptions, _connectorCosmosClientOptions);
             services.ConfigureExceptonhandler();
             services.AddOAuthHttpClient(Configuration.GetValue<string>(AppSettings.OAuthUrl));
+            services.AddAppConfigServices(Configuration.GetValue<string>("splitIOApiKey")); 
 
             AddAuthServices(services, _legalPlatformAuthOptions, _ciamAuthOptions);
         }

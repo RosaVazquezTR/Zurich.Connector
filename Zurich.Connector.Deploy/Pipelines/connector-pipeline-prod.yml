@@ -124,6 +124,7 @@ stages:
                   routeTableName: ${{ variables.routeTableName }}
                   connectorServiceName: ${{ variables.connectorServiceName }}
                   smartDetectionRuleNames: ${{ variables.smartDetectionRuleNames }}
+                  splitIOApiKey: $(splitIOApiKey)
                   subnetPreFix: ${{ variables.subnetPreFix }}
                   subnetConnectorBackend: ${{ variables.subnetConnectorBackend }}
                   subnetFunctionBackend: ${{ variables.subnetFunctionBackend }}

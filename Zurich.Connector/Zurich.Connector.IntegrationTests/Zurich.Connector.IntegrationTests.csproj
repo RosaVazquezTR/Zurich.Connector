@@ -28,7 +28,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="Zurich.Common" Version="1.0.1-CI-20220517-180628" />
+    <PackageReference Include="Zurich.Common" Version="1.0.1-CI-20220906-191010" />
   </ItemGroup>
 
   <ItemGroup>
