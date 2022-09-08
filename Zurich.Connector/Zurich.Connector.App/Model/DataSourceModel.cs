@@ -73,6 +73,10 @@ namespace Zurich.Connector.App.Model
         /// TODO: Remove this, needed for a work around at the moment
         /// </summary>
         public string ProductType { get; set; }
+        /// <summary>
+        /// Whether or not the datasource contains multiple instances
+        /// </summary>
+        public bool CombinedLocations { get; set; }
     }
 
     /// <summary>

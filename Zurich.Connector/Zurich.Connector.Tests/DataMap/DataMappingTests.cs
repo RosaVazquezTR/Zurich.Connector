@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
+using System.Net.Http;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Zurich.Common.Models.OAuth;
@@ -25,6 +26,7 @@ using Zurich.Connector.Data.Repositories.CosmosDocuments;
 using Zurich.Connector.Data.Services;
 using Zurich.Connector.Tests.Common;
 using Zurich.ProductData.Models;
+using Zurich.TenantData;
 
 namespace Zurich.Connector.Tests
 {
@@ -47,6 +49,10 @@ namespace Zurich.Connector.Tests
 		private IConfiguration _fakeConfiguration;
 		private ICosmosService _cosmosService;
 		private Mock<IOAuthServices> _mockOAuthServices;
+		// Temporary measure to use the old way to obtain a token for HighQ, while highQ admin token is fixed in federated search
+		// TODO: Remove this once the adminToken works in federated search and can be obtained from OAuth
+		private Mock<IHttpClientFactory> _mockHttpClientFactory;
+		private Mock<ISessionAccessor> _mockSessionAccessor;
 
 		[TestInitialize]
 		public void TestInitialize()
@@ -63,6 +69,10 @@ namespace Zurich.Connector.Tests
             _mockOAuthApirepository = new Mock<IOAuthApiRepository>();
 			_mockLegalHomeAccessCheck = new Mock<ILegalHomeAccessCheck>();
 			_fakeConfiguration = Utility.CreateConfiguration("fakeKey", "fakeValue");
+			// Temporary measure to use the old way to obtain a token for HighQ, while highQ admin token is fixed in federated search
+			// TODO: Remove this once the adminToken works in federated search and can be obtained from OAuth
+			_mockHttpClientFactory = new Mock<IHttpClientFactory>();
+			_mockSessionAccessor = new Mock<ISessionAccessor>();
 
 			_fakeOAuthOptions.Connections = new Dictionary<string, OAuthConnection>();
 
@@ -367,7 +377,7 @@ namespace Zurich.Connector.Tests
 
 		private DataMappingOAuth CreateDataMapping()
         {
-			return new DataMappingOAuth(_mockRepository.Object, _mockDataMappingRepository.Object, _mockOAuthService.Object, _mockLoggerOAuth.Object, _mockCosmosDocumentReader.Object, _mockMapper.Object, _mockHttpBodyFactory.Object, _mockHttpResponseFactory.Object, _mockContextAccessor.Object, _mockOAuthApirepository.Object, _fakeOAuthOptions, _mockLegalHomeAccessCheck.Object, _fakeConfiguration);
+			return new DataMappingOAuth(_mockRepository.Object, _mockDataMappingRepository.Object, _mockOAuthService.Object, _mockLoggerOAuth.Object, _mockCosmosDocumentReader.Object, _mockMapper.Object, _mockHttpBodyFactory.Object, _mockHttpResponseFactory.Object, _mockContextAccessor.Object, _mockOAuthApirepository.Object, _fakeOAuthOptions, _mockLegalHomeAccessCheck.Object, _fakeConfiguration, _mockHttpClientFactory.Object, _mockSessionAccessor.Object);
 		}
 
 		[TestMethod]

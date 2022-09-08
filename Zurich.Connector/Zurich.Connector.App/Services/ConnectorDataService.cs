@@ -20,6 +20,8 @@ using Zurich.TenantData;
 using Zurich.Connector.Data.Model;
 using Microsoft.Extensions.Configuration;
 using Zurich.Connector.App.Exceptions;
+using Zurich.Common.Models.OAuth;
+using Zurich.Common.Repositories;
 
 namespace Zurich.Connector.Data.Services
 {
@@ -55,7 +57,7 @@ namespace Zurich.Connector.Data.Services
         private readonly CommonServices.ITenantService _tenantService;
         private readonly IOAuthServices _OAuthService;
         private readonly IConfiguration _configuration;
-
+        private readonly IOAuthApiRepository _OAuthApiRepository;
         public ConnectorDataService(
             IDataMappingFactory dataMappingFactory,
             IDataMappingRepository dataMappingRepo,
@@ -102,7 +104,7 @@ namespace Zurich.Connector.Data.Services
             ConnectorModel connectorModel = await _dataMappingService.RetrieveProductInformationMap(connectionIdentifier, hostname, retrieveFilters);
             List<DataSourceInformation> availableRegistrations = await _OAuthService.GetUserRegistrations();
             availableRegistrations = availableRegistrations?.FindAll(x => x.AppCode == connectorModel.DataSource.AppCode).Take(instanceLimit).ToList<DataSourceInformation>();
-             
+
             queryParameters = _dataMappingService.UpdateOffset(connectorModel.DataSource.AppCode, availableRegistrations, queryParameters);
 
             if (queryParameters.ContainsKey(QueryParameters.ResultSize))
@@ -148,8 +150,42 @@ namespace Zurich.Connector.Data.Services
 
             if (!resultSize.HasValue || resultSize.Value > 0)
             {
-                data = await service.GetAndMapResults<dynamic>(connectorDocument, transferToken, mappedQueryParameters, headerParameters, queryParameters);
-                data = await EnrichConnectorData(connectorModel, data);
+                if (connectorModel.DataSource.CombinedLocations)
+                {
+                    dynamic dataArray = new JObject();
+                    dataArray.Instances = new JArray();
+                    foreach (DataSourceInformation currentRegistration in availableRegistrations)
+                    {
+                        try
+                        {
+                            data = await service.GetAndMapResults<dynamic>(connectorDocument, transferToken, mappedQueryParameters, headerParameters, queryParameters, currentRegistration.Domain);
+                            data = await EnrichConnectorData(connectorModel, data);
+                        }
+                        catch (Exception ex)
+                        {
+                            data = new JObject();
+                            data.Status = "Error";
+                            data.ErrorDetails = $"Cannot retrieve {currentRegistration.Name} information - {ex.Message}";
+                        }
+                        finally
+                        {
+                            // TODO: Once it's defined how to display the multiple instances of HighQ in the search endpoint,
+                            // a change in how we arrange the instances from the response will have to be done
+                            dynamic tempInstance = new JObject();
+                            tempInstance.Name = currentRegistration.Name;
+                            tempInstance.Value = data;
+                            dataArray.Instances.Add(tempInstance);
+                        }
+                        
+                    }
+                    data = dataArray;
+                }
+                else
+                {
+                    // Thinking about using the instance domain instead of its name
+                    data = await service.GetAndMapResults<dynamic>(connectorDocument, transferToken, mappedQueryParameters, headerParameters, queryParameters);
+                    data = await EnrichConnectorData(connectorModel, data);
+                }
                 
                 if (data == null)
                     return data;
@@ -163,9 +199,16 @@ namespace Zurich.Connector.Data.Services
 
             if (retrieveFilters == true && data != null)
             {
-
                 JToken mappingFilters = JToken.FromObject(connectorDocument.Filters);
-                data[Constants.filters] = mappingFilters;
+                if (data is JArray)
+                {
+                    foreach (JObject instance in data)
+                    {
+                        instance[Constants.filters] = mappingFilters;
+                    }
+                }
+                else if (data is JObject)
+                    data[Constants.filters] = mappingFilters;
             }
             return data;
         }

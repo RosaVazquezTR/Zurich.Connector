@@ -13,8 +13,8 @@
   },
   "preRelease": true,
   "request": {
-    "endpointPath": "/api/12/Search",
-    "method": "GET",
+    "endpointPath": "/api/12/search",
+    "method": "POST",
     "parameters": [
       {
         "cdmName": "Query",

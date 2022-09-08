@@ -60,7 +60,6 @@ namespace Zurich.Connector.Data.Repositories
 
         public async Task<string> Post(ApiInformation apiInformation, NameValueCollection parameters, string postBody)
 		{
-
             string uri = CreateUri(apiInformation, parameters);
 
             using (var requestMessage = new HttpRequestMessage(HttpMethod.Post, uri))

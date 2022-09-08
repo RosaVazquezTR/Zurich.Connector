@@ -35,7 +35,7 @@ namespace Zurich.Connector.Data.DataMap
             this._configuration = configuration;
         }
 
-        public async override Task<T> GetAndMapResults<T>(ConnectorDocument connectorDocument, string transferToken, NameValueCollection query, Dictionary<string, string> headers, Dictionary<string, string> requestParameters)
+        public async override Task<T> GetAndMapResults<T>(ConnectorDocument connectorDocument, string transferToken, NameValueCollection query, Dictionary<string, string> headers, Dictionary<string, string> requestParameters, string domain = null)
         {
             T results = default(T);
 
@@ -74,8 +74,12 @@ namespace Zurich.Connector.Data.DataMap
                 {
                     var appCodeBaseUrl = _oAuthOptions.Connections[info.AppCode].TransferUrl;
                     //because we use a url builder we need to drop the https, however we need this for the token information
-                    info.HostName = appCodeBaseUrl.Replace("https://", "");
+                    info.HostName = CleanUpApiUrl.FormattingUrl(appCodeBaseUrl);
                 }
+            }
+            else
+            {
+                info.HostName = CleanUpApiUrl.FormattingUrl(info.HostName);
             }
         }
     }

@@ -21,6 +21,12 @@ using Zurich.Connector.Data.Repositories.CosmosDocuments;
 using Zurich.Connector.Data.Services;
 using Zurich.ProductData.Models;
 using OAuthAPITokenResponse = Zurich.Common.Models.OAuth.OAuthAPITokenResponse;
+using Zurich.Common;
+using System.Net.Http;
+using Newtonsoft.Json;
+using Zurich.Common.Models.HighQ;
+using Zurich.Common.Exceptions;
+using Zurich.TenantData;
 
 namespace Zurich.Connector.Data.DataMap
 {
@@ -40,9 +46,12 @@ namespace Zurich.Connector.Data.DataMap
         protected OAuthOptions _oAuthOptions;
         protected ILegalHomeAccessCheck _legalHomeAccessCheck;
         protected IConfiguration _configuration;
+        // Temporary measure to use the old way to obtain a token for HighQ, while highQ admin token is fixed in federated search
+        // TODO: Remove this once the adminToken works in federated search and can be obtained from OAuth
+        protected IHttpClientFactory _httpClientFactory;
+        protected ISessionAccessor _sessionAccessor;
 
-
-        public async virtual Task<T> GetAndMapResults<T>(ConnectorDocument dataTypeInformation, string transferToken, NameValueCollection query, Dictionary<string, string> headers, Dictionary<string, string> requestParameters)
+        public async virtual Task<T> GetAndMapResults<T>(ConnectorDocument dataTypeInformation, string transferToken, NameValueCollection query, Dictionary<string, string> headers, Dictionary<string, string> requestParameters, string domain = null)
         {
             T results = default(T);
 
@@ -93,8 +102,23 @@ namespace Zurich.Connector.Data.DataMap
         }
 
         public async virtual Task<OAuthAPITokenResponse> RetrieveToken(string appCode, OAuthApplicationType? appType = null,
-                                                          string locale = null, string grandType = null, string productType = null)
+                                                          string locale = null, string grandType = null, string productType = null, string domain = null)
         {
+            // Temporary measure to use the old way to obtain a token for HighQ, while highQ admin token is fixed in federated search
+            // TODO: Remove this once the adminToken works in federated search and can be obtained from OAuth
+            if (appCode == "HighQ")
+            {
+                await _sessionAccessor.PopulateUserInfo();
+                AppToken token;
+                token = await GetImpersonatedUserToken(domain.Contains("collabdemo1") ? "collabdemo1": "collabdemo2", _sessionAccessor.Email);
+
+                // HighQ returned a lower case token type and it doesn't accept the token type being lower case in other calls so we have to capitalize it
+                token.token_type = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(token.token_type);
+
+                var result = _mapper.Map<OAuthAPITokenResponse>(token);
+                return result;
+            }
+
             if (_legalHomeAccessCheck.isLegalHomeUser())
             {
                 AppToken token;
@@ -111,7 +135,7 @@ namespace Zurich.Connector.Data.DataMap
             }
             else
             {
-                OAuthAPITokenResponse result = await _oAuthApirepository.GetToken(appCode);
+                OAuthAPITokenResponse result = await _oAuthApirepository.GetToken(appCode, domain);
                 return result;
 
             }
@@ -188,8 +212,12 @@ namespace Zurich.Connector.Data.DataMap
                 {
                     var appCodeBaseUrl = _oAuthOptions.Connections[info.AppCode].BaseUrl;
                     //because we use a url builder we need to drop the https, however we need this for the token information
-                    info.HostName = appCodeBaseUrl.Replace("https://", "");
+                    info.HostName = CleanUpApiUrl.FormattingUrl(appCodeBaseUrl);
                 }
+            }
+            else
+            {
+                info.HostName = CleanUpApiUrl.FormattingUrl(info.HostName);
             }
         }
 
@@ -391,6 +419,64 @@ namespace Zurich.Connector.Data.DataMap
             connectorDocument.DataSource = connectorDataSourceDocument;
 
             return connectorDocument;
+        }
+
+        // Temporary measure to use the old way to obtain a token for HighQ, while highQ admin token is fixed in federated search
+        // TODO: Remove GetInstanceAdminToken and GetImpersonatedUserToken once the adminToken works in federated search and can be obtained from OAuth
+        public async Task<AppToken> GetInstanceAdminToken(string instanceName)
+        {
+            var token = await _oAuthService.GetToken(instanceName, OAuthApplicationType.ServiceApp);
+
+            return token;
+        }
+
+        public async Task<AppToken> GetImpersonatedUserToken(string instanceName, string email)
+        {
+            var instanceConnection = await _oAuthService.GetOAuthConnection(OAuthApplicationType.ServiceApp, instanceName);
+
+            if (instanceConnection != null)
+            {
+                var adminToken = await GetInstanceAdminToken(instanceName);
+                if (!string.IsNullOrEmpty(adminToken?.access_token))
+                {
+                    var client = _httpClientFactory.CreateClient(HttpClientNames.HighQ);
+
+                    var requestMessage = new HttpRequestMessage(HttpMethod.Get, $"{instanceConnection.BaseUrl}{HighQMicroserviceAuthEndpoints.ImpersonateEndpoint}?useremail={email}");
+                    requestMessage.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", adminToken.access_token);
+                    var response = await client.SendAsync(requestMessage);
+                    var responseContent = await response.Content.ReadAsStringAsync();
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var userToken = JsonConvert.DeserializeObject<AppToken>(responseContent);
+
+                        return userToken;
+                    }
+                    else
+                    {
+                        _logger.LogError($"{response.StatusCode} Non Successful response from highQ Impersonate token {requestMessage.RequestUri.Host}");
+                        
+                        if (response.StatusCode == System.Net.HttpStatusCode.Forbidden)
+                        {
+                            var errorResponse = JsonConvert.DeserializeObject<ErrorResponse>(responseContent);
+
+                            if (errorResponse.Summary.Contains(HighQ.InvalidEmail))
+                            {
+                                _logger.LogWarning($"User email was invalid for {instanceName}");
+                                throw new InvalidUserException(errorResponse.Summary);
+                            }
+                        }
+                        
+                        _logger.LogError($"Unable to retrieve user token for {instanceName}. Server returned {response.StatusCode}: {responseContent}");
+                    }
+                }
+            }
+            else
+            {
+                _logger.LogError($"Unable to retrieve user token. Invalid instance name {instanceName ?? ""}");
+            }
+
+            return null;
         }
     }
 }

@@ -25,7 +25,7 @@ namespace Zurich.Connector.Data.DataMap
         /// <param name="headers">headers that should be passed to the 3rd party request</param>
         /// <param name="requestParameters">parameters that came in on the data request</param>
         /// <returns>The T model based on the request or default(T)</returns>
-        Task<T> GetAndMapResults<T>(ConnectorDocument dataTypeInformation, string transferToken, NameValueCollection query, Dictionary<string, string> headers, Dictionary<string, string> requestParameters);
+        Task<T> GetAndMapResults<T>(ConnectorDocument dataTypeInformation, string transferToken, NameValueCollection query, Dictionary<string, string> headers, Dictionary<string, string> requestParameters, string domain = null);
 
         /// <summary>
         /// Retrieve token based on appCode, appType, locale, grandType
@@ -33,7 +33,7 @@ namespace Zurich.Connector.Data.DataMap
         /// <param name="appCode">Application code to get the data from</param>
         /// <returns>Token to use</returns>
         Task<OAuthAPITokenResponse> RetrieveToken(string appCode, OAuthApplicationType? appType = null,
-                                     string locale = null, string grandType = null, string productType = null);
+                                     string locale = null, string grandType = null, string productType = null, string domain = null);
 
         /// <summary>
         /// Method will map a string json object to the CDM object passed in

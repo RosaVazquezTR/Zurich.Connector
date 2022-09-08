@@ -325,7 +325,7 @@ namespace Zurich.Connector.Tests.ServiceTests
 			var mappedResult = await service.GetConnectorData("12", null, null, cdmQueryParameters, false);
 
 			// ASSERT
-			mockDataMappingImpl.Verify(x => x.GetAndMapResults<dynamic>(It.IsAny<ConnectorDocument>(), It.IsAny<string>(), It.IsAny<NameValueCollection>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, string>>()), Times.Once, "GetAndMapResults should be called once if no ResultSize");
+			mockDataMappingImpl.Verify(x => x.GetAndMapResults<dynamic>(It.IsAny<ConnectorDocument>(), It.IsAny<string>(), It.IsAny<NameValueCollection>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<string>()), Times.Once, "GetAndMapResults should be called once if no ResultSize");
 
 		}
 

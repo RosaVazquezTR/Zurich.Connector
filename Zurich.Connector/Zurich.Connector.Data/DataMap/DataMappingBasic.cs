@@ -42,7 +42,7 @@ public class DataMappingBasic : AbstractDataMapping, IDataMapping
         this._configuration = configuration;
         this._cosmosContext = cosmosContext;
     }
-    public async override Task<T> GetAndMapResults<T>(ConnectorDocument connector, string transferToken, NameValueCollection query, Dictionary<string, string> headers, Dictionary<string, string> requestParameters)
+    public async override Task<T> GetAndMapResults<T>(ConnectorDocument connector, string transferToken, NameValueCollection query, Dictionary<string, string> headers, Dictionary<string, string> requestParameters, string domain = null)
     {    
             var appinfoDetails = _oAuthOptions.Connections.SingleOrDefault(x => x.Key.Equals(connector.DataSource.appCode, StringComparison.OrdinalIgnoreCase));
             string svcCredentials = Convert.ToBase64String(Encoding.UTF8.GetBytes(appinfoDetails.Value.Id + ":" + appinfoDetails.Value.Secret));

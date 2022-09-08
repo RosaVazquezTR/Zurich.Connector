@@ -4,6 +4,7 @@
   "name": "HighQ",
   "description": "Connects to the HighQ APIS",
   "appCode": "HighQ",
+  "combinedLocations": "true",
   "infoURL": "",
   "productType": "HighQ",
   "extraRequestContext": "",
@@ -15,7 +16,7 @@
     "registrationFileRequired": "false"
   },
   "securityDefinition": {
-    "type": "highq",
+    "type": "oauth2",
     "flow": "accessCode",
     "defaultSecurityDefinition": {
       "authorizationURL": "https://hub1.hqdev.highq.com/hub1/restAPI/",
