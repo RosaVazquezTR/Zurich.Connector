@@ -29,6 +29,13 @@ stages:
       steps:
         - checkout: self
         - checkout: ZurichDeploy
+        - task: PowerShell@2
+          displayName: 'Setup splitIOApiKey secret for testing'
+          condition: and(succeeded(), ne('$(splitIOApiKey)', ''))
+          inputs:
+            targetType: 'inline'
+            script: |
+              Write-Host  "##vso[task.setvariable variable=splitIOApiKey;isSecret=false]$(splitIOApiKey)"
         - template: Templates\V2\ZurichDeploy-BuildWebAPI.yml@ZurichDeploy
           parameters:
             projectName: ${{ variables.projectName }}

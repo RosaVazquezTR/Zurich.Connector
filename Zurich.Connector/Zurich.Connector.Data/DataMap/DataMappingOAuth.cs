@@ -11,6 +11,7 @@ using System.Security.Authentication;
 using System.Threading.Tasks;
 using Zurich.Common.Models.OAuth;
 using Zurich.Common.Repositories;
+using Zurich.Common.Services;
 using Zurich.Common.Services.Security;
 using Zurich.Connector.Data.Factories;
 using Zurich.Connector.Data.Model;
@@ -23,7 +24,7 @@ namespace Zurich.Connector.Data.DataMap
 {
     public class DataMappingOAuth : AbstractDataMapping, IDataMapping
     {
-        public DataMappingOAuth(IRepository repository, IDataMappingRepository dataMappingRepository, IOAuthService oAuthService, ILogger<DataMappingOAuth> logger, ConnectorCosmosContext cosmosContext, IMapper mapper, IHttpBodyFactory factory, IHttpResponseFactory httpResponseFactory, IHttpContextAccessor contextAccessor, IOAuthApiRepository OAuthApirepository, OAuthOptions oAuthOptions, ILegalHomeAccessCheck legalHomeAccessCheck, IConfiguration configuration, IHttpClientFactory httpClientFactory, ISessionAccessor sessionAccessor)
+        public DataMappingOAuth(IRepository repository, IDataMappingRepository dataMappingRepository, IOAuthService oAuthService, ILogger<DataMappingOAuth> logger, ConnectorCosmosContext cosmosContext, IMapper mapper, IHttpBodyFactory factory, IHttpResponseFactory httpResponseFactory, IHttpContextAccessor contextAccessor, IOAuthApiRepository OAuthApirepository, OAuthOptions oAuthOptions, ILegalHomeAccessCheck legalHomeAccessCheck, IConfiguration configuration, IAppConfigService appConfigService, IHttpClientFactory httpClientFactory, ISessionAccessor sessionAccessor)
         {
             this._repository = repository;
             this._dataMappingRepository = dataMappingRepository;
@@ -38,6 +39,7 @@ namespace Zurich.Connector.Data.DataMap
             this._oAuthOptions = oAuthOptions;
             this._legalHomeAccessCheck = legalHomeAccessCheck;
             this._configuration = configuration;
+            this._appConfigService = appConfigService;
             // Temporary measure to use the old way to obtain a token for HighQ, while highQ admin token is fixed in federated search
             // TODO: Remove this once the adminToken works in federated search and can be obtained from OAuth
             this._httpClientFactory = httpClientFactory;

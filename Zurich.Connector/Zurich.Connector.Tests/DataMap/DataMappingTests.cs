@@ -15,6 +15,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Zurich.Common.Models.OAuth;
 using Zurich.Common.Repositories;
+using Zurich.Common.Services;
 using Zurich.Common.Services.Security;
 using Zurich.Connector.App.Services;
 using Zurich.Connector.Data;
@@ -49,6 +50,7 @@ namespace Zurich.Connector.Tests
 		private IConfiguration _fakeConfiguration;
 		private ICosmosService _cosmosService;
 		private Mock<IOAuthServices> _mockOAuthServices;
+		private Mock<IAppConfigService> _mockAppConfigService;
 		// Temporary measure to use the old way to obtain a token for HighQ, while highQ admin token is fixed in federated search
 		// TODO: Remove this once the adminToken works in federated search and can be obtained from OAuth
 		private Mock<IHttpClientFactory> _mockHttpClientFactory;
@@ -69,6 +71,7 @@ namespace Zurich.Connector.Tests
             _mockOAuthApirepository = new Mock<IOAuthApiRepository>();
 			_mockLegalHomeAccessCheck = new Mock<ILegalHomeAccessCheck>();
 			_fakeConfiguration = Utility.CreateConfiguration("fakeKey", "fakeValue");
+			_mockAppConfigService = new Mock<IAppConfigService>();
 			// Temporary measure to use the old way to obtain a token for HighQ, while highQ admin token is fixed in federated search
 			// TODO: Remove this once the adminToken works in federated search and can be obtained from OAuth
 			_mockHttpClientFactory = new Mock<IHttpClientFactory>();
@@ -377,7 +380,7 @@ namespace Zurich.Connector.Tests
 
 		private DataMappingOAuth CreateDataMapping()
         {
-			return new DataMappingOAuth(_mockRepository.Object, _mockDataMappingRepository.Object, _mockOAuthService.Object, _mockLoggerOAuth.Object, _mockCosmosDocumentReader.Object, _mockMapper.Object, _mockHttpBodyFactory.Object, _mockHttpResponseFactory.Object, _mockContextAccessor.Object, _mockOAuthApirepository.Object, _fakeOAuthOptions, _mockLegalHomeAccessCheck.Object, _fakeConfiguration, _mockHttpClientFactory.Object, _mockSessionAccessor.Object);
+			return new DataMappingOAuth(_mockRepository.Object, _mockDataMappingRepository.Object, _mockOAuthService.Object, _mockLoggerOAuth.Object, _mockCosmosDocumentReader.Object, _mockMapper.Object, _mockHttpBodyFactory.Object, _mockHttpResponseFactory.Object, _mockContextAccessor.Object, _mockOAuthApirepository.Object, _fakeOAuthOptions, _mockLegalHomeAccessCheck.Object, _fakeConfiguration, _mockAppConfigService.Object, _mockHttpClientFactory.Object, _mockSessionAccessor.Object);
 		}
 
 		[TestMethod]

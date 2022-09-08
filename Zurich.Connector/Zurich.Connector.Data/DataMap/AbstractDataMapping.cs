@@ -27,6 +27,8 @@ using Newtonsoft.Json;
 using Zurich.Common.Models.HighQ;
 using Zurich.Common.Exceptions;
 using Zurich.TenantData;
+using Zurich.Common.Models.FeatureFlags;
+using Zurich.Common.Services;
 
 namespace Zurich.Connector.Data.DataMap
 {
@@ -46,6 +48,7 @@ namespace Zurich.Connector.Data.DataMap
         protected OAuthOptions _oAuthOptions;
         protected ILegalHomeAccessCheck _legalHomeAccessCheck;
         protected IConfiguration _configuration;
+        protected IAppConfigService _appConfigService;
         // Temporary measure to use the old way to obtain a token for HighQ, while highQ admin token is fixed in federated search
         // TODO: Remove this once the adminToken works in federated search and can be obtained from OAuth
         protected IHttpClientFactory _httpClientFactory;
@@ -445,6 +448,16 @@ namespace Zurich.Connector.Data.DataMap
                     requestMessage.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", adminToken.access_token);
                     var response = await client.SendAsync(requestMessage);
                     var responseContent = await response.Content.ReadAsStringAsync();
+
+                    //Feature flag to simulate error in oauth requests to test puroposes
+                    if (await _appConfigService.IsDynamicFeatureEnabled(Features.SimulateErrorOAuthDatasource, "HighQ"))
+                    {
+                        response.StatusCode = System.Net.HttpStatusCode.InternalServerError;
+                    }
+                    else if (await _appConfigService.IsDynamicFeatureEnabled(Features.SimulateTimeoutOAuthDatasource, "HighQ"))
+                    {
+                        response.StatusCode = System.Net.HttpStatusCode.GatewayTimeout;
+                    }
 
                     if (response.IsSuccessStatusCode)
                     {
