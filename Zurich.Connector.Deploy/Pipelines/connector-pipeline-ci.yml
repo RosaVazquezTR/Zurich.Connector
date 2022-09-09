@@ -90,6 +90,7 @@ stages:
                   environmentType: ${{ variables.environmentType }}
                   flowWebhook: ${{ variables.flowWebhook }}
                   flowWebhookName: ${{ variables.flowWebhookName }}
+                  highqMSKey: $(highqMSKey)
                   keyVault: ${{ variables.keyVault }}
                   keyVaultSubnets: ${{ variables.keyVaultSubnets }}
                   legalHomeDbUser: ${{ variables.legalHomeDbUser }}

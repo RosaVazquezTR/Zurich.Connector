@@ -13,6 +13,7 @@ using Zurich.Connector.Data.Model;
 using Zurich.Connector.Data.Repositories;
 using Zurich.Connector.Data.Repositories.CosmosDocuments;
 using Zurich.Connector.Data.Services;
+using Zurich.Connector.Data.Utils;
 
 namespace Zurich.Connector.Data.DataMap
 {
@@ -74,12 +75,12 @@ namespace Zurich.Connector.Data.DataMap
                 {
                     var appCodeBaseUrl = _oAuthOptions.Connections[info.AppCode].TransferUrl;
                     //because we use a url builder we need to drop the https, however we need this for the token information
-                    info.HostName = CleanUpApiUrl.FormattingUrl(appCodeBaseUrl);
+                    info.HostName = UrlUtils.FormattingUrl(appCodeBaseUrl);
                 }
             }
             else
             {
-                info.HostName = CleanUpApiUrl.FormattingUrl(info.HostName);
+                info.HostName = UrlUtils.FormattingUrl(info.HostName);
             }
         }
     }

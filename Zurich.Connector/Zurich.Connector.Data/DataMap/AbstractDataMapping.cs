@@ -27,6 +27,7 @@ using Newtonsoft.Json;
 using Zurich.Common.Models.HighQ;
 using Zurich.Common.Exceptions;
 using Zurich.TenantData;
+using Zurich.Connector.Data.Utils;
 using Zurich.Common.Models.FeatureFlags;
 using Zurich.Common.Services;
 
@@ -215,12 +216,12 @@ namespace Zurich.Connector.Data.DataMap
                 {
                     var appCodeBaseUrl = _oAuthOptions.Connections[info.AppCode].BaseUrl;
                     //because we use a url builder we need to drop the https, however we need this for the token information
-                    info.HostName = CleanUpApiUrl.FormattingUrl(appCodeBaseUrl);
+                    info.HostName = UrlUtils.FormattingUrl(appCodeBaseUrl);
                 }
             }
             else
             {
-                info.HostName = CleanUpApiUrl.FormattingUrl(info.HostName);
+                info.HostName = UrlUtils.FormattingUrl(info.HostName);
             }
         }
 
