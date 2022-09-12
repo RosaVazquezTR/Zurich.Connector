@@ -39,7 +39,7 @@ namespace Zurich.Connector.App.Services.DataSources
 
         public bool IsCompatible(string appCode)
         {
-            return appCode == KnownDataSources.iManage;
+            return appCode == KnownDataSources.iManage || appCode == KnownDataSources.iManageServiceApp;
         }
 
         public async Task<dynamic> SetItemLink(ConnectorEntityType entityType, dynamic item, string appCode, string hostName)
@@ -53,20 +53,30 @@ namespace Zurich.Connector.App.Services.DataSources
                         {
                             if (result["Items"] is JArray)
                             {
-                                // 1 = iManage user profile
-                                ConnectorModel connectorModel = await _cosmosService.GetConnector("1", true);
+                                ConnectorModel connectorModel = null;
+                                if (appCode == KnownDataSources.iManageServiceApp)
+                                {
+                                    // 55 = iManageServiceApp user profile
+                                    connectorModel = await _cosmosService.GetConnector("55", true);
+                                }
+                                else
+                                {
+                                    // 1 = iManage user profile
+                                    connectorModel = await _cosmosService.GetConnector("1", true);
+                                }
+
                                 ConnectorDocument connectorDocument = _mapper.Map<ConnectorDocument>(connectorModel);
                                 // Make api call to get the information for the url variable inside { }
                                 connectorDocument.HostName = hostName;
                                 JToken userProfileResponse = await _dataMapping.GetAndMapResults<JToken>(connectorDocument, string.Empty, null, null, null);
                                 customerId = userProfileResponse["customer_id"].Value<string>();
 
-                                foreach (JObject doc in (result["Items"] as JArray) )
-                                { 
-                                        if (!doc.ContainsKey(StructuredCDMProperties.WebUrl))
-                                            doc[StructuredCDMProperties.WebUrl] = BuildLink(entityType, doc, hostName);
-                                        if (!doc.ContainsKey(StructuredCDMProperties.DownloadUrl))
-                                            doc[StructuredCDMProperties.DownloadUrl] = await BuildDownloadLink(entityType, doc, hostName);
+                                foreach (JObject doc in (result["Items"] as JArray))
+                                {
+                                    if (!doc.ContainsKey(StructuredCDMProperties.WebUrl))
+                                        doc[StructuredCDMProperties.WebUrl] = BuildLink(entityType, doc, hostName);
+                                    if (!doc.ContainsKey(StructuredCDMProperties.DownloadUrl))
+                                        doc[StructuredCDMProperties.DownloadUrl] = await BuildDownloadLink(entityType, doc, hostName);
                                 }
                             }
                         }

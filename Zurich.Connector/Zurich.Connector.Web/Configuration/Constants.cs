@@ -32,4 +32,15 @@
         // TODO: Add Connector specific scopes to Identity Server. Shouldn't use the legalhome ones
         public const string Full = "connectors.full";
     }
+
+    /// <summary>
+    /// Represents the Policies for the API Endpoints
+    /// </summary>
+    public static class Policies
+    {
+        /// <summary>
+        /// Policy for Service Connectors
+        /// </summary>
+        public const string ServiceConnectorPolicy = "ServiceConnectorPolicy";
+    }
 }

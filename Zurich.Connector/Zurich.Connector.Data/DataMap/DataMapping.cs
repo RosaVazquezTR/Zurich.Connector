@@ -8,6 +8,7 @@ using Zurich.Connector.Data.Factories;
 using Zurich.Connector.Data.Repositories;
 using Zurich.Connector.Data.Repositories.CosmosDocuments;
 using Zurich.Connector.Data.Services;
+using Zurich.TenantData;
 
 namespace Zurich.Connector.Data.DataMap
 {
@@ -16,7 +17,7 @@ namespace Zurich.Connector.Data.DataMap
     /// </summary>
     public class DataMapping : AbstractDataMapping, IDataMapping
     {
-        public DataMapping(IRepository repository, IDataMappingRepository dataMappingRepository, IOAuthService oAuthService, OAuthOptions oAuthOptions, ConnectorCosmosContext cosmosContext, IHttpBodyFactory httpBodyFactory, IHttpResponseFactory httpResponseFactory, ILogger<DataMapping> logger, IHttpContextAccessor contextAccessor, IOAuthApiRepository OAuthApirepository, ILegalHomeAccessCheck legalHomeAccessCheck, IConfiguration configuration)
+        public DataMapping(IRepository repository, IDataMappingRepository dataMappingRepository, IOAuthService oAuthService, OAuthOptions oAuthOptions, ConnectorCosmosContext cosmosContext, IHttpBodyFactory httpBodyFactory, IHttpResponseFactory httpResponseFactory, ILogger<DataMapping> logger, IHttpContextAccessor contextAccessor, IOAuthApiRepository OAuthApirepository, ILegalHomeAccessCheck legalHomeAccessCheck, IConfiguration configuration, ISessionAccessor sessionAccessor)
         {
             this._repository = repository;
             this._dataMappingRepository = dataMappingRepository;
@@ -30,6 +31,7 @@ namespace Zurich.Connector.Data.DataMap
             this._legalHomeAccessCheck = legalHomeAccessCheck;
             this._configuration = configuration;
             this._cosmosContext = cosmosContext;
+            this._sessionAccessor = sessionAccessor;
         }
     }
 }

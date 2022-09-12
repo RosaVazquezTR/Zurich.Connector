@@ -27,6 +27,10 @@ using System.Text.Json.Serialization;
 using Zurich.Connector.Data.Factories;
 using Zurich.Common.Services.Security.CIAM;
 using Zurich.Common.Services.Security;
+using IdentityModel;
+using System.Linq;
+using Zurich.Connector.Web.Extensions;
+using Zurich.Connector.Web.Configuration;
 
 namespace Zurich.Connector.Web
 {
@@ -107,10 +111,11 @@ namespace Zurich.Connector.Web
             services.AddDiagnostics();
             services.AddSwaggerGen(c =>
             {
-                if(!c.SwaggerGeneratorOptions.SwaggerDocs.Keys.Contains("v1"))
-                { 
+                if (!c.SwaggerGeneratorOptions.SwaggerDocs.Keys.Contains("v1"))
+                {
                     c.SwaggerDoc("v1", new OpenApiInfo { Title = "Zurich.Connector.Web", Version = "v1" });
                 }
+                c.ResolveConflictingActions(x => x.First());
             });
             services.AddApiVersioning(
                options =>
@@ -143,6 +148,13 @@ namespace Zurich.Connector.Web
         public virtual void AddAuthServices(IServiceCollection services, AuthIssuerOptions legalPlatformAuthOptions, CIAMAuthOptions ciamOptions)
         {
             services.AddAuthenticationServices(legalPlatformAuthOptions, ciamOptions);
+
+            // Policy for Service Connector which should have the sufficient claim to make call to the endpoint.
+            services.AddAuthorization(x => x.AddPolicy(Policies.ServiceConnectorPolicy, x =>
+             {
+                 x.AuthenticationSchemes.Add(AuthSchemes.LegalPlatform);
+                 x.RequireClaim(JwtClaimTypes.Scope, legalPlatformAuthOptions.AppScopes);
+             }));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -155,13 +167,16 @@ namespace Zurich.Connector.Web
             }
             app.ConfigureExceptionHandleMiddleware(env);
             app.UseSwagger();
-            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Zurich.Connector.Web v1"));
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Zurich.Connector.Web v1");
+            });
             app.UseHttpsRedirection();
 
             app.UseRouting();
 
             app.UseAuthorization();
-
+            app.UseClaimsTransformation();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapHealthChecks("/health");

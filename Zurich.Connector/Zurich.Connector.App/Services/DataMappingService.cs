@@ -60,7 +60,8 @@ namespace Zurich.Connector.App.Services
                 connector = await _cosmosService.GetConnectorByAlias(connectionIdentifier, true); ;
             }
 
-            if (connector != null)
+            // Assigning the hostname only if the parameter is not null
+            if (connector != null && hostname != null)
             {
                 connector.HostName = hostname;
             }

@@ -1,0 +1,93 @@
+{
+  "id": "54",
+  "partitionkey": "ConnectorList",
+  "alias": "imanageserviceapp.document",
+  "info": {
+    "title": "Get Recent Documents from iManage",
+    "description": "Get Recent Documents from iManage",
+    "entityType": "Document",
+    "dataSourceId": "48",
+    "version": "1.0",
+    "subType": "Parent"
+  },
+  "preRelease": true,
+  "request": {
+    "endpointPath": "/work/api/v2/customers/{55.customer_id}/recent-documents",
+    "method": "GET",
+    "parameters": [
+      {
+        "cdmName": "ResultSize",
+        "name": "limit",
+        "inClause": "Query",
+        "required": false,
+        "type": "string",
+        "defaultValue": "25",
+        "tags": [
+          "pagination"
+        ]
+      },
+      {
+        "cdmName": "docTypes",
+        "name": "type",
+        "inClause": "Query",
+        "required": false,
+        "type": "string",
+        "defaultValue": "",
+        "tags": []
+      },
+      {
+        "cdmName": "Offset",
+        "name": "offset",
+        "inClause": "Query",
+        "required": false,
+        "type": "string",
+        "defaultValue": "0",
+        "tags": [
+          "pagination"
+        ]
+      },
+      {
+        "cdmName": "Total",
+        "name": "total",
+        "inClause": "Query",
+        "required": true,
+        "type": "string",
+        "defaultValue": "true"
+      }
+    ],
+    "sorting": {
+      "properties": []
+    }
+  },
+  "response": {
+    "schema": {
+      "properties": {}
+    },
+    "type": "JSON"
+  },
+  "pagination": {
+    "available": true,
+    "paginationType": "",
+    "isZeroBasedOffset": true
+  },
+  "resultLocation": "",
+  "filters": [],
+  "cdmMapping": {
+    "structured": [
+      {
+        "name": "TotalCount",
+        "type": "int",
+        "responseElement": "total_count",
+        "_comment": ""
+      },
+      {
+        "name": "Items",
+        "type": "object",
+        "responseElement": "{18}",
+        "_comment": ""
+      }
+    ],
+    "unstructured": []
+  }
+
+}

@@ -22,28 +22,30 @@ using Zurich.Connector.Data.Services;
 using Zurich.ProductData.Models;
 using OAuthAPITokenResponse = Zurich.Common.Models.OAuth.OAuthAPITokenResponse;
 using System.Text;
+using Zurich.TenantData;
 
 namespace Zurich.Connector.Data.DataMap
 {
-public class DataMappingBasic : AbstractDataMapping, IDataMapping
-{
-    public DataMappingBasic(IRepository repository, IDataMappingRepository dataMappingRepository, IOAuthService oAuthService, OAuthOptions oAuthOptions, ConnectorCosmosContext cosmosContext, IHttpBodyFactory httpBodyFactory, IHttpResponseFactory httpResponseFactory, ILogger<DataMapping> logger, IHttpContextAccessor contextAccessor, IOAuthApiRepository OAuthApirepository, ILegalHomeAccessCheck legalHomeAccessCheck, IConfiguration configuration)
+    public class DataMappingBasic : AbstractDataMapping, IDataMapping
     {
-        this._repository = repository;
-        this._dataMappingRepository = dataMappingRepository;
-        this._oAuthService = oAuthService;
-        this._oAuthOptions = oAuthOptions;
-        this._logger = logger;
-        this._httpResponseFactory = httpResponseFactory;
-        this._httpBodyFactory = httpBodyFactory;
-        this._contextAccessor = contextAccessor;
-        this._oAuthApirepository = OAuthApirepository;
-        this._legalHomeAccessCheck = legalHomeAccessCheck;
-        this._configuration = configuration;
-        this._cosmosContext = cosmosContext;
-    }
-    public async override Task<T> GetAndMapResults<T>(ConnectorDocument connector, string transferToken, NameValueCollection query, Dictionary<string, string> headers, Dictionary<string, string> requestParameters, string domain = null)
-    {    
+        public DataMappingBasic(IRepository repository, IDataMappingRepository dataMappingRepository, IOAuthService oAuthService, OAuthOptions oAuthOptions, ConnectorCosmosContext cosmosContext, IHttpBodyFactory httpBodyFactory, IHttpResponseFactory httpResponseFactory, ILogger<DataMapping> logger, IHttpContextAccessor contextAccessor, IOAuthApiRepository OAuthApirepository, ILegalHomeAccessCheck legalHomeAccessCheck, IConfiguration configuration, ISessionAccessor sessionAccessor)
+        {
+            this._repository = repository;
+            this._dataMappingRepository = dataMappingRepository;
+            this._oAuthService = oAuthService;
+            this._oAuthOptions = oAuthOptions;
+            this._logger = logger;
+            this._httpResponseFactory = httpResponseFactory;
+            this._httpBodyFactory = httpBodyFactory;
+            this._contextAccessor = contextAccessor;
+            this._oAuthApirepository = OAuthApirepository;
+            this._legalHomeAccessCheck = legalHomeAccessCheck;
+            this._configuration = configuration;
+            this._cosmosContext = cosmosContext;
+            this._sessionAccessor = sessionAccessor;
+        }
+        public async override Task<T> GetAndMapResults<T>(ConnectorDocument connector, string transferToken, NameValueCollection query, Dictionary<string, string> headers, Dictionary<string, string> requestParameters, string domain = null)
+        {
             var appinfoDetails = _oAuthOptions.Connections.SingleOrDefault(x => x.Key.Equals(connector.DataSource.appCode, StringComparison.OrdinalIgnoreCase));
             string svcCredentials = Convert.ToBase64String(Encoding.UTF8.GetBytes(appinfoDetails.Value.Id + ":" + appinfoDetails.Value.Secret));
             connector.DataSource.securityDefinition.defaultSecurityDefinition.authorizationHeader = "Basic " + svcCredentials;
@@ -71,11 +73,11 @@ public class DataMappingBasic : AbstractDataMapping, IDataMapping
                 throw;
             }
 
-        return default(T);
+            return default(T);
+        }
+
     }
 
-}
-    
-    
+
 
 }

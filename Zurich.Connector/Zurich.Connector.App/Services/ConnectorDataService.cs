@@ -58,6 +58,8 @@ namespace Zurich.Connector.Data.Services
         private readonly IOAuthServices _OAuthService;
         private readonly IConfiguration _configuration;
         private readonly IOAuthApiRepository _OAuthApiRepository;
+        private readonly ISessionAccessor _sessionAccessor;
+
         public ConnectorDataService(
             IDataMappingFactory dataMappingFactory,
             IDataMappingRepository dataMappingRepo,
@@ -70,7 +72,8 @@ namespace Zurich.Connector.Data.Services
             ILegalHomeAccessCheck legalHomeAccess,
             CommonServices.ITenantService tenantService,
             IOAuthServices OAuthService,
-            IConfiguration configuration)
+            IConfiguration configuration,
+            ISessionAccessor sessionAccessor)
         {
             _dataMappingFactory = dataMappingFactory;
             _dataMappingRepo = dataMappingRepo;
@@ -85,6 +88,7 @@ namespace Zurich.Connector.Data.Services
             _tenantService = tenantService;
             _OAuthService = OAuthService;
             _configuration = configuration;
+            _sessionAccessor = sessionAccessor;
         }
 
         /// <summary>
@@ -102,7 +106,18 @@ namespace Zurich.Connector.Data.Services
             int MaxRecordSizePerInstance = _configuration.GetValue<int>(AppSettings.MaxRecordSizePerInstance, 1000);
 
             ConnectorModel connectorModel = await _dataMappingService.RetrieveProductInformationMap(connectionIdentifier, hostname, retrieveFilters);
-            List<DataSourceInformation> availableRegistrations = await _OAuthService.GetUserRegistrations();
+
+            List<DataSourceInformation> availableRegistrations;
+
+            if (_sessionAccessor.TenantId != Guid.Empty && _sessionAccessor.UserId == Guid.Empty)
+            {
+                availableRegistrations = await _OAuthService.GetAvailableRegistrations();
+            }
+            else
+            {
+                availableRegistrations = await _OAuthService.GetUserRegistrations();
+            }
+
             availableRegistrations = availableRegistrations?.FindAll(x => x.AppCode == connectorModel.DataSource.AppCode).Take(instanceLimit).ToList<DataSourceInformation>();
 
             queryParameters = _dataMappingService.UpdateOffset(connectorModel.DataSource.AppCode, availableRegistrations, queryParameters);
@@ -117,7 +132,7 @@ namespace Zurich.Connector.Data.Services
             if (string.IsNullOrEmpty(connectorModel.DataSource.Domain) && string.IsNullOrEmpty(hostname))
             {
                 hostname = await GetBaseUrl(connectorModel);
-                if (connectorModel != null)
+                if (connectorModel != null && hostname != null)
                 {
                     connectorModel.HostName = hostname;
                 }
@@ -127,7 +142,7 @@ namespace Zurich.Connector.Data.Services
             {
                 return null;
             }
-            if (connectorModel.AdvancedSearchSyntax != null && connectorModel.AdvancedSearchSyntax.Operators != null) 
+            if (connectorModel.AdvancedSearchSyntax != null && connectorModel.AdvancedSearchSyntax.Operators != null)
             {
                 queryParameters = MapQueryAdvancedSearch(queryParameters, connectorModel);
             }

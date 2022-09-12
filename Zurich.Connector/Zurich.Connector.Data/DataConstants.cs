@@ -33,6 +33,7 @@
     public static class KnownDataSources
     {
         public const string iManage = "iManage";
+        public const string iManageServiceApp = "iManageServiceApp";
         public const string practicalLawConnect = "PracticalLawConnect";
         public const string practicalLawConnectOnePass = "CBTPRACPT";
         public const string plcUS = "PLCUS";

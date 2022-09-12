@@ -14,12 +14,13 @@ using Zurich.Connector.Data.Repositories;
 using Zurich.Connector.Data.Repositories.CosmosDocuments;
 using Zurich.Connector.Data.Services;
 using Zurich.Connector.Data.Utils;
+using Zurich.TenantData;
 
 namespace Zurich.Connector.Data.DataMap
 {
     public class DataMappingTransfer : AbstractDataMapping, IDataMapping
     {
-        public DataMappingTransfer(IRepository repository, IDataMappingRepository dataMappingRepository, IOAuthService oAuthService, ILogger<DataMappingTransfer> logger, ConnectorCosmosContext cosmosContext, IMapper mapper, IHttpBodyFactory factory, IHttpResponseFactory httpResponseFactory, IHttpContextAccessor contextAccessor, IOAuthApiRepository OAuthApirepository, OAuthOptions oAuthOptions, ILegalHomeAccessCheck legalHomeAccessCheck, IConfiguration configuration)
+        public DataMappingTransfer(IRepository repository, IDataMappingRepository dataMappingRepository, IOAuthService oAuthService, ILogger<DataMappingTransfer> logger, ConnectorCosmosContext cosmosContext, IMapper mapper, IHttpBodyFactory factory, IHttpResponseFactory httpResponseFactory, IHttpContextAccessor contextAccessor, IOAuthApiRepository OAuthApirepository, OAuthOptions oAuthOptions, ILegalHomeAccessCheck legalHomeAccessCheck, IConfiguration configuration, ISessionAccessor sessionAccessor)
         {
             this._repository = repository;
             this._dataMappingRepository = dataMappingRepository;
@@ -34,6 +35,7 @@ namespace Zurich.Connector.Data.DataMap
             this._oAuthOptions = oAuthOptions;
             this._legalHomeAccessCheck = legalHomeAccessCheck;
             this._configuration = configuration;
+            this._sessionAccessor = sessionAccessor;
         }
 
         public async override Task<T> GetAndMapResults<T>(ConnectorDocument connectorDocument, string transferToken, NameValueCollection query, Dictionary<string, string> headers, Dictionary<string, string> requestParameters, string domain = null)

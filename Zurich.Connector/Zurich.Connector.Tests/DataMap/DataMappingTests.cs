@@ -88,7 +88,7 @@ namespace Zurich.Connector.Tests
 			_mockMapper = new Mock<IMapper>();
 			_cosmosService = new CosmosService(_mockCosmosDocumentReader.Object, _mockMapper.Object, _fakeConfiguration);
 			_mockOAuthServices = new Mock<IOAuthServices>();
-
+			_mockSessionAccessor = new Mock<ISessionAccessor>();
 		}
 
 		#region json Strings
