@@ -32,7 +32,7 @@ namespace Zurich.Connector.App.Services
         /// <param name="cdmQueryParameters">The mapped query parameters of request</param>
         /// <param name="connectorDocument"></param>
         /// <returns>Extracted data for the connector</returns>
-        Dictionary<string, string> ExtractHeadersParams(Dictionary<string, string> cdmQueryParameters, ConnectorDocument connectorDocument);
+        Dictionary<string, string> ExtractParams(Dictionary<string, string> cdmQueryParameters, ConnectorDocument connectorDocument, string paramType);
     }
     public class DataExtractionService : IDataExtractionService
     {
@@ -49,10 +49,13 @@ namespace Zurich.Connector.App.Services
         }
 
         public async Task<Dictionary<string, string>> ExtractDataSource(NameValueCollection mappedQueryParameters, Dictionary<string, string> queryParameters, string hostname, ConnectorDocument connectorDocument)
-        {        
-            var headerParameters = ExtractHeadersParams(queryParameters, connectorDocument);
+        {
+            var headerParameters = ExtractParams(queryParameters, connectorDocument, InClauseConstants.Headers);
             var extractIds = headerParameters.Values.Append(connectorDocument.Request.EndpointPath);
             var connectorIds = ExtractIds(extractIds);
+
+            var pathParameters = ExtractParams(queryParameters, connectorDocument, InClauseConstants.Path);
+
             if (connectorIds.Count() > 0)
             {
                 var additionalInfo = await GetAdditionalInformation(hostname, connectorIds, queryParameters);
@@ -60,8 +63,12 @@ namespace Zurich.Connector.App.Services
                 foreach (var header in headerParameters)
                 {
                     headerParameters[header.Key] = UpdateIdProperty(header.Value, additionalInfo);
-                }      
+                }
             }
+
+            if (pathParameters.Count() > 0)
+                connectorDocument.Request.EndpointPath = UpdatePathParameter(connectorDocument.Request.EndpointPath, pathParameters);
+ 
             return headerParameters;
         }
 
@@ -87,6 +94,25 @@ namespace Zurich.Connector.App.Services
                     string value = result.Value<string>();
                     newProperty = Regex.Replace(newProperty, stringFormat, value);
                 }
+            }
+            return newProperty;
+        }
+
+        public string UpdatePathParameter(string property, Dictionary<string, string> pathParameters)
+        {
+            string newProperty = property;
+
+
+            foreach (KeyValuePair<string,string> parameter in pathParameters)
+            {
+                string parameterEndPointPathKey = $"{{{parameter.Key}}}";
+
+                // Replace the url variable inside { }
+                if (pathParameters.TryGetValue(parameter.Key, out string value))
+                {
+                    newProperty = Regex.Replace(newProperty, parameterEndPointPathKey, value);
+                }
+
             }
             return newProperty;
         }
@@ -120,17 +146,17 @@ namespace Zurich.Connector.App.Services
             return null;
         }
 
-        public Dictionary<string, string> ExtractHeadersParams(Dictionary<string, string> cdmQueryParameters, ConnectorDocument connectorDocument)
+        public Dictionary<string, string> ExtractParams(Dictionary<string, string> cdmQueryParameters, ConnectorDocument connectorDocument, string paramType)
         {
             if (connectorDocument.Request?.Parameters != null)
             {
-                var headerParameters = (from param in cdmQueryParameters
+                var qryParameters = (from param in cdmQueryParameters
                                         join requestParam in connectorDocument.Request?.Parameters
                                         on param.Key.ToString().ToLower() equals requestParam.CdmName.ToLower()
-                                        where requestParam.InClause == InClauseConstants.Headers
-                                        select new { name = requestParam.Name, value = param.Value.ToString() }).ToDictionary(c => c.name, c => c.value);
-                var headers = connectorDocument.Request.Parameters.Where(x => string.IsNullOrEmpty(x.CdmName) && x.InClause == InClauseConstants.Headers).Select(x => new { name = x.Name, value = x.DefaultValue.ToString() }).ToDictionary(c => c.name, c => c.value);
-                return headerParameters.Concat(headers).ToDictionary(x => x.Key, x => x.Value);
+                                        where requestParam.InClause == paramType
+                                     select new { name = requestParam.Name, value = param.Value.ToString() }).ToDictionary(c => c.name, c => c.value);
+                var parameters = connectorDocument.Request.Parameters.Where(x => string.IsNullOrEmpty(x.CdmName) && x.InClause == paramType).Select(x => new { name = x.Name, value = x.DefaultValue.ToString() }).ToDictionary(c => c.name, c => c.value);
+                return qryParameters.Concat(parameters).ToDictionary(x => x.Key, x => x.Value);
             }
             return null;
         }

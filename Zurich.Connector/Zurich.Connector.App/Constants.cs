@@ -33,6 +33,7 @@ namespace Zurich.Connector.App
     public static class InClauseConstants
     {
         public const string Headers = "Headers";
+        public const string Path = "Path";
         public const string Query = "Query";
         public const string Child = "Child";
         public const string OData = "OData";

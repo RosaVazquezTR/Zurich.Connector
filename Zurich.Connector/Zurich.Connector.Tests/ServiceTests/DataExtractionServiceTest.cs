@@ -73,10 +73,56 @@ namespace Zurich.Connector.Tests.ServiceTests
 
             // ACT
             _mockCosmosService.Setup(x => x.GetConnector("UserInfo", true)).Returns(Task.FromResult(connectorModel));
-            Dictionary<string, string> headerParameters = service.ExtractHeadersParams(queryParameters, connectorDocument);
+            Dictionary<string, string> headerParameters = service.ExtractParams(queryParameters, connectorDocument, InClauseConstants.Headers);
 
             // ASSERT
             Assert.AreEqual(queryParameters.Values.Count, 1);
+        }
+
+        [TestMethod]
+        public async Task CallExtrPactathParams()
+        {
+            // ARRANGE
+            var queryParameters = new Dictionary<string, string>() { { "CustomerId", "1" }, { "LibraryName", "library" }, { "FolderId", "folder123" } };
+
+            ConnectorModel connectorModel = new ConnectorModel()
+            {
+                Request = new ConnectorRequestModel()
+                {
+                    EndpointPath = "work/api/v2/customers/api/v2/customers/{{customerId}}/libraries/{{libraryName}}/folders/{{folderId}}/documents",
+                    Parameters = new List<ConnectorRequestParameterModel>()
+                    {
+                            new ConnectorRequestParameterModel() { CdmName = "CustomerId", Name = "CustomerId", InClause="Path", DefaultValue = ""},
+                            new ConnectorRequestParameterModel() { CdmName = "LibraryName", Name = "LibraryName", InClause="Path", DefaultValue = ""},
+                            new ConnectorRequestParameterModel() { CdmName = "FolderId", Name = "FolderId", InClause="Path", DefaultValue = ""}
+                    },
+                },
+
+            };
+            connectorModel.CDMMapping = new CDMMappingModel()
+            {
+                Structured = new List<CDMElementModel>() {
+                         {
+                             new CDMElementModel(){ Name="AuthorName", ResponseElement ="author_description"}
+                         },
+                         {
+                             new CDMElementModel(){ Name="author", ResponseElement ="author"}
+                         },
+                         {
+                             new CDMElementModel(){ Name="checksum", ResponseElement ="checksum"}
+                         }
+                 }
+            };
+            ConnectorDocument connectorDocument = _mapper.Map<ConnectorDocument>(connectorModel);
+
+            DataExtractionService service = new DataExtractionService(_mockCosmosService.Object, _mapper, _mockDataMappingFactory.Object);
+
+            // ACT
+            _mockCosmosService.Setup(x => x.GetConnector("UserInfo", true)).Returns(Task.FromResult(connectorModel));
+            Dictionary<string, string> pathParameters = service.ExtractParams(queryParameters, connectorDocument, InClauseConstants.Path);
+
+            // ASSERT
+            Assert.AreEqual(queryParameters.Values.Count, 3);
         }
     }
 }

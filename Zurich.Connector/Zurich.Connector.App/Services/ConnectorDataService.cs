@@ -325,7 +325,8 @@ namespace Zurich.Connector.Data.Services
             return !String.IsNullOrWhiteSpace(request.DefaultValue)
                 && !queryParameters.ContainsKey(request.Name)
                 && request.InClause != ODataConstants.OData
-                && request.InClause != InClauseConstants.Headers;
+                && request.InClause != InClauseConstants.Headers
+                && request.InClause != InClauseConstants.Path;
         }
 
         private Dictionary<string, string> SetupPagination(ConnectorModel connectorModel, Dictionary<string, string> cdmQueryParameters)
