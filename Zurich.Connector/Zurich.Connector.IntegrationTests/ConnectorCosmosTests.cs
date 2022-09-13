@@ -23,7 +23,7 @@ namespace Zurich.Connector.IntegrationTests
         private List<string> dataSourceTypes = new List<string>() { "oauth2", "transferToken", "highq", "basic" };
         private List<string> parameterTypes = new List<string>() { "array", "date", "int", "object", "short", "string", "DateTime", "bool" };
         private List<string> requestMethodTypes = new List<string>() { "GET", "POST" };
-        private List<string> requestInClauseTypes = new List<string>() { "Child", "Body", "OData", "Query", "Headers" };
+        private List<string> requestInClauseTypes = new List<string>() { "Child", "Body", "OData", "Query", "Headers", "Path" };
 
         public ConnectorCosmosTests(CustomWebApplicationFactory fixture) : base(fixture)
         {

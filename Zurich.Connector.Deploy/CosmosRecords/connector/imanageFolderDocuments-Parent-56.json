@@ -1,0 +1,65 @@
+{
+  "id": "56",
+  "partitionkey": "ConnectorList",
+  "alias": "imanage.folderdocuments",
+  "info": {
+    "title": "Get Folder Documents from iManage",
+    "description": "Get Folder Documents from iManage",
+    "entityType": "FolderDocuments",
+    "dataSourceId": "10",
+    "version": "1.0",
+    "subType": "Parent"
+  },
+  "preRelease": true,
+  "request": {
+    "endpointPath": "/work/api/v2/customers/{1.customer_id}/libraries/{libraryName}/folders/{folderId}/documents",
+    "method": "GET",
+    "parameters": [
+      {
+        "cdmName": "libraryName",
+        "name": "libraryName",
+        "inClause": "Path",
+        "required": true,
+        "type": "string",
+        "defaultValue": "",
+        "tags": []
+      },
+      {
+        "cdmName": "folderId",
+        "name": "folderId",
+        "inClause": "Path",
+        "required": true,
+        "type": "string",
+        "defaultValue": "",
+        "tags": []
+      }
+    ],
+    "sorting": {
+      "properties": []
+    }
+  },
+  "response": {
+    "schema": {
+      "properties": {}
+    },
+    "type": "JSON"
+  },
+  "pagination": {
+    "available": false,
+    "paginationType": "",
+    "isZeroBasedOffset": true
+  },
+  "resultLocation": "",
+  "filters": [],
+  "cdmMapping": {
+    "structured": [
+      {
+        "name": "Items",
+        "type": "object",
+        "responseElement": "{57}",
+        "_comment": ""
+      }
+    ],
+    "unstructured": []
+  }
+}
