@@ -1,11 +1,11 @@
 {
   "id": "56",
   "partitionkey": "ConnectorList",
-  "alias": "imanage.folderdocuments",
+  "alias": "imanage.document.folder",
   "info": {
     "title": "Get Folder Documents from iManage",
     "description": "Get Folder Documents from iManage",
-    "entityType": "FolderDocuments",
+    "entityType": "Document",
     "dataSourceId": "10",
     "version": "1.0",
     "subType": "Parent"

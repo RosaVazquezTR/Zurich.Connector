@@ -4,7 +4,7 @@
    "info": {
     "title": "Get Recent Documents from iManage",
     "description": "Get Recent Documents from iManage",
-    "entityType": "FolderDocuments",
+    "entityType": "Document",
     "dataSourceId": "10",
     "version": "1.0",
     "subType": "Child"

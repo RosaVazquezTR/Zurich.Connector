@@ -42,7 +42,6 @@ namespace Zurich.Connector.Data.Model
         Favorites,
         Search,
         ActionItems,
-        FolderDocuments
     }
 
     /// <summary>
