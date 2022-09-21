@@ -1,0 +1,101 @@
+{
+  "id": "58",
+  "partitionkey": "ConnectorList",
+  "alias": "imanageserviceapp.foldernestedsubfolders",
+  "info": {
+    "title": "Get Folder Nested Subfolders from iManage",
+    "description": "Get Folder Nested Subfolders from iManage",
+    "entityType": "Folder",
+    "dataSourceId": "48",
+    "version": "1.0",
+    "subType": "Parent"
+  },
+  "preRelease": true,
+  "request": {
+    "endpointPath": "/work/api/v2/customers/{55.customer_id}/libraries/{libraryName}/folders",
+    "method": "GET",
+    "parameters": [
+      {
+        "cdmName": "LibraryName",
+        "name": "libraryName",
+        "inClause": "Path",
+        "required": true,
+        "type": "string",
+        "defaultValue": "",
+        "tags": []
+      },
+      {
+        "cdmName": "FolderId",
+        "name": "container_id",
+        "inClause": "Query",
+        "required": true,
+        "type": "string",
+        "defaultValue": "",
+        "tags": []
+      },
+      {
+        "cdmName": "ResultSize",
+        "name": "limit",
+        "inClause": "Query",
+        "required": false,
+        "type": "string",
+        "defaultValue": "25",
+        "tags": [
+          "pagination"
+        ]
+      },
+      {
+        "cdmName": "Offset",
+        "name": "offset",
+        "inClause": "Query",
+        "required": false,
+        "type": "string",
+        "defaultValue": "0",
+        "tags": [
+          "pagination"
+        ]
+      },
+      {
+        "cdmName": "Total",
+        "name": "total",
+        "inClause": "Query",
+        "required": false,
+        "type": "string",
+        "defaultValue": "true"
+      }
+    ],
+    "sorting": {
+      "properties": []
+    }
+  },
+  "response": {
+    "schema": {
+      "properties": {}
+    },
+    "type": "JSON"
+  },
+  "pagination": {
+    "available": true,
+    "paginationType": "",
+    "isZeroBasedOffset": true
+  },
+  "resultLocation": "",
+  "filters": [],
+  "cdmMapping": {
+    "structured": [
+      {
+        "name": "TotalCount",
+        "type": "int",
+        "responseElement": "total_count",
+        "_comment": "Total count of returned folders. For pagination."
+      },
+      {
+        "name": "Items",
+        "type": "object",
+        "responseElement": "{59}",
+        "_comment": ""
+      }
+    ],
+    "unstructured": []
+  }
+}

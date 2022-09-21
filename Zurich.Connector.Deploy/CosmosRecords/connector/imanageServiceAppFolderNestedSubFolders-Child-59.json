@@ -1,0 +1,70 @@
+{
+  "id": "59",
+  "partitionkey": "ConnectorList",
+  "info": {
+    "title": "Get Folder Nested Subfolders from iManage - Child of 58",
+    "description": "Get Folder Nested Subfolders from iManage - Child of 58",
+    "entityType": "Folder",
+    "dataSourceId": "48",
+    "version": "1.0",
+    "subType": "Child"
+  },
+  "preRelease": true,
+  "request": {},
+  "response": {},
+  "filters": [],
+  "resultLocation": "data",
+  "cdmMapping": {
+    "structured": [
+      {
+        "name": "Id",
+        "type": "string",
+        "responseElement": "id",
+        "_comment": ""
+      },
+      {
+        "name": "ParentId",
+        "type": "string",
+        "responseElement": "parent_id",
+        "_comment": ""
+      },
+      {
+        "name": "DriveId",
+        "type": "string",
+        "responseElement": "database",
+        "_comment": ""
+      },
+      {
+        "name": "Title",
+        "type": "string",
+        "responseElement": "name",
+        "_comment": ""
+      },
+      {
+        "name": "Owner",
+        "type": "string",
+        "responseElement": "owner_description",
+        "_comment": ""
+      },
+      {
+        "name": "LastModifiedDateTime",
+        "type": "string",
+        "responseElement": "edit_date",
+        "_comment": ""
+      },
+      {
+        "name": "HasSubfolders",
+        "type": "bool",
+        "responseElement": "has_subfolders",
+        "_comment": ""
+      },
+      {
+        "name": "HasDocuments",
+        "type": "bool",
+        "responseElement": "has_documents",
+        "_comment": ""
+      }
+    ],
+    "unstructured": []
+  }
+}

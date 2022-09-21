@@ -24,7 +24,8 @@ namespace Zurich.Connector.App.Services.DataSources
         private readonly IMapper _mapper;
 
         #region Endpoints
-        private const string DocumentsEndpoint = "work/link/d/";
+        private const string DocumentsWebEndpoint = "work/link/d/";
+        private const string FoldersWebEndpoint = "work/link/f/";
         private const string DocumentsDowloadEndpoint = "work/web/api/v2";
         private string customerId;
         #endregion
@@ -49,35 +50,26 @@ namespace Zurich.Connector.App.Services.DataSources
                 switch (entityType)
                 {
                     case ConnectorEntityType.Document:
-                        if (item is JObject result && result.ContainsKey("Items") && result["Items"].HasValues)
+                        if (item is JObject docResult && docResult.ContainsKey("Items") && docResult["Items"].HasValues && docResult["Items"] is JArray)
                         {
-                            if (result["Items"] is JArray)
+                            customerId = await GetCustomerId(appCode, hostName);
+                            foreach (JObject doc in docResult["Items"] as JArray)
                             {
-                                ConnectorModel connectorModel = null;
-                                if (appCode == KnownDataSources.iManageServiceApp)
-                                {
-                                    // 55 = iManageServiceApp user profile
-                                    connectorModel = await _cosmosService.GetConnector("55", true);
-                                }
-                                else
-                                {
-                                    // 1 = iManage user profile
-                                    connectorModel = await _cosmosService.GetConnector("1", true);
-                                }
-
-                                ConnectorDocument connectorDocument = _mapper.Map<ConnectorDocument>(connectorModel);
-                                // Make api call to get the information for the url variable inside { }
-                                connectorDocument.HostName = hostName;
-                                JToken userProfileResponse = await _dataMapping.GetAndMapResults<JToken>(connectorDocument, string.Empty, null, null, null);
-                                customerId = userProfileResponse["customer_id"].Value<string>();
-
-                                foreach (JObject doc in (result["Items"] as JArray))
-                                {
-                                    if (!doc.ContainsKey(StructuredCDMProperties.WebUrl))
-                                        doc[StructuredCDMProperties.WebUrl] = BuildLink(entityType, doc, hostName);
-                                    if (!doc.ContainsKey(StructuredCDMProperties.DownloadUrl))
-                                        doc[StructuredCDMProperties.DownloadUrl] = await BuildDownloadLink(entityType, doc, hostName);
-                                }
+                                if (!doc.ContainsKey(StructuredCDMProperties.WebUrl))
+                                    doc[StructuredCDMProperties.WebUrl] = BuildLink(entityType, doc, hostName);
+                                if (!doc.ContainsKey(StructuredCDMProperties.DownloadUrl))
+                                    doc[StructuredCDMProperties.DownloadUrl] = BuildDownloadLink(entityType, doc, hostName);
+                            }
+                        }
+                        break;
+                    case ConnectorEntityType.Folder:
+                        if (item is JObject folderResult && folderResult.ContainsKey("Items") && folderResult["Items"].HasValues && folderResult["Items"] is JArray)
+                        {
+                            customerId = await GetCustomerId(appCode, hostName);
+                            foreach (JObject folder in folderResult["Items"] as JArray)
+                            {
+                                if (!folder.ContainsKey(StructuredCDMProperties.WebUrl))
+                                    folder[StructuredCDMProperties.WebUrl] = BuildLink(entityType, folder, hostName);
                             }
                         }
                         break;
@@ -125,7 +117,7 @@ namespace Zurich.Connector.App.Services.DataSources
         /// <param name="item">The target item</param>
         /// <param name="hostName">The data source host name</param>
         /// <returns></returns>
-        private async Task<string> BuildDownloadLink(ConnectorEntityType itemType, JObject item, string hostName)
+        private string BuildDownloadLink(ConnectorEntityType itemType, JObject item, string hostName)
         {
             string result = null;
 
@@ -154,23 +146,59 @@ namespace Zurich.Connector.App.Services.DataSources
         private string BuildLink(ConnectorEntityType itemType, JObject item, string hostName)
         {
             string result = null;
-            string docId = null;
+            string id = null;
+            string endpoint = null;
+
             switch (itemType)
             {
                 case ConnectorEntityType.Document:
-                    docId = item.ContainsKey(StructuredCDMProperties.EntityId) ? item[StructuredCDMProperties.EntityId].Value<string>() : "";
+                    id = item.ContainsKey(StructuredCDMProperties.EntityId) ? item[StructuredCDMProperties.EntityId].Value<string>() : "";
+                    endpoint = DocumentsWebEndpoint;
+                    break;
+                case ConnectorEntityType.Folder:
+                    id = item.ContainsKey(StructuredCDMProperties.EntityId) ? item[StructuredCDMProperties.EntityId].Value<string>() : "";
+                    endpoint = FoldersWebEndpoint;
                     break;
                 case ConnectorEntityType.Search:
                     var additionalProperties = (JObject)item[StructuredCDMProperties.AdditionalProperties];
-                    docId = additionalProperties.ContainsKey(UnstructuredCDMProperties.Id) ? additionalProperties[UnstructuredCDMProperties.Id].Value<string>() : "";
+                    id = additionalProperties.ContainsKey(UnstructuredCDMProperties.Id) ? additionalProperties[UnstructuredCDMProperties.Id].Value<string>() : "";
+                    endpoint = DocumentsWebEndpoint;
                     break;
             }
-            if (!string.IsNullOrEmpty(docId))
+
+            if (!string.IsNullOrEmpty(id))
             {
                 var builder = new UriBuilder("https", hostName, -1);
-                result = $"{builder.Uri}{DocumentsEndpoint}{docId}";
+                result = $"{builder.Uri}{endpoint}{id}";
             }
+
             return result;
+        }
+
+        /// <summary>
+        /// Gets the user's customer id from iManage's user profile
+        /// </summary>
+        /// <param name="appCode">The data source app code</param>
+        /// <param name="hostName">The data source host name</param>
+        private async Task<string> GetCustomerId(string appCode, string hostName)
+        {
+            ConnectorModel connectorModel = null;
+            if (appCode == KnownDataSources.iManageServiceApp)
+            {
+                // 55 = iManageServiceApp user profile
+                connectorModel = await _cosmosService.GetConnector("55", true);
+            }
+            else
+            {
+                // 1 = iManage user profile
+                connectorModel = await _cosmosService.GetConnector("1", true);
+            }
+
+            ConnectorDocument connectorDocument = _mapper.Map<ConnectorDocument>(connectorModel);
+            // Make api call to get the information for the url variable inside { }
+            connectorDocument.HostName = hostName;
+            JToken userProfileResponse = await _dataMapping.GetAndMapResults<JToken>(connectorDocument, string.Empty, null, null, null);
+            return userProfileResponse["customer_id"].Value<string>();
         }
     }
 }

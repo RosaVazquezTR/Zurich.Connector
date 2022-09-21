@@ -484,6 +484,29 @@ namespace Zurich.Connector.Tests.Common
             return result;
         }
 
+        internal static IEnumerable<dynamic> SetupFoldersModel()
+        {
+            dynamic result;
+
+            result = JObject.Parse(@"{
+                ""TotalCount"": 2,
+                ""Items"": [
+                    {
+                        ""Id"":""1"",
+                        ""Title"":""Secret cookie recipes 1"",
+                        ""ParentId"":""2""
+
+                    },
+                    {
+                        ""Id"":""2"",
+                        ""Title"":""Secret cookie recipes 2"",
+                        ""ParentId"":""3""
+                    }
+                ]
+            }");
+            return result;
+        }
+
         internal static IEnumerable<dynamic> SetupSearchDocumentsModel()
         {
             dynamic result;

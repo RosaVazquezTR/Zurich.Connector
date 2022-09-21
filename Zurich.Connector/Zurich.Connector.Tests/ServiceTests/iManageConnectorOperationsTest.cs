@@ -133,6 +133,29 @@ namespace Zurich.Connector.Tests.ServiceTests
             result[StructuredCDMProperties.ItemsCount].Value<short>().Should().Be(expectedCount);
         }
 
+        [TestMethod]
+        public async Task SetItemLinkTest_Folder_Should_SetWebUrl()
+        {
+            //Arrange
+            var mockFolders = MockConnectorData.SetupFoldersModel();
+            var hostName = "my.cookieapp.com";
+            var appCode = "";
+            var expectedUrl = $"https://{hostName}/work/link/f/1";
+            var customerId = "1";
+            //Act
+            var token = new JObject();
+            token["customer_id"] = customerId;
+            _mockDataMapping.Setup(x => x.GetAndMapResults<JToken>(It.IsAny<ConnectorDocument>(), string.Empty, null, null, null, null)).Returns(Task.FromResult((JToken)token));
+            _mockDataMappingFactory.Setup(x => x.GetImplementation(Data.Model.AuthType.OAuth2.ToString())).Returns(_mockDataMapping.Object);
+            _mockCosmosService.Setup(x => x.GetConnector("1", true)).Returns(Task.FromResult(new ConnectorModel()));
+            var service = new IManageConnectorOperations(_mockLogger.Object, _mockDataMappingFactory.Object, _mapper, _mockCosmosService.Object);
+            var result = (await service.SetItemLink(Data.Model.ConnectorEntityType.Folder, mockFolders, appCode, hostName) as JObject);
+            //Assert
+            result.Should().NotBeNull();
+            var doc = result["Items"][0] as JObject;
+            doc.ContainsKey(StructuredCDMProperties.WebUrl).Should().BeTrue();
+            doc[StructuredCDMProperties.WebUrl].Value<string>().Should().Be(expectedUrl);
+        }
 
         [TestMethod]
         public async Task SetItemLinkTest_Search_Should_SetWebUrlAndType()
