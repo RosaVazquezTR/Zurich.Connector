@@ -41,8 +41,8 @@
       },
       {
         "name": "CreationDate",
-        "type": "string",
-        "responseElement": "lastModifiedDate",
+        "type": "DateTime",
+        "responseElement": "lastModifiedDateTime",
         "_comment": ""
       }
     ],

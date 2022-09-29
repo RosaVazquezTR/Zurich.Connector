@@ -24,6 +24,7 @@ namespace Zurich.Connector.Data.DataMap
         /// <param name="query">Query parameters mapped from cosmo DB</param>
         /// <param name="headers">headers that should be passed to the 3rd party request</param>
         /// <param name="requestParameters">parameters that came in on the data request</param>
+        /// <param name="domain"> The domain that will be used to make the search request </param>
         /// <returns>The T model based on the request or default(T)</returns>
         Task<T> GetAndMapResults<T>(ConnectorDocument dataTypeInformation, string transferToken, NameValueCollection query, Dictionary<string, string> headers, Dictionary<string, string> requestParameters, string domain = null);
 

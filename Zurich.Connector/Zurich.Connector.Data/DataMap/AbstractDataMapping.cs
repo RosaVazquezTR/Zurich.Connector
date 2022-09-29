@@ -30,6 +30,7 @@ using Zurich.TenantData;
 using Zurich.Connector.Data.Utils;
 using Zurich.Common.Models.FeatureFlags;
 using Zurich.Common.Services;
+using System.Threading;
 
 namespace Zurich.Connector.Data.DataMap
 {
@@ -54,6 +55,7 @@ namespace Zurich.Connector.Data.DataMap
         // TODO: Remove this once the adminToken works in federated search and can be obtained from OAuth
         protected IHttpClientFactory _httpClientFactory;
         protected ISessionAccessor _sessionAccessor;
+        private static SemaphoreSlim semaphoreSlim = new SemaphoreSlim(1, 1);
 
         public async virtual Task<T> GetAndMapResults<T>(ConnectorDocument dataTypeInformation, string transferToken, NameValueCollection query, Dictionary<string, string> headers, Dictionary<string, string> requestParameters, string domain = null)
         {
@@ -114,10 +116,12 @@ namespace Zurich.Connector.Data.DataMap
             {
                 await _sessionAccessor.PopulateUserInfo();
                 AppToken token;
+                // TODO: Modify this to obtain the instance name from the domain when more instances are available
                 token = await GetImpersonatedUserToken(domain.Contains("collabdemo1") ? "collabdemo1": "collabdemo2", _sessionAccessor.Email);
 
                 // HighQ returned a lower case token type and it doesn't accept the token type being lower case in other calls so we have to capitalize it
-                token.token_type = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(token.token_type);
+                if (token != null)
+                    token.token_type = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(token.token_type);
 
                 var result = _mapper.Map<OAuthAPITokenResponse>(token);
                 return result;
@@ -141,7 +145,7 @@ namespace Zurich.Connector.Data.DataMap
             {
                 OAuthAPITokenResponse result;
                 // Making call to endpoint which takes AppCode and TenantId and it returns the token
-                if (_sessionAccessor?.TenantId != Guid.Empty && _sessionAccessor.UserId == Guid.Empty)
+                if (_sessionAccessor?.TenantId != Guid.Empty)
                 {
                     result = await _oAuthApirepository.GetTokenWithTenantId(appCode, _sessionAccessor.TenantId.ToString(), null);
                 }
@@ -444,6 +448,9 @@ namespace Zurich.Connector.Data.DataMap
 
         public async Task<AppToken> GetImpersonatedUserToken(string instanceName, string email)
         {
+            //await semaphoreSlim.WaitAsync(8000);
+            //try
+            //{
             var instanceConnection = await _oAuthService.GetOAuthConnection(OAuthApplicationType.ServiceApp, instanceName);
 
             if (instanceConnection != null)
@@ -477,7 +484,7 @@ namespace Zurich.Connector.Data.DataMap
                     else
                     {
                         _logger.LogError($"{response.StatusCode} Non Successful response from highQ Impersonate token {requestMessage.RequestUri.Host}");
-                        
+
                         if (response.StatusCode == System.Net.HttpStatusCode.Forbidden)
                         {
                             var errorResponse = JsonConvert.DeserializeObject<ErrorResponse>(responseContent);
@@ -488,7 +495,7 @@ namespace Zurich.Connector.Data.DataMap
                                 throw new InvalidUserException(errorResponse.Summary);
                             }
                         }
-                        
+
                         _logger.LogError($"Unable to retrieve user token for {instanceName}. Server returned {response.StatusCode}: {responseContent}");
                     }
                 }
@@ -499,6 +506,12 @@ namespace Zurich.Connector.Data.DataMap
             }
 
             return null;
+            //}
+            //finally
+            //{
+                //semaphoreSlim.Release();
+            //}
+            //return null;
         }
     }
 }

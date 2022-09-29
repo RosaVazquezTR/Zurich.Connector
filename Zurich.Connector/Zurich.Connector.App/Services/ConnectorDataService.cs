@@ -152,9 +152,9 @@ namespace Zurich.Connector.Data.Services
                     queryParameters["Query"] = System.Web.HttpUtility.UrlDecode(queryParameters["Query"]);
             }
 
-            NameValueCollection mappedQueryParameters = MapQueryParametersFromDB(queryParameters, connectorModel);
+            //NameValueCollection mappedQueryParameters = MapQueryParametersFromDB(queryParameters, connectorModel);
             ConnectorDocument connectorDocument = _mapper.Map<ConnectorDocument>(connectorModel);
-            Dictionary<string, string> headerParameters = await _dataExtractionService.ExtractDataSource(mappedQueryParameters, queryParameters, hostname, connectorDocument);
+            //Dictionary<string, string> headerParameters = await _dataExtractionService.ExtractDataSource(mappedQueryParameters, queryParameters, hostname, connectorDocument);
             IDataMapping service = _dataMappingFactory.GetImplementation(connectorModel?.DataSource?.SecurityDefinition?.Type);
 
             // Needs to be dynamic because we can return an JToken or JArray
@@ -168,35 +168,44 @@ namespace Zurich.Connector.Data.Services
                 if (connectorModel.DataSource.CombinedLocations)
                 {
                     dynamic dataArray = new JObject();
-                    dataArray.Instances = new JArray();
+                    dataArray.Count = 0;
+                    dataArray.successUrls = new JArray();
+                    dataArray.failUrls = new JArray();
+                    dataArray.searchResults = new JArray();
+
+                    // TODO: Turn this into a parallel process once we confirm whether or not we need to call multiple instances
                     foreach (DataSourceInformation currentRegistration in availableRegistrations)
                     {
                         try
                         {
+                            // TODO: Check if this code can be encapsulated into a new method to avoid repeating code,
+                            // this once we confirm whether or not we need to call multiple instances
+                            NameValueCollection mappedQueryParameters = MapQueryParametersFromDB(queryParameters, connectorModel);
+                            Dictionary<string, string> headerParameters = await _dataExtractionService.ExtractDataSource(mappedQueryParameters, queryParameters, hostname, connectorDocument);
+
                             data = await service.GetAndMapResults<dynamic>(connectorDocument, transferToken, mappedQueryParameters, headerParameters, queryParameters, currentRegistration.Domain);
                             data = await EnrichConnectorData(connectorModel, data);
+                            dataArray.successUrls.Add(currentRegistration.Domain);
                         }
                         catch (Exception ex)
                         {
-                            data = new JObject();
-                            data.Status = "Error";
-                            data.ErrorDetails = $"Cannot retrieve {currentRegistration.Name} information - {ex.Message}";
+                            dataArray.failUrls.Add(currentRegistration.Domain);
                         }
                         finally
                         {
-                            // TODO: Once it's defined how to display the multiple instances of HighQ in the search endpoint,
-                            // a change in how we arrange the instances from the response will have to be done
-                            dynamic tempInstance = new JObject();
-                            tempInstance.Name = currentRegistration.Name;
-                            tempInstance.Value = data;
-                            dataArray.Instances.Add(tempInstance);
+                            dataArray.searchResults.Add(data.Documents);
+                            dataArray.Count += data.Count;
                         }
-                        
+
                     }
                     data = dataArray;
                 }
                 else
                 {
+                    // TODO: Check if this code can be encapsulated into a new method to avoid repeating code,
+                    // this once we confirm whether or not we need to call multiple instances
+                    NameValueCollection mappedQueryParameters = MapQueryParametersFromDB(queryParameters, connectorModel);
+                    Dictionary<string, string> headerParameters = await _dataExtractionService.ExtractDataSource(mappedQueryParameters, queryParameters, hostname, connectorDocument);
                     // Thinking about using the instance domain instead of its name
                     data = await service.GetAndMapResults<dynamic>(connectorDocument, transferToken, mappedQueryParameters, headerParameters, queryParameters);
                     data = await EnrichConnectorData(connectorModel, data);
