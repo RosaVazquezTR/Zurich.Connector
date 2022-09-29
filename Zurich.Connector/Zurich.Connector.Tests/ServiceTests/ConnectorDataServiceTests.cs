@@ -275,7 +275,7 @@ namespace Zurich.Connector.Tests.ServiceTests
         }
 
         [TestMethod]
-        public async Task CallMapQueryParametersFromDBWithMissingRequiredParameter()
+        public void CallMapQueryParametersFromDBWithMissingRequiredParameter()
         {
             // ARRANGE
             var cdmQueryParameters = new Dictionary<string, string>() { { "Offset", "1" }, { "ResultSize", "10" } };
@@ -288,7 +288,7 @@ namespace Zurich.Connector.Tests.ServiceTests
         }
 
         [TestMethod]
-        public async Task CallMapQueryAdvancedSearchWithMissingRequiredParameter()
+        public void CallMapQueryAdvancedSearchWithMissingRequiredParameter()
         {
             // ARRANGE
             var cdmQueryParameters = new Dictionary<string, string>() { { "Offset", "1" }, { "ResultSize", "10" } };
