@@ -26,7 +26,7 @@
         "cdmName": "PracticeArea.filter",
         "name": "products",
         "inClause": "Query",
-        "required": true,
+        "required": false,
         "type": "string",
         "defaultValue": ""
       },
@@ -34,7 +34,7 @@
         "cdmName": "ResourceType.filter",
         "name": "resourceTypeFolders",
         "inClause": "Query",
-        "required": true,
+        "required": false,
         "type": "string",
         "defaultValue": ""
       },
@@ -42,7 +42,7 @@
         "cdmName": "Jurisdiction.filter",
         "name": "jurisdiction",
         "inClause": "Query",
-        "required": true,
+        "required": false,
         "type": "string",
         "defaultValue": ""
       },
@@ -50,7 +50,7 @@
         "cdmName": "Sector.filter",
         "name": "practiceAreas",
         "inClause": "Query",
-        "required": true,
+        "required": false,
         "type": "string",
         "defaultValue": ""
       },

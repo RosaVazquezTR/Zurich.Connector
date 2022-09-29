@@ -12,6 +12,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Zurich.Common.Services;
 using Zurich.Connector.App;
+using Zurich.Connector.App.Exceptions;
 using Zurich.Connector.App.Model;
 using Zurich.Connector.App.Services;
 using Zurich.Connector.App.Services.DataSources;
@@ -271,6 +272,32 @@ namespace Zurich.Connector.Tests.ServiceTests
 
             // ASSERT
             Assert.AreEqual(mappedResult.Count, 0);
+        }
+
+        [TestMethod]
+        public async Task CallMapQueryParametersFromDBWithMissingRequiredParameter()
+        {
+            // ARRANGE
+            var cdmQueryParameters = new Dictionary<string, string>() { { "Offset", "1" }, { "ResultSize", "10" } };
+            var connector = MockConnectorData.SetupConnectorModel_Version2().Where(t => t.Id == "5").FirstOrDefault();
+
+            ConnectorDataService service = CreateConnectorDataService();
+
+            // ACT & ASSERT
+            Assert.ThrowsException<RequiredParameterMissingException>(() => service.MapQueryParametersFromDB(cdmQueryParameters, connector));
+        }
+
+        [TestMethod]
+        public async Task CallMapQueryAdvancedSearchWithMissingRequiredParameter()
+        {
+            // ARRANGE
+            var cdmQueryParameters = new Dictionary<string, string>() { { "Offset", "1" }, { "ResultSize", "10" } };
+            var connector = MockConnectorData.SetupConnectorModel_Version2().Where(t => t.Id == "5").FirstOrDefault();
+
+            ConnectorDataService service = CreateConnectorDataService();
+
+            // ACT & ASSERT
+            Assert.ThrowsException<RequiredParameterMissingException>(() => service.MapQueryAdvancedSearch(cdmQueryParameters, connector));
         }
 
         [TestMethod]

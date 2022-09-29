@@ -362,7 +362,7 @@ namespace Zurich.Connector.Tests.Common
                         Description = "DataSource 33 desc"
                     }
                 },
-                  new ConnectorModel()
+                new ConnectorModel()
                 {
                     Id = "44",
                     Info = new ConnectorInfoModel()
@@ -429,7 +429,35 @@ namespace Zurich.Connector.Tests.Common
                         }
                     },
                 }
-        };
+                ,new ConnectorModel()
+                {
+                    Id = "5",
+                    Info = new ConnectorInfoModel()
+                    {
+                        Title = "Connector5",
+                        DataSourceId = "5",
+                        Description ="Connector 5 desc",
+                        EntityType = ConnectorEntityType.Search,
+                        Version = "v1"
+                    },
+                    Request = new ConnectorRequestModel()
+                    {
+                        Parameters = new List<ConnectorRequestParameterModel>()
+                        {
+                            new ConnectorRequestParameterModel() { CdmName = "Query", Name = "searchTerm", Required = true, DefaultValue = ""},
+                            new ConnectorRequestParameterModel() { CdmName = "Offset", Name = "resultsStartIndex", DefaultValue = "1"},
+                            new ConnectorRequestParameterModel() { CdmName = "ResultSize", Name = "resultsCount", DefaultValue = "25"}
+                        }
+                    },
+                    DataSource = new DataSourceModel()
+                    {
+                        Id = "5",
+                        Name = "DataSource5",
+                        AppCode = "DataSource5",
+                        Description = "DataSource 5 desc"
+                    }
+                },
+            };
 
         }
 

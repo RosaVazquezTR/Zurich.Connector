@@ -230,7 +230,15 @@ namespace Zurich.Connector.Data.Services
 
         public Dictionary<string, string> MapQueryAdvancedSearch(Dictionary<string, string> cdmQueryParameters, ConnectorModel connectorModel)
         {
-            string searchQuery = System.Web.HttpUtility.UrlDecode(cdmQueryParameters["Query"]);
+            if (!cdmQueryParameters.TryGetValue("Query", out string query))
+            {
+                var defaultParameter = connectorModel.Request?.Parameters?.FirstOrDefault(t => t.CdmName == "Query");
+                if (defaultParameter == null || string.IsNullOrEmpty(defaultParameter.DefaultValue))
+                    throw new RequiredParameterMissingException(string.Format("Missing required parameter: Query"));
+                query = defaultParameter.DefaultValue;
+            }
+            
+            string searchQuery = System.Web.HttpUtility.UrlDecode(query);
             cdmQueryParameters["Query"] = AdvancedSearchHandler.HandleOperator(searchQuery, connectorModel);
             return cdmQueryParameters;
         }
@@ -269,10 +277,19 @@ namespace Zurich.Connector.Data.Services
             if (ODataHandler.HasODataParams(connectorModel))
                 ODataHandler.BuildQueryParams(cdmQueryParameters, connectorModel).ToList().ForEach(param => queryParameters.Add(param.Key, param.Value));
 
+            // Throw if any required parameters are empty
+            if (connectorModel.Request?.Parameters != null)
+            {
+                foreach (var parameter in connectorModel.Request?.Parameters)
+                {
+                    if (RequiredParametersCheck(parameter, queryParameters))
+                        throw new RequiredParameterMissingException(string.Format("Missing required parameter: {0}", parameter.CdmName));
+                }
+            }
+
             // Add default parameters if not present in the request. ex: locale, ResultSize etc
             var defaultParameters = connectorModel.Request?.Parameters?.Where(t => DefaultParametersCheck(t, queryParameters))
                                 .ToDictionary(c => c.Name, c => c.DefaultValue);
-
 
             // Add the default sort parameter specified in connector if necessary if not present in the request
             if (!sortParameters.Any() && connectorModel.Request?.Sorting != null)
@@ -318,6 +335,13 @@ namespace Zurich.Connector.Data.Services
                 }
             }
             return null;
+        }
+
+        private bool RequiredParametersCheck(ConnectorRequestParameterModel request, Dictionary<string, string> queryParameters)
+        {
+            return String.IsNullOrWhiteSpace(request.DefaultValue)
+                && request.Required
+                && !queryParameters.ContainsKey(request.Name);
         }
 
         private bool DefaultParametersCheck(ConnectorRequestParameterModel request, Dictionary<string, string> queryParameters)
