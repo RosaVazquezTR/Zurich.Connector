@@ -145,7 +145,7 @@ namespace Zurich.Connector.Data.DataMap
             {
                 OAuthAPITokenResponse result;
                 // Making call to endpoint which takes AppCode and TenantId and it returns the token
-                if (_sessionAccessor?.TenantId != Guid.Empty)
+                if (_sessionAccessor?.TenantId != Guid.Empty && _sessionAccessor.UserId == Guid.Empty)
                 {
                     result = await _oAuthApirepository.GetTokenWithTenantId(appCode, _sessionAccessor.TenantId.ToString(), null);
                 }
