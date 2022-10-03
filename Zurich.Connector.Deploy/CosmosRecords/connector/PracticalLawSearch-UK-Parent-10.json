@@ -27,7 +27,7 @@
 				"cdmName": "PracticeArea.filter",
 				"name": "products",
 				"inClause": "Query",
-				"required": true,
+				"required": false,
 				"type": "string",
 				"defaultValue": ""
 			},

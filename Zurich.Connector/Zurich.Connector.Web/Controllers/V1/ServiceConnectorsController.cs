@@ -119,7 +119,7 @@ namespace Zurich.Connector.Web.Controllers.V1
             }
             catch (Exception e)
             {
-                if (e is MaxResultSizeException)
+                if (e is MaxResultSizeException || e is RequiredParameterMissingException)
                 {
                     return BadRequest(e.Message);
                 }
