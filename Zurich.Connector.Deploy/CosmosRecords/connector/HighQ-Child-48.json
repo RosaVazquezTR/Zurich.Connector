@@ -48,6 +48,12 @@
     ],
     "unstructured": [
       {
+        "name": "instance",
+        "type": "string",
+        "responseElement": "instance.instanceName",
+        "_comment": ""
+      },
+      {
         "name": "site",
         "type": "string",
         "responseElement": "site.siteName",
@@ -57,12 +63,6 @@
         "name": "folderPath",
         "type": "string",
         "responseElement": "documentMetaData.folderPath",
-        "_comment": ""
-      },
-      {
-        "name": "instance",
-        "type": "string",
-        "responseElement": "instance.instanceName",
         "_comment": ""
       },
       {

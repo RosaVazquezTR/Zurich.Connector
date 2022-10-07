@@ -119,7 +119,7 @@
   "pagination": {
     "available": true,
     "paginationType": "",
-    "isZeroBasedOffset": false
+    "isZeroBasedOffset": true
   },
   "resultLocation": "",
   "cdmMapping": {

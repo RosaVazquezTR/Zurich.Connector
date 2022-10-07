@@ -171,7 +171,7 @@ namespace Zurich.Connector.Data.Services
                     dataArray.Count = 0;
                     dataArray.successUrls = new JArray();
                     dataArray.failUrls = new JArray();
-                    dataArray.searchResults = new JArray();
+                    dataArray.Documents = new JArray();
 
                     // TODO: Turn this into a parallel process once we confirm whether or not we need to call multiple instances
                     foreach (DataSourceInformation currentRegistration in availableRegistrations)
@@ -193,7 +193,13 @@ namespace Zurich.Connector.Data.Services
                         }
                         finally
                         {
-                            dataArray.searchResults.Add(data.Documents);
+                            if (data.Documents != null)
+                            {
+                                foreach (var document in data.Documents)
+                                {
+                                    dataArray.Documents.Add(document);
+                                }
+                            }
                             dataArray.Count += data.Count;
                         }
 
