@@ -40,7 +40,7 @@
       },
       {
         "cdmName": "Jurisdiction.filter",
-        "name": "jurisdiction",
+        "name": "jurisdictions",
         "inClause": "Query",
         "required": false,
         "type": "string",
