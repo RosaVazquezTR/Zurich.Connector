@@ -242,7 +242,7 @@
 		{
 			"name": "ResourceType",
 			"description": "ResourceType Folder",
-			"isMultiselect": "false",
+			"isMultiselect": "true",
 			"requestParameter": "ResourceType.filter",
 			"filterlist": [
 				{
@@ -402,7 +402,7 @@
 		{
 			"name": "Jurisdiction",
 			"description": "Jurisdictions",
-			"isMultiselect": "false",
+			"isMultiselect": "true",
 			"requestParameter": "Jurisdiction.filter",
 			"filterlist": [
 				{
