@@ -77,7 +77,15 @@
         "required": true,
         "type": "string",
         "defaultValue": "1"
-      }
+      },
+			{
+				"cdmName": "MultivalueSingleFilter",
+				"name": "isFilterPlural",
+				"inClause": "Query",
+				"required": false,
+				"type": "string",
+				"defaultValue": "true"
+			}
     ],
     "sorting": {
       "properties": [
@@ -116,7 +124,7 @@
     {
       "name": "PracticeArea",
       "description": "The practice areas",
-      "isMultiselect": "false",
+      "isMultiselect": "true",
       "requestParameter": "PracticeArea.filter",
       "filterlist": [
         {
@@ -200,7 +208,7 @@
     {
       "name": "ResourceType",
       "description": "ResourceType Folder",
-      "isMultiselect": "false",
+      "isMultiselect": "true",
       "requestParameter": "ResourceType.filter",
       "filterlist": [
         {
@@ -360,7 +368,7 @@
     {
       "name": "Jurisdiction",
       "description": "Jurisdictions",
-      "isMultiselect": "false",
+      "isMultiselect": "true",
       "requestParameter": "Jurisdiction.filter",
       "filterlist": [
         {
@@ -1504,7 +1512,7 @@
     {
       "name": "Sector",
       "description": "Sectors",
-      "isMultiselect": "false",
+      "isMultiselect": "true",
       "requestParameter": "Sector.filter",
       "filterlist": [
         {

@@ -98,22 +98,23 @@ namespace Zurich.Connector.Data.Repositories
             string paramStr = paramCollection.ToString();
             if (paramCollection.AllKeys.Contains("isFilterPlural"))
             {
-                // The complicated but more reliable way to do it
-                if (paramStr.Contains("%2c"))
+                string[] strParamArray = paramStr.Split('&');
+                
+                for (int s = 0; s < strParamArray.Length; s++)
                 {
-                    string filterName = paramStr[..paramStr.IndexOf("%2c")];
-                    char[] strArray = filterName.ToCharArray();
-                    Array.Reverse(strArray);
-                    filterName = new String(strArray);
-                    filterName = filterName[..filterName.IndexOf("&")];
-                    strArray = filterName.ToCharArray();
-                    Array.Reverse(strArray);
-                    filterName = new String(strArray);
-                    filterName = filterName[..filterName.IndexOf("=")];
-                    paramStr = paramStr.Replace("%2c", $"&{filterName}=");
+                    if (strParamArray[s].Contains("%2c"))
+                    {
+                        string filterName = strParamArray[s][..strParamArray[s].IndexOf("=")];
+                        strParamArray[s] = strParamArray[s].Replace("%2c", $"&{filterName}=");
+                    }
+                    // Removing the isFilterPlural parameter from uri parameters since it is only used internally
+                    else if (strParamArray[s].Contains("isFilterPlural"))
+                    {
+                        strParamArray[s] = "";
+                    }
                 }
-                // The easiest not so realiable way to do it
-                //paramStr = paramStr.Replace("%2c", $"&{paramCollection.AllKeys[2]}=");
+                paramStr = string.Join("&", strParamArray);
+
             }
             builder.Query = paramStr;
             return builder.ToString();
