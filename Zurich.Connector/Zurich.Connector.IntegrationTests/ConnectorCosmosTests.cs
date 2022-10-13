@@ -249,7 +249,7 @@ namespace Zurich.Connector.IntegrationTests
             {
                 //should be camelCased
                 bool nameCamelCased = !char.IsUpper(param.name[0]);
-                nameCamelCased.Should().BeTrue("Should be camel cased");
+                nameCamelCased.Should().BeTrue("Should be camel cased | Parameter: "+param.name);
             }
         }
 

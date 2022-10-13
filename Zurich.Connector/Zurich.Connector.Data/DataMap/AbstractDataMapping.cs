@@ -74,7 +74,14 @@ namespace Zurich.Connector.Data.DataMap
             if (!string.IsNullOrWhiteSpace(response))
             {
                 IHttpResponseService httpResponseService = _httpResponseFactory.GetImplementation(connectorDocument.Response.Type.ToString());
-                JToken jsonResponse = await httpResponseService.GetJTokenResponse(response, connectorDocument.Response);
+
+                JToken jsonResponse = null;
+
+                if (connectorDocument.Response.Type.ToString() == "JSON")
+                    jsonResponse = await httpResponseService.GetJTokenResponse(response, connectorDocument.Response, connectorDocument.Id);
+                if (jsonResponse is null)
+                    jsonResponse = await httpResponseService.GetJTokenResponse(response, connectorDocument.Response);
+
                 if (httpResponseService.MapResponse)
                     return await MapToCDM<T>(jsonResponse, connectorDocument.ResultLocation, connectorDocument, requestParameter);
                 else

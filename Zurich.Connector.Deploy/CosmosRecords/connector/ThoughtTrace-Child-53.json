@@ -33,15 +33,39 @@
                 "type": "string",
                 "responseElement": "documentTypeId",
                 "_comment": ""
-            },
-            {
-                "name": "Count",
-                "type": "short",
-                "responseElement": "pageCount",
-                "_comment": ""
             }
         ],
         "unstructured": [
+            {
+                "name": "stringValue",
+                "type": "string",
+                "responseElement": "stringValue",
+                "_comment": ""
+            },
+            {
+                "name": "score",
+                "type": "string",
+                "responseElement": "score",
+                "_comment": ""
+            },
+            {
+                "name": "highlightedText",
+                "type": "string",
+                "responseElement": "highlightedText",
+                "_comment": ""
+            },
+            {
+                "name": "documentId",
+                "type": "string",
+                "responseElement": "documentId",
+                "_comment": ""
+            },
+            {
+                "name": "count",
+                "type": "short",
+                "responseElement": "pageCount",
+                "_comment": ""
+            },
             {
                 "name": "lastModifiedOn",
                 "type": "DateTime",
@@ -55,9 +79,27 @@
                 "_comment": ""
             },
             {
-                "name": "highlightedText",
+                "name": "thoughtId",
                 "type": "string",
-                "responseElement": "highlightedText",
+                "responseElement": "thoughtId",
+                "_comment": ""
+            },
+            {
+                "name": "thoughtTypeId",
+                "type": "string",
+                "responseElement": "thoughtTypeId",
+                "_comment": ""
+            },
+            {
+                "name": "fieldId",
+                "type": "string",
+                "responseElement": "fieldId",
+                "_comment": ""
+            },
+            {
+                "name": "thoughtFieldTypeId",
+                "type": "string",
+                "responseElement": "thoughtFieldTypeId",
                 "_comment": ""
             }
         ]

@@ -1,0 +1,37 @@
+{
+  "Documents": {
+    "#loop($.Documents)": {
+      "documentId": "#currentvalueatpath($.id)",
+      "name": "#currentvalueatpath($.name)",
+      "createdOn": "#currentvalueatpath($.createdOn)",
+      "documentTypeId": "#currentvalueatpath($.documentTypeId)",
+      "pageCount": "#currentvalueatpath($.pageCount)",
+      "lastModifiedOn": "#currentvalueatpath($.lastModifiedOn)",
+      "processingStatus": "#currentvalueatpath($.processingStatus)",
+      "highlightedText": "#currentvalueatpath($.highlightedText)",
+      "thoughts": {
+        "#loopwithincontext($.thoughts)": {
+          "id": "#currentvalueatpath($.id)",
+          "thoughtTypeId": "#currentvalueatpath($.thoughtTypeId)",
+          "fields": {
+            "#loopwithincontext($.fields)": {
+              "name": "",
+              "createdOn": "",
+              "documentTypeId": "",
+              "pageCount": "",
+              "lastModifiedOn": "",
+              "processingStatus": "",
+              "highlightedText": "#currentvalueatpath($.highlightedText)",
+              "thoughtId": "",
+              "thoughtTypeId": "",
+              "fieldId": "#currentvalueatpath($.id)",
+              "thoughtFieldTypeId": "#currentvalueatpath($.thoughtFieldTypeId)",
+              "score": "#currentvalueatpath($.score)",
+              "stringValue": "#currentvalueatpath($.stringValue)"
+            }
+          }
+        }
+      }
+    }
+  }
+}

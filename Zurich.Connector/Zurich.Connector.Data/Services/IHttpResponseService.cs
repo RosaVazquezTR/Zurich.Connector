@@ -26,5 +26,21 @@ namespace Zurich.Connector.Data.Services
         /// A <see cref="JToken"/>JToken response</returns>
         /// </returns>
         Task<JToken> GetJTokenResponse(string response, ConnectorResponse connectorResponse);
+        /// <summary>
+        /// Apply transformation on the responseof TT passing connector ID
+        /// </summary>
+        /// <param name="response">
+        /// Connector response
+        /// </param>
+        /// <param name="connectorResponse">
+        /// Connector details
+        /// </param>
+        /// <param name="connectorId">
+        /// Connector id
+        /// </param>
+        /// <returns>
+        /// A <see cref="JToken"/>JToken response</returns>
+        /// </returns>
+        Task<JToken> GetJTokenResponse(string response1, ConnectorResponse response2, string id);
     }
 }
