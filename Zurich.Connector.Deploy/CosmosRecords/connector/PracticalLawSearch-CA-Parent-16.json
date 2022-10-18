@@ -161,108 +161,16 @@
       "requestParameter": "ResourceType.filter",
       "filterlist": [
         {
-          "name": "CaseTracker",
-          "id": "5-103-0961"
-        },
-        {
-          "name": "Legislation",
-          "id": "1-103-0977"
-        },
-        {
-          "name": "Help and information notes",
-          "id": "4-103-2003"
-        },
-        {
-          "name": "Training questions",
-          "id": "2-103-0986"
-        },
-        {
-          "name": "Policy guidance and consultations",
-          "id": "1-103-0958"
+          "name": "Article other",
+          "id": "7-103-0955"
         },
         {
           "name": "Articles",
           "id": "5-103-0956"
         },
         {
-          "name": "Drafting notes",
-          "id": "2-103-0967"
-        },
-        {
-          "name": "Binary Document",
-          "id": "9-500-0000"
-        },
-        {
-          "name": "Training materials",
-          "id": "4-103-0985"
-        },
-        {
-          "name": "Case report list",
-          "id": "7-103-0960"
-        },
-        {
-          "name": "Legal update - archive",
-          "id": "2-103-2004"
-        },
-        {
-          "name": "External resources",
-          "id": "8-103-0988"
-        },
-        {
-          "name": "News",
-          "id": "9-103-0978"
-        },
-        {
-          "name": "Training modules",
-          "id": "5-103-2007"
-        },
-        {
-          "name": "Standard clauses",
-          "id": "4-103-0966"
-        },
-        {
-          "name": "Emails",
-          "id": "4-103-0971"
-        },
-        {
-          "name": "Practice notes",
-          "id": "1-103-0982"
-        },
-        {
-          "name": "Glossary",
-          "id": "1-103-0963"
-        },
-        {
-          "name": "Article other",
-          "id": "7-103-0955"
-        },
-        {
           "name": "Articles - professional",
           "id": "3-103-0957"
-        },
-        {
-          "name": "Standard documents",
-          "id": "6-103-0965"
-        },
-        {
-          "name": "Practice note - overview",
-          "id": "9-103-2005"
-        },
-        {
-          "name": "Case Study",
-          "id": "4-103-0829"
-        },
-        {
-          "name": "Country QandA",
-          "id": "5-378-9574"
-        },
-        {
-          "name": "Checklists",
-          "id": "8-103-0969"
-        },
-        {
-          "name": "Forms",
-          "id": "0-103-0968"
         },
         {
           "name": "Ask",
@@ -273,12 +181,12 @@
           "id": "0-509-4748"
         },
         {
-          "name": "Book",
-          "id": "8-512-7472"
+          "name": "Binary Document",
+          "id": "9-500-0000"
         },
         {
-          "name": "Chapter",
-          "id": "5-512-7478"
+          "name": "Book",
+          "id": "8-512-7472"
         },
         {
           "name": "BriefBankSummary",
@@ -289,28 +197,120 @@
           "id": "5-520-5433"
         },
         {
+          "name": "Case report list",
+          "id": "7-103-0960"
+        },
+        {
+          "name": "Case Study",
+          "id": "4-103-0829"
+        },
+        {
+          "name": "CaseTracker",
+          "id": "5-103-0961"
+        },
+        {
+          "name": "Chapter",
+          "id": "5-512-7478"
+        },
+        {
+          "name": "Checklists",
+          "id": "8-103-0969"
+        },
+        {
+          "name": "Country QandA",
+          "id": "5-378-9574"
+        },
+        {
+          "name": "Drafting notes",
+          "id": "2-103-0967"
+        },
+        {
+          "name": "Emails",
+          "id": "4-103-0971"
+        },
+        {
+          "name": "External resources",
+          "id": "8-103-0988"
+        },
+        {
+          "name": "Forms",
+          "id": "0-103-0968"
+        },
+        {
+          "name": "Glossary",
+          "id": "1-103-0963"
+        },
+        {
+          "name": "Help and information notes",
+          "id": "4-103-2003"
+        },
+        {
+          "name": "Legal update - archive",
+          "id": "2-103-2004"
+        },
+        {
           "name": "Legal update - case report",
           "id": "0-520-5435"
         },
         {
-          "name": "Toolkit",
-          "id": "5-524-0969"
+          "name": "Legislation",
+          "id": "1-103-0977"
         },
         {
           "name": "Legislation Tracker",
           "id": "3-524-0970"
         },
         {
-          "name": "State Q&amp;A",
-          "id": "1-524-0971"
+          "name": "News",
+          "id": "9-103-0978"
         },
         {
-          "name": "State Q&amp;A Tool",
-          "id": "4-524-8353"
+          "name": "Policy guidance and consultations",
+          "id": "1-103-0958"
+        },
+        {
+          "name": "Practice note - overview",
+          "id": "9-103-2005"
+        },
+        {
+          "name": "Practice notes",
+          "id": "1-103-0982"
         },
         {
           "name": "PrimarySource",
           "id": "7-504-1186"
+        },
+        {
+          "name": "Standard clauses",
+          "id": "4-103-0966"
+        },
+        {
+          "name": "Standard documents",
+          "id": "6-103-0965"
+        },
+        {
+          "name": "State Q&A",
+          "id": "1-524-0971"
+        },
+        {
+          "name": "State Q&A Tool",
+          "id": "4-524-8353"
+        },
+        {
+          "name": "Toolkit",
+          "id": "5-524-0969"
+        },
+        {
+          "name": "Training materials",
+          "id": "4-103-0985"
+        },
+        {
+          "name": "Training modules",
+          "id": "5-103-2007"
+        },
+        {
+          "name": "Training questions",
+          "id": "2-103-0986"
         }
       ]
     },
@@ -553,7 +553,7 @@
           "id": "2-503-0213"
         },
         {
-          "name": "Cura‡ao",
+          "name": "Curaçao",
           "id": "7-549-3296"
         },
         {
@@ -773,7 +773,7 @@
           "id": "3-103-0655"
         },
         {
-          "name": "Lao People?s Democratic Republic",
+          "name": "Lao People's Democratic Republic",
           "id": "7-503-0201"
         },
         {
@@ -993,7 +993,7 @@
           "id": "7-503-0178"
         },
         {
-          "name": "S?o Tom‚ and Pr¡ncipe",
+          "name": "São Tomé and Príncipe",
           "id": "5-503-0179"
         },
         {
