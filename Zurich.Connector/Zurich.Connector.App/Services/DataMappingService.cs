@@ -77,8 +77,7 @@ namespace Zurich.Connector.App.Services
                 {
                     if (int.TryParse(queryParameters["Offset"], out int Offset) && int.TryParse(queryParameters["ResultSize"], out int ResultSize))
                     {
-                        queryParameters[QueryParameters.ResultSize] = (Convert.ToInt32(queryParameters[QueryParameters.Offset]) + Convert.ToInt32(queryParameters[QueryParameters.ResultSize])).ToString();
-                        queryParameters[QueryParameters.Offset] = "0";
+                        queryParameters[QueryParameters.ResultSize] = (ResultSize - Offset).ToString();
                     }
                 }
             }

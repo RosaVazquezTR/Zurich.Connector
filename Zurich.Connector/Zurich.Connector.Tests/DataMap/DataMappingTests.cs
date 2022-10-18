@@ -1180,7 +1180,7 @@ namespace Zurich.Connector.Tests
             queryParameters = dataMappingService.UpdateOffset(AppCode, availableRegistrations, queryParameters);
 
 			Assert.IsNotNull(queryParameters);
-			Assert.AreEqual(queryParameters["ResultSize"], "15");
+			Assert.AreEqual(queryParameters["ResultSize"], "5");
 		}
     }
 }
