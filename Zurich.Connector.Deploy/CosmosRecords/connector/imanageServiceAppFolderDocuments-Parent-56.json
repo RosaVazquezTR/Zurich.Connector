@@ -10,6 +10,7 @@
     "version": "1.0",
     "subType": "Parent"
   },
+  "hostName": "cloudimanage.com",
   "preRelease": true,
   "request": {
     "endpointPath": "/work/api/v2/customers/{55.customer_id}/libraries/{libraryName}/folders/{folderId}/documents",
