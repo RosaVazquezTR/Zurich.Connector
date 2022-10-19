@@ -5,7 +5,7 @@
     "title": "Get Recent Documents from iManage",
     "description": "Get Recent Documents from iManage",
     "entityType": "Document",
-    "dataSourceId": "10",
+    "dataSourceId": "48",
     "version": "1.0",
     "subType": "Child"
   },

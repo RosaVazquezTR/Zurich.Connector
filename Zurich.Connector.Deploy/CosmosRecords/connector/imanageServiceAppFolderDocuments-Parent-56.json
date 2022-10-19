@@ -1,18 +1,18 @@
 {
   "id": "56",
   "partitionkey": "ConnectorList",
-  "alias": "imanage.document.folder",
+  "alias": "imanageserviceapp.document.folder",
   "info": {
     "title": "Get Folder Documents from iManage",
     "description": "Get Folder Documents from iManage",
     "entityType": "Document",
-    "dataSourceId": "10",
+    "dataSourceId": "48",
     "version": "1.0",
     "subType": "Parent"
   },
   "preRelease": true,
   "request": {
-    "endpointPath": "/work/api/v2/customers/{1.customer_id}/libraries/{libraryName}/folders/{folderId}/documents",
+    "endpointPath": "/work/api/v2/customers/{55.customer_id}/libraries/{libraryName}/folders/{folderId}/documents",
     "method": "GET",
     "parameters": [
       {
