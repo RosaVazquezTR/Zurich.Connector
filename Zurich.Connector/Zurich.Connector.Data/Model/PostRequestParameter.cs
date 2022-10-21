@@ -15,6 +15,6 @@ namespace Zurich.Connector.Data.Model
             Tags = connectorParameter.Tags;
     }
 
-        public string ParamValue { get; set; }
+        public object ParamValue { get; set; }
     }
 }

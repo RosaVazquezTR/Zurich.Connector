@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Specialized;
 using System.Linq;
@@ -28,10 +29,26 @@ namespace Zurich.Connector.Data.Services
 			var neededParams = requestMappingParameters.Where(x => parameters.AllKeys.Contains(x.Name)).Select(y => new PostRequestParameter(y) { ParamValue = parameters[y.Name] });
 			foreach (var parameter in neededParams)
 			{
-				JTokenWriter writer = SetupPostJWriter(parameter);
-				JsonRequest.Merge(writer.Token, settings);
-				// remove so it doesn't get stuck on the query string.
-				parameters.Remove(parameter.Name);
+				if (parameter.Type == "object")
+				{
+
+					JContainer JsonParam = new JObject();
+					string paramValue = parameter.ParamValue.ToString() ?? parameter.DefaultValue.ToString();
+					string unescapedParam = paramValue.Replace("\n", "").Replace("\r", "").Replace("\\", "").Replace(" ", "");
+					JTokenWriter writerParam = new JTokenWriter();
+					writerParam.WritePropertyName(parameter.Name);
+					JsonParam.Merge(JObject.Parse("{" + writerParam.Token.ToString().Replace("null", unescapedParam) + "}"));
+					JsonRequest.Merge(JsonParam);
+					// remove so it doesn't get stuck on the query string.
+					parameters.Remove(parameter.Name);
+				}
+				else
+				{
+					JTokenWriter writer = SetupPostJWriter(parameter);
+					JsonRequest.Merge(writer.Token, settings);
+					// remove so it doesn't get stuck on the query string.
+					parameters.Remove(parameter.Name);
+				}
 			}
 			return JsonRequest.ToString(Newtonsoft.Json.Formatting.None);
 		}
@@ -40,7 +57,7 @@ namespace Zurich.Connector.Data.Services
 		{
 			JTokenWriter writer = new JTokenWriter();
 			var parts = param.Name.Split('.');
-			WriteJsonObject(writer, parts, param.ParamValue, param.Type);
+			WriteJsonObject(writer, parts, param.ParamValue?.ToString() ?? "", param.Type);
 			return writer;
 		}
 

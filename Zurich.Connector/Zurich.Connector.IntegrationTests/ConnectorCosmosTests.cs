@@ -175,14 +175,6 @@ namespace Zurich.Connector.IntegrationTests
                 connector.Request.Method.Should().ContainAny(requestMethodTypes);
                 foreach (var param in connector.Request.Parameters)
                 {
-                    if (param.DefaultValue.ToString().StartsWith("{"))
-                    {
-                        param.CdmName.Should().BeNullOrWhiteSpace();
-                    }
-                    else
-                    {
-                        param.CdmName.Should().NotBeNullOrWhiteSpace();
-                    }
                     param.Name.Should().NotBeNullOrWhiteSpace();
                     param.InClause.Should().ContainAny(requestInClauseTypes);
                     param.Type.Should().ContainAny(parameterTypes);

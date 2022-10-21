@@ -70,6 +70,32 @@
                 "required": false,
                 "type": "string",
                 "defaultValue": ""
+            },
+            {
+                "cdmName": "thoughtFilters",
+                "name": "thoughtFilters",
+                "inClause": "Body",
+                "required": true,
+                "type": "object",
+                "defaultValue": {
+                    "operator": "and",
+                    "filters": [
+                        {
+                            "fieldTypes": [
+                                {
+                                    "thoughtTypeId": "1",
+                                    "thoughtFieldTypeId": "1746"
+                                }
+                            ],
+                            "operator": "exists",
+                            "stringValue": "",
+                            "stringValueList": null,
+                            "numberValue": null,
+                            "dateValue": null,
+                            "booleanValue": null
+                        }
+                    ]
+                }
             }
         ],
         "sorting": {
@@ -407,16 +433,5 @@
             }
         ],
         "unstructured": []
-    },
-    "advancedSearchSyntax": {
-        "operators": {
-            "and": "AND",
-            "or": "OR",
-            "textualOcurrence": "\"",
-            "not": "-",
-            "wildcard": "*",
-            "proximity": "~",
-            "termGrouping": "("
-        }
     }
 }
