@@ -1,0 +1,37 @@
+{
+    "id": "60",
+    "partitionkey": "ConnectorList",
+    "alias": "tt.ontologies",
+    "info": {
+        "title": "Get Thought Trace Ontologies",
+        "description": "Pull Thougth Trace ontologies",
+        "entityType": "Ontologies",
+        "dataSourceId": "47",
+        "version": "1.0"
+    },
+    "preRelease": true,
+    "request": {
+        "endpointPath": "/ontologies",
+        "method": "GET",
+        "parameters": [],
+        "sorting": {
+            "properties": []
+        }
+    },
+    "response": {
+        "type": "JSON"
+    },
+    "filters": [],
+    "resultLocation": "",
+    "cdmMapping": {
+        "structured": [
+            {
+                "name": "Ontologies",
+                "type": "string",
+                "responseElement": "Ontologies",
+                "_comment": ""
+            }
+        ],
+        "unstructured": []
+    }
+}

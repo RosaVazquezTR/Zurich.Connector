@@ -92,6 +92,7 @@ namespace Zurich.Connector.Web
             services.AddScoped<IConnectorDataSourceOperations, PracticalLawConnectorOperation>();
             services.AddScoped<IConnectorDataSourceOperations, MsGraphConnectorOperation>();
             services.AddScoped<IConnectorDataSourceOperations, WestLawUKConnectorOperation>();
+            services.AddScoped<IConnectorDataSourceOperations, ThoughtTraceOntologiesConnectorOperation>();
             services.AddScoped<IConnectorDataSourceOperationsFactory, ConnectorDataSourceOperationsFactory>();
             services.AddScoped<IHttpBodyFactory, HttpBodyFactory>();
             services.AddScoped<HttpGetBodyService>();

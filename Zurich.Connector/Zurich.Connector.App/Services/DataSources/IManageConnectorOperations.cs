@@ -109,6 +109,10 @@ namespace Zurich.Connector.App.Services.DataSources
         {
             return allParameters;
         }
+        public async Task<dynamic> AddAditionalInformation(ConnectorModel connector, dynamic item)
+        {
+            return item;
+        }
 
         /// <summary>
         /// Downloads a document to an item in its data source app

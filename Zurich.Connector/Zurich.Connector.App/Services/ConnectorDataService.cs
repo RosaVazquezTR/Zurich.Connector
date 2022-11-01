@@ -406,7 +406,10 @@ namespace Zurich.Connector.Data.Services
         {
             var dataSourceOperationsService = _dataSourceOperationsFactory.GetDataSourceOperationsService(connector?.DataSource?.AppCode);
             if (dataSourceOperationsService != null)
+            {
                 data = await dataSourceOperationsService.SetItemLink(connector.Info.EntityType, data, connector?.DataSource?.AppCode, connector.HostName);
+                data = await dataSourceOperationsService.AddAditionalInformation(connector, data);
+            }
             else
                 _logger.LogInformation("No data source operations service found for {appCode}", connector?.DataSource?.AppCode ?? "");
             return data;

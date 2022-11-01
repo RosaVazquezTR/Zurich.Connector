@@ -24,6 +24,11 @@ namespace Zurich.Connector.App.Services.DataSources
             return appCode == KnownDataSources.westLawUK;
         }
 
+        public async Task<dynamic> AddAditionalInformation(ConnectorModel connector, dynamic item)
+        {
+            return item;
+        }
+
         public async Task<dynamic> SetItemLink(ConnectorEntityType entityType, dynamic item, string appCode, string hostName)
         {
             return item;

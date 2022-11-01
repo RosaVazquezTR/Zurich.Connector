@@ -147,7 +147,7 @@ namespace Zurich.Connector.IntegrationTests
             // Note:- Workaround to skip HighQ connector check  TRMarketplace (29)
             //        and MS Graph External Search Connector (49) check (Test user didn't consent ExternalItem.Read therefore will get 403 forbidden on graph side)
             //        and Thought Trace check for the moment
-            if (connector.Id != "29" && connector.Id != "47" && connector.Id != "48" && connector.Id != "49" && connector.Id != "52" && connector.Id != "51")
+            if (connector.Id != "29" && connector.Id != "47" && connector.Id != "48" && connector.Id != "49" && connector.Id != "52" && connector.Id != "51" && connector.Id != "60")
             {
                 // Arrange
                 var request = $"/api/v1/Connectors/{connector.Id}/Data?Query=*";

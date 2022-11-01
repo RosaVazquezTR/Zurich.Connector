@@ -76,6 +76,10 @@ namespace Zurich.Connector.App.Services.DataSources
         {
             return allParameters;
         }
+        public async Task<dynamic> AddAditionalInformation(ConnectorModel connector, dynamic item)
+        {
+            return item;
+        }
 
         /// <summary>
         /// Pulls the extention form the title so can be returned on type

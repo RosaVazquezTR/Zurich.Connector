@@ -31,5 +31,13 @@ namespace Zurich.Connector.App.Services.DataSources
         /// </summary>
         /// <param name="appCode">The third party app code</param>
         bool IsCompatible(string appCode);
+
+        /// <summary>
+        /// Adds aditional information from other sources to data if necessary
+        /// </summary>
+        /// <param name="connector">The connector model information</param>
+        /// <param name="item">The target data item</param>
+        /// <returns></returns>
+        Task<dynamic> AddAditionalInformation(ConnectorModel connector, dynamic item);
     }
 }
