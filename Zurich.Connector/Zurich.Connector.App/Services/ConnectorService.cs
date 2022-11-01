@@ -115,12 +115,17 @@ namespace Zurich.Connector.Data.Services
 
                 registeredDataSources = await _registrationService.GetUserDataSources();
                 List<ConnectorModel> registeredConnectors = new List<ConnectorModel>();
-                foreach (var connector in connectors.Where(connector => registeredDataSources.Select(x => x.AppCode).Contains(connector.DataSource.AppCode)))
+                // If the user is new and does not have any connectors registered, this validation will avoid getting a 500 response
+                if (registeredDataSources != null)
                 {
-                    connector.RegistrationStatus = RegistrationStatus.Registered;
-                    // FirstOrDefault is needed because we can get multiple app codes in the registered data sources. Eg: HighQ returns 2 app codes if a user is associated with 2 instances.
-                    connector.DataSource.RequiresNewToken = registeredDataSources.Where(x => x.AppCode == connector.DataSource.AppCode).FirstOrDefault().RequiresNewToken;
-                    registeredConnectors.Add(connector);
+                    foreach (var connector in connectors.Where(connector => registeredDataSources.Select(x => x.AppCode).Contains(connector.DataSource.AppCode)))
+                    {
+                        connector.RegistrationStatus = RegistrationStatus.Registered;
+                        // FirstOrDefault is needed because we can get multiple app codes in the registered data sources. Eg: HighQ returns 2 app codes if a user is associated with 2 instances.
+                        connector.DataSource.RequiresNewToken = registeredDataSources.Where(x => x.AppCode == connector.DataSource.AppCode).FirstOrDefault().RequiresNewToken;
+                        registeredConnectors.Add(connector);
+                    }
+
                 }
                 // Can't stick this in the cosmos query because it is looking at connectors not datasources.
                 if(filters.IsRegistered)
