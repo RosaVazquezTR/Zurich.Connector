@@ -21,7 +21,7 @@
                 "inClause": "Body",
                 "required": true,
                 "type": "int",
-                "defaultValue": 10
+                "defaultValue": 1000
             },
             {
                 "cdmName": "Archived.filter",
@@ -419,7 +419,7 @@
         }
     ],
     "pagination": {
-        "available": true,
+        "available": false,
         "isZeroBasedOffset": false
     },
     "resultLocation": "",
@@ -432,6 +432,19 @@
                 "_comment": ""
             }
         ],
-        "unstructured": []
+        "unstructured": [
+            {
+                "name": "pagination",
+                "type": "object",
+                "responseElement": "pagination",
+                "_comment": ""
+            },
+            {
+                "name": "totalDocs",
+                "type": "object",
+                "responseElement": "totalDocs",
+                "_comment": ""
+            }
+        ]
     }
 }
