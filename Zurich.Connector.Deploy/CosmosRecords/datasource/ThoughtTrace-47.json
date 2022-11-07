@@ -5,12 +5,12 @@
     "description": "This is connecting to Thought Trace API ",
     "appCode": "TT",
     "infoURL": "",
-    "appType": "0",
+    "appType": "1",
     "productType": "",
     "domain": "",
     "extraRequestContext": "",
     "registrationInfo": {
-        "registrationMode": "Automatic",
+        "registrationMode": "Manual",
         "domainRequired": "false",
         "clientAndSecretRequired": "false",
         "connectionMessage": "",
@@ -26,7 +26,7 @@
             "tokenPath": "",
             "keyVaultClientId": "",
             "keyVaultSecret": "",
-            "grantType": "client_credentials"
+            "grantType": "authorization_code"
         },
         "scopes": {}
     }
