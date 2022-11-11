@@ -40,13 +40,60 @@ namespace Zurich.Connector.App.Services.DataSources
             return item;
         }
 
-        public async Task<Dictionary<string, string>> SetSortParameters(Dictionary<string, string> allParameters)
+        public async Task<Dictionary<string, string>> SetParametersSpecialCases(ConnectorModel connector, Dictionary<string, string> allParameters)
         {
+            //TODO: changing this from a specific connector id to a parameter in the data source
+            if (connector.Id != "52")
+                return allParameters;
+            
+            var thoughtFilters = JToken.Parse(allParameters["thoughtFilters"]);
+            List<string> thoughtTypeIds = new();
+
+            //Extract thoughtTypeIds from request
+            foreach (var filter in thoughtFilters["filters"])
+            {
+                foreach(var fieldType in filter["fieldTypes"])
+                    thoughtTypeIds.Add(fieldType["thoughtTypeId"].Value<string>());
+
+            }
+     
+            //For each thoughTypeId, we add a new filter to parameters, we first need to extract the thoughFieldTypeId from onotlogies
+            foreach( var thoughtTypeId in thoughtTypeIds.Distinct())
+            {
+                var thoughtFieldTypeId = await GetProvisionThoughtFieldTypeIdFromOntologies(thoughtTypeId);
+
+                if (thoughtFieldTypeId == null)
+                    continue;
+
+                JObject fieldType = new()
+                {
+                    ["thoughtFieldTypeId"] = thoughtFieldTypeId
+                };
+
+                JObject defaultProvisionFilter = new();
+                defaultProvisionFilter["fieldTypes"] = new JArray(fieldType);
+                defaultProvisionFilter["operator"] = "exists";
+                defaultProvisionFilter["stringValue"] = String.Empty;
+                defaultProvisionFilter["stringValueList"] = null;
+                defaultProvisionFilter["numberValue"] = null;
+                defaultProvisionFilter["dateValue"] = null;
+                defaultProvisionFilter["booleanValue"] = null;
+
+                ((JArray)thoughtFilters["filters"]).Add(defaultProvisionFilter);
+
+            }
+
+            allParameters["thoughtFilters"] = thoughtFilters.ToString();
+
             return allParameters;
         }
 
         public async Task<dynamic> AddAditionalInformation(ConnectorModel connector, dynamic item)
         {
+            //TODO: changing this from a specific connector id to a parameter in the data source
+            if (connector.Id != "52")
+                return item;
+
             JArray thoughtTypes = await GetThoughtTypesFromOntologies();
             
             if (item is JObject searchResult && searchResult.ContainsKey("Documents") && searchResult["Documents"].HasValues)
@@ -56,11 +103,11 @@ namespace Zurich.Connector.App.Services.DataSources
                     var thoughtType = thoughtTypes.Where(thoughtType =>
                         thoughtType["id"].Value<string>() == document["AdditionalProperties"]["thoughtTypeId"].Value<string>()).FirstOrDefault();
 
-                    var thoughtFieldType = thoughtType["fieldTypes"].Where(fieldType => 
+                    var thoughtFieldType = thoughtType?["fieldTypes"].Where(fieldType => 
                         fieldType["id"].Value<string>() == document["AdditionalProperties"]["thoughtFieldTypeId"].Value<string>()).FirstOrDefault();
 
-                    document["AdditionalProperties"]["thoughtTypeName"] = thoughtType["name"].Value<string>();
-                    document["AdditionalProperties"]["thoughtFieldTypeName"] = thoughtFieldType["name"].Value<string>();
+                    document["AdditionalProperties"]["thoughtTypeName"] = thoughtType?["name"].Value<string>();
+                    document["AdditionalProperties"]["thoughtFieldTypeName"] = thoughtFieldType?["name"].Value<string>();
                 }
             }
 
@@ -87,6 +134,19 @@ namespace Zurich.Connector.App.Services.DataSources
             }
 
             return thoughtTypes;
+        }
+
+        /// <summary>
+        /// Gets the "Provision" thought id field given a thoughtTypeId information from ontologies
+        /// </summary>
+        private async Task<string> GetProvisionThoughtFieldTypeIdFromOntologies(string thoughtTypeId)
+        {
+            JArray thoughtTypes = await GetThoughtTypesFromOntologies();
+
+            var thoughtType = thoughtTypes.Where(thoughtType => thoughtType["id"].Value<string>() == thoughtTypeId).FirstOrDefault();
+            var provisionThought = thoughtType?["fieldTypes"].Where(fieldType => fieldType["name"].Value<string>() == "Provision").FirstOrDefault();
+
+            return provisionThought?["id"].Value<string>();
         }
     }
 }

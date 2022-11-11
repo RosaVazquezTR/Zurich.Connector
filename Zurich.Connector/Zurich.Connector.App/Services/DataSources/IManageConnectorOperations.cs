@@ -105,7 +105,7 @@ namespace Zurich.Connector.App.Services.DataSources
             return item;
         }
 
-        public async Task<Dictionary<string, string>> SetSortParameters(Dictionary<string, string> allParameters)
+        public async Task<Dictionary<string, string>> SetParametersSpecialCases(ConnectorModel connector, Dictionary<string, string> allParameters)
         {
             return allParameters;
         }

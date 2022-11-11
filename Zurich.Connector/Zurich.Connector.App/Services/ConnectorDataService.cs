@@ -326,7 +326,7 @@ namespace Zurich.Connector.Data.Services
             if (sortParameters.Any())
                 allParameters = allParameters.Concat(sortParameters);
 
-            allParameters = EnrichSortParametersSpecialCases(connectorModel, allParameters.ToDictionary(pair => pair.Key, pair => pair.Value)).Result;
+            allParameters = EnrichParametersSpecialCases(connectorModel, allParameters.ToDictionary(pair => pair.Key, pair => pair.Value)).Result;
 
             if (allParameters != null)
             {
@@ -386,11 +386,11 @@ namespace Zurich.Connector.Data.Services
         /// <param name="connector">The data connector</param>
         /// <param name="allParameters">All final parameters that will be sent in the request</param>
         /// <returns></returns>
-        private async Task<Dictionary<string, string>> EnrichSortParametersSpecialCases(ConnectorModel connector, Dictionary<string, string> allParameters)
+        private async Task<Dictionary<string, string>> EnrichParametersSpecialCases(ConnectorModel connector, Dictionary<string, string> allParameters)
         {
             var dataSourceOperationsService = _dataSourceOperationsFactory.GetDataSourceOperationsService(connector?.DataSource?.AppCode);
             if (dataSourceOperationsService != null)
-                allParameters = await dataSourceOperationsService.SetSortParameters(allParameters);
+                allParameters = await dataSourceOperationsService.SetParametersSpecialCases(connector, allParameters);
             else
                 _logger.LogInformation("No data source operations service found for {appCode}", connector?.DataSource?.AppCode ?? "");
             return allParameters;

@@ -20,11 +20,11 @@ namespace Zurich.Connector.App.Services.DataSources
         Task<dynamic> SetItemLink(ConnectorEntityType entityType, dynamic item, string appCode, string hostName);
 
         /// <summary>
-        /// Sets the sort parameters if any special condition exists in the data source application based on other parameters
+        /// Sets the parameters if any special condition exists in the data source application based on other parameters
         /// </summary>
         /// <param name="allParameters">All final parameters that will be sent to the request</param>
         /// <returns></returns>
-        Task<Dictionary<string, string>> SetSortParameters(Dictionary<string, string> allParameters);
+        Task<Dictionary<string, string>> SetParametersSpecialCases(ConnectorModel connector, Dictionary<string, string> allParameters);
 
         /// <summary>
         /// Checks if the service implementation is compatible with the third party app
