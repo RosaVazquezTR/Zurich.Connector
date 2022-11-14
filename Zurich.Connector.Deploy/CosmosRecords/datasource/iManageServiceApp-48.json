@@ -2,7 +2,7 @@
   "id": "48",
   "partitionkey": "DataSourceList",
   "name": "iManage Work",
-  "description": "Connects to the iManage APIS",
+  "description": "Connects to the iManage APIs",
   "appCode": "iManageServiceApp",
   "infoURL": "",
   "productType": "AdminCloud",
@@ -15,7 +15,7 @@
     "registrationFileRequired": "false",
     "domainSpecificInformation": {
       "clientAndSecretRequired": "true",
-      "connectionMessage": "Download this linked package and upload the application in Imanage.",
+      "connectionMessage": "Download this linked package and upload the application in IManage.",
       "registrationFileRequired": "true"
     }
   },

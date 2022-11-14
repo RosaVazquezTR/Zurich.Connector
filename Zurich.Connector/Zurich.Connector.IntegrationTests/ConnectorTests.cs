@@ -52,7 +52,7 @@ namespace Zurich.Connector.IntegrationTests
                         if (!isParent || string.IsNullOrEmpty(connector.Info.SubType) || connector.Info.SubType == SubType.Parent)
                         {
                             //ToDo: Needs to remove this once iManage connector token generation sucessful.
-                            if (connector.Id != "44")
+                            if (connector.Id != "44" && connector.Id != "61")
                                 connectors.Add(connector);
                         }
                     }

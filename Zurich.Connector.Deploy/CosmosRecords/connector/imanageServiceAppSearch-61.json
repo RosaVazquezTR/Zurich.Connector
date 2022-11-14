@@ -1,0 +1,239 @@
+{
+  "id": "61",
+  "partitionkey": "ConnectorList",
+  "alias": "imanageserviceapp.search",
+  "info": {
+    "title": "Search Documents from iManage",
+    "description": "Search Documents from iManage",
+    "entityType": "Search",
+    "dataSourceId": "48",
+    "version": "1.0",
+    "subType": "Parent"
+  },
+  "preRelease": true,
+  "request": {
+    "endpointPath": "/work/api/v2/customers/{55.customer_id}/documents/search",
+    "method": "POST",
+    "parameters": [
+      {
+        "cdmName": "Query",
+        "name": "filters.anywhere",
+        "inClause": "Body",
+        "required": false,
+        "type": "string",
+        "defaultValue": ""
+      },
+      {
+        "cdmName": "ResultSize",
+        "name": "limit",
+        "inClause": "Body",
+        "required": false,
+        "type": "int",
+        "defaultValue": "100"
+      },
+      {
+        "cdmName": "Name.filter",
+        "name": "filters.name",
+        "inClause": "Body",
+        "required": false,
+        "type": "string",
+        "defaultValue": ""
+      },
+      {
+        "cdmName": "Type.filter",
+        "name": "filters.type",
+        "inClause": "Body",
+        "required": false,
+        "type": "string",
+        "defaultValue": ""
+      },
+      {
+        "cdmName": "Author.filter",
+        "name": "filters.author",
+        "inClause": "Body",
+        "required": false,
+        "type": "string",
+        "defaultValue": ""
+      },
+      {
+        "cdmName": "LastUser.filter",
+        "name": "filters.last_user",
+        "inClause": "Body",
+        "required": false,
+        "type": "string",
+        "defaultValue": ""
+      },
+      {
+        "cdmName": "CreateDate.start.filter",
+        "name": "filters.create_date_from",
+        "inClause": "Body",
+        "required": false,
+        "type": "DateTime",
+        "defaultValue": ""
+      },
+      {
+        "cdmName": "CreateDate.end.filter",
+        "name": "filters.create_date_to",
+        "inClause": "Body",
+        "required": false,
+        "type": "DateTime",
+        "defaultValue": ""
+      },
+      {
+        "cdmName": "EditDate.start.filter",
+        "name": "filters.edit_date_from",
+        "inClause": "Body",
+        "required": false,
+        "type": "DateTime",
+        "defaultValue": ""
+      },
+      {
+        "cdmName": "EditDate.end.filter",
+        "name": "filters.edit_date_to",
+        "inClause": "Body",
+        "required": false,
+        "type": "DateTime",
+        "defaultValue": ""
+      },
+      {
+        "cdmName": "Class.filter",
+        "name": "filters.class",
+        "inClause": "Body",
+        "required": false,
+        "type": "string",
+        "defaultValue": ""
+      },
+      {
+        "cdmName": "Subclass.filter",
+        "name": "filters.subclass",
+        "inClause": "Body",
+        "required": false,
+        "type": "string",
+        "defaultValue": ""
+      },
+      {
+        "cdmName": "ProfileFields.default",
+        "name": "profile_fields.document.[]",
+        "inClause": "Body",
+        "required": false,
+        "type": "string",
+        "defaultValue": "name,extension,id,author_description,last_user_description,create_date,edit_date,size,version,database,author,last_user,class,subclass"
+      }
+    ],
+    "sorting": {
+      "properties": []
+    }
+  },
+  "response": {
+    "type": "JSON"
+  },
+  "filters": [
+    {
+      "name": "Query",
+      "description": "Text to be searched anywhere in the document profile or contents.",
+      "isMultiselect": "false",
+      "requestParameter": "Query"
+    },
+    {
+      "name": "Title",
+      "description": "Text to be searched in the document title.",
+      "isMultiselect": "false",
+      "requestParameter": "Name.filter"
+    },
+    {
+      "name": "Type",
+      "description": "Must match name of type as defined in iManage exactly. Can be comma-seperated.",
+      "isMultiselect": "true",
+      "requestParameter": "Type.filter",
+      "filterlist": [
+        {
+          "name": "Document",
+          "id": "WORD,WORDX,WORDXT,DOCM,DOTX,PAGES,RTF,WPF"
+        },
+        {
+          "name": "Spreadsheet",
+          "id": "EXCEL,EXCELX,EXCELM,XLSB,XLSM,NUMBERS"
+        },
+        {
+          "name": "Presentation",
+          "id": "PPT,PPTX,PPTM,KEY"
+        },
+        {
+          "name": "Pdf",
+          "id": "ACROBAT"
+        }
+      ]
+    },
+    {
+      "name": "Author",
+      "description": "Must match the document author's user ID.",
+      "isMultiselect": "false",
+      "requestParameter": "Author.filter"
+    },
+    {
+      "name": "Last Modified User",
+      "description": "Must match the document last modified user ID.",
+      "isMultiselect": "false",
+      "requestParameter": "LastUser.filter"
+    },
+    {
+      "name": "Created Start Date",
+      "description": "Matches documents that were created on or after this date.",
+      "isMultiselect": "false",
+      "requestParameter": "CreateDate.start.filter"
+    },
+    {
+      "name": "Created End Date",
+      "description": "Matches documents that were created on or before this date.",
+      "isMultiselect": "false",
+      "requestParameter": "CreateDate.end.filter"
+    },
+    {
+      "name": "Last Modified Start Date",
+      "description": "Matches documents that were last modified on or after this date.",
+      "isMultiselect": "false",
+      "requestParameter": "EditDate.start.filter"
+    },
+    {
+      "name": "Last Modified End Date",
+      "description": "Matches documents that were last modified on or before this date.",
+      "isMultiselect": "false",
+      "requestParameter": "EditDate.end.filter"
+    },
+    {
+      "name": "Class",
+      "description": "Must match the document author's class ID.",
+      "isMultiselect": "false",
+      "requestParameter": "Class.filter"
+    },
+    {
+      "name": "Subclass",
+      "description": "Must match the document author's subclass ID.",
+      "isMultiselect": "false",
+      "requestParameter": "Subclass.filter"
+    }
+  ],
+  "CDMmapping": {
+    "structured": [
+      {
+        "name": "Count",
+        "type": "short",
+        "responseElement": "",
+        "_comment": ""
+      },
+      {
+        "name": "SourceDirectoryUrl",
+        "type": "interpolationString",
+        "responseElement": "",
+        "_comment": ""
+      },
+      {
+        "name": "Documents",
+        "type": "object",
+        "responseElement": "{62}",
+        "_comment": ""
+      }
+    ],
+    "unstructured": []
+  }
+}

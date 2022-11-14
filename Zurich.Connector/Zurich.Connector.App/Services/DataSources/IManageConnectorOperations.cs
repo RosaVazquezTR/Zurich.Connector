@@ -78,15 +78,21 @@ namespace Zurich.Connector.App.Services.DataSources
                         {
                             if (searchResult.ContainsKey("Documents") && searchResult["Documents"].HasValues)
                             {
+                                customerId = await GetCustomerId(appCode, hostName);
                                 var documents = searchResult["Documents"] as JArray;
                                 searchResult[StructuredCDMProperties.ItemsCount] = (short)documents.Count;
                                 foreach (JObject doc in documents)
                                 {
                                     if (doc.ContainsKey(StructuredCDMProperties.AdditionalProperties))
                                     {
+                                        JObject additionalProperties = (JObject)doc[StructuredCDMProperties.AdditionalProperties];
                                         doc[StructuredCDMProperties.WebUrl] = BuildLink(entityType, doc, hostName);
-                                        var extension = ((JObject)doc[StructuredCDMProperties.AdditionalProperties]).ContainsKey(UnstructuredCDMProperties.Extension) ? doc[StructuredCDMProperties.AdditionalProperties][UnstructuredCDMProperties.Extension].Value<string>() : "";
+                                        var extension = additionalProperties.ContainsKey(UnstructuredCDMProperties.Extension) ? doc[StructuredCDMProperties.AdditionalProperties][UnstructuredCDMProperties.Extension].Value<string>() : "";
                                         doc[StructuredCDMProperties.Type] = ConnectorOperationsUtility.MapExtensionToDocumentType(extension);
+
+                                        // Add download URL as unstructured property.
+                                        if (!additionalProperties.ContainsKey(StructuredCDMProperties.DownloadUrl))
+                                            additionalProperties[StructuredCDMProperties.DownloadUrl] = BuildDownloadLink(entityType, doc, hostName);
                                     }
                                 }
                             }
@@ -124,19 +130,36 @@ namespace Zurich.Connector.App.Services.DataSources
         private string BuildDownloadLink(ConnectorEntityType itemType, JObject item, string hostName)
         {
             string result = null;
+            string libraryId = null;
+            string documentId = null;
 
             switch (itemType)
             {
                 case ConnectorEntityType.Document:
                     // Fetching LibraryId from DesktopUrl = "iwl:dms=2fdb2-dmobility.imanage.work&&lib=Active&&num=118&&ver=1",
                     string desktopUrl = item.ContainsKey(StructuredCDMProperties.DesktopUrl) ? item[StructuredCDMProperties.DesktopUrl].Value<string>() : "";
-                    Uri uri = new Uri(desktopUrl);
-                    var libraryId = HttpUtility.ParseQueryString(uri.AbsoluteUri).Get("lib");
-                    var docId = item.ContainsKey(StructuredCDMProperties.EntityId) ? item[StructuredCDMProperties.EntityId].Value<string>() : "";
-                    var builder = new UriBuilder("https", hostName, -1);
-                    result = $"{builder.Uri}{DocumentsDowloadEndpoint}/customers/{customerId}/libraries/{libraryId}/documents/{docId}/download";
+                    Uri uri = new Uri(desktopUrl); 
+                    libraryId = HttpUtility.ParseQueryString(uri.AbsoluteUri).Get("lib");
+                    documentId = item.ContainsKey(StructuredCDMProperties.EntityId) ? item[StructuredCDMProperties.EntityId].Value<string>() : "";
+                    break;
+                case ConnectorEntityType.Search:
+                    // LibraryId will always be contained in the document ID. See documentation at:
+                    // https://help.imanage.com/hc/en-us/articles/4412558535067-iManage-Work-Universal-API-Reference-Guide-REST-v2-#tag--Documents
+                    var additionalProperties = (JObject) item[StructuredCDMProperties.AdditionalProperties];
+                    documentId = additionalProperties.ContainsKey(UnstructuredCDMProperties.Id) ? additionalProperties[UnstructuredCDMProperties.Id].Value<string>() : "";
+                    if (string.IsNullOrEmpty(documentId)) break;
+                    int index = documentId.IndexOf('!');
+                    if (index == -1) break;
+                    libraryId = documentId.Substring(0, index);
                     break;
             }
+
+            if (!string.IsNullOrEmpty(documentId) && !string.IsNullOrEmpty(libraryId))
+            {
+                var builder = new UriBuilder("https", hostName, -1);
+                result = $"{builder.Uri}{DocumentsDowloadEndpoint}/customers/{customerId}/libraries/{libraryId}/documents/{documentId}/download";
+            }
+
             return result;
         }
 

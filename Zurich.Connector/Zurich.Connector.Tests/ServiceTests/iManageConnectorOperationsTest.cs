@@ -91,25 +91,23 @@ namespace Zurich.Connector.Tests.ServiceTests
         }
 
         [TestMethod]
-        public async Task SetItemLinkTest_Should_SetDownloadUrl()
+        public async Task SetItemLinkTest_Document_Should_SetDownloadUrl()
         {
             //Arrange
             var mockDocuments = MockConnectorData.SetupDocumentsModel();
             var hostName = "my.cookieapp.com";
-            var appCode = "";
             var customerId = "3";
-            var libraryId = "TestLibrary";
-            var docId = "1";
-            var fileName = "Secretcookierecipe1";
-            var expectedUrl = $"https://{hostName}/work/web/api/v2/customers/{customerId}/libraries/{libraryId}/documents/{docId}/download";
-            //Act
+            var expectedUrl = $"https://{hostName}/work/web/api/v2/customers/{customerId}/libraries/TestLibrary/documents/1/download";
             var token = new JObject();
             token["customer_id"] = customerId;
             _mockDataMapping.Setup(x => x.GetAndMapResults<JToken>(It.IsAny<ConnectorDocument>(), string.Empty, null, null, null, null)).Returns(Task.FromResult((JToken)token));
             _mockDataMappingFactory.Setup(x => x.GetImplementation(Data.Model.AuthType.OAuth2.ToString())).Returns(_mockDataMapping.Object);
             _mockCosmosService.Setup(x => x.GetConnector("1", true)).Returns(Task.FromResult(new ConnectorModel()));
+
+            //Act
             var service = new IManageConnectorOperations(_mockLogger.Object, _mockDataMappingFactory.Object, _mapper, _mockCosmosService.Object);
-            var result = (await service.SetItemLink(Data.Model.ConnectorEntityType.Document, mockDocuments, appCode, hostName) as JObject);
+            var result = await service.SetItemLink(Data.Model.ConnectorEntityType.Document, mockDocuments, string.Empty, hostName) as JObject;
+            
             //Assert
             result.Should().NotBeNull();
             var doc = result["Items"][0] as JObject;
@@ -118,19 +116,51 @@ namespace Zurich.Connector.Tests.ServiceTests
         }
 
         [TestMethod]
-        public async Task SetItemLink_Should_SetCount()
+        public async Task SetItemLinkTest_Search_Should_SetDownloadUrl()
+        {
+            //Arrange
+            var mockSearchResult = MockConnectorData.SetupIManageSearchDocumentsModel();
+            var hostName = "my.cookieapp.com";
+            var customerId = "3";
+            var expectedUrl = $"https://{hostName}/work/web/api/v2/customers/{customerId}/libraries/ContractExpress/documents/ContractExpress!2218.1/download";
+            var token = new JObject();
+            token["customer_id"] = customerId;
+            _mockDataMapping.Setup(x => x.GetAndMapResults<JToken>(It.IsAny<ConnectorDocument>(), string.Empty, null, null, null, null)).Returns(Task.FromResult((JToken)token));
+            _mockDataMappingFactory.Setup(x => x.GetImplementation(Data.Model.AuthType.OAuth2.ToString())).Returns(_mockDataMapping.Object);
+            _mockCosmosService.Setup(x => x.GetConnector("1", true)).Returns(Task.FromResult(new ConnectorModel()));
+
+            //Act
+            var service = new IManageConnectorOperations(_mockLogger.Object, _mockDataMappingFactory.Object, _mapper, _mockCosmosService.Object);
+            var result = (await service.SetItemLink(Data.Model.ConnectorEntityType.Search, mockSearchResult, string.Empty, hostName) as JObject);
+            
+            //Assert
+            result.Should().NotBeNull();
+            var doc = result["Documents"][0] as JObject;
+            doc.ContainsKey(StructuredCDMProperties.AdditionalProperties).Should().BeTrue();
+            var additionalProperties = (JObject) doc[StructuredCDMProperties.AdditionalProperties];
+            additionalProperties.ContainsKey(StructuredCDMProperties.DownloadUrl).Should().BeTrue();
+            additionalProperties[StructuredCDMProperties.DownloadUrl].Value<string>().Should().Be(expectedUrl);
+        }
+
+        [TestMethod]
+        public async Task SetItemLinkTest_Search_Should_SetCount()
         {
             //Arrange
             var mockSearchResult = MockConnectorData.SetupSearchDocumentsModel();
-            short expectedCount = 2;
-            //Act
+            var customerId = "3";
+            var token = new JObject();
+            token["customer_id"] = customerId;
+            _mockDataMapping.Setup(x => x.GetAndMapResults<JToken>(It.IsAny<ConnectorDocument>(), string.Empty, null, null, null, null)).Returns(Task.FromResult((JToken)token));
             _mockDataMappingFactory.Setup(x => x.GetImplementation(Data.Model.AuthType.OAuth2.ToString())).Returns(_mockDataMapping.Object);
             _mockCosmosService.Setup(x => x.GetConnector("1", true)).Returns(Task.FromResult(new ConnectorModel()));
+
+            //Act
             var service = new IManageConnectorOperations(_mockLogger.Object, _mockDataMappingFactory.Object, _mapper, _mockCosmosService.Object);
             var result = (await service.SetItemLink(Data.Model.ConnectorEntityType.Search, mockSearchResult, null, null) as JObject);
+            
             //Assert
             result.Should().NotBeNull();
-            result[StructuredCDMProperties.ItemsCount].Value<short>().Should().Be(expectedCount);
+            result[StructuredCDMProperties.ItemsCount].Value<short>().Should().Be(2);
         }
 
         [TestMethod]

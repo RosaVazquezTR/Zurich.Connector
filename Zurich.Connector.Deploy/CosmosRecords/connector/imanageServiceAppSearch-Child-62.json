@@ -1,0 +1,107 @@
+{
+  "id": "62",
+  "partitionkey": "ConnectorList",
+  "info": {
+    "title": "Search Documents from iManage - Child Connector for 61",
+    "description": "Search Documents from iManage - Child Connector for 61",
+    "entityType": "Search",
+    "dataSourceId": "48",
+    "version": "1.0",
+    "subType": "Child"
+  },
+  "preRelease": true,
+  "request": {},
+  "response": {},
+  "filters": [],
+  "resultLocation": "data",
+  "cdmMapping": {
+    "structured": [
+      {
+        "name": "Title",
+        "type": "string",
+        "responseElement": "name",
+        "_comment": "Document title without extension"
+      },
+      {
+        "name": "CreationDate",
+        "type": "DateTime",
+        "responseElement": "create_date",
+        "_comment": "Document creation date"
+      }
+    ],
+    "unstructured": [
+      {
+        "name": "authorName",
+        "type": "string",
+        "responseElement": "author_description",
+        "_comment": "Document's author name"
+      },
+      {
+        "name": "author",
+        "type": "string",
+        "responseElement": "author",
+        "_comment": "Document's author ID"
+      },
+      {
+        "name": "lastModifiedUserName",
+        "type": "string",
+        "responseElement": "last_user_description",
+        "_comment": "Document's last modified user name"
+      },
+      {
+        "name": "lastModifiedUser",
+        "type": "string",
+        "responseElement": "last_user",
+        "_comment": "Document's last modified user ID"
+      },
+      {
+        "name": "lastModifiedDate",
+        "type": "DateTime",
+        "responseElement": "edit_date",
+        "_comment": "Document last modified date"
+      },
+      {
+        "name": "extension",
+        "type": "string",
+        "responseElement": "extension",
+        "_comment": "Document file extension"
+      },
+      {
+        "name": "id",
+        "type": "string",
+        "responseElement": "id",
+        "_comment": "Document ID"
+      },
+      {
+        "name": "database",
+        "type": "string",
+        "responseElement": "database",
+        "_comment": "Document database/library name"
+      },
+      {
+        "name": "size",
+        "type": "integer",
+        "responseElement": "size",
+        "_comment": "Document size"
+      },
+      {
+        "name": "version",
+        "type": "string",
+        "responseElement": "version",
+        "_comment": "Document version"
+      },
+      {
+        "name": "class",
+        "type": "string",
+        "responseElement": "class",
+        "_comment": "Document class"
+      },
+      {
+        "name": "subclass",
+        "type": "string",
+        "responseElement": "subclass",
+        "_comment": "Document subclass"
+      }
+    ]
+  }
+}
