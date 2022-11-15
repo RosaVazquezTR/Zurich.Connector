@@ -68,15 +68,21 @@ namespace Zurich.Connector.App.Model
         /// Locale (ex: US / UK etc).
         /// </summary>
         public string Locale { get; set; }
-
+        
         /// <summary>
         /// TODO: Remove this, needed for a work around at the moment
         /// </summary>
         public string ProductType { get; set; }
+
         /// <summary>
         /// Whether or not the datasource contains multiple instances
         /// </summary>
         public bool CombinedLocations { get; set; }
+
+        /// <summary>
+        /// Whether or not the connector response needs to be sorted on our side
+        /// </summary>
+        public bool InternalSorting { get; set; }
     }
 
     /// <summary>

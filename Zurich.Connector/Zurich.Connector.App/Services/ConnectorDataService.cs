@@ -216,9 +216,21 @@ namespace Zurich.Connector.Data.Services
                     data = await service.GetAndMapResults<dynamic>(connectorDocument, transferToken, mappedQueryParameters, headerParameters, queryParameters);
                     data = await EnrichConnectorData(connectorModel, data);
                 }
-                
+
                 if (data == null)
                     return data;
+                
+                if (connectorModel.DataSource.InternalSorting)
+                {
+                    // TODO: find a way to do this validation more generic
+                    if (queryParameters["Filters"].Contains("keyword"))
+                    {
+                        JArray flatResults = data.Documents;
+                        JArray flatResultsSorted = new(flatResults.OrderByDescending(obj => (float)obj["AdditionalProperties"]["score"]));
+                        data.Documents = flatResultsSorted;
+                    }
+                }
+                
             }
 
             // if there is no data because resultSize = 0 default to a JObject

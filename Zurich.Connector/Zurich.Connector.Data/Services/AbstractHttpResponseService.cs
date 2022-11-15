@@ -18,6 +18,7 @@ namespace Zurich.Connector.Data.Services
         }
         public async virtual Task<JToken> GetJTokenResponse(string response, ConnectorResponse connectorResponse, string connectorId, Dictionary<string, string> requestParameter)
         {
+            //TODO: add a data source parameter to avoid using connector ids directly in the code
             if (connectorId != "52")
                 return JToken.Parse(response);
             else

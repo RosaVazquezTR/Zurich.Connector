@@ -4,6 +4,7 @@
     "name": "Thought Trace",
     "description": "This is connecting to Thought Trace API ",
     "appCode": "TT",
+    "internalSorting": "true",
     "infoURL": "",
     "appType": "1",
     "productType": "",
