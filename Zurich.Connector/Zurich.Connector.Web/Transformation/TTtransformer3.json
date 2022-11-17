@@ -27,6 +27,7 @@
               "fieldId": "#currentvalueatpath($.id)",
               "thoughtFieldTypeId": "#currentvalueatpath($.thoughtFieldTypeId)",
               "score": "#currentvalueatpath($.score)",
+              "confidence": "#currentvalueatpath($.confidence)",
               "stringValue": "#currentvalueatpath($.stringValue)"
             }
           }

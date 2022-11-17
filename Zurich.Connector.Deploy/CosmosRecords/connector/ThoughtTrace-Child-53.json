@@ -48,6 +48,12 @@
                 "responseElement": "score",
                 "_comment": ""
             },
+			{
+                "name": "confidence",
+                "type": "string",
+                "responseElement": "confidence",
+                "_comment": ""
+            },
             {
                 "name": "highlightedText",
                 "type": "string",

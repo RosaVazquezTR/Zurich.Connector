@@ -15,13 +15,21 @@
         "endpointPath": "/documents/search",
         "method": "POST",
         "parameters": [
+		    {
+                "cdmName": "keyWord",
+                "name": "keyWord",
+                "inClause": "Body",
+                "required": false,
+                "type": "string",
+                "defaultValue": ""
+            },
             {
                 "cdmName": "ResultSize",
                 "name": "top",
                 "inClause": "Body",
                 "required": true,
                 "type": "int",
-                "defaultValue": 1000
+                "defaultValue": 250
             },
             {
                 "cdmName": "Archived.filter",

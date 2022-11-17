@@ -43,7 +43,7 @@ namespace Zurich.Connector.App.Services.DataSources
         public async Task<Dictionary<string, string>> SetParametersSpecialCases(ConnectorModel connector, Dictionary<string, string> allParameters)
         {
             //TODO: changing this from a specific connector id to a parameter in the data source
-            if (connector.Id != "52")
+            if (!connector.DataSource.InternalSorting)
                 return allParameters;
             
             var thoughtFilters = JToken.Parse(allParameters["thoughtFilters"]);
@@ -54,7 +54,7 @@ namespace Zurich.Connector.App.Services.DataSources
             {
                 foreach(var fieldType in filter["fieldTypes"])
                     thoughtTypeIds.Add(fieldType["thoughtTypeId"].Value<string>());
-
+            
             }
      
             //For each thoughTypeId, we add a new filter to parameters, we first need to extract the thoughFieldTypeId from onotlogies
@@ -72,12 +72,17 @@ namespace Zurich.Connector.App.Services.DataSources
 
                 JObject defaultProvisionFilter = new();
                 defaultProvisionFilter["fieldTypes"] = new JArray(fieldType);
-                defaultProvisionFilter["operator"] = "exists";
-                defaultProvisionFilter["stringValue"] = String.Empty;
-                defaultProvisionFilter["stringValueList"] = null;
-                defaultProvisionFilter["numberValue"] = null;
-                defaultProvisionFilter["dateValue"] = null;
-                defaultProvisionFilter["booleanValue"] = null;
+                if(String.IsNullOrEmpty(allParameters["keyWord"])) {
+                    defaultProvisionFilter["operator"] = "exists";
+                    defaultProvisionFilter["stringValue"] = String.Empty;
+                }
+                else
+                {
+                    defaultProvisionFilter["operator"] = "contains";
+                    defaultProvisionFilter["stringValue"] = allParameters["keyWord"];
+                }
+
+                
 
                 ((JArray)thoughtFilters["filters"]).Add(defaultProvisionFilter);
 
@@ -139,7 +144,7 @@ namespace Zurich.Connector.App.Services.DataSources
         /// <summary>
         /// Gets the "Provision" thought id field given a thoughtTypeId information from ontologies
         /// </summary>
-        private async Task<string> GetProvisionThoughtFieldTypeIdFromOntologies(string thoughtTypeId)
+        public async Task<string> GetProvisionThoughtFieldTypeIdFromOntologies(string thoughtTypeId)
         {
             JArray thoughtTypes = await GetThoughtTypesFromOntologies();
 
