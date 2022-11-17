@@ -222,15 +222,21 @@ namespace Zurich.Connector.Data.Services
                 
                 if (connectorModel.DataSource.InternalSorting)
                 {
-                    // TODO: find a way to do this validation more generic
-                    // Add else condition to sort by confidence 
-                    // Remove nulls in score and confdence 
+                    // TODO: for the moment this code is way too specific for TT, for future connectors
+                    // that might use internal sorting we need to find a way to do it in a more generic way
+                    JArray flatResults = data.Documents;
+
+                    // Removing empty string from score and confidence values
+                    string flatResStr = flatResults.ToString();
+                    flatResStr = flatResStr.Replace("score\": \"\"", "score\": 0.0");
+                    flatResStr = flatResStr.Replace("confidence\": \"\"", "confidence\": 0.0");
+                    flatResults = JArray.Parse(flatResStr);
+
                     if (!String.IsNullOrEmpty(queryParameters["keyWord"]))
-                    {
-                        JArray flatResults = data.Documents;
-                        JArray flatResultsSorted = new(flatResults.OrderByDescending(obj => (float)obj["AdditionalProperties"]["score"]));
-                        data.Documents = flatResultsSorted;
-                    }
+                        flatResults = new(flatResults.OrderByDescending(obj => (float)obj["AdditionalProperties"]["score"]));
+                    else
+                        flatResults = new JArray(flatResults.OrderByDescending(obj => (float)obj["AdditionalProperties"]["confidence"]));
+                    data.Documents = flatResults;
                 }
                 
             }
@@ -474,7 +480,7 @@ namespace Zurich.Connector.Data.Services
             thoughtFilters.Add("filters", filters);
 
             JObject confidenceFilterObject = new JObject();
-            confidenceFilterObject.Add("from", int.Parse(cdmQueryParameters["threhsold"]));
+            confidenceFilterObject.Add("from", int.Parse(cdmQueryParameters["threshold"]));
             thoughtFilters.Add("confidenceFilter", confidenceFilterObject);
 
             cdmQueryParameters.Remove("Filters");

@@ -71,7 +71,7 @@ namespace Zurich.Connector.Data.DataMap
             string body = service.CreateBody(connectorDocument, query);
             string response = await _repository.MakeRequest(apiInfo, query, body);
 
-            if (!string.IsNullOrWhiteSpace(response))
+            if (!(string.IsNullOrWhiteSpace(response) || response == "[]"))
             {
                 IHttpResponseService httpResponseService = _httpResponseFactory.GetImplementation(connectorDocument.Response.Type.ToString());
 
