@@ -479,9 +479,12 @@ namespace Zurich.Connector.Data.Services
             }
             thoughtFilters.Add("filters", filters);
 
-            JObject confidenceFilterObject = new JObject();
-            confidenceFilterObject.Add("from", int.Parse(cdmQueryParameters["threshold"]));
-            thoughtFilters.Add("confidenceFilter", confidenceFilterObject);
+            if (cdmQueryParameters.ContainsKey("threshold"))
+            {
+                JObject confidenceFilterObject = new JObject();
+                confidenceFilterObject.Add("from", int.Parse(cdmQueryParameters["threshold"]));
+                thoughtFilters.Add("confidenceFilter", confidenceFilterObject);
+            }
 
             cdmQueryParameters.Remove("Filters");
             cdmQueryParameters.Add("thoughtFilters", thoughtFilters.ToString());
