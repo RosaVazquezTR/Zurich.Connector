@@ -8,8 +8,8 @@
   "productType": "AdminCloud",
   "extraRequestContext": "",
   "registrationInfo": {
-    "registrationMode": "Manual",
-    "domainRequired": "true",
+    "registrationMode": "TenantWide",
+    "domainRequired": "false",
     "clientAndSecretRequired": "false",
     "connectionMessage": "Install the applicationin the iManage Control Center. Look for Thomson Reuters Legal home",
     "registrationFileRequired": "false",

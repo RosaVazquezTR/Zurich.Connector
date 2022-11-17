@@ -4,15 +4,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using CommonModel = Zurich.Common.Models.Connectors;
-using CommonServices = Zurich.Common.Services;
+using Zurich.Common.Models.OAuth;
+using Zurich.Common.Repositories;
 using Zurich.Connector.Data;
 using Zurich.Connector.Data.Model;
 using Zurich.Connector.Data.Repositories.CosmosDocuments;
-using DataServices = Zurich.Connector.Data.Services;
-using AppModel = Zurich.Connector.App.Model;
 using Zurich.TenantData;
-using Zurich.Common.Models.OAuth;
+using AppModel = Zurich.Connector.App.Model;
+using CommonModel = Zurich.Common.Models.Connectors;
+using CommonServices = Zurich.Common.Services;
 
 namespace Zurich.Connector.App.Services
 {
@@ -53,18 +53,20 @@ namespace Zurich.Connector.App.Services
     public class RegistrationService : IRegistrationService
     {
         private readonly ICosmosService _cosmosService;
-        private readonly ISessionAccessor _sessionAccesor;
+        private readonly ISessionAccessor _sessionAccessor;
         private readonly IOAuthServices _OAuthService;
+        private readonly IOAuthApiRepository _oAuthApiRepository;
         private readonly IConfiguration _configuration;
         private readonly CommonServices.ITenantService _tenantService;
         private readonly ILegalHomeAccessCheck _legalHomeAccess;
         private readonly OAuthOptions _oAuthOptions;
 
-        public RegistrationService(ICosmosService cosmosService, ISessionAccessor sessionAccesor, IOAuthServices OAuthService, IConfiguration configuration, CommonServices.ITenantService tenantService, ILegalHomeAccessCheck legalHomeAccess, OAuthOptions oauthOptions)
+        public RegistrationService(ICosmosService cosmosService, ISessionAccessor sessionAccessor, IOAuthServices OAuthService, IOAuthApiRepository OAuthApiRepository, IConfiguration configuration, CommonServices.ITenantService tenantService, ILegalHomeAccessCheck legalHomeAccess, OAuthOptions oauthOptions)
         {
             _cosmosService = cosmosService;
-            _sessionAccesor = sessionAccesor;
+            _sessionAccessor = sessionAccessor;
             _OAuthService = OAuthService;
+            _oAuthApiRepository = OAuthApiRepository;
             _configuration = configuration;
             _tenantService = tenantService;
             _legalHomeAccess = legalHomeAccess;
@@ -131,24 +133,40 @@ namespace Zurich.Connector.App.Services
                     return response;
             }
 
+            bool isAutomaticRegistration = false;
+            switch (dataSource.RegistrationInfo.RegistrationMode)
+            {
+                case CommonModel.RegistrationEntityMode.Automatic:
+                    isAutomaticRegistration = true;
+                    break;
+                case CommonModel.RegistrationEntityMode.TenantWide:
+                    OAuthAPITokenResponse token;
+                    if (_sessionAccessor.UserId == Guid.Empty)
+                        token = await _oAuthApiRepository.GetTokenWithTenantId(applicationCode, _sessionAccessor.TenantId.ToString(), null);
+                    else
+                        token = await _oAuthApiRepository.GetToken(applicationCode);
 
-            if (dataSource.RegistrationInfo.RegistrationMode == CommonModel.RegistrationEntityMode.Automatic)
+                    isAutomaticRegistration = token != null;
+                    break;
+            }
+
+            if (isAutomaticRegistration)
             {
                 response.Registered = await _OAuthService.AutomaticRegistration(applicationCode);
                 return response;
             }
-            //Manual registration that is not registered returned auth url
-            //AuthorizeUrlResponse authUrlResponse = await _OAuthService.GetAuthorizeUrl(dataSource.AppCode);
-
-            var oAuthDomain = _configuration.GetValue<string>(AppSettings.OAuthUrl);
-            response.Registered = false;
-            response.AuthorizeUrl = $"{oAuthDomain}api/v1/{applicationCode}/authorizeURL?domain={domain}";
-            return response;
+            else
+            {
+                var oAuthDomain = _configuration.GetValue<string>(AppSettings.OAuthUrl);
+                response.Registered = false;
+                response.AuthorizeUrl = $"{oAuthDomain}api/v1/{applicationCode}/authorizeURL?domain={domain}";
+                return response;
+            }
         }
 
         public async Task<bool> RemoveUserConnector(string connectorId)
         {
-            var userId = _sessionAccesor.UserId.ToString();
+            var userId = _sessionAccessor.UserId.ToString();
 
             Expression<Func<ConnectorRegistrationDocument, bool>> condition = registration => registration.ConnectorId == connectorId;
             var registrations = _cosmosService.GetConnectorRegistrations(userId, condition);

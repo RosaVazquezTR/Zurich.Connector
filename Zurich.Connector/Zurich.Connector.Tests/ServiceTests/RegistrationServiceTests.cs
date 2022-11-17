@@ -1,27 +1,26 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
-using System.Threading.Tasks;
-using Zurich.Connector.App.Services;
-using Zurich.TenantData;
-using Zurich.Connector.Data.Repositories.CosmosDocuments;
 using System.Collections.Generic;
-using Zurich.Connector.App.Model;
-using System.Linq.Expressions;
 using System.Linq;
+using System.Linq.Expressions;
+using System.Threading.Tasks;
 using Zurich.Common.Models.Connectors;
-using Microsoft.Extensions.Configuration;
-using Zurich.Common.Services;
-using Zurich.TenantData.Models;
-using DataModel = Zurich.Connector.Data.Model;
-using DataSourceModel = Zurich.Connector.App.Model.DataSourceModel;
-using Zurich.Connector.App;
-using Zurich.Connector.Data;
-using DataModels = Zurich.Connector.Data.Model;
-using AppConnectorModel = Zurich.Connector.App.Model.ConnectorModel;
 using Zurich.Common.Models.OAuth;
+using Zurich.Common.Repositories;
+using Zurich.Common.Services;
+using Zurich.Connector.App;
+using Zurich.Connector.App.Model;
+using Zurich.Connector.App.Services;
+using Zurich.Connector.Data;
+using Zurich.Connector.Data.Repositories.CosmosDocuments;
+using Zurich.TenantData;
+using Zurich.TenantData.Models;
+using AppConnectorModel = Zurich.Connector.App.Model.ConnectorModel;
+using DataModel = Zurich.Connector.Data.Model;
+using DataModels = Zurich.Connector.Data.Model;
+using DataSourceModel = Zurich.Connector.App.Model.DataSourceModel;
 
 namespace Zurich.Connector.Tests.ServiceTests
 {
@@ -31,6 +30,7 @@ namespace Zurich.Connector.Tests.ServiceTests
         private Mock<ISessionAccessor> _mockSessionAccessor;
         private Mock<ICosmosService> _mockCosmosService;
         private Mock<IOAuthServices> _mockOAuthService;
+        private Mock<IOAuthApiRepository> _mockOAuthApiRepository;
         private Mock<IConfiguration> _mockConfiguration;
         private Mock<ITenantService> _mockTenantService;
         private Mock<ILegalHomeAccessCheck> _mockLegalHomeAccess;
@@ -79,6 +79,7 @@ namespace Zurich.Connector.Tests.ServiceTests
             _mockSessionAccessor = new Mock<ISessionAccessor>();
             _mockCosmosService = new Mock<ICosmosService>();
             _mockOAuthService = new Mock<IOAuthServices>();
+            _mockOAuthApiRepository = new Mock<IOAuthApiRepository>();
             _mockConfiguration = new Mock<IConfiguration>();
             _mockTenantService = new Mock<ITenantService>();
             _mockLegalHomeAccess = new Mock<ILegalHomeAccessCheck>();
@@ -89,7 +90,7 @@ namespace Zurich.Connector.Tests.ServiceTests
         {
             if (config == null)
                 config = _mockConfiguration.Object;
-            return new RegistrationService(_mockCosmosService.Object, _mockSessionAccessor.Object, _mockOAuthService.Object, config, _mockTenantService.Object, _mockLegalHomeAccess.Object, _mockOAuthOptions.Object);
+            return new RegistrationService(_mockCosmosService.Object, _mockSessionAccessor.Object, _mockOAuthService.Object, _mockOAuthApiRepository.Object, config, _mockTenantService.Object, _mockLegalHomeAccess.Object, _mockOAuthOptions.Object);
         }
 
         [TestMethod]
@@ -263,7 +264,7 @@ namespace Zurich.Connector.Tests.ServiceTests
         }
 
         [TestMethod]
-        public async Task RegisterValidConnectorwithAutomaticregistration()
+        public async Task RegisterValidConnectorwithAutomaticRegistration()
         {
             //Arrange
             var testId = "140";
@@ -292,6 +293,92 @@ namespace Zurich.Connector.Tests.ServiceTests
             var registrationService = CreateService();
             //Act
             DataModels.DataSourceRegistration register = await registrationService.RegisterConnector(testId);
+            //Assert
+            _mockOAuthService.Verify(x => x.AutomaticRegistration(appCode), times: Times.Once());
+            Assert.IsNotNull(register);
+            Assert.IsTrue(register.Registered);
+        }
+
+        [TestMethod]
+        public async Task RegisterValidConnectorWithTenantWideRegistrationWithoutToken()
+        {
+            //Arrange
+            var testId = "140";
+            var appCode = "AppCode";
+            var domain = "AppCodeDomain";
+            var tenantId = Guid.NewGuid();
+            _mockSessionAccessor.Setup(x => x.UserId).Returns(Guid.Empty);
+            _mockSessionAccessor.Setup(x => x.TenantId).Returns(tenantId);
+            _mockOAuthApiRepository.Setup(x => x.GetTokenWithTenantId(appCode, tenantId.ToString(), It.IsAny<string>())).ReturnsAsync(default(OAuthAPITokenResponse));
+            _mockOAuthService.Setup(x => x.AutomaticRegistration(appCode)).ReturnsAsync(true);
+
+            AppConnectorModel connectors = new AppConnectorModel()
+            {
+                DataSource = new DataSourceModel()
+                {
+                    AppCode = appCode,
+                    Domain = domain,
+                    RegistrationInfo = new App.Model.RegistrationInfoModel()
+                    { DomainRequired = true, RegistrationMode = RegistrationEntityMode.TenantWide }
+                }
+            };
+            _mockCosmosService.Setup(x => x.GetConnectorUsingPreRelease(testId, true)).ReturnsAsync(connectors);
+
+            List<DataModel.DataSourceInformation> userRegistrations = new List<DataModel.DataSourceInformation>();
+            userRegistrations.Add(new DataModel.DataSourceInformation() { AppCode = "RegisteredAppCode" });
+            _mockOAuthService.Setup(x => x.GetUserRegistrations()).ReturnsAsync(userRegistrations);
+            List<DataModel.DataSourceInformation> availableRegistrations = new List<DataModel.DataSourceInformation>();
+            availableRegistrations.Add(new DataModel.DataSourceInformation() { AppCode = appCode, Domain = domain });
+            _mockOAuthService.Setup(x => x.GetAvailableRegistrations()).ReturnsAsync(availableRegistrations);
+            IConfiguration config = Utility.CreateConfiguration(AppSettings.OAuthUrl, "OAuthBaseUrl");
+            var registrationService = CreateService(config);
+
+            //Act
+            DataModels.DataSourceRegistration register = await registrationService.RegisterConnector(testId);
+
+            //Assert
+            Assert.IsNotNull(register);
+            Assert.IsFalse(register.Registered);
+            Assert.IsNotNull(register.AuthorizeUrl);
+        }
+
+        [TestMethod]
+        public async Task RegisterValidConnectorWithTenantWideRegistrationWithToken()
+        {
+            //Arrange
+            var testId = "140";
+            var appCode = "AppCode";
+            var domain = "AppCodeDomain";
+            var userId = Guid.NewGuid();
+            var tenantId = Guid.NewGuid();
+            _mockSessionAccessor.Setup(x => x.UserId).Returns(userId);
+            _mockSessionAccessor.Setup(x => x.TenantId).Returns(tenantId);
+            _mockOAuthApiRepository.Setup(x => x.GetToken(appCode, It.IsAny<string>())).ReturnsAsync(new OAuthAPITokenResponse());
+            _mockOAuthService.Setup(x => x.AutomaticRegistration(appCode)).ReturnsAsync(true);
+
+            AppConnectorModel connectors = new AppConnectorModel()
+            {
+                DataSource = new DataSourceModel()
+                {
+                    AppCode = appCode,
+                    Domain = domain,
+                    RegistrationInfo = new App.Model.RegistrationInfoModel()
+                    { DomainRequired = true, RegistrationMode = RegistrationEntityMode.TenantWide }
+                }
+            };
+            _mockCosmosService.Setup(x => x.GetConnectorUsingPreRelease(testId, true)).ReturnsAsync(connectors);
+
+            List<DataModel.DataSourceInformation> userRegistrations = new List<DataModel.DataSourceInformation>();
+            userRegistrations.Add(new DataModel.DataSourceInformation() { AppCode = "RegisteredAppCode" });
+            _mockOAuthService.Setup(x => x.GetUserRegistrations()).ReturnsAsync(userRegistrations);
+            List<DataModel.DataSourceInformation> availableRegistrations = new List<DataModel.DataSourceInformation>();
+            availableRegistrations.Add(new DataModel.DataSourceInformation() { AppCode = appCode, Domain = domain });
+            _mockOAuthService.Setup(x => x.GetAvailableRegistrations()).ReturnsAsync(availableRegistrations);
+            var registrationService = CreateService();
+
+            //Act
+            DataModels.DataSourceRegistration register = await registrationService.RegisterConnector(testId);
+
             //Assert
             _mockOAuthService.Verify(x => x.AutomaticRegistration(appCode), times: Times.Once());
             Assert.IsNotNull(register);
