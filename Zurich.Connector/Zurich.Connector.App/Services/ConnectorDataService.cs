@@ -463,14 +463,28 @@ namespace Zurich.Connector.Data.Services
             thoughtFilters.Add("operator", "and");
 
             JArray filters = new JArray();
-            foreach (var id in clauseIds)
+             if(clauseIds.Count > 0)
+                foreach (var id in clauseIds)
+                {
+                    JObject filterObject = new JObject();
+                    JArray fieldTypes = new JArray();
+                    JObject fieldTypesObject = new JObject();
+
+                    fieldTypesObject.Add("thoughtTypeId", clauseType);
+                    fieldTypesObject.Add("thoughtFieldTypeId", (string)id);
+                    fieldTypes.Add(fieldTypesObject);
+                    filterObject.Add("fieldTypes", fieldTypes);
+                    filterObject.Add("operator", "exists");
+                    filterObject.Add("stringValue", string.Empty);
+                    filters.Add(filterObject);
+                }
+            else
             {
                 JObject filterObject = new JObject();
                 JArray fieldTypes = new JArray();
                 JObject fieldTypesObject = new JObject();
 
                 fieldTypesObject.Add("thoughtTypeId", clauseType);
-                fieldTypesObject.Add("thoughtFieldTypeId", (string)id);
                 fieldTypes.Add(fieldTypesObject);
                 filterObject.Add("fieldTypes", fieldTypes);
                 filterObject.Add("operator", "exists");
