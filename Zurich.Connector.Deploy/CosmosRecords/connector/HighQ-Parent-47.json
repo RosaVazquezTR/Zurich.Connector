@@ -47,6 +47,14 @@
         "required": true,
         "type": "bool",
         "defaultValue": true
+      },
+      {
+        "cdmName": "CreationDateStart.filter",
+        "name": "fromDate",
+        "inClause": "Body",
+        "required": true,
+        "type": "string",
+        "defaultValue": "01 Jan 2000"
       }
     ],
     "sorting": {

@@ -11,7 +11,7 @@
     "subType": "Parent"
   },
   "request": {
-    "endpointPath": "/beta/search/microsoft.graph.query",
+    "endpointPath": "/v1.0/search/microsoft.graph.query",
     "method": "POST",
     "parameters": [
       {
