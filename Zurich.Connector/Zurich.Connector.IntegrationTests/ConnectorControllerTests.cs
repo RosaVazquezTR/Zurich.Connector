@@ -103,7 +103,7 @@ namespace Zurich.Connector.IntegrationTests
         public async Task TestJsonConnectorDataById_With_SuccessStatus()
         {
             // Arrange
-            var request = $"/api/v1/Connectors/14/data/?query=query";
+            var request = $"/api/v1/Connectors/12/data/?query=query";
             HttpRequestMessage getRequest = new Helper().TokenRequest(request);
 
 
