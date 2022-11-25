@@ -12,7 +12,7 @@
       "thoughts": {
         "#loopwithincontext($.thoughts)": {
           "id": "#currentvalueatpath($.id)",
-          "thoughtTypeId": "#currentvalueatpath($.thoughtTypeId)",
+          "clauseTypeId": "#currentvalueatpath($.thoughtTypeId)",
           "fields": {
             "#loopwithincontext($.fields)": {
               "name": "",
@@ -23,9 +23,9 @@
               "processingStatus": "",
               "highlightedText": "#currentvalueatpath($.highlightedText)",
               "thoughtId": "",
-              "thoughtTypeId": "",
+              "clauseTypeId": "",
               "fieldId": "#currentvalueatpath($.id)",
-              "thoughtFieldTypeId": "#currentvalueatpath($.thoughtFieldTypeId)",
+              "clauseTermId": "#currentvalueatpath($.thoughtFieldTypeId)",
               "score": "#currentvalueatpath($.score)",
               "confidence": "#currentvalueatpath($.confidence)",
               "stringValue": "#currentvalueatpath($.stringValue)"

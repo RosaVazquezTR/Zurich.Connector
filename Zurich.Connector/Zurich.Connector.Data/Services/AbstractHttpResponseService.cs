@@ -82,7 +82,7 @@ namespace Zurich.Connector.Data.Services
                     foreach (var thought in document["thoughts"])
                     {
                         var id = thought["id"].Value<string>();
-                        var thoughtTypeId = thought["thoughtTypeId"].Value<string>();
+                        var clauseTypeId = thought["clauseTypeId"].Value<string>();
                         foreach (var field in thought["fields"])
                         {
                             position++;
@@ -101,7 +101,7 @@ namespace Zurich.Connector.Data.Services
                                         field["lastModifiedOn"] = lastModifiedOn;
                                         field["processingStatus"] = processingStatus;
                                         field["thoughtId"] = id;
-                                        field["thoughtTypeId"] = thoughtTypeId;
+                                        field["clauseTypeId"] = clauseTypeId;
                                         field["position"] = position;
 
                                         lstPositions.Add(position);

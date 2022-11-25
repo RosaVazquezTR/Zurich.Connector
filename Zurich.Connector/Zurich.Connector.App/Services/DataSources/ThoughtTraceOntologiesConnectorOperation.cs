@@ -103,16 +103,17 @@ namespace Zurich.Connector.App.Services.DataSources
             
             if (item is JObject searchResult && searchResult.ContainsKey("Documents") && searchResult["Documents"].HasValues)
             {
+                 
                 foreach (JObject document in searchResult["Documents"] as JArray)
                 {
                     var thoughtType = thoughtTypes.Where(thoughtType =>
-                        thoughtType["id"].Value<string>() == document["AdditionalProperties"]["thoughtTypeId"].Value<string>()).FirstOrDefault();
+                        thoughtType["id"].Value<string>() == document["AdditionalProperties"]["clauseTypeId"].Value<string>()).FirstOrDefault();
 
                     var thoughtFieldType = thoughtType?["fieldTypes"].Where(fieldType => 
-                        fieldType["id"].Value<string>() == document["AdditionalProperties"]["thoughtFieldTypeId"].Value<string>()).FirstOrDefault();
+                        fieldType["id"].Value<string>() == document["AdditionalProperties"]["clauseTermId"].Value<string>()).FirstOrDefault();
 
-                    document["AdditionalProperties"]["thoughtTypeName"] = thoughtType?["name"].Value<string>();
-                    document["AdditionalProperties"]["thoughtFieldTypeName"] = thoughtFieldType?["name"].Value<string>();
+                    document["AdditionalProperties"]["clauseTypeName"] = thoughtType?["name"].Value<string>();
+                    document["AdditionalProperties"]["clauseTermName"] = thoughtFieldType?["name"].Value<string>();
                 }
             }
 
