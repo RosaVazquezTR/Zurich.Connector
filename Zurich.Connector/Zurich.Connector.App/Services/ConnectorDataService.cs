@@ -232,7 +232,10 @@ namespace Zurich.Connector.Data.Services
                     flatResStr = flatResStr.Replace("confidence\": \"\"", "confidence\": 0.0");
                     flatResults = JArray.Parse(flatResStr);
 
-                    if (!String.IsNullOrEmpty(queryParameters["keyWord"]))
+                    var keyWord = JToken.Parse(queryParameters["filters"])
+                        ?.Where(filter => filter["key"].Value<string>() == "keyword").FirstOrDefault()?["value"];
+
+                    if (!String.IsNullOrEmpty(keyWord?.Value<string>()))
                         flatResults = new(flatResults.OrderByDescending(obj => (float)obj["AdditionalProperties"]["score"]));
                     else
                         flatResults = new JArray(flatResults.OrderByDescending(obj => (float)obj["AdditionalProperties"]["confidence"]));
@@ -290,9 +293,6 @@ namespace Zurich.Connector.Data.Services
                 {
                     cdmQueryParameters = SetupPagination(connectorModel, cdmQueryParameters);
                 }
-
-                if (connectorModel.DataSource.InternalSorting)
-                    cdmQueryParameters = TTMap(cdmQueryParameters);
 
                 if (connectorModel.Request?.Parameters != null)
                     queryParameters = (from param in cdmQueryParameters
@@ -436,75 +436,6 @@ namespace Zurich.Connector.Data.Services
             else
                 _logger.LogInformation("No data source operations service found for {appCode}", connector?.DataSource?.AppCode ?? "");
             return data;
-        }
-
-        public Dictionary<string, string> TTMap (Dictionary<string, string> cdmQueryParameters) 
-        {
-            string clauseType = "";
-            JArray clauseIds = new JArray();
-            string keyword = "";
-
-            JToken requestFilters = JToken.Parse(cdmQueryParameters["Filters"]);
-            foreach (var filter in requestFilters)
-            {
-                var key = (string)filter.First.First;
-                var value = filter.First.Next;
-
-                if (key == "clauseTypeID")
-                    clauseType = (string)value;
-
-                if (key == "clauseTermIDs")
-                    clauseIds = (JArray)value.First;
-
-                if (key == "keyword")
-                    keyword = (string)value;
-            }
-            JObject thoughtFilters = new JObject();
-            thoughtFilters.Add("operator", "and");
-
-            JArray filters = new JArray();
-             if(clauseIds.Count > 0)
-                foreach (var id in clauseIds)
-                {
-                    JObject filterObject = new JObject();
-                    JArray fieldTypes = new JArray();
-                    JObject fieldTypesObject = new JObject();
-
-                    fieldTypesObject.Add("thoughtTypeId", clauseType);
-                    fieldTypesObject.Add("thoughtFieldTypeId", (string)id);
-                    fieldTypes.Add(fieldTypesObject);
-                    filterObject.Add("fieldTypes", fieldTypes);
-                    filterObject.Add("operator", "exists");
-                    filterObject.Add("stringValue", string.Empty);
-                    filters.Add(filterObject);
-                }
-            else
-            {
-                JObject filterObject = new JObject();
-                JArray fieldTypes = new JArray();
-                JObject fieldTypesObject = new JObject();
-
-                fieldTypesObject.Add("thoughtTypeId", clauseType);
-                fieldTypes.Add(fieldTypesObject);
-                filterObject.Add("fieldTypes", fieldTypes);
-                filterObject.Add("operator", "exists");
-                filterObject.Add("stringValue", string.Empty);
-                filters.Add(filterObject);
-            }
-            thoughtFilters.Add("filters", filters);
-
-            if (cdmQueryParameters.ContainsKey("threshold"))
-            {
-                JObject confidenceFilterObject = new JObject();
-                confidenceFilterObject.Add("from", int.Parse(cdmQueryParameters["threshold"]));
-                thoughtFilters.Add("confidenceFilter", confidenceFilterObject);
-            }
-
-            cdmQueryParameters.Remove("Filters");
-            cdmQueryParameters.Add("thoughtFilters", thoughtFilters.ToString());
-            cdmQueryParameters.Add("keyWord", keyword);
-            return cdmQueryParameters;
-
         }
     }
 }

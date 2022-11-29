@@ -103,6 +103,14 @@
                         }
                     ]
                 }
+            },
+            {
+                "cdmName": "Filters",
+                "name": "Filters",
+                "inClause": "Body",
+                "required": false,
+                "type": "object",
+                "defaultValue": ""
             }
         ],
         "sorting": {

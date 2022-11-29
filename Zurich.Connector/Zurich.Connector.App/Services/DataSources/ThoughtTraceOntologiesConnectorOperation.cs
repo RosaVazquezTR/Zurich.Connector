@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
 using System;
@@ -21,13 +22,15 @@ namespace Zurich.Connector.App.Services.DataSources
         private readonly IDataMapping _dataMapping;
         private readonly IMapper _mapper;
         private readonly ILogger _logger;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public ThoughtTraceOntologiesConnectorOperation(ILogger<IConnectorDataSourceOperations> logger, IDataMappingFactory dataMappingFactory, IMapper mapper, ICosmosService cosmosService)
+        public ThoughtTraceOntologiesConnectorOperation(ILogger<IConnectorDataSourceOperations> logger, IDataMappingFactory dataMappingFactory, IMapper mapper, ICosmosService cosmosService, IHttpContextAccessor httpContextAccessor)
         {
             _logger = logger;
             _mapper = mapper;
             _cosmosService = cosmosService;
             _dataMapping = dataMappingFactory.GetImplementation(AuthType.OAuth2.ToString());
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public bool IsCompatible(string appCode)
@@ -46,6 +49,9 @@ namespace Zurich.Connector.App.Services.DataSources
             if (!connector.DataSource.InternalSorting)
                 return allParameters;
             
+
+            allParameters = TTMap(allParameters);
+
             var thoughtFilters = JToken.Parse(allParameters["thoughtFilters"]);
             List<string> thoughtTypeIds = new();
 
@@ -125,15 +131,22 @@ namespace Zurich.Connector.App.Services.DataSources
         /// </summary>
         private async Task<JArray> GetThoughtTypesFromOntologies()
         {
-            ConnectorModel connectorModel = await _cosmosService.GetConnector("60", true);            
-            ConnectorDocument connectorDocument = _mapper.Map<ConnectorDocument>(connectorModel);
 
-            JToken ontologiesResponse = await _dataMapping.GetAndMapResults<JToken>(connectorDocument, string.Empty, null, null, null);
+            if(!_httpContextAccessor.HttpContext.Items.TryGetValue("Ontologies", out var ontologiesResponse))
+            {
+                ConnectorModel connectorModel = await _cosmosService.GetConnector("60", true);
+                ConnectorDocument connectorDocument = _mapper.Map<ConnectorDocument>(connectorModel);
+
+                ontologiesResponse = await _dataMapping.GetAndMapResults<JToken>(connectorDocument, string.Empty, null, null, null);
+
+                _httpContextAccessor.HttpContext.Items.Add("Ontologies", ontologiesResponse);
+            }
+            
 
             JArray thoughtTypes = new JArray();
 
             // As we don't need ontology metadata, I put together all tougtTypes to make search easier
-            foreach (JToken ontology in ontologiesResponse)
+            foreach (JToken ontology in (JToken)ontologiesResponse)
             {
                 foreach(JToken thoughtType in ontology["thoughtTypes"])
                     thoughtTypes.Add(thoughtType);
@@ -153,6 +166,87 @@ namespace Zurich.Connector.App.Services.DataSources
             var provisionThought = thoughtType?["fieldTypes"].Where(fieldType => fieldType["name"].Value<string>() == "Provision").FirstOrDefault();
 
             return provisionThought?["id"].Value<string>();
+        }
+
+        public Dictionary<string, string> TTMap(Dictionary<string, string> cdmQueryParameters)
+        {
+            string clauseType = "";
+            JArray clauseIds = new JArray();
+            string keyword = "";
+
+            JToken requestFilters = JToken.Parse(cdmQueryParameters["Filters"]);
+            foreach (var filter in requestFilters)
+            {
+                var key = (string)filter.First.First;
+                var value = filter.First.Next;
+
+                if (key == "clauseTypeID")
+                    clauseType = (string)value;
+
+                if (key == "clauseTermIDs")
+                    clauseIds = (JArray)value.First;
+
+                if (key == "keyword")
+                    keyword = (string)value;
+            }
+
+            //Remove default thoughtFilter if info is given
+            if (String.IsNullOrEmpty(clauseType) || clauseIds?.Count < 1)
+            {
+                cdmQueryParameters.Remove("Filters");
+                return cdmQueryParameters;
+            }                
+            else
+            {
+                cdmQueryParameters.Remove("thoughtFilters");
+            }
+
+            JObject thoughtFilters = new JObject();
+            thoughtFilters.Add("operator", "and");
+
+            JArray filters = new JArray();
+            if (clauseIds.Count > 0)
+                foreach (var id in clauseIds)
+                {
+                    JObject filterObject = new JObject();
+                    JArray fieldTypes = new JArray();
+                    JObject fieldTypesObject = new JObject();
+
+                    fieldTypesObject.Add("thoughtTypeId", clauseType);
+                    fieldTypesObject.Add("thoughtFieldTypeId", (string)id);
+                    fieldTypes.Add(fieldTypesObject);
+                    filterObject.Add("fieldTypes", fieldTypes);
+                    filterObject.Add("operator", "exists");
+                    filterObject.Add("stringValue", string.Empty);
+                    filters.Add(filterObject);
+                }
+            else
+            {
+                JObject filterObject = new JObject();
+                JArray fieldTypes = new JArray();
+                JObject fieldTypesObject = new JObject();
+
+                fieldTypesObject.Add("thoughtTypeId", clauseType);
+                fieldTypes.Add(fieldTypesObject);
+                filterObject.Add("fieldTypes", fieldTypes);
+                filterObject.Add("operator", "exists");
+                filterObject.Add("stringValue", string.Empty);
+                filters.Add(filterObject);
+            }
+            thoughtFilters.Add("filters", filters);
+
+            if (cdmQueryParameters.ContainsKey("threshold"))
+            {
+                JObject confidenceFilterObject = new JObject();
+                confidenceFilterObject.Add("from", int.Parse(cdmQueryParameters["threshold"]));
+                thoughtFilters.Add("confidenceFilter", confidenceFilterObject);
+            }
+
+            cdmQueryParameters.Remove("Filters");
+            cdmQueryParameters.Add("thoughtFilters", thoughtFilters.ToString());
+            cdmQueryParameters.Add("keyWord", keyword);
+            return cdmQueryParameters;
+
         }
     }
 }
