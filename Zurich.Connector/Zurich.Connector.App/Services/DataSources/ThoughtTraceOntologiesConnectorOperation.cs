@@ -240,6 +240,7 @@ namespace Zurich.Connector.App.Services.DataSources
                 JObject confidenceFilterObject = new JObject();
                 confidenceFilterObject.Add("from", int.Parse(cdmQueryParameters["threshold"]));
                 thoughtFilters.Add("confidenceFilter", confidenceFilterObject);
+                cdmQueryParameters.Remove("threshold");
             }
 
             cdmQueryParameters.Remove("Filters");

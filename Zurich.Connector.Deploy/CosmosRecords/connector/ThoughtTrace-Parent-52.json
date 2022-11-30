@@ -22,6 +22,14 @@
                 "type": "string",
                 "defaultValue": ""
             },
+			{
+                "cdmName": "threshold",
+                "name": "threshold",
+                "inClause": "Body",
+                "required": false,
+                "type": "string",
+                "defaultValue": "0"
+            },
             {
                 "cdmName": "ResultSize",
                 "name": "top",
