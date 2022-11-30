@@ -48,7 +48,7 @@ namespace Zurich.Connector.App.Services.DataSources
             //TODO: changing this from a specific connector id to a parameter in the data source
             if (!connector.DataSource.InternalSorting)
                 return allParameters;
-            
+
 
             allParameters = TTMap(allParameters);
 
@@ -60,9 +60,9 @@ namespace Zurich.Connector.App.Services.DataSources
             {
                 foreach(var fieldType in filter["fieldTypes"])
                     thoughtTypeIds.Add(fieldType["thoughtTypeId"].Value<string>());
-            
+
             }
-     
+
             //For each thoughTypeId, we add a new filter to parameters, we first need to extract the thoughFieldTypeId from onotlogies
             foreach( var thoughtTypeId in thoughtTypeIds.Distinct())
             {
@@ -78,7 +78,8 @@ namespace Zurich.Connector.App.Services.DataSources
 
                 JObject defaultProvisionFilter = new();
                 defaultProvisionFilter["fieldTypes"] = new JArray(fieldType);
-                if(String.IsNullOrEmpty(allParameters["keyWord"])) {
+                if(allParameters.ContainsKey("keyWord") && String.IsNullOrEmpty(allParameters["keyWord"]))
+                {
                     defaultProvisionFilter["operator"] = "exists";
                     defaultProvisionFilter["stringValue"] = String.Empty;
                 }
@@ -88,7 +89,7 @@ namespace Zurich.Connector.App.Services.DataSources
                     defaultProvisionFilter["stringValue"] = allParameters["keyWord"];
                 }
 
-                
+
 
                 ((JArray)thoughtFilters["filters"]).Add(defaultProvisionFilter);
 
@@ -106,16 +107,16 @@ namespace Zurich.Connector.App.Services.DataSources
                 return item;
 
             JArray thoughtTypes = await GetThoughtTypesFromOntologies();
-            
+
             if (item is JObject searchResult && searchResult.ContainsKey("Documents") && searchResult["Documents"].HasValues)
             {
-                 
+
                 foreach (JObject document in searchResult["Documents"] as JArray)
                 {
                     var thoughtType = thoughtTypes.Where(thoughtType =>
                         thoughtType["id"].Value<string>() == document["AdditionalProperties"]["clauseTypeId"].Value<string>()).FirstOrDefault();
 
-                    var thoughtFieldType = thoughtType?["fieldTypes"].Where(fieldType => 
+                    var thoughtFieldType = thoughtType?["fieldTypes"].Where(fieldType =>
                         fieldType["id"].Value<string>() == document["AdditionalProperties"]["clauseTermId"].Value<string>()).FirstOrDefault();
 
                     document["AdditionalProperties"]["clauseTypeName"] = thoughtType?["name"].Value<string>();
@@ -141,7 +142,7 @@ namespace Zurich.Connector.App.Services.DataSources
 
                 _httpContextAccessor.HttpContext.Items.Add("Ontologies", ontologiesResponse);
             }
-            
+
 
             JArray thoughtTypes = new JArray();
 
@@ -170,6 +171,7 @@ namespace Zurich.Connector.App.Services.DataSources
 
         public Dictionary<string, string> TTMap(Dictionary<string, string> cdmQueryParameters)
         {
+            cdmQueryParameters.Remove("thoughtFilters");
             string clauseType = "";
             JArray clauseIds = new JArray();
             string keyword = "";
@@ -189,18 +191,6 @@ namespace Zurich.Connector.App.Services.DataSources
                 if (key == "keyword")
                     keyword = (string)value;
             }
-
-            //Remove default thoughtFilter if info is given
-            if (String.IsNullOrEmpty(clauseType) || clauseIds?.Count < 1)
-            {
-                cdmQueryParameters.Remove("Filters");
-                return cdmQueryParameters;
-            }                
-            else
-            {
-                cdmQueryParameters.Remove("thoughtFilters");
-            }
-
             JObject thoughtFilters = new JObject();
             thoughtFilters.Add("operator", "and");
 
