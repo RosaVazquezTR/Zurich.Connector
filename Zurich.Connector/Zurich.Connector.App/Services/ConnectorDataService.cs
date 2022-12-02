@@ -432,7 +432,10 @@ namespace Zurich.Connector.Data.Services
                 flatResStr = flatResStr.Replace("confidence\": \"\"", "confidence\": 0.0");
                 documents = JArray.Parse(flatResStr);
 
-                if (!string.IsNullOrEmpty(queryParameters["keyWord"]))
+                var keyWord = JToken.Parse(queryParameters["filters"])
+                        ?.Where(filter => filter["key"].Value<string>() == "keyword").FirstOrDefault()?["value"];
+
+                if (!String.IsNullOrEmpty(keyWord?.Value<string>()))
                     documents = new(documents.OrderByDescending(obj => (float)obj["AdditionalProperties"]["score"]));
                 else
                     documents = new JArray(documents.OrderByDescending(obj => (float)obj["AdditionalProperties"]["confidence"]));
