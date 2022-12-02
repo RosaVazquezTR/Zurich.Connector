@@ -30,7 +30,6 @@ using Zurich.TenantData;
 using Zurich.Connector.Data.Utils;
 using Zurich.Common.Models.FeatureFlags;
 using Zurich.Common.Services;
-using System.Threading;
 
 namespace Zurich.Connector.Data.DataMap
 {
@@ -55,7 +54,6 @@ namespace Zurich.Connector.Data.DataMap
         // TODO: Remove this once the adminToken works in federated search and can be obtained from OAuth
         protected IHttpClientFactory _httpClientFactory;
         protected ISessionAccessor _sessionAccessor;
-        private static SemaphoreSlim semaphoreSlim = new SemaphoreSlim(1, 1);
 
         public async virtual Task<T> GetAndMapResults<T>(ConnectorDocument dataTypeInformation, string transferToken, NameValueCollection query, Dictionary<string, string> headers, Dictionary<string, string> requestParameters, string domain = null)
         {
@@ -125,7 +123,7 @@ namespace Zurich.Connector.Data.DataMap
                 await _sessionAccessor.PopulateUserInfo();
                 AppToken token;
                 // TODO: Modify this to obtain the instance name from the domain when more instances are available
-                token = await GetImpersonatedUserToken(domain.Contains("collabdemo1") ? "collabdemo1": "collabdemo2", _sessionAccessor.Email);
+                token = await GetImpersonatedUserToken(domain.Contains("collabdemo1") ? "collabdemo1" : "collabdemo2", _sessionAccessor.Email);
 
                 // HighQ returned a lower case token type and it doesn't accept the token type being lower case in other calls so we have to capitalize it
                 if (token != null)
@@ -454,11 +452,10 @@ namespace Zurich.Connector.Data.DataMap
             return token;
         }
 
+        // Temporary measure to use the old way to obtain a token for HighQ, while highQ admin token is fixed in federated search
+        // TODO: Remove GetInstanceAdminToken and GetImpersonatedUserToken once the adminToken works in federated search and can be obtained from OAuth
         public async Task<AppToken> GetImpersonatedUserToken(string instanceName, string email)
         {
-            //await semaphoreSlim.WaitAsync(8000);
-            //try
-            //{
             var instanceConnection = await _oAuthService.GetOAuthConnection(OAuthApplicationType.ServiceApp, instanceName);
 
             if (instanceConnection != null)
@@ -514,12 +511,6 @@ namespace Zurich.Connector.Data.DataMap
             }
 
             return null;
-            //}
-            //finally
-            //{
-                //semaphoreSlim.Release();
-            //}
-            //return null;
         }
     }
 }

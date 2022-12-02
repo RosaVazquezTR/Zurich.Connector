@@ -59,7 +59,7 @@ namespace Zurich.Connector.Data.Services
         private readonly IConfiguration _configuration;
         private readonly IOAuthApiRepository _OAuthApiRepository;
         private readonly ISessionAccessor _sessionAccessor;
-
+        
         public ConnectorDataService(
             IDataMappingFactory dataMappingFactory,
             IDataMappingRepository dataMappingRepo,
@@ -152,9 +152,7 @@ namespace Zurich.Connector.Data.Services
                     queryParameters["Query"] = System.Web.HttpUtility.UrlDecode(queryParameters["Query"]);
             }
 
-            //NameValueCollection mappedQueryParameters = MapQueryParametersFromDB(queryParameters, connectorModel);
             ConnectorDocument connectorDocument = _mapper.Map<ConnectorDocument>(connectorModel);
-            //Dictionary<string, string> headerParameters = await _dataExtractionService.ExtractDataSource(mappedQueryParameters, queryParameters, hostname, connectorDocument);
             IDataMapping service = _dataMappingFactory.GetImplementation(connectorModel?.DataSource?.SecurityDefinition?.Type);
 
             // Needs to be dynamic because we can return an JToken or JArray
@@ -166,50 +164,9 @@ namespace Zurich.Connector.Data.Services
             if (!resultSize.HasValue || resultSize.Value > 0)
             {
                 if (connectorModel.DataSource.CombinedLocations)
-                {
-                    dynamic dataArray = new JObject();
-                    dataArray.Count = 0;
-                    dataArray.successUrls = new JArray();
-                    dataArray.failUrls = new JArray();
-                    dataArray.Documents = new JArray();
-
-                    // TODO: Turn this into a parallel process once we confirm whether or not we need to call multiple instances
-                    foreach (DataSourceInformation currentRegistration in availableRegistrations)
-                    {
-                        try
-                        {
-                            // TODO: Check if this code can be encapsulated into a new method to avoid repeating code,
-                            // this once we confirm whether or not we need to call multiple instances
-                            NameValueCollection mappedQueryParameters = MapQueryParametersFromDB(queryParameters, connectorModel);
-                            Dictionary<string, string> headerParameters = await _dataExtractionService.ExtractDataSource(mappedQueryParameters, queryParameters, hostname, connectorDocument);
-
-                            data = await service.GetAndMapResults<dynamic>(connectorDocument, transferToken, mappedQueryParameters, headerParameters, queryParameters, currentRegistration.Domain);
-                            data = await EnrichConnectorData(connectorModel, data);
-                            dataArray.successUrls.Add(currentRegistration.Domain);
-                        }
-                        catch (Exception ex)
-                        {
-                            dataArray.failUrls.Add(currentRegistration.Domain);
-                        }
-                        finally
-                        {
-                            if (data.Documents != null)
-                            {
-                                foreach (var document in data.Documents)
-                                {
-                                    dataArray.Documents.Add(document);
-                                }
-                            }
-                            dataArray.Count += data.Count;
-                        }
-
-                    }
-                    data = dataArray;
-                }
+                    data = await GetDataForMultiInstanceConnector(connectorModel, connectorDocument, availableRegistrations, service, queryParameters, transferToken, hostname);
                 else
                 {
-                    // TODO: Check if this code can be encapsulated into a new method to avoid repeating code,
-                    // this once we confirm whether or not we need to call multiple instances
                     NameValueCollection mappedQueryParameters = MapQueryParametersFromDB(queryParameters, connectorModel);
                     Dictionary<string, string> headerParameters = await _dataExtractionService.ExtractDataSource(mappedQueryParameters, queryParameters, hostname, connectorDocument);
                     // Thinking about using the instance domain instead of its name
@@ -219,28 +176,9 @@ namespace Zurich.Connector.Data.Services
 
                 if (data == null)
                     return data;
-                
-                if (connectorModel.DataSource.InternalSorting)
-                {
-                    // TODO: for the moment this code is way too specific for TT, for future connectors
-                    // that might use internal sorting we need to find a way to do it in a more generic way
-                    JArray flatResults = data.Documents;
 
-                    // Removing empty string from score and confidence values
-                    string flatResStr = flatResults.ToString();
-                    flatResStr = flatResStr.Replace("score\": \"\"", "score\": 0.0");
-                    flatResStr = flatResStr.Replace("confidence\": \"\"", "confidence\": 0.0");
-                    flatResults = JArray.Parse(flatResStr);
-
-                    var keyWord = JToken.Parse(queryParameters["filters"])
-                        ?.Where(filter => filter["key"].Value<string>() == "keyword").FirstOrDefault()?["value"];
-
-                    if (!String.IsNullOrEmpty(keyWord?.Value<string>()))
-                        flatResults = new(flatResults.OrderByDescending(obj => (float)obj["AdditionalProperties"]["score"]));
-                    else
-                        flatResults = new JArray(flatResults.OrderByDescending(obj => (float)obj["AdditionalProperties"]["confidence"]));
-                    data.Documents = flatResults;
-                }
+                if (data.Documents != null)
+                    data.Documents = SortingResponseDocuments(data.Documents, connectorModel.DataSource, queryParameters);
                 
             }
 
@@ -436,6 +374,71 @@ namespace Zurich.Connector.Data.Services
             else
                 _logger.LogInformation("No data source operations service found for {appCode}", connector?.DataSource?.AppCode ?? "");
             return data;
+        }
+
+        private async Task<dynamic> GetDataForMultiInstanceConnector(ConnectorModel connectorModel, ConnectorDocument connectorDocument, List<DataSourceInformation> availableRegistrations, IDataMapping service, Dictionary<string, string> queryParameters, string transferToken, string hostname)
+        {
+            dynamic data = null;
+
+            dynamic dataArray = new JObject();
+            dataArray.Count = 0;
+            dataArray.successUrls = new JArray();
+            dataArray.failUrls = new JArray();
+            dataArray.Documents = new JArray();
+
+            // TODO: Turn this into a parallel process once HighQ Dogfood implementation for getting tokens is completed
+            foreach (DataSourceInformation currentRegistration in availableRegistrations)
+            {
+                try
+                {
+                    NameValueCollection mappedQueryParameters = MapQueryParametersFromDB(queryParameters, connectorModel);
+                    Dictionary<string, string> headerParameters = await _dataExtractionService.ExtractDataSource(mappedQueryParameters, queryParameters, hostname, connectorDocument);
+
+                    data = await service.GetAndMapResults<dynamic>(connectorDocument, transferToken, mappedQueryParameters, headerParameters, queryParameters, currentRegistration.Domain);
+                    data = await EnrichConnectorData(connectorModel, data);
+                    dataArray.successUrls.Add(currentRegistration.Domain);
+                }
+                catch (Exception)
+                {
+                    dataArray.failUrls.Add(currentRegistration.Domain);
+                }
+                finally
+                {
+                    if (data.Documents != null)
+                    {
+                        foreach (var document in data.Documents)
+                        {
+                            dataArray.Documents.Add(document);
+                        }
+                    }
+                    dataArray.Count += data.Count;
+                }
+
+            }
+
+            return dataArray;
+        }
+
+        private static JArray SortingResponseDocuments(JArray documents, DataSourceModel dataSource, Dictionary<string, string> queryParameters)
+        {
+            // TODO: for the moment this code is too specific for TT and HighQ, for future connectors
+            // that might use internal sorting we need to find a way to do it in a more generic way
+            if (dataSource.CombinedLocations)
+                documents = new JArray(documents.OrderByDescending(obj => (DateTime)obj["CreationDate"]));
+            else if (dataSource.InternalSorting)
+            {
+                string flatResStr = documents.ToString();
+                flatResStr = flatResStr.Replace("score\": \"\"", "score\": 0.0");
+                flatResStr = flatResStr.Replace("confidence\": \"\"", "confidence\": 0.0");
+                documents = JArray.Parse(flatResStr);
+
+                if (!string.IsNullOrEmpty(queryParameters["keyWord"]))
+                    documents = new(documents.OrderByDescending(obj => (float)obj["AdditionalProperties"]["score"]));
+                else
+                    documents = new JArray(documents.OrderByDescending(obj => (float)obj["AdditionalProperties"]["confidence"]));
+            }
+
+            return documents;
         }
     }
 }
