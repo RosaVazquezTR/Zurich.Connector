@@ -177,7 +177,9 @@ namespace Zurich.Connector.Data.Services
                 if (data == null)
                     return data;
 
-                if (data.Documents != null)
+                // TODO: Check if the count for TT response can be sent the same way the other connectors do so we can change this validation
+                //if (data?.Count > 0)
+                if (connectorModel.DataSource.CombinedLocations || connectorModel.DataSource.InternalSorting)
                     data.Documents = SortingResponseDocuments(data.Documents, connectorModel.DataSource, queryParameters);
                 
             }
