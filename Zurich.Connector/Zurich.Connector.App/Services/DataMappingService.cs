@@ -20,8 +20,6 @@ namespace Zurich.Connector.App.Services
         /// <param name="hostname">Host name</param>
         /// <returns> Returns ConnectorModel</returns>
         public Task<ConnectorModel> RetrieveProductInformationMap(string connectionIdentifier, string hostname, bool retrieveFilters);
-
-        public Dictionary<string, string> UpdateOffset(string AppCode, List<DataSourceInformation> availableRegistrations, Dictionary<string, string> queryParameters);
     }
 
     /// <summary>
@@ -67,21 +65,6 @@ namespace Zurich.Connector.App.Services
             }
 
             return connector;
-        }
-
-        public Dictionary<string, string> UpdateOffset(string AppCode, List<DataSourceInformation> availableRegistrations, Dictionary<string, string> queryParameters)
-        {
-            if(availableRegistrations?.Count > 1)
-            {
-                if(queryParameters.ContainsKey(QueryParameters.Offset) && queryParameters.ContainsKey(QueryParameters.ResultSize))
-                {
-                    if (int.TryParse(queryParameters["Offset"], out int Offset) && int.TryParse(queryParameters["ResultSize"], out int ResultSize))
-                    {
-                        queryParameters[QueryParameters.ResultSize] = (ResultSize - Offset).ToString();
-                    }
-                }
-            }
-            return queryParameters;
         }
     }
 }

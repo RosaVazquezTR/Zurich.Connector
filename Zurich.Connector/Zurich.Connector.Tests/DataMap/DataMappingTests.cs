@@ -1167,20 +1167,5 @@ namespace Zurich.Connector.Tests
 			Assert.AreEqual(0, date.Second);
 
 		}
-
-        [TestMethod]
-        public void UpdateOffsetTest()
-        {
-            // ARRANGE
-            string AppCode = string.Empty;
-            var availableRegistrations = MockConnectorData.SetupAvailableUserRegistrations().ToList();
-            Dictionary<string, string> queryParameters = new Dictionary<string, string>() { { "Offset", "5" }, { "ResultSize", "10" } };
-            DataMappingService dataMappingService = new DataMappingService(_cosmosService, _mockMapper.Object, _mockOAuthServices.Object);
-
-            queryParameters = dataMappingService.UpdateOffset(AppCode, availableRegistrations, queryParameters);
-
-			Assert.IsNotNull(queryParameters);
-			Assert.AreEqual(queryParameters["ResultSize"], "5");
-		}
     }
 }

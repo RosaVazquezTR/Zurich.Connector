@@ -120,8 +120,6 @@ namespace Zurich.Connector.Data.Services
 
             availableRegistrations = availableRegistrations?.FindAll(x => x.AppCode == connectorModel.DataSource.AppCode).Take(instanceLimit).ToList<DataSourceInformation>();
 
-            queryParameters = _dataMappingService.UpdateOffset(connectorModel.DataSource.AppCode, availableRegistrations, queryParameters);
-
             if (queryParameters.ContainsKey(QueryParameters.ResultSize))
             {
                 if (Convert.ToInt64(queryParameters[QueryParameters.ResultSize]) > MaxRecordSizePerInstance)

@@ -322,7 +322,6 @@ namespace Zurich.Connector.Tests.ServiceTests
 
             _mockdataMappingService.Setup(x => x.RetrieveProductInformationMap(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>())).Returns(Task.FromResult(connector));
             _mockOAuthServices.Setup(x => x.GetUserRegistrations()).Returns(Task.FromResult(availableRegistrations));
-            _mockdataMappingService.Setup(x => x.UpdateOffset(It.IsAny<string>(), It.IsAny<List<DataSourceInformation>>(), It.IsAny<Dictionary<string, string>>())).Returns(cdmQueryParameters);
 
             // ACT
             var mappedResult = await service.GetConnectorData("12", null, null, cdmQueryParameters, true);
@@ -357,7 +356,6 @@ namespace Zurich.Connector.Tests.ServiceTests
 
             _mockdataMappingService.Setup(x => x.RetrieveProductInformationMap(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>())).Returns(Task.FromResult(connector));
             _mockOAuthServices.Setup(x => x.GetUserRegistrations()).Returns(Task.FromResult(availableRegistrations));
-            _mockdataMappingService.Setup(x => x.UpdateOffset(It.IsAny<string>(), It.IsAny<List<DataSourceInformation>>(), It.IsAny<Dictionary<string, string>>())).Returns(cdmQueryParameters);
 
             // ACT
             var mappedResult = await service.GetConnectorData("12", null, null, cdmQueryParameters, false);
@@ -392,7 +390,6 @@ namespace Zurich.Connector.Tests.ServiceTests
 
             _mockdataMappingService.Setup(x => x.RetrieveProductInformationMap(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>())).Returns(Task.FromResult(connector));
             _mockOAuthServices.Setup(x => x.GetUserRegistrations()).Returns(Task.FromResult(availableRegistrations));
-            _mockdataMappingService.Setup(x => x.UpdateOffset(It.IsAny<string>(), It.IsAny<List<DataSourceInformation>>(), It.IsAny<Dictionary<string, string>>())).Returns(cdmQueryParameters);
 
             // ACT
             var mappedResult = await service.GetConnectorData("14", null, null, cdmQueryParameters, false);
