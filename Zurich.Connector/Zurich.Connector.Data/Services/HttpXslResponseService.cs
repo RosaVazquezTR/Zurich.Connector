@@ -67,16 +67,15 @@ namespace Zurich.Connector.Data.Services
                     foreach (SearchItemEntity item in searchObject.Documents)
                     {
                         item.Title = item.Title.Replace("\"", string.Empty);
-                        item.Snippet = item.Snippet.Replace("\"", string.Empty);
-
+                        item.Snippet = item.Snippet.Replace("\"", string.Empty).Replace("&lt;span class=co_searchTerm&gt;", string.Empty).Replace("&lt;/span&gt;", string.Empty).Replace("amp;", string.Empty);                                                  
                     }
                 }
+                response = JsonConvert.SerializeObject(searchObject);
             }
             catch(Exception ex)
             {
                 response = string.Empty;
             }
-            response = JsonConvert.SerializeObject(JsonConvert.DeserializeObject(response));
             return response;
         }
 
