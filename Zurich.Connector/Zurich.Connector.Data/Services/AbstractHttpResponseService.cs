@@ -28,47 +28,9 @@ namespace Zurich.Connector.Data.Services
                 string path = Directory.GetCurrentDirectory() + "\\Transformation\\TTtransformer3.json";
                 string transformer = File.ReadAllText(path);
                 string transformedString = JsonTransformer.Transform(transformer, input); //Add the thoughtId and thoughtTypeId fields to toug
-
-                int skip = 0;
-                int limitCounter = 1;
-                int position = 0;
-                bool skipEnabled = false;
-                bool unlimited = false;
-                int currentPage = 1;
-                Decimal totalPages = 1;
-
-                List<int> lstPositions = new List<int>();
                 JObject jObjectTop = new JObject();
                 var obj = JObject.Parse(transformedString);
                 JArray acumulate = new JArray();
-
-                var totalThoughts = obj["Documents"].Children()["thoughts"].Children()["id"].Count();
-                int limit = totalThoughts;
-                
-                if (requestParameter.ContainsKey("resultsPerPage"))
-                {
-                    if (Convert.ToInt32(requestParameter["resultsPerPage"]) > 0)
-                    {
-                        limit = Convert.ToInt32(requestParameter["resultsPerPage"]);
-                        totalPages = Math.Ceiling((decimal)totalThoughts / (decimal)limit);
-                    }
-                    else
-                    {
-                        unlimited = true;
-                    }
-                }
-
-                if (requestParameter.ContainsKey("start"))
-                    if (Convert.ToInt32(requestParameter["start"]) > 0)
-                        currentPage = Convert.ToInt32(requestParameter["start"]);
-
-                if (currentPage > totalPages)
-                    currentPage = (int)totalPages;
-
-                if (currentPage != 1)
-                    skip = (currentPage * limit) - limit;
-                if (skip > 0)
-                    skipEnabled = true;
 
                 foreach (var document in obj["Documents"])
                 {
@@ -85,43 +47,16 @@ namespace Zurich.Connector.Data.Services
                         var clauseTypeId = thought["clauseTypeId"].Value<string>();
                         foreach (var field in thought["fields"])
                         {
-                            position++;
-
-                            if (!skipEnabled)
-                            {
-                                if (limitCounter <= limit || unlimited)
-                                {
-                                    if (limitCounter < totalThoughts)
-                                    {
-                                        field["documentId"] = docId;
-                                        field["name"] = name;
-                                        field["createdOn"] = createdOn;
-                                        field["documentTypeId"] = documentTypeId;
-                                        field["pageCount"] = pageCount;
-                                        field["lastModifiedOn"] = lastModifiedOn;
-                                        field["processingStatus"] = processingStatus;
-                                        field["thoughtId"] = id;
-                                        field["clauseTypeId"] = clauseTypeId;
-                                        field["position"] = position;
-
-                                        lstPositions.Add(position);
-                                        acumulate.Add(field);
-                                        limitCounter++;
-                                    }
-                                }
-                                else
-                                {
-                                    break;
-                                }
-                            }
-                            else
-                            {
-                                skip--;
-                                if (skip == 0)
-                                {
-                                    skipEnabled = false;
-                                }
-                            }
+                            field["documentId"] = docId;
+                            field["name"] = name;
+                            field["createdOn"] = createdOn;
+                            field["documentTypeId"] = documentTypeId;
+                            field["pageCount"] = pageCount;
+                            field["lastModifiedOn"] = lastModifiedOn;
+                            field["processingStatus"] = processingStatus;
+                            field["thoughtId"] = id;
+                            field["clauseTypeId"] = clauseTypeId;
+                            acumulate.Add(field);
                         }
                     }
                 }
@@ -129,9 +64,31 @@ namespace Zurich.Connector.Data.Services
                 JProperty documents = new JProperty("Documents", acumulate);
                 jObjectTop.Add(documents);
 
+
+                // Calculating pagination data
+                // TT Pagination values
+                int currentPage = 1;
+                int totalPages = 1;
+                int totalThoughts = acumulate.Count();
+                int resultsPerPage = totalThoughts;
                 dynamic paginationDoc = new JObject();
-                paginationDoc.from = lstPositions.First();
-                paginationDoc.to = lstPositions.Last();
+
+                if (requestParameter.ContainsKey("resultsPerPage") && Convert.ToInt32(requestParameter["resultsPerPage"]) > 0)
+                {
+                    resultsPerPage = Convert.ToInt32(requestParameter["resultsPerPage"]);
+                    totalPages = (int)Math.Ceiling((decimal)totalThoughts / (decimal)resultsPerPage);
+                }
+                if (requestParameter.ContainsKey("start") && (Convert.ToInt32(requestParameter["start"]) > 0))
+                {
+                    currentPage = Convert.ToInt32(requestParameter["start"]);
+                    if (currentPage > totalPages) 
+                    {
+                        currentPage = totalPages;
+                    }
+                }
+                
+                paginationDoc.from = (currentPage-1) * resultsPerPage+1;
+                paginationDoc.to = ((currentPage)*resultsPerPage> totalThoughts)? totalThoughts : (currentPage) * resultsPerPage;
                 paginationDoc.of = totalThoughts;
 
                 paginationDoc.PagesPaginationInfo = new JObject();

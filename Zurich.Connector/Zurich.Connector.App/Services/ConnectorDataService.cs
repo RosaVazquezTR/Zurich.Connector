@@ -200,7 +200,11 @@ namespace Zurich.Connector.Data.Services
                 //if (data?.Count > 0)
                 if (connectorModel.DataSource.CombinedLocations || connectorModel.DataSource.InternalSorting)
                     data.Documents = SortingResponseDocuments(data.Documents, connectorModel.DataSource, queryParameters);
-                
+                if (data.AdditionalProperties != null && data.AdditionalProperties.pagination != null) {
+                    var pagination_to = (int)data.AdditionalProperties.pagination.to;
+                    var pagination_from = (int)data.AdditionalProperties.pagination.from;
+                    data.Documents = PaginationResponseDocuments(data.Documents, pagination_from, pagination_to);
+                }
             }
 
             // if there is no data because resultSize = 0 default to a JObject
@@ -441,6 +445,15 @@ namespace Zurich.Connector.Data.Services
             return dataArray;
         }
 
+        private static JArray PaginationResponseDocuments(JArray documents, int from, int to)
+        {
+            JArray aux = new JArray();
+            for (int i = from-1; i < to; i++) {
+                aux.Add(documents[i]);
+            }
+            return aux;
+        }
+
         private static JArray SortingResponseDocuments(JArray documents, DataSourceModel dataSource, Dictionary<string, string> queryParameters)
         {
             // TODO: for the moment this code is too specific for TT and HighQ, for future connectors
@@ -458,9 +471,9 @@ namespace Zurich.Connector.Data.Services
                         ?.Where(filter => filter["key"].Value<string>() == "keyword").FirstOrDefault()?["value"];
 
                 if (!String.IsNullOrEmpty(keyWord?.Value<string>()))
-                    documents = new(documents.OrderByDescending(obj => (float)obj["AdditionalProperties"]["score"]));
+                    documents = new(documents.OrderByDescending(obj => (float)obj["AdditionalProperties"]["score"]).ThenBy(obj => obj["AdditionalProperties"]["fieldId"]));
                 else
-                    documents = new JArray(documents.OrderByDescending(obj => (float)obj["AdditionalProperties"]["confidence"]));
+                    documents = new JArray(documents.OrderByDescending(obj => (float)obj["AdditionalProperties"]["confidence"]).ThenBy(obj => obj["AdditionalProperties"]["fieldId"]));
             }
 
             return documents;
