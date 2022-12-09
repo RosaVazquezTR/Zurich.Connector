@@ -162,7 +162,28 @@ namespace Zurich.Connector.Data.Services
             if (!resultSize.HasValue || resultSize.Value > 0)
             {
                 if (connectorModel.DataSource.CombinedLocations)
-                    data = await GetDataForMultiInstanceConnector(connectorModel, connectorDocument, availableRegistrations, service, queryParameters, transferToken, hostname);
+                {
+                    var instanceFilter = connectorDocument.Filters.Where(filter => filter.Name == "InstanceFilter").FirstOrDefault();
+                    connectorDocument.Filters.Remove(instanceFilter);
+                    foreach (DataSourceInformation currentRegistration in availableRegistrations)
+                    {
+                        FilterList availableInstance = new()
+                        {
+                            Id = currentRegistration.Domain,
+                            Name = currentRegistration.Name
+                        };
+                        instanceFilter.FilterList.Add(availableInstance);
+                    }
+                    connectorDocument.Filters.Add(instanceFilter);
+
+                    if (queryParameters.ContainsKey("Instance.Filter"))
+                        availableRegistrations = availableRegistrations.FindAll(regs => queryParameters["Instance.Filter"].Contains(regs.Name));
+                    if (availableRegistrations.Count > 0)
+                        data = await GetDataForMultiInstanceConnector(connectorModel, connectorDocument, availableRegistrations, service, queryParameters, transferToken, hostname);
+                    else
+                        return data;
+
+                }
                 else
                 {
                     NameValueCollection mappedQueryParameters = MapQueryParametersFromDB(queryParameters, connectorModel);
@@ -191,6 +212,7 @@ namespace Zurich.Connector.Data.Services
             if (retrieveFilters == true && data != null)
             {
                 JToken mappingFilters = JToken.FromObject(connectorDocument.Filters);
+                
                 if (data is JArray)
                 {
                     foreach (JObject instance in data)
