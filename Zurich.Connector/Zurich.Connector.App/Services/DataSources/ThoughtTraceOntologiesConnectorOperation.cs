@@ -62,11 +62,11 @@ namespace Zurich.Connector.App.Services.DataSources
                     thoughtTypeIds.Add(fieldType["thoughtTypeId"].Value<string>());
 
             }
-
+            var thoughtFieldTypeId = "";
             //For each thoughTypeId, we add a new filter to parameters, we first need to extract the thoughFieldTypeId from onotlogies
             foreach( var thoughtTypeId in thoughtTypeIds.Distinct())
             {
-                var thoughtFieldTypeId = await GetProvisionThoughtFieldTypeIdFromOntologies(thoughtTypeId);
+                thoughtFieldTypeId = await GetProvisionThoughtFieldTypeIdFromOntologies(thoughtTypeId);
 
                 if (thoughtFieldTypeId == null)
                     continue;
@@ -96,7 +96,7 @@ namespace Zurich.Connector.App.Services.DataSources
             }
 
             allParameters["thoughtFilters"] = thoughtFilters.ToString();
-
+            allParameters["provisionID"] = thoughtFieldTypeId;
             return allParameters;
         }
 

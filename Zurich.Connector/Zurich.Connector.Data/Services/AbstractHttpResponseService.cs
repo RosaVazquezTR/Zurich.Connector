@@ -6,7 +6,7 @@ using System.IO;
 using System.Collections.Generic;
 using System;
 using System.Linq;
-
+using System.Collections.Specialized;
 namespace Zurich.Connector.Data.Services
 {
     public abstract class AbstractHttpResponseService
@@ -16,7 +16,7 @@ namespace Zurich.Connector.Data.Services
         {
             return JToken.Parse(response);
         }
-        public async virtual Task<JToken> GetJTokenResponse(string response, ConnectorResponse connectorResponse, string connectorId, Dictionary<string, string> requestParameter)
+        public async virtual Task<JToken> GetJTokenResponse(string response, ConnectorResponse connectorResponse, string connectorId, Dictionary<string, string> requestParameter, NameValueCollection query)
         {
             //TODO: add a data source parameter to avoid using connector ids directly in the code
             if (connectorId != "52")
@@ -24,6 +24,7 @@ namespace Zurich.Connector.Data.Services
             else
             // TT transformation response
             {
+                string provisionID = query["provisionID"];
                 string input = "{\"Documents\":" + response + "}";
                 string path = Directory.GetCurrentDirectory() + "\\Transformation\\TTtransformer3.json";
                 string transformer = File.ReadAllText(path);
@@ -47,16 +48,19 @@ namespace Zurich.Connector.Data.Services
                         var clauseTypeId = thought["clauseTypeId"].Value<string>();
                         foreach (var field in thought["fields"])
                         {
-                            field["documentId"] = docId;
-                            field["name"] = name;
-                            field["createdOn"] = createdOn;
-                            field["documentTypeId"] = documentTypeId;
-                            field["pageCount"] = pageCount;
-                            field["lastModifiedOn"] = lastModifiedOn;
-                            field["processingStatus"] = processingStatus;
-                            field["thoughtId"] = id;
-                            field["clauseTypeId"] = clauseTypeId;
-                            acumulate.Add(field);
+                            if (field["clauseTermId"].ToString() == provisionID)
+                            {
+                                field["documentId"] = docId;
+                                field["name"] = name;
+                                field["createdOn"] = createdOn;
+                                field["documentTypeId"] = documentTypeId;
+                                field["pageCount"] = pageCount;
+                                field["lastModifiedOn"] = lastModifiedOn;
+                                field["processingStatus"] = processingStatus;
+                                field["thoughtId"] = id;
+                                field["clauseTypeId"] = clauseTypeId;
+                                acumulate.Add(field);
+                            }
                         }
                     }
                 }

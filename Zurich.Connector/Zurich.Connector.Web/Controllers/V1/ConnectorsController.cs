@@ -40,7 +40,7 @@ namespace Zurich.Connector.Web.Controllers
         [HttpGet("{id}/data")]
         public async Task<ActionResult<dynamic>> ConnectorData(string id, [FromQuery] string hostName, [FromQuery] string transferToken, bool retrieveFilters)
         {
-            dynamic results;
+           dynamic results;
             try
             {
                 // TODO: Eventually hostname and transferToken will be removed 
@@ -114,7 +114,7 @@ namespace Zurich.Connector.Web.Controllers
                     StatusCode = StatusCodes.Status500InternalServerError
                 };
             }
-
+            
         }
 
         /// <summary>

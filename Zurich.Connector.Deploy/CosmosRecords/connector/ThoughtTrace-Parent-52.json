@@ -15,6 +15,14 @@
         "method": "POST",
         "parameters": [
 		    {
+                "cdmName": "expandFieldResults",
+                "name": "expandFieldResults",
+                "inClause": "Body",
+                "required": true,
+                "type": "string",
+                "defaultValue": "false"
+            },
+		    {
                 "cdmName": "keyWord",
                 "name": "keyWord",
                 "inClause": "Body",
