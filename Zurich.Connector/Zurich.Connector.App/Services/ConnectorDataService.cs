@@ -200,7 +200,7 @@ namespace Zurich.Connector.Data.Services
                 //if (data?.Count > 0)
                 if (connectorModel.DataSource.CombinedLocations || connectorModel.DataSource.InternalSorting)
                     data.Documents = SortingResponseDocuments(data.Documents, connectorModel.DataSource, queryParameters);
-                if (data["AdditionalProperties"] != null && data.AdditionalProperties.pagination != null) {
+                if (data is JObject && data["AdditionalProperties"] != null && data.AdditionalProperties.pagination != null) {
                     var pagination_to = (int)data.AdditionalProperties.pagination.to;
                     var pagination_from = (int)data.AdditionalProperties.pagination.from;
                     data.Documents = PaginationResponseDocuments(data.Documents, pagination_from, pagination_to);
