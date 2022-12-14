@@ -449,6 +449,7 @@ namespace Zurich.Connector.Data.Services
         {
             JArray aux = new JArray();
             for (int i = from-1; i < to; i++) {
+                documents[i]["AdditionalProperties"]["position"] = i+1;
                 aux.Add(documents[i]);
             }
             return aux;
