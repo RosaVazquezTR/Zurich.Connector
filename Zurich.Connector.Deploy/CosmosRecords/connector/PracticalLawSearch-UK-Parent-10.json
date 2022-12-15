@@ -112,7 +112,7 @@
 	},
 	"filters": [
 		{
-			"name": "PracticeArea",
+			"name": "Practice Areas",
 			"description": "The practice areas",
 			"isMultiselect": "true",
 			"requestParameter": "PracticeArea.filter",
@@ -240,7 +240,7 @@
 			]
 		},
 		{
-			"name": "ResourceType",
+			"name": "Resource Type",
 			"description": "ResourceType Folder",
 			"isMultiselect": "true",
 			"requestParameter": "ResourceType.filter",
@@ -400,7 +400,7 @@
 			]
 		},
 		{
-			"name": "Jurisdiction",
+			"name": "Jurisdictions",
 			"description": "Jurisdictions",
 			"isMultiselect": "true",
 			"requestParameter": "Jurisdiction.filter",

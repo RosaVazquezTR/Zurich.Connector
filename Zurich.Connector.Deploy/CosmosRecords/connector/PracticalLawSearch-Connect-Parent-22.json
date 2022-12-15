@@ -84,7 +84,7 @@
     },
     "filters": [
         {
-            "name": "PracticeArea",
+            "name": "Practice Areas",
             "description": "Allows for the selection of practice areas for Practical law connect",
             "isMultiselect": "true",
             "requestParameter": "PracticeArea.filter",

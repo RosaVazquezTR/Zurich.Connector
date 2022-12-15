@@ -163,7 +163,7 @@ namespace Zurich.Connector.Data.Services
             {
                 if (connectorModel.DataSource.CombinedLocations)
                 {
-                    var instanceFilter = connectorDocument.Filters.Where(filter => filter.Name == "InstanceFilter").FirstOrDefault();
+                    var instanceFilter = connectorDocument.Filters.Where(filter => filter.RequestParameter == "Instance.Filter").FirstOrDefault();
                     connectorDocument.Filters.Remove(instanceFilter);
                     foreach (DataSourceInformation currentRegistration in availableRegistrations)
                     {
@@ -449,7 +449,7 @@ namespace Zurich.Connector.Data.Services
         {
             JArray aux = new JArray();
             for (int i = from-1; i < to; i++) {
-                documents[i]["AdditionalProperties"]["position"] = i+1;
+                documents[i]["AdditionalProperties"]["position"] = i + 1;
                 aux.Add(documents[i]);
             }
             return aux;
