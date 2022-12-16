@@ -165,11 +165,18 @@ namespace Zurich.Connector.Data.Services
                     data = await GetDataForMultiInstanceConnector(connectorModel, connectorDocument, availableRegistrations, service, queryParameters, transferToken, hostname);
                 else
                 {
+                    //For connectors that do not support native offset we add the resultSize and the offset parameters
+                    //Then in EnrichConnectorData we will trim the result
+                    if (connectorModel.DataSource.ManualOffset)
+                    {
+                        queryParameters["resultSize"] = CalculateOffset(queryParameters).ToString();
+                    }
+
                     NameValueCollection mappedQueryParameters = MapQueryParametersFromDB(queryParameters, connectorModel);
                     Dictionary<string, string> headerParameters = await _dataExtractionService.ExtractDataSource(mappedQueryParameters, queryParameters, hostname, connectorDocument);
                     // Thinking about using the instance domain instead of its name
                     data = await service.GetAndMapResults<dynamic>(connectorDocument, transferToken, mappedQueryParameters, headerParameters, queryParameters);
-                    data = await EnrichConnectorData(connectorModel, data);
+                    data = await EnrichConnectorData(connectorModel, data, queryParameters);
                 }
 
                 if (data == null)
@@ -202,6 +209,14 @@ namespace Zurich.Connector.Data.Services
                     data[Constants.filters] = mappingFilters;
             }
             return data;
+        }
+
+        private int CalculateOffset(Dictionary<string, string> queryParameters)
+        {
+            int resultSize = Convert.ToInt32(queryParameters["resultSize"]);
+            int offset = Convert.ToInt32(queryParameters["offset"]);
+
+            return resultSize + offset;
         }
 
         public Dictionary<string, string> MapQueryAdvancedSearch(Dictionary<string, string> cdmQueryParameters, ConnectorModel connectorModel)
@@ -363,9 +378,13 @@ namespace Zurich.Connector.Data.Services
         /// <param name="connector">The data connector</param>
         /// <param name="data">The entity data</param>
         /// <returns></returns>
-        private async Task<dynamic> EnrichConnectorData(ConnectorModel connector, dynamic data)
+        private async Task<dynamic> EnrichConnectorData(ConnectorModel connector, dynamic data, Dictionary<string, string> queryParameters = null)
         {
             var dataSourceOperationsService = _dataSourceOperationsFactory.GetDataSourceOperationsService(connector?.DataSource?.AppCode);
+            if (connector.DataSource.ManualOffset)
+            {
+                data.Documents = ManualOffset(data, queryParameters);
+            }
             if (dataSourceOperationsService != null)
             {
                 data = await dataSourceOperationsService.SetItemLink(connector.Info.EntityType, data, connector?.DataSource?.AppCode, connector.HostName);
@@ -374,6 +393,26 @@ namespace Zurich.Connector.Data.Services
             else
                 _logger.LogInformation("No data source operations service found for {appCode}", connector?.DataSource?.AppCode ?? "");
             return data;
+        }
+
+        private static dynamic ManualOffset(dynamic data, Dictionary<string, string> queryParameters)
+        {
+            JArray offsetDocuments = new JArray();
+            var documents = data.Documents;
+            int resultSize = Convert.ToInt32(queryParameters["resultSize"]);
+            int offset = Convert.ToInt32(queryParameters["offset"]);
+
+            if (documents.Count < resultSize)
+            {
+                resultSize = documents.Count;
+            }
+
+            for (int i = offset; i <= resultSize - 1; i++)
+            {
+                offsetDocuments.Add(documents[i]);
+            }
+
+            return offsetDocuments;
         }
 
         private async Task<dynamic> GetDataForMultiInstanceConnector(ConnectorModel connectorModel, ConnectorDocument connectorDocument, List<DataSourceInformation> availableRegistrations, IDataMapping service, Dictionary<string, string> queryParameters, string transferToken, string hostname)
