@@ -50,6 +50,7 @@ namespace Zurich.Connector.Web.Controllers
                     && !param.Equals("retrievefilters", StringComparison.InvariantCultureIgnoreCase))
                     .ToDictionary(k => k, v => HttpContext?.Request.Query[v].ToString(), StringComparer.OrdinalIgnoreCase);
 
+                //ADD MANUALOFFSET PARAMETER TO CONNECTOR
                 var selectedConnector = _connectorService.GetConnector(id);
 
                 if (selectedConnector.Result.Filters != null)
