@@ -162,7 +162,28 @@ namespace Zurich.Connector.Data.Services
             if (!resultSize.HasValue || resultSize.Value > 0)
             {
                 if (connectorModel.DataSource.CombinedLocations)
-                    data = await GetDataForMultiInstanceConnector(connectorModel, connectorDocument, availableRegistrations, service, queryParameters, transferToken, hostname);
+                {
+                    var instanceFilter = connectorDocument.Filters.Where(filter => filter.RequestParameter == "Instance.Filter").FirstOrDefault();
+                    connectorDocument.Filters.Remove(instanceFilter);
+                    foreach (DataSourceInformation currentRegistration in availableRegistrations)
+                    {
+                        FilterList availableInstance = new()
+                        {
+                            Id = currentRegistration.Domain,
+                            Name = currentRegistration.Name
+                        };
+                        instanceFilter.FilterList.Add(availableInstance);
+                    }
+                    connectorDocument.Filters.Add(instanceFilter);
+
+                    if (queryParameters.ContainsKey("Instance.Filter"))
+                        availableRegistrations = availableRegistrations.FindAll(regs => queryParameters["Instance.Filter"].Contains(regs.Name));
+                    if (availableRegistrations.Count > 0)
+                        data = await GetDataForMultiInstanceConnector(connectorModel, connectorDocument, availableRegistrations, service, queryParameters, transferToken, hostname);
+                    else
+                        return data;
+
+                }
                 else
                 {
                     //For connectors that do not support native offset we add the resultSize and the offset parameters
@@ -186,7 +207,11 @@ namespace Zurich.Connector.Data.Services
                 //if (data?.Count > 0)
                 if (connectorModel.DataSource.CombinedLocations || connectorModel.DataSource.InternalSorting)
                     data.Documents = SortingResponseDocuments(data.Documents, connectorModel.DataSource, queryParameters);
-                
+                if (data is JObject && data["AdditionalProperties"] != null && data.AdditionalProperties.pagination != null) {
+                    var pagination_to = (int)data.AdditionalProperties.pagination.to;
+                    var pagination_from = (int)data.AdditionalProperties.pagination.from;
+                    data.Documents = PaginationResponseDocuments(data.Documents, pagination_from, pagination_to);
+                }
             }
 
             // if there is no data because resultSize = 0 default to a JObject
@@ -198,6 +223,7 @@ namespace Zurich.Connector.Data.Services
             if (retrieveFilters == true && data != null)
             {
                 JToken mappingFilters = JToken.FromObject(connectorDocument.Filters);
+                
                 if (data is JArray)
                 {
                     foreach (JObject instance in data)
@@ -458,6 +484,16 @@ namespace Zurich.Connector.Data.Services
             return dataArray;
         }
 
+        private static JArray PaginationResponseDocuments(JArray documents, int from, int to)
+        {
+            JArray aux = new JArray();
+            for (int i = from-1; i < to; i++) {
+                documents[i]["AdditionalProperties"]["position"] = i + 1;
+                aux.Add(documents[i]);
+            }
+            return aux;
+        }
+
         private static JArray SortingResponseDocuments(JArray documents, DataSourceModel dataSource, Dictionary<string, string> queryParameters)
         {
             // TODO: for the moment this code is too specific for TT and HighQ, for future connectors
@@ -475,9 +511,9 @@ namespace Zurich.Connector.Data.Services
                         ?.Where(filter => filter["key"].Value<string>() == "keyword").FirstOrDefault()?["value"];
 
                 if (!String.IsNullOrEmpty(keyWord?.Value<string>()))
-                    documents = new(documents.OrderByDescending(obj => (float)obj["AdditionalProperties"]["score"]));
+                    documents = new(documents.OrderByDescending(obj => (float)obj["AdditionalProperties"]["score"]).ThenBy(obj => obj["AdditionalProperties"]["fieldId"]));
                 else
-                    documents = new JArray(documents.OrderByDescending(obj => (float)obj["AdditionalProperties"]["confidence"]));
+                    documents = new JArray(documents.OrderByDescending(obj => (float)obj["AdditionalProperties"]["confidence"]).ThenBy(obj => obj["AdditionalProperties"]["fieldId"]));
             }
 
             return documents;

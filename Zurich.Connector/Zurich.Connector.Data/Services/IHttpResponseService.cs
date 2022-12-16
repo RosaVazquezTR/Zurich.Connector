@@ -42,6 +42,6 @@ namespace Zurich.Connector.Data.Services
         /// <returns>
         /// A <see cref="JToken"/>JToken response</returns>
         /// </returns>
-        Task<JToken> GetJTokenResponse(string response1, ConnectorResponse response2, string id, Dictionary<string, string> requestParameter);
+        Task<JToken> GetJTokenResponse(string response1, ConnectorResponse response2, string id, Dictionary<string, string> requestParameter, System.Collections.Specialized.NameValueCollection query);
     }
 }

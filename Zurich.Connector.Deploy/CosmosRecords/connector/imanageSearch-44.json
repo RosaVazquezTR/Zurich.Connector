@@ -113,13 +113,13 @@
   },
   "filters": [
     {
-      "name": "EditDate",
+      "name": "Last modified date",
       "description": "The format is [begin]:[end][timescale]. The time scale is 'd' for days, 'm' for months, 'y' for years. Example: -30:0d. These dates are relative to each other prior the current date.",
       "isMultiselect": "false",
       "requestParameter": "EditDate.filter"
     },
     {
-      "name": "CreateDate",
+      "name": "Creation date",
       "description": "The format is [begin]:[end][timescale]. The time scale is 'd' for days, 'm' for months, 'y' for years. Example: -30:0d. These dates are relative to each other prior the current date.",
       "isMultiselect": "false",
       "requestParameter": "CreateDate.filter"
@@ -149,7 +149,7 @@
       "requestParameter": "Owner.filter"
     },
     {
-      "name": "ContainerId",
+      "name": "Container Id",
       "description": "Returns documents or emails from the specified container_id only.",
       "isMultiselect": "false",
       "requestParameter": "ContainerId.filter"

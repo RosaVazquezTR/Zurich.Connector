@@ -122,6 +122,14 @@
           "id": "xml"
         }
       ]
+    },
+    {
+      "name": "Instance Filter",
+      "description": "The instances where the search will run",
+      "isMultiselect": "true",
+      "requestParameter": "Instance.Filter",
+      "filterlist": [
+      ]
     }
   ],
   "pagination": {
