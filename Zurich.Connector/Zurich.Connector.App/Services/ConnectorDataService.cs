@@ -188,7 +188,7 @@ namespace Zurich.Connector.Data.Services
                 {
                     //For connectors that do not support native offset we add the resultSize and the offset parameters
                     //Then in EnrichConnectorData we will trim the result
-                    if (connectorModel.DataSource.ManualOffset)
+                    if (connectorModel.DataSource.ManualOffset && queryParameters.ContainsKey("resultSize") && queryParameters.ContainsKey("offset"))
                     {
                         queryParameters["resultSize"] = CalculateOffset(queryParameters).ToString();
                     }
@@ -407,7 +407,8 @@ namespace Zurich.Connector.Data.Services
         private async Task<dynamic> EnrichConnectorData(ConnectorModel connector, dynamic data, Dictionary<string, string> queryParameters = null)
         {
             var dataSourceOperationsService = _dataSourceOperationsFactory.GetDataSourceOperationsService(connector?.DataSource?.AppCode);
-            if (connector.DataSource.ManualOffset)
+
+            if (connector.DataSource.ManualOffset && queryParameters.ContainsKey("resultSize") && queryParameters.ContainsKey("offset"))
             {
                 data.Documents = ManualOffset(data, queryParameters);
             }
