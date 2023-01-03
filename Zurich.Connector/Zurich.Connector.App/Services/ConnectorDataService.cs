@@ -22,6 +22,7 @@ using Microsoft.Extensions.Configuration;
 using Zurich.Connector.App.Exceptions;
 using Zurich.Common.Models.OAuth;
 using Zurich.Common.Repositories;
+using GroupDocs.Search.Dictionaries;
 
 namespace Zurich.Connector.Data.Services
 {
@@ -148,6 +149,21 @@ namespace Zurich.Connector.Data.Services
             {
                 if (queryParameters.ContainsKey("Query"))
                     queryParameters["Query"] = System.Web.HttpUtility.UrlDecode(queryParameters["Query"]);
+
+                string query = System.Web.HttpUtility.UrlDecode(queryParameters["Query"]);
+                string[] synonyms = new GroupDocs.Search.Index().Dictionaries.SynonymDictionary.GetSynonyms(query);
+
+                string indexFolder = @"C:\Users\6116345\Documents";
+
+                // Creating an index from in specified folder
+                GroupDocs.Search.Index index = new(indexFolder);
+                // Export synonyms to a file
+                index.Dictionaries.SynonymDictionary.ExportDictionary(@".\Synonyms.dat");
+
+                // Import synonyms from a file
+                index.Dictionaries.SynonymDictionary.ImportDictionary(@".\Synonyms.dat");
+
+                string[] synonyms2 = index.Dictionaries.SynonymDictionary.GetSynonyms(query);
             }
 
             ConnectorDocument connectorDocument = _mapper.Map<ConnectorDocument>(connectorModel);
