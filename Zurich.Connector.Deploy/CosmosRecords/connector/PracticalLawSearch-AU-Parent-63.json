@@ -1,0 +1,154 @@
+{
+	"id": "63",
+	"partitionkey": "ConnectorList",
+	"alias": "plcau.search",
+	"info": {
+		"title": "Get Search Practical law documents - UK",
+		"description": "Pull Practical law documents - UK",
+		"entityType": "Search",
+		"dataSourceId": "49",
+		"version": "1.0",
+		"subType": "Parent",
+		"isDynamicFilter": true
+	},
+    "preRelease": true,
+	"request": {
+		"endpointPath": "/v4/federatedsearch",
+		"method": "GET",
+		"parameters": [
+			{
+				"cdmName": "Query",
+				"name": "searchTerm",
+				"inClause": "Query",
+				"required": false,
+				"type": "string",
+				"defaultValue": "*"
+			},
+			{
+				"cdmName": "PracticeArea.filter",
+				"name": "products",
+				"inClause": "Query",
+				"required": false,
+				"type": "string",
+				"defaultValue": ""
+			},
+			{
+				"cdmName": "ResourceType.filter",
+				"name": "resourceTypeFolders",
+				"inClause": "Query",
+				"required": false,
+				"type": "string",
+				"defaultValue": ""
+			},
+			{
+				"cdmName": "Jurisdiction.filter",
+				"name": "jurisdictions",
+				"inClause": "Query",
+				"required": false,
+				"type": "string",
+				"defaultValue": ""
+			},
+			{
+				"cdmName": "Locale",
+				"name": "locale",
+				"inClause": "Query",
+				"required": true,
+				"type": "string",
+				"defaultValue": "AU"
+			},
+			{
+				"cdmName": "ResultSize",
+				"name": "resultsCount",
+				"inClause": "Query",
+				"required": true,
+				"type": "string",
+				"defaultValue": "25"
+			},
+			{
+				"cdmName": "Offset",
+				"name": "resultsStartIndex",
+				"inClause": "Body",
+				"required": true,
+				"type": "string",
+				"defaultValue": "1"
+			},
+			{
+				"cdmName": "MultivalueSingleFilter",
+				"name": "isFilterPlural",
+				"inClause": "Query",
+				"required": false,
+				"type": "string",
+				"defaultValue": "true"
+			}
+		],
+		"sorting": {
+			"properties": [
+				{
+					"name": "Date",
+					"type": "date",
+					"element": "sortOrder",
+					"elementValue": "DATE"
+				},
+				{
+					"name": "Alphabetical",
+					"type": "string",
+					"element": "sortOrder",
+					"elementValue": "ARTICLE"
+				},
+				{
+					"name": "Relevance",
+					"type": "string",
+					"element": "sortOrder",
+					"elementValue": "RELEVANCE"
+				}
+			]
+		}
+	},
+	"response": {
+		"type": "XML",
+		"xmlArrayAttribute": [
+			"//searchResults/detail/document",
+			"//searchResults/detail/document/jurisdictionList/jurisdiction"
+		]
+	},
+	"filters": [],
+	"pagination": {
+		"available": true,
+		"isZeroBasedOffset": false
+	},
+	"resultLocation": "searchResults.detail",
+	"cdmMapping": {
+		"structured": [
+			{
+				"name": "Count",
+				"type": "short",
+				"responseElement": "total",
+				"_comment": ""
+			},
+			{
+				"name": "SourceDirectoryUrl",
+				"type": "interpolationString",
+				"responseElement": "https://(PracticalLawUKHost)/Search/Results.html?query=(%Query)&categoryPageUrl=Home/PracticalLaw&contentType=KNOWHOW_UK&querySubmissionGuid=(NewGuid())",
+				"_comment": ""
+			},
+			{
+				"name": "Documents",
+				"type": "object",
+				"responseElement": "{11}",
+				"_comment": ""
+			}
+		],
+		"unstructured": []
+	},
+	"advancedSearchSyntax": {
+		"operators": {
+			"and": "&",
+			"or": "or",
+			"textualOcurrence": "\"",
+			"not": "%",
+			"wildcard": "*",
+			"proximity": "/",
+			"termGrouping": "("
+		}
+	}
+}
