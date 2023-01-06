@@ -111,7 +111,1376 @@
 			"//searchResults/detail/document/jurisdictionList/jurisdiction"
 		]
 	},
-	"filters": [],
+	"filters": [
+		{
+			"name": "Practice Areas",
+			"description": "The practice areas",
+			"isMultiselect": "true",
+			"requestParameter": "PracticeArea.filter",
+			"filterlist": [
+				{
+					"name": "Banking and Finance",
+					"id": "w-010-4233"
+				},
+				{
+					"name": "Commercial Real Estate",
+					"id": "w-012-8000"
+				},
+				{
+					"name": "Commercial",
+					"id": "w-003-7577"
+				},
+				{
+					"name": "Company Law",
+					"id": "w-000-6549"
+				},
+				{
+					"name": "Competition and Regulation",
+					"id": "w-007-7631"
+				},
+				{
+					"name": "Corporate Transactions",
+					"id": "w-000-5040"
+				},
+				{
+					"name": "Dispute Resolution",
+					"id": "w-002-7371"
+				},
+				{
+					"name": "Employment",
+					"id": "w-000-5039"
+				},
+				{
+					"name": "Equity Capital Markets",
+					"id": "w-000-6550"
+				},
+				{
+					"name": "Hong Kong Resource Centre",
+					"id": "w-021-0602"
+				},
+				{
+					"name": "In-house Centre",
+					"id": "w-010-4230"
+				},
+				{
+					"name": "Insolvency and Restructuring",
+					"id": "w-023-8930"
+				},
+				{
+					"name": "New Zealand Resource Centre",
+					"id": "w-018-0227"
+				},
+				{
+					"name": "Private Business Structures",
+					"id": "w-000-6551"
+				}
+			]
+		},
+		{
+			"name": "Resource Type",
+			"description": "ResourceType Folder",
+			"isMultiselect": "true",
+			"requestParameter": "ResourceType.filter",
+			"filterlist": [
+				{
+					"name": "Article other",
+					"id": "7-103-0955"
+				},
+				{
+					"name": "Articles",
+					"id": "5-103-0956"
+				},
+				{
+					"name": "Articles - professional",
+					"id": "3-103-0957"
+				},
+				{
+					"name": "Ask",
+					"id": "4-509-4746"
+				},
+				{
+					"name": "Ask PLC Non-legal query",
+					"id": "0-509-4748"
+				},
+				{
+					"name": "Binary Document",
+					"id": "9-500-0000"
+				},
+				{
+					"name": "Book",
+					"id": "8-512-7472"
+				},
+				{
+					"name": "BriefBankSummary",
+					"id": "0-519-5846"
+				},
+				{
+					"name": "Case page",
+					"id": "5-520-5433"
+				},
+				{
+					"name": "Case report list",
+					"id": "7-103-0960"
+				},
+				{
+					"name": "Case Study",
+					"id": "4-103-0829"
+				},
+				{
+					"name": "CaseTracker",
+					"id": "5-103-0961"
+				},
+				{
+					"name": "Chapter",
+					"id": "5-512-7478"
+				},
+				{
+					"name": "Checklists",
+					"id": "8-103-0969"
+				},
+				{
+					"name": "Country QandA",
+					"id": "5-378-9574"
+				},
+				{
+					"name": "Drafting notes",
+					"id": "2-103-0967"
+				},
+				{
+					"name": "Emails",
+					"id": "4-103-0971"
+				},
+				{
+					"name": "External resources",
+					"id": "8-103-0988"
+				},
+				{
+					"name": "Forms",
+					"id": "0-103-0968"
+				},
+				{
+					"name": "Glossary",
+					"id": "1-103-0963"
+				},
+				{
+					"name": "Help and information notes",
+					"id": "4-103-2003"
+				},
+				{
+					"name": "Legal update - archive",
+					"id": "2-103-2004"
+				},
+				{
+					"name": "Legal update - case report",
+					"id": "0-520-5435"
+				},
+				{
+					"name": "Legislation",
+					"id": "1-103-0977"
+				},
+				{
+					"name": "Legislation Tracker",
+					"id": "3-524-0970"
+				},
+				{
+					"name": "News",
+					"id": "9-103-0978"
+				},
+				{
+					"name": "Policy guidance and consultations",
+					"id": "1-103-0958"
+				},
+				{
+					"name": "Practice note - overview",
+					"id": "9-103-2005"
+				},
+				{
+					"name": "Practice notes",
+					"id": "1-103-0982"
+				},
+				{
+					"name": "PrimarySource",
+					"id": "7-504-1186"
+				},
+				{
+					"name": "Standard clauses",
+					"id": "4-103-0966"
+				},
+				{
+					"name": "Standard documents",
+					"id": "6-103-0965"
+				},
+				{
+					"name": "State Q&A",
+					"id": "1-524-0971"
+				},
+				{
+					"name": "State Q&A Tool",
+					"id": "4-524-8353"
+				},
+				{
+					"name": "Toolkit",
+					"id": "5-524-0969"
+				},
+				{
+					"name": "Training materials",
+					"id": "4-103-0985"
+				},
+				{
+					"name": "Training modules",
+					"id": "5-103-2007"
+				},
+				{
+					"name": "Training questions",
+					"id": "2-103-0986"
+				}
+			]
+		},
+		{
+			"name": "Jurisdictions",
+			"description": "Jurisdictions",
+			"isMultiselect": "true",
+			"requestParameter": "Jurisdiction.filter",
+			"filterlist": [
+				{
+					"name": "USA",
+					"id": "7-103-0719"
+				},
+				{
+					"name": "UK",
+					"id": "1-503-0968"
+				},
+				{
+					"name": "Afghanistan",
+					"id": "5-503-0184"
+				},
+				{
+					"name": "Africa",
+					"id": "5-103-0579"
+				},
+				{
+					"name": "Albania",
+					"id": "3-103-0580"
+				},
+				{
+					"name": "Algeria",
+					"id": "1-103-0581"
+				},
+				{
+					"name": "Andorra",
+					"id": "9-103-0582"
+				},
+				{
+					"name": "Angola",
+					"id": "7-103-0583"
+				},
+				{
+					"name": "Anguilla",
+					"id": "9-201-6702"
+				},
+				{
+					"name": "Antigua and Barbuda",
+					"id": "8-503-0210"
+				},
+				{
+					"name": "Argentina",
+					"id": "5-103-0584"
+				},
+				{
+					"name": "Armenia",
+					"id": "1-520-4572"
+				},
+				{
+					"name": "Australia",
+					"id": "2-103-0585"
+				},
+				{
+					"name": "Austria",
+					"id": "0-103-0586"
+				},
+				{
+					"name": "Azerbaijan",
+					"id": "8-103-0587"
+				},
+				{
+					"name": "Bahamas",
+					"id": "6-103-0588"
+				},
+				{
+					"name": "Bahrain",
+					"id": "4-103-0589"
+				},
+				{
+					"name": "Bangladesh",
+					"id": "4-201-7921"
+				},
+				{
+					"name": "Barbados",
+					"id": "2-103-0590"
+				},
+				{
+					"name": "Belarus",
+					"id": "0-103-0591"
+				},
+				{
+					"name": "Belgium",
+					"id": "8-103-0592"
+				},
+				{
+					"name": "Belize",
+					"id": "4-103-0594"
+				},
+				{
+					"name": "Benin",
+					"id": "5-502-9963"
+				},
+				{
+					"name": "Bermuda",
+					"id": "1-103-0595"
+				},
+				{
+					"name": "Bhutan",
+					"id": "5-503-0198"
+				},
+				{
+					"name": "Bolivia",
+					"id": "9-103-0596"
+				},
+				{
+					"name": "Bosnia and Herzegovina",
+					"id": "7-103-0597"
+				},
+				{
+					"name": "Botswana",
+					"id": "5-103-0598"
+				},
+				{
+					"name": "Brazil",
+					"id": "3-103-0599"
+				},
+				{
+					"name": "British Virgin Islands",
+					"id": "5-201-7925"
+				},
+				{
+					"name": "Brunei",
+					"id": "9-103-0600"
+				},
+				{
+					"name": "Bulgaria",
+					"id": "7-103-0601"
+				},
+				{
+					"name": "Burkina Faso",
+					"id": "1-503-0157"
+				},
+				{
+					"name": "Burma",
+					"id": "5-103-0602"
+				},
+				{
+					"name": "Burundi",
+					"id": "9-503-0158"
+				},
+				{
+					"name": "Cambodia",
+					"id": "3-503-0199"
+				},
+				{
+					"name": "Canada",
+					"id": "3-103-0603"
+				},
+				{
+					"name": "Canada Alberta",
+					"id": "5-205-8082"
+				},
+				{
+					"name": "Canada British Columbia",
+					"id": "5-205-8157"
+				},
+				{
+					"name": "Canada Manitoba",
+					"id": "1-205-5976"
+				},
+				{
+					"name": "Canada Maritime Provinces",
+					"id": "1-103-0604"
+				},
+				{
+					"name": "Canada Ontario",
+					"id": "8-103-0605"
+				},
+				{
+					"name": "Canada Quebec",
+					"id": "6-103-0606"
+				},
+				{
+					"name": "Canada Western Provinces",
+					"id": "4-103-0607"
+				},
+				{
+					"name": "Cape Verde",
+					"id": "6-503-0211"
+				},
+				{
+					"name": "Cayman Islands",
+					"id": "2-103-0608"
+				},
+				{
+					"name": "Central African Republic",
+					"id": "7-503-0159"
+				},
+				{
+					"name": "Chad",
+					"id": "5-503-0160"
+				},
+				{
+					"name": "Channel Islands-Guernsey",
+					"id": "6-203-0573"
+				},
+				{
+					"name": "Channel Islands-Jersey",
+					"id": "4-203-0574"
+				},
+				{
+					"name": "Chile",
+					"id": "4-103-0612"
+				},
+				{
+					"name": "China",
+					"id": "2-103-0613"
+				},
+				{
+					"name": "Colombia",
+					"id": "0-103-0614"
+				},
+				{
+					"name": "Comoros",
+					"id": "3-503-0161"
+				},
+				{
+					"name": "Cook Islands",
+					"id": "4-503-0212"
+				},
+				{
+					"name": "Costa Rica",
+					"id": "7-103-0615"
+				},
+				{
+					"name": "Croatia",
+					"id": "5-103-0616"
+				},
+				{
+					"name": "Cuba",
+					"id": "2-503-0213"
+				},
+				{
+					"name": "Curaçao",
+					"id": "7-549-3296"
+				},
+				{
+					"name": "Cyprus",
+					"id": "3-103-0617"
+				},
+				{
+					"name": "Czech Republic",
+					"id": "1-103-0618"
+				},
+				{
+					"name": "Democratic Republic of the Congo",
+					"id": "1-503-0162"
+				},
+				{
+					"name": "Denmark",
+					"id": "9-103-0619"
+				},
+				{
+					"name": "Djibouti",
+					"id": "9-503-0163"
+				},
+				{
+					"name": "Dominica",
+					"id": "0-503-0214"
+				},
+				{
+					"name": "Dominican Republic",
+					"id": "7-103-0620"
+				},
+				{
+					"name": "Ecuador",
+					"id": "5-103-0621"
+				},
+				{
+					"name": "Egypt",
+					"id": "3-103-0622"
+				},
+				{
+					"name": "El Salvador",
+					"id": "1-103-0623"
+				},
+				{
+					"name": "England",
+					"id": "9-103-0624"
+				},
+				{
+					"name": "Equatorial Guinea",
+					"id": "7-503-0164"
+				},
+				{
+					"name": "Eritrea",
+					"id": "4-503-0165"
+				},
+				{
+					"name": "Estonia",
+					"id": "6-103-0625"
+				},
+				{
+					"name": "Ethiopia",
+					"id": "2-503-0166"
+				},
+				{
+					"name": "European Union",
+					"id": "4-103-0626"
+				},
+				{
+					"name": "Federated States of Micronesia",
+					"id": "5-503-0216"
+				},
+				{
+					"name": "Fiji",
+					"id": "7-503-0215"
+				},
+				{
+					"name": "Finland",
+					"id": "2-103-0627"
+				},
+				{
+					"name": "France",
+					"id": "0-103-0628"
+				},
+				{
+					"name": "FYR Macedonia",
+					"id": "8-103-0629"
+				},
+				{
+					"name": "Gambia",
+					"id": "0-503-0167"
+				},
+				{
+					"name": "Georgia",
+					"id": "6-103-0630"
+				},
+				{
+					"name": "Germany",
+					"id": "4-103-0631"
+				},
+				{
+					"name": "Ghana",
+					"id": "2-103-0632"
+				},
+				{
+					"name": "Gibraltar",
+					"id": "0-103-0633"
+				},
+				{
+					"name": "Greece",
+					"id": "5-103-0635"
+				},
+				{
+					"name": "Greenland",
+					"id": "3-103-0636"
+				},
+				{
+					"name": "Grenada",
+					"id": "2-384-1738"
+				},
+				{
+					"name": "Guatemala",
+					"id": "1-103-0637"
+				},
+				{
+					"name": "Guinea",
+					"id": "8-503-0168"
+				},
+				{
+					"name": "Guinea-Bissau",
+					"id": "6-503-0169"
+				},
+				{
+					"name": "Guyana",
+					"id": "9-103-0638"
+				},
+				{
+					"name": "Haiti",
+					"id": "0-503-0209"
+				},
+				{
+					"name": "Honduras",
+					"id": "0-201-7923"
+				},
+				{
+					"name": "Hong Kong - PRC",
+					"id": "7-103-0639"
+				},
+				{
+					"name": "Hungary",
+					"id": "5-103-0640"
+				},
+				{
+					"name": "Iceland",
+					"id": "3-103-0641"
+				},
+				{
+					"name": "India",
+					"id": "1-103-0642"
+				},
+				{
+					"name": "Indonesia",
+					"id": "9-103-0643"
+				},
+				{
+					"name": "International",
+					"id": "7-103-0644"
+				},
+				{
+					"name": "Iran",
+					"id": "4-103-0645"
+				},
+				{
+					"name": "Ireland",
+					"id": "2-103-0646"
+				},
+				{
+					"name": "Isle of Man",
+					"id": "0-103-0647"
+				},
+				{
+					"name": "Israel",
+					"id": "8-103-0648"
+				},
+				{
+					"name": "Italy",
+					"id": "6-103-0649"
+				},
+				{
+					"name": "Jamaica",
+					"id": "4-103-0650"
+				},
+				{
+					"name": "Japan",
+					"id": "2-103-0651"
+				},
+				{
+					"name": "Jordan",
+					"id": "0-103-0652"
+				},
+				{
+					"name": "Kazakhstan",
+					"id": "8-103-0653"
+				},
+				{
+					"name": "Kenya",
+					"id": "6-103-0654"
+				},
+				{
+					"name": "Kiribati",
+					"id": "9-503-0200"
+				},
+				{
+					"name": "Kuwait",
+					"id": "1-103-0656"
+				},
+				{
+					"name": "Kyrgyz Republic",
+					"id": "3-103-0655"
+				},
+				{
+					"name": "Lao People's Democratic Republic",
+					"id": "7-503-0201"
+				},
+				{
+					"name": "Latvia",
+					"id": "9-103-0657"
+				},
+				{
+					"name": "Lebanon",
+					"id": "7-103-0658"
+				},
+				{
+					"name": "Lesotho",
+					"id": "4-503-0170"
+				},
+				{
+					"name": "Liberia",
+					"id": "2-503-0171"
+				},
+				{
+					"name": "Libya",
+					"id": "5-103-0659"
+				},
+				{
+					"name": "Liechtenstein",
+					"id": "3-103-0660"
+				},
+				{
+					"name": "Lithuania",
+					"id": "1-103-0661"
+				},
+				{
+					"name": "Luxembourg",
+					"id": "9-103-0662"
+				},
+				{
+					"name": "Madagascar",
+					"id": "0-503-0172"
+				},
+				{
+					"name": "Malawi",
+					"id": "8-503-0173"
+				},
+				{
+					"name": "Malaysia",
+					"id": "7-103-0663"
+				},
+				{
+					"name": "Maldives",
+					"id": "5-503-0202"
+				},
+				{
+					"name": "Mali",
+					"id": "6-503-0174"
+				},
+				{
+					"name": "Malta",
+					"id": "5-103-0664"
+				},
+				{
+					"name": "Marshall Islands",
+					"id": "3-503-0217"
+				},
+				{
+					"name": "Mauritania",
+					"id": "3-503-0175"
+				},
+				{
+					"name": "Mauritius",
+					"id": "2-103-0665"
+				},
+				{
+					"name": "Mexico",
+					"id": "0-103-0666"
+				},
+				{
+					"name": "Moldova",
+					"id": "8-382-8475"
+				},
+				{
+					"name": "Monaco",
+					"id": "8-103-0667"
+				},
+				{
+					"name": "Mongolia",
+					"id": "4-504-3846"
+				},
+				{
+					"name": "Montenegro",
+					"id": "3-203-9834"
+				},
+				{
+					"name": "Montserrat",
+					"id": "9-550-9965"
+				},
+				{
+					"name": "Morocco",
+					"id": "6-103-0668"
+				},
+				{
+					"name": "Mozambique",
+					"id": "4-103-0669"
+				},
+				{
+					"name": "Myanmar",
+					"id": "3-503-0203"
+				},
+				{
+					"name": "Namibia",
+					"id": "6-502-4597"
+				},
+				{
+					"name": "Nauru",
+					"id": "1-503-0218"
+				},
+				{
+					"name": "Nepal",
+					"id": "2-103-0670"
+				},
+				{
+					"name": "Netherlands Antilles",
+					"id": "0-103-0671"
+				},
+				{
+					"name": "New Zealand",
+					"id": "6-103-0673"
+				},
+				{
+					"name": "Nicaragua",
+					"id": "8-201-6062"
+				},
+				{
+					"name": "Niger",
+					"id": "1-503-0176"
+				},
+				{
+					"name": "Nigeria",
+					"id": "4-103-0674"
+				},
+				{
+					"name": "Niue",
+					"id": "7-503-0220"
+				},
+				{
+					"name": "Northern Ireland",
+					"id": "1-103-0675"
+				},
+				{
+					"name": "Northern Mariana Islands",
+					"id": "9-103-0676"
+				},
+				{
+					"name": "Norway",
+					"id": "7-103-0677"
+				},
+				{
+					"name": "Oman",
+					"id": "5-103-0678"
+				},
+				{
+					"name": "Orangestream Test 2",
+					"id": "8-515-1650"
+				},
+				{
+					"name": "Pakistan",
+					"id": "3-103-0679"
+				},
+				{
+					"name": "Palau",
+					"id": "5-503-0221"
+				},
+				{
+					"name": "Panama",
+					"id": "1-103-0680"
+				},
+				{
+					"name": "Papua New Guinea",
+					"id": "9-103-0681"
+				},
+				{
+					"name": "Paraguay",
+					"id": "2-201-7922"
+				},
+				{
+					"name": "Peru",
+					"id": "7-103-0682"
+				},
+				{
+					"name": "Philippines",
+					"id": "5-103-0683"
+				},
+				{
+					"name": "Poland",
+					"id": "3-103-0684"
+				},
+				{
+					"name": "Portugal",
+					"id": "0-103-0685"
+				},
+				{
+					"name": "Puerto Rico",
+					"id": "0-201-7621"
+				},
+				{
+					"name": "Qatar",
+					"id": "8-103-0686"
+				},
+				{
+					"name": "Romania",
+					"id": "6-103-0687"
+				},
+				{
+					"name": "Russian Federation",
+					"id": "4-103-0688"
+				},
+				{
+					"name": "Rwanda",
+					"id": "7-503-0178"
+				},
+				{
+					"name": "São Tomé and Príncipe",
+					"id": "5-503-0179"
+				},
+				{
+					"name": "Samoa",
+					"id": "1-503-0204"
+				},
+				{
+					"name": "San Marino",
+					"id": "4-555-7505"
+				},
+				{
+					"name": "Saudi Arabia",
+					"id": "2-103-0689"
+				},
+				{
+					"name": "Scotland",
+					"id": "0-103-0690"
+				},
+				{
+					"name": "Senegal",
+					"id": "3-503-0180"
+				},
+				{
+					"name": "Serbia",
+					"id": "8-103-0691"
+				},
+				{
+					"name": "Seychelles",
+					"id": "3-503-0222"
+				},
+				{
+					"name": "Sierra Leone",
+					"id": "6-103-0692"
+				},
+				{
+					"name": "Singapore",
+					"id": "4-103-0693"
+				},
+				{
+					"name": "Slovakia",
+					"id": "2-103-0694"
+				},
+				{
+					"name": "Slovenia",
+					"id": "9-103-0695"
+				},
+				{
+					"name": "Solomon Islands",
+					"id": "8-503-0205"
+				},
+				{
+					"name": "Somalia",
+					"id": "1-503-0181"
+				},
+				{
+					"name": "South Africa",
+					"id": "7-103-0696"
+				},
+				{
+					"name": "South Korea",
+					"id": "5-103-0697"
+				},
+				{
+					"name": "Spain",
+					"id": "3-103-0698"
+				},
+				{
+					"name": "Sri Lanka",
+					"id": "1-103-0699"
+				},
+				{
+					"name": "St. Kitts",
+					"id": "7-103-0700"
+				},
+				{
+					"name": "St. Lucia",
+					"id": "1-503-0223"
+				},
+				{
+					"name": "St. Vincent and the Grenadines",
+					"id": "6-503-0225"
+				},
+				{
+					"name": "Sudan",
+					"id": "5-103-0701"
+				},
+				{
+					"name": "Suriname",
+					"id": "4-503-0226"
+				},
+				{
+					"name": "Swaziland",
+					"id": "7-520-4574"
+				},
+				{
+					"name": "Sweden",
+					"id": "3-103-0702"
+				},
+				{
+					"name": "Switzerland",
+					"id": "1-103-0703"
+				},
+				{
+					"name": "Syria",
+					"id": "1-503-3839"
+				},
+				{
+					"name": "Taiwan",
+					"id": "9-103-0704"
+				},
+				{
+					"name": "Tajikistan",
+					"id": "3-517-5031"
+				},
+				{
+					"name": "Tanzania",
+					"id": "6-103-0705"
+				},
+				{
+					"name": "Tenerife",
+					"id": "4-103-0706"
+				},
+				{
+					"name": "Thailand",
+					"id": "2-103-0707"
+				},
+				{
+					"name": "The Baltics",
+					"id": "0-103-0708"
+				},
+				{
+					"name": "The Netherlands",
+					"id": "8-103-0672"
+				},
+				{
+					"name": "Timor-Leste",
+					"id": "6-503-0206"
+				},
+				{
+					"name": "Togo",
+					"id": "9-503-0182"
+				},
+				{
+					"name": "Tonga",
+					"id": "2-503-0227"
+				},
+				{
+					"name": "Trinidad and Tobago",
+					"id": "8-103-0709"
+				},
+				{
+					"name": "Tunisia",
+					"id": "6-103-0710"
+				},
+				{
+					"name": "Turkey",
+					"id": "4-103-0711"
+				},
+				{
+					"name": "Turkmenistan",
+					"id": "2-103-0712"
+				},
+				{
+					"name": "Turks and Caicos Islands",
+					"id": "0-103-0713"
+				},
+				{
+					"name": "Tuvalu",
+					"id": "4-503-0207"
+				},
+				{
+					"name": "Uganda",
+					"id": "8-103-0714"
+				},
+				{
+					"name": "Ukraine",
+					"id": "5-103-0715"
+				},
+				{
+					"name": "United Arab Emirates",
+					"id": "3-103-0716"
+				},
+				{
+					"name": "United Kingdom",
+					"id": "9-103-0624,1-103-0675,0-103-0690,4-103-1070,1-103-0717"
+				},
+				{
+					"name": "Uruguay",
+					"id": "9-103-0718"
+				},
+				{
+					"name": "USA Alabama",
+					"id": "5-386-1409"
+				},
+				{
+					"name": "USA Alaska",
+					"id": "3-386-1410"
+				},
+				{
+					"name": "USA American Samoa",
+					"id": "4-386-1589"
+				},
+				{
+					"name": "USA Arizona",
+					"id": "1-386-1411"
+				},
+				{
+					"name": "USA Arkansas",
+					"id": "9-386-1412"
+				},
+				{
+					"name": "USA California",
+					"id": "7-386-1413"
+				},
+				{
+					"name": "USA Colorado",
+					"id": "5-386-1414"
+				},
+				{
+					"name": "USA Connecticut",
+					"id": "2-386-1415"
+				},
+				{
+					"name": "USA Delaware",
+					"id": "0-386-1416"
+				},
+				{
+					"name": "USA District of Columbia",
+					"id": "0-386-1591"
+				},
+				{
+					"name": "USA Florida",
+					"id": "4-386-1419"
+				},
+				{
+					"name": "USA Georgia",
+					"id": "0-386-1421"
+				},
+				{
+					"name": "USA Guam",
+					"id": "4-386-1594"
+				},
+				{
+					"name": "USA Hawaii",
+					"id": "8-386-1422"
+				},
+				{
+					"name": "USA Idaho",
+					"id": "1-386-1425"
+				},
+				{
+					"name": "USA Illinois",
+					"id": "7-386-1427"
+				},
+				{
+					"name": "USA Indiana",
+					"id": "5-386-1428"
+				},
+				{
+					"name": "USA Iowa",
+					"id": "1-386-1430"
+				},
+				{
+					"name": "USA Kansas",
+					"id": "9-386-1431"
+				},
+				{
+					"name": "USA Kentucky",
+					"id": "4-386-1443"
+				},
+				{
+					"name": "USA Louisiana",
+					"id": "7-386-1446"
+				},
+				{
+					"name": "USA Maine",
+					"id": "1-386-1449"
+				},
+				{
+					"name": "USA Maryland",
+					"id": "3-386-1448"
+				},
+				{
+					"name": "USA Massachusetts",
+					"id": "9-386-1450"
+				},
+				{
+					"name": "USA Michigan",
+					"id": "1-386-1454"
+				},
+				{
+					"name": "USA Minnesota",
+					"id": "0-386-1548"
+				},
+				{
+					"name": "USA Mississippi",
+					"id": "8-386-1549"
+				},
+				{
+					"name": "USA Missouri",
+					"id": "6-386-1550"
+				},
+				{
+					"name": "USA Montana",
+					"id": "4-386-1551"
+				},
+				{
+					"name": "USA Nebraska",
+					"id": "8-386-1554"
+				},
+				{
+					"name": "USA Nevada",
+					"id": "3-386-1556"
+				},
+				{
+					"name": "USA New Hampshire",
+					"id": "1-386-1557"
+				},
+				{
+					"name": "USA New Jersey",
+					"id": "3-386-1561"
+				},
+				{
+					"name": "USA New Mexico",
+					"id": "9-386-1563"
+				},
+				{
+					"name": "USA New York",
+					"id": "4-386-1565"
+				},
+				{
+					"name": "USA North Carolina",
+					"id": "0-386-1567"
+				},
+				{
+					"name": "USA North Dakota",
+					"id": "6-386-1569"
+				},
+				{
+					"name": "USA Northern Mariana Islands",
+					"id": "9-386-1596"
+				},
+				{
+					"name": "USA Ohio",
+					"id": "4-386-1570"
+				},
+				{
+					"name": "USA Oklahoma",
+					"id": "2-386-1571"
+				},
+				{
+					"name": "USA Oregon",
+					"id": "0-386-1572"
+				},
+				{
+					"name": "USA Pennsylvania",
+					"id": "8-386-1573"
+				},
+				{
+					"name": "USA Puerto Rico",
+					"id": "8-500-0091"
+				},
+				{
+					"name": "USA Rhode Island",
+					"id": "6-386-1574"
+				},
+				{
+					"name": "USA South Carolina",
+					"id": "3-386-1575"
+				},
+				{
+					"name": "USA South Dakota",
+					"id": "9-386-1577"
+				},
+				{
+					"name": "USA Tennessee",
+					"id": "5-386-1579"
+				},
+				{
+					"name": "USA Texas",
+					"id": "3-386-1580"
+				},
+				{
+					"name": "USA US Virgin Islands",
+					"id": "3-386-1599"
+				},
+				{
+					"name": "USA Utah",
+					"id": "9-386-1582"
+				},
+				{
+					"name": "USA Vermont",
+					"id": "7-386-1583"
+				},
+				{
+					"name": "USA Virginia",
+					"id": "5-386-1584"
+				},
+				{
+					"name": "USA Washington",
+					"id": "2-386-1585"
+				},
+				{
+					"name": "USA West Virginia",
+					"id": "0-386-1586"
+				},
+				{
+					"name": "USA Wisconsin",
+					"id": "8-386-1587"
+				},
+				{
+					"name": "USA Wyoming",
+					"id": "6-386-1588"
+				},
+				{
+					"name": "Uzbekistan",
+					"id": "9-103-0756"
+				},
+				{
+					"name": "Vanuatu",
+					"id": "2-503-0208"
+				},
+				{
+					"name": "Venezuela",
+					"id": "0-103-1067"
+				},
+				{
+					"name": "Vietnam",
+					"id": "8-103-1068"
+				},
+				{
+					"name": "Virgin islands",
+					"id": "6-103-1069"
+				},
+				{
+					"name": "Wales",
+					"id": "4-103-1070"
+				},
+				{
+					"name": "Yemen",
+					"id": "2-103-1071"
+				},
+				{
+					"name": "Zambia",
+					"id": "0-103-1072"
+				},
+				{
+					"name": "Zimbabwe",
+					"id": "8-103-1073"
+				},
+				{
+					"name": "zz Orangestream 1",
+					"id": "0-515-1649"
+				},
+				{
+					"name": "zz Orangestream Jurisdiction Test",
+					"id": "8-515-1631"
+				},
+				{
+					"name": "zz Orangestream Sunday Test Jurisdiction",
+					"id": "0-515-1772"
+				}
+			]
+		}
+	],
 	"pagination": {
 		"available": true,
 		"isZeroBasedOffset": false
