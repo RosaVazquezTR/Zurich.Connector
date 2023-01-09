@@ -3,8 +3,8 @@
 	"partitionkey": "ConnectorList",
 	"alias": "plcau.search",
 	"info": {
-		"title": "Get Search Practical law documents - UK",
-		"description": "Pull Practical law documents - UK",
+		"title": "Get Search Practical law documents - AU",
+		"description": "Pull Practical law documents - AU",
 		"entityType": "Search",
 		"dataSourceId": "49",
 		"version": "1.0",
@@ -1497,7 +1497,7 @@
 			{
 				"name": "SourceDirectoryUrl",
 				"type": "interpolationString",
-				"responseElement": "https://(PracticalLawUKHost)/Search/Results.html?query=(%Query)&categoryPageUrl=Home/PracticalLaw&contentType=KNOWHOW_UK&querySubmissionGuid=(NewGuid())",
+				"responseElement": "https://(PracticalLawAUHost)/Search/Results.html?query=(%Query)&categoryPageUrl=Home/&contentType=KNOWHOW_AU&querySubmissionGuid=(NewGuid())",
 				"_comment": ""
 			},
 			{
