@@ -34,7 +34,7 @@ namespace Zurich.Connector.Data.Services
 
 					JContainer JsonParam = new JObject();
 					string paramValue = parameter.ParamValue.ToString() ?? parameter.DefaultValue.ToString();
-					string unescapedParam = paramValue.Replace("\n", "").Replace("\r", "").Replace("\\", "").Replace(" ", "");
+					string unescapedParam = paramValue.Replace("\n", "").Replace("\r", "");
 					JTokenWriter writerParam = new JTokenWriter();
 					writerParam.WritePropertyName(parameter.Name);
 					JsonParam.Merge(JObject.Parse("{" + writerParam.Token.ToString().Replace("null", unescapedParam) + "}"));

@@ -111,7 +111,8 @@ namespace Zurich.Connector.Data.Services
                 else
                     paginationDoc.PagesPaginationInfo.previous = currentPage - 1;
 
-                jObjectTop.Add(new JProperty("pagination", paginationDoc));
+                if(totalThoughts>0)
+                    jObjectTop.Add(new JProperty("pagination", paginationDoc));
                 jObjectTop.Add(new JProperty("totalDocs", totalThoughts));
 
                 return jObjectTop;
