@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Zurich.Connector.Data.Model;
 using Zurich.Connector.Web.Enum;
+using Zurich.Connector.App.Enum;
 
 namespace Zurich.Connector.Web.Models
 {
@@ -56,6 +57,11 @@ namespace Zurich.Connector.Web.Models
         /// Sort type options
         /// </summary>
         public IEnumerable<SortType> Sort { get; set; }
+
+        /// <summary>
+        /// Registration status
+        /// </summary>
+        public RegistrationStatus RegistrationStatus { get; set; }
     }
 
     /// <summary>

@@ -145,6 +145,7 @@ namespace Zurich.Connector.Data.Services
         public async Task<ConnectorModel> GetConnector(string connectorId)
         {
             ConnectorModel connector;
+            IEnumerable<DataSourceInformation> registeredDataSources = Enumerable.Empty<DataSourceInformation>();
             // Adding a validation to know wheter the call is being made providing connector id or connector alias
             if (int.TryParse(connectorId, out var _))
             {
@@ -156,7 +157,25 @@ namespace Zurich.Connector.Data.Services
                 // This means we passed connector alias
                 connector = await _cosmosService.GetConnectorByAlias(connectorId, true);
             }
-            
+            if (connector != null)
+            {
+                try
+                {
+                    registeredDataSources = await _registrationService.GetUserDataSources();
+                    if (registeredDataSources != null)
+                    {
+                        var registeredConnectors = from regCon in registeredDataSources where regCon.AppCode == connector.DataSource.AppCode select regCon;
+                        if (registeredConnectors != null && registeredConnectors.Count() != 0)
+                        {
+                            connector.RegistrationStatus = RegistrationStatus.Registered;
+                        }
+                    }
+                }
+                catch (Exception ex) {
+                    _logger.LogError("Error trying to change registered status, this will not be updated", ex.Message);
+                }
+            }
+
             return connector;
         }
 

@@ -1,0 +1,32 @@
+{
+    "id": "49",
+    "partitionkey": "DataSourceList",
+    "name": "Practical Law AU",
+    "description": "This is connecting to Practical Law AU API ",
+    "infoURL": "",
+    "appCode": "PLCAU",
+    "appType": "0",
+    "locale": "AU",
+    "extraRequestContext": "",
+    "registrationInfo": {
+      "registrationMode": "Automatic",
+      "domainRequired": "false",
+      "clientAndSecretRequired": "false",
+      "connectionMessage": "",
+      "registrationFileRequired": "false"
+    },
+    "securityDefinition": {
+      "type": "oauth2",
+      "flow": "",
+      "defaultSecurityDefinition": {
+        "authorizationURL": "",
+        "authorizationPath": "",
+        "tokenURL": "",
+        "tokenPath": "",
+        "keyVaultClientId": "",
+        "keyVaultSecret": "",
+        "grantType": "client_credentials"
+      },
+      "scopes": {}
+    }
+  }
