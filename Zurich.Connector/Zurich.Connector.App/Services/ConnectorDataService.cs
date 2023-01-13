@@ -514,7 +514,7 @@ namespace Zurich.Connector.Data.Services
                 if (!String.IsNullOrEmpty(keyWord?.Value<string>()))
                     documents = new(documents.OrderByDescending(obj => (float)obj["AdditionalProperties"]["score"]).ThenBy(obj => obj["AdditionalProperties"]["fieldId"]));
                 else
-                    documents = new JArray(documents.OrderByDescending(obj => (float)obj["AdditionalProperties"]["confidence"]).ThenBy(obj => obj["AdditionalProperties"]["lastModifiedOn"]));
+                    documents = new JArray(documents.OrderByDescending(obj => (float)obj["AdditionalProperties"]["confidence"]).ThenByDescending(obj => obj["AdditionalProperties"]["lastModifiedOn"]));
             }
 
             return documents;
