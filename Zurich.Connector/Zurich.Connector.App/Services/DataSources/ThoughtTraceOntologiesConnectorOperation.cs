@@ -55,13 +55,13 @@ namespace Zurich.Connector.App.Services.DataSources
             var thoughtFilters = JToken.Parse(allParameters["thoughtFilters"]);
             List<string> thoughtTypeIds = new();
 
-            //Extract thoughtTypeIds from request
-            foreach (var filter in thoughtFilters["filters"])
-            {
-                foreach(var fieldType in filter["fieldTypes"])
-                    thoughtTypeIds.Add(fieldType["thoughtTypeId"].Value<string>());
+            string clauseTerms = allParameters["clauseTerms"].Trim('[', ']').Replace("\r", String.Empty).Replace("\n", String.Empty);
+            allParameters.Remove("clauseTerms");
 
-            }
+            //Extract thoughtTypeIds from request
+            thoughtTypeIds.Add(allParameters["clauseType"]);
+            allParameters.Remove("clauseType"); 
+
             var thoughtFieldTypeId = "";
             //For each thoughTypeId, we add a new filter to parameters, we first need to extract the thoughFieldTypeId from onotlogies
             foreach( var thoughtTypeId in thoughtTypeIds.Distinct())
@@ -71,32 +71,34 @@ namespace Zurich.Connector.App.Services.DataSources
                 if (thoughtFieldTypeId == null)
                     continue;
 
-                JObject fieldType = new()
+                // If provision thoughtFieldTypeId is already requested in the clauseTypes, its not needed to add it again by default
+                if (!clauseTerms.Contains(thoughtFieldTypeId.ToString()) || !String.IsNullOrEmpty(allParameters["keyWord"]))
                 {
-                    ["thoughtFieldTypeId"] = thoughtFieldTypeId
-                };
+                    JObject fieldType = new()
+                    {
+                        ["thoughtFieldTypeId"] = thoughtFieldTypeId
+                    };
 
-                JObject defaultProvisionFilter = new();
-                defaultProvisionFilter["fieldTypes"] = new JArray(fieldType);
-                if(allParameters.ContainsKey("keyWord") && String.IsNullOrEmpty(allParameters["keyWord"]))
-                {
-                    defaultProvisionFilter["operator"] = "exists";
-                    defaultProvisionFilter["stringValue"] = String.Empty;
+                    JObject defaultProvisionFilter = new();
+                    defaultProvisionFilter["fieldTypes"] = new JArray(fieldType);
+                    if (allParameters.ContainsKey("keyWord") && String.IsNullOrEmpty(allParameters["keyWord"]))
+                    {
+                        defaultProvisionFilter["operator"] = "exists";
+                        defaultProvisionFilter["stringValue"] = String.Empty;
+                    }
+                    else
+                    {
+                        defaultProvisionFilter["operator"] = "contains";
+                        defaultProvisionFilter["stringValue"] = allParameters["keyWord"];
+                    }
+                    ((JArray)thoughtFilters["filters"]).Add(defaultProvisionFilter);
                 }
-                else
-                {
-                    defaultProvisionFilter["operator"] = "contains";
-                    defaultProvisionFilter["stringValue"] = allParameters["keyWord"];
-                }
-
-
-
-                ((JArray)thoughtFilters["filters"]).Add(defaultProvisionFilter);
 
             }
 
             allParameters["thoughtFilters"] = thoughtFilters.ToString();
-            allParameters["provisionID"] = thoughtFieldTypeId;
+            if (! string.IsNullOrEmpty(thoughtFieldTypeId))
+                allParameters["provisionID"] = thoughtFieldTypeId;
             return allParameters;
         }
 
@@ -195,7 +197,7 @@ namespace Zurich.Connector.App.Services.DataSources
             thoughtFilters.Add("operator", "and");
 
             JArray filters = new JArray();
-            if (clauseIds.Count > 0)
+            if (clauseIds.Count > 0 && String.IsNullOrEmpty(keyword))
                 foreach (var id in clauseIds)
                 {
                     JObject filterObject = new JObject();
@@ -210,19 +212,6 @@ namespace Zurich.Connector.App.Services.DataSources
                     filterObject.Add("stringValue", string.Empty);
                     filters.Add(filterObject);
                 }
-            else
-            {
-                JObject filterObject = new JObject();
-                JArray fieldTypes = new JArray();
-                JObject fieldTypesObject = new JObject();
-
-                fieldTypesObject.Add("thoughtTypeId", clauseType);
-                fieldTypes.Add(fieldTypesObject);
-                filterObject.Add("fieldTypes", fieldTypes);
-                filterObject.Add("operator", "exists");
-                filterObject.Add("stringValue", string.Empty);
-                filters.Add(filterObject);
-            }
             thoughtFilters.Add("filters", filters);
 
             if (cdmQueryParameters.ContainsKey("threshold"))
@@ -236,6 +225,8 @@ namespace Zurich.Connector.App.Services.DataSources
             cdmQueryParameters.Remove("Filters");
             cdmQueryParameters.Add("thoughtFilters", thoughtFilters.ToString());
             cdmQueryParameters.Add("keyWord", keyword);
+            cdmQueryParameters.Add("clauseType", clauseType);
+            cdmQueryParameters.Add("clauseTerms", clauseIds.ToString());
             return cdmQueryParameters;
 
         }
