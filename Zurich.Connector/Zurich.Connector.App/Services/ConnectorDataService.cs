@@ -143,6 +143,20 @@ namespace Zurich.Connector.Data.Services
             }
             if (connectorModel.AdvancedSearchSyntax != null && connectorModel.AdvancedSearchSyntax.Operators != null)
             {
+                if (queryParameters.ContainsKey("Query") && !string.IsNullOrEmpty(queryParameters["Query"]))
+                {
+                    string query = System.Web.HttpUtility.UrlDecode(queryParameters["Query"]);
+
+                    string indexFolder = @"C:\Users\6116345\Documents";
+                    GroupDocs.Search.Index index = new(indexFolder);
+                    index.Dictionaries.SynonymDictionary.ImportDictionary(@".\Synonyms.dat");
+
+                    string[] querySynonyms = index.Dictionaries.SynonymDictionary.GetSynonyms(query);
+
+                    queryParameters["Query"] = $"{query} or " + String.Join(" or ", querySynonyms);
+
+                }
+
                 queryParameters = MapQueryAdvancedSearch(queryParameters, connectorModel);
             }
             else
@@ -150,20 +164,20 @@ namespace Zurich.Connector.Data.Services
                 if (queryParameters.ContainsKey("Query"))
                     queryParameters["Query"] = System.Web.HttpUtility.UrlDecode(queryParameters["Query"]);
 
-                string query = System.Web.HttpUtility.UrlDecode(queryParameters["Query"]);
-                string[] synonyms = new GroupDocs.Search.Index().Dictionaries.SynonymDictionary.GetSynonyms(query);
+                //string query = System.Web.HttpUtility.UrlDecode(queryParameters["Query"]);
+                //string[] synonyms = new GroupDocs.Search.Index().Dictionaries.SynonymDictionary.GetSynonyms(query);
 
-                string indexFolder = @"C:\Users\6116345\Documents";
+                //string indexFolder = @"C:\Users\6116345\Documents";
 
-                // Creating an index from in specified folder
-                GroupDocs.Search.Index index = new(indexFolder);
-                // Export synonyms to a file
-                index.Dictionaries.SynonymDictionary.ExportDictionary(@".\Synonyms.dat");
+                //// Creating an index from in specified folder
+                //GroupDocs.Search.Index index = new(indexFolder);
+                //// Export synonyms to a file
+                ////index.Dictionaries.SynonymDictionary.ExportDictionary(@".\Synonyms.dat");
 
-                // Import synonyms from a file
-                index.Dictionaries.SynonymDictionary.ImportDictionary(@".\Synonyms.dat");
+                //// Import synonyms from a file
+                //index.Dictionaries.SynonymDictionary.ImportDictionary(@".\Synonyms.dat");
 
-                string[] synonyms2 = index.Dictionaries.SynonymDictionary.GetSynonyms(query);
+                //string[] synonyms2 = index.Dictionaries.SynonymDictionary.GetSynonyms(query);
             }
 
             ConnectorDocument connectorDocument = _mapper.Map<ConnectorDocument>(connectorModel);
