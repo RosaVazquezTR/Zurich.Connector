@@ -11,6 +11,7 @@ using System.Collections.Specialized;
 using System.Web;
 using Zurich.Common.Services;
 using Zurich.Common.Models.FeatureFlags;
+using System.Text.RegularExpressions;
 
 namespace Zurich.Connector.Data.Repositories
 {
@@ -100,9 +101,13 @@ namespace Zurich.Connector.Data.Repositories
             {
                 string[] strParamArray = paramStr.Split('&');
                 
+
                 for (int s = 0; s < strParamArray.Length; s++)
                 {
-                    if (strParamArray[s].Contains("%2c"))
+                    if (strParamArray[s].Contains("%2b"))
+                        strParamArray[s]= strParamArray[s].Replace("%2b", "+");
+
+                    if (strParamArray[s].Contains("%2c") && !strParamArray[s].Contains("searchTerm"))
                     {
                         string filterName = strParamArray[s][..strParamArray[s].IndexOf("=")];
                         strParamArray[s] = strParamArray[s].Replace("%2c", $"&{filterName}=");

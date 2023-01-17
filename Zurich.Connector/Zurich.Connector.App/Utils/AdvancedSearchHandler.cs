@@ -24,9 +24,9 @@ namespace Zurich.Connector.App.Utils
 
         public static bool validateQuery(string query)
         {
-            // There is no nesting of any operator. The text inside () or " " must be query terms.
+            // There is no nesting of grouping any operator. The text inside () must be query terms.
             List<string> forbiddenOperators = new List<string>() { "%", "/", "*", "?", "\"", "(", ")" };
-            MatchCollection enclosedTexts = Regex.Matches(query, @"\((.+?)\)|\" + (char)34 + @"(.+?)\" + (char)34); //Gets the enclosed text in () and ""
+            MatchCollection enclosedTexts = Regex.Matches(query, @"\((.+?)\)"); //Gets the enclosed text in () 
             foreach (Match text in enclosedTexts)
             {
                 if (forbiddenOperators.Any(s => text.Groups[1].Value.Contains(s)) || forbiddenOperators.Any(s => text.Groups[2].Value.Contains(s)))
@@ -39,12 +39,12 @@ namespace Zurich.Connector.App.Utils
 
             // Not operator % must be followed by a term with no space
             int numOfNots = query.Count(f => (f == '%'));
-            if (numOfNots > 0 & (numOfNots != Regex.Matches(query, @"\%[a-zA-Z\d]+").Count) )
+            if (numOfNots > 0 && (numOfNots != Regex.Matches(query, @"\%[a-zA-Z\d]+").Count+ Regex.Matches(query, @"[\d]+\%|[\d]+ \%").Count) )
                 return false;
 
-            // Proximity operator must be followed by an integer  @
+            // Proximity operator must be followed by an integer  @, also supports /p and /s PracticalLaw-ish operators. 
             int numOfProx = query.Count(f => (f == '/'));
-            if (numOfProx > 0 & (numOfProx != Regex.Matches(query, @"\/\d+").Count))
+            if (numOfProx > 0 && (numOfProx != (Regex.Matches(query, @"\/\d+").Count+ Regex.Matches(query, @"\/p").Count+ Regex.Matches(query, @"\/s").Count)))
                 return false;
 
             return true;
