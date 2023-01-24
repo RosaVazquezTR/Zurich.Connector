@@ -64,6 +64,9 @@ namespace Zurich.Connector.App.Utils
                     query = query.Substring(1, query.Length - 3);
                 }
             }
+            query = query.Replace("- ", "");
+            query = query.Replace("'", "\"");
+            query = query.Replace(":", "");
             if (validateQuery(query))
             {
                 string newQuery = query;
