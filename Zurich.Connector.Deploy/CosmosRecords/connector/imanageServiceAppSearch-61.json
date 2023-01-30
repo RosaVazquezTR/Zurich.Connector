@@ -142,7 +142,7 @@
       "requestParameter": "Name.filter"
     },
     {
-      "name": "Type",
+      "name": "Document Type",
       "description": "Must match name of type as defined in iManage exactly. Can be comma-seperated.",
       "isMultiselect": "true",
       "requestParameter": "Type.filter",
