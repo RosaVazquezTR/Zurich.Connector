@@ -53,52 +53,58 @@ namespace Zurich.Connector.App.Services.DataSources
             allParameters = TTMap(allParameters);
 
             var thoughtFilters = JToken.Parse(allParameters["thoughtFilters"]);
-            List<string> thoughtTypeIds = new();
 
-            string clauseTerms = allParameters["clauseTerms"].Trim('[', ']').Replace("\r", String.Empty).Replace("\n", String.Empty);
+            string clauseType = allParameters["clauseType"];
+            allParameters.Remove("clauseType");
+
+            String[] clauseTerms = allParameters["clauseTerms"].Trim('[', ']').Replace("\r",String.Empty).Replace("\n",String.Empty).Replace(" ",String.Empty).Split(',', StringSplitOptions.RemoveEmptyEntries);
             allParameters.Remove("clauseTerms");
 
-            //Extract thoughtTypeIds from request
-            thoughtTypeIds.Add(allParameters["clauseType"]);
-            allParameters.Remove("clauseType"); 
+            //For the given clauseType/thoughTypeId, we first need to extract the provision thoughFieldTypeId from onotlogies
+            var provisionID = "";
+            provisionID = await GetProvisionThoughtFieldTypeIdFromOntologies(clauseType);
+            if (provisionID == null)
+                return null;
+            allParameters["provisionID"] = provisionID;
 
-            var thoughtFieldTypeId = "";
-            //For each thoughTypeId, we add a new filter to parameters, we first need to extract the thoughFieldTypeId from onotlogies
-            foreach( var thoughtTypeId in thoughtTypeIds.Distinct())
+            // provisionID filter allways have to be included
+
+            JObject fieldType = new()
             {
-                thoughtFieldTypeId = await GetProvisionThoughtFieldTypeIdFromOntologies(thoughtTypeId);
+                ["thoughtFieldTypeId"] = provisionID
+            };
 
-                if (thoughtFieldTypeId == null)
-                    continue;
-
-                // If provision thoughtFieldTypeId is already requested in the clauseTypes, its not needed to add it again by default
-                if (!clauseTerms.Contains(thoughtFieldTypeId.ToString()) || !String.IsNullOrEmpty(allParameters["keyWord"]))
-                {
-                    JObject fieldType = new()
-                    {
-                        ["thoughtFieldTypeId"] = thoughtFieldTypeId
-                    };
-
-                    JObject defaultProvisionFilter = new();
-                    defaultProvisionFilter["fieldTypes"] = new JArray(fieldType);
-                    if (allParameters.ContainsKey("keyWord") && String.IsNullOrEmpty(allParameters["keyWord"]))
-                    {
-                        defaultProvisionFilter["operator"] = "exists";
-                        defaultProvisionFilter["stringValue"] = String.Empty;
-                    }
-                    else
-                    {
-                        defaultProvisionFilter["operator"] = "contains";
-                        defaultProvisionFilter["stringValue"] = allParameters["keyWord"];
-                    }
-                    ((JArray)thoughtFilters["filters"]).Add(defaultProvisionFilter);
-                }
-
+            JObject defaultProvisionFilter = new();
+            defaultProvisionFilter["fieldTypes"] = new JArray(fieldType);
+            //If theres no KW, provisionID filter goes with "exists", if there's KW, goes with "contains"
+            if (allParameters.ContainsKey("keyWord") && String.IsNullOrEmpty(allParameters["keyWord"]))
+            {
+                defaultProvisionFilter["operator"] = "exists";
+                defaultProvisionFilter["stringValue"] = String.Empty;
             }
+            else
+            {
+                defaultProvisionFilter["operator"] = "contains";
+                defaultProvisionFilter["stringValue"] = allParameters["keyWord"];
+            }
+            ((JArray)thoughtFilters["filters"]).Add(defaultProvisionFilter);
 
+            //Then, foreach ClauseTerm
+            clauseTerms = clauseTerms.Where(val => val != provisionID).ToArray();
+            foreach (string clauseTerm in clauseTerms)
+            {
+                JObject fieldTypes = new()
+                {
+                    ["thoughtTypeId"] = clauseType,
+                    ["thoughtFieldTypeId"] = clauseTerm.ToString()
+                };
+                JObject clauseTermFilters = new();
+                clauseTermFilters["fieldTypes"] = new JArray(fieldTypes);
+                clauseTermFilters["operator"] = "exists";
+                clauseTermFilters["stringValue"] = String.Empty;
+                ((JArray)thoughtFilters["filters"]).Add(clauseTermFilters);
+            }
             allParameters["thoughtFilters"] = thoughtFilters.ToString();
-            if (! string.IsNullOrEmpty(thoughtFieldTypeId))
-                allParameters["provisionID"] = thoughtFieldTypeId;
             return allParameters;
         }
 
@@ -197,21 +203,6 @@ namespace Zurich.Connector.App.Services.DataSources
             thoughtFilters.Add("operator", "and");
 
             JArray filters = new JArray();
-            if (clauseIds.Count > 0 && String.IsNullOrEmpty(keyword))
-                foreach (var id in clauseIds)
-                {
-                    JObject filterObject = new JObject();
-                    JArray fieldTypes = new JArray();
-                    JObject fieldTypesObject = new JObject();
-
-                    fieldTypesObject.Add("thoughtTypeId", clauseType);
-                    fieldTypesObject.Add("thoughtFieldTypeId", (string)id);
-                    fieldTypes.Add(fieldTypesObject);
-                    filterObject.Add("fieldTypes", fieldTypes);
-                    filterObject.Add("operator", "exists");
-                    filterObject.Add("stringValue", string.Empty);
-                    filters.Add(filterObject);
-                }
             thoughtFilters.Add("filters", filters);
 
             if (cdmQueryParameters.ContainsKey("threshold"))
