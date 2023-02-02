@@ -20,8 +20,8 @@ using Zurich.TenantData;
 using Zurich.Connector.Data.Model;
 using Microsoft.Extensions.Configuration;
 using Zurich.Connector.App.Exceptions;
-using Zurich.Common.Models.OAuth;
 using Zurich.Common.Repositories;
+using AppCodes = Zurich.Connector.Data.Constants.AppCodes;
 
 namespace Zurich.Connector.Data.Services
 {
@@ -103,7 +103,6 @@ namespace Zurich.Connector.Data.Services
         public async Task<dynamic> GetConnectorData(string connectionIdentifier, string hostname, string transferToken, Dictionary<string, string> queryParameters, bool retrieveFilters)
         {
             int instanceLimit = _configuration.GetValue<int>(AppSettings.InstanceLimit, 10);
-            int MaxRecordSizePerInstance = _configuration.GetValue<int>(AppSettings.MaxRecordSizePerInstance, 1000);
 
             ConnectorModel connectorModel = await _dataMappingService.RetrieveProductInformationMap(connectionIdentifier, hostname, retrieveFilters);
 
@@ -120,11 +119,7 @@ namespace Zurich.Connector.Data.Services
 
             availableRegistrations = availableRegistrations?.FindAll(x => x.AppCode == connectorModel.DataSource.AppCode).Take(instanceLimit).ToList<DataSourceInformation>();
 
-            if (queryParameters.ContainsKey(QueryParameters.ResultSize))
-            {
-                if (Convert.ToInt64(queryParameters[QueryParameters.ResultSize]) > MaxRecordSizePerInstance)
-                    throw new MaxResultSizeException("Request exceeds maximum record size per instance of 1000");
-            }
+            ValidateResultSize(queryParameters, connectorModel);
 
             // TODO: This is a legalhome workaround until legalhome uses OAuth
             if (string.IsNullOrEmpty(connectorModel.DataSource.Domain) && string.IsNullOrEmpty(hostname))
@@ -207,7 +202,8 @@ namespace Zurich.Connector.Data.Services
                 //if (data?.Count > 0)
                 if (connectorModel.DataSource.CombinedLocations || connectorModel.DataSource.InternalSorting)
                     data.Documents = SortingResponseDocuments(data.Documents, connectorModel.DataSource, queryParameters);
-                if (data is JObject && data["AdditionalProperties"] != null && data.AdditionalProperties.pagination != null) {
+                if (data is JObject && data["AdditionalProperties"] != null && data.AdditionalProperties.pagination != null)
+                {
                     var pagination_to = (int)data.AdditionalProperties.pagination.to;
                     var pagination_from = (int)data.AdditionalProperties.pagination.from;
                     data.Documents = PaginationResponseDocuments(data.Documents, pagination_from, pagination_to);
@@ -223,18 +219,28 @@ namespace Zurich.Connector.Data.Services
             if (retrieveFilters == true && data != null)
             {
                 JToken mappingFilters = JToken.FromObject(connectorDocument.Filters);
-                
+
                 if (data is JArray)
                 {
                     foreach (JObject instance in data)
                     {
-                        instance[Constants.filters] = mappingFilters;
+                        instance[App.Constants.filters] = mappingFilters;
                     }
                 }
                 else if (data is JObject)
-                    data[Constants.filters] = mappingFilters;
+                    data[App.Constants.filters] = mappingFilters;
             }
             return data;
+        }
+
+        private void ValidateResultSize(Dictionary<string, string> queryParameters, ConnectorModel connectorModel)
+        {
+            int maxRecordSizePerInstance = _configuration.GetValue(AppSettings.MaxRecordSizePerInstance, 1000);
+            if (connectorModel.DataSource.AppCode == AppCodes.HighQ && queryParameters.ContainsKey(QueryParameters.ResultSize))
+            {
+                if (Convert.ToInt64(queryParameters[QueryParameters.ResultSize]) > maxRecordSizePerInstance)
+                    throw new MaxResultSizeException("Request exceeds maximum record size per instance of 1000");
+            }
         }
 
         private int CalculateOffset(Dictionary<string, string> queryParameters)

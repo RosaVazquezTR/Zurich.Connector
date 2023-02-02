@@ -118,7 +118,7 @@ namespace Zurich.Connector.Data.DataMap
         {
             // Temporary measure to use the old way to obtain a token for HighQ, while highQ admin token is fixed in federated search
             // TODO: Remove this once the adminToken works in federated search and can be obtained from OAuth
-            if (appCode == "HighQ")
+            if (appCode == Constants.AppCodes.HighQ)
             {
                 await _sessionAccessor.PopulateUserInfo();
                 AppToken token;
@@ -471,11 +471,11 @@ namespace Zurich.Connector.Data.DataMap
                     var responseContent = await response.Content.ReadAsStringAsync();
 
                     //Feature flag to simulate error in oauth requests to test puroposes
-                    if (await _appConfigService.IsDynamicFeatureEnabled(Features.SimulateErrorOAuthDatasource, "HighQ"))
+                    if (await _appConfigService.IsDynamicFeatureEnabled(Features.SimulateErrorOAuthDatasource, Constants.AppCodes.HighQ))
                     {
                         response.StatusCode = System.Net.HttpStatusCode.InternalServerError;
                     }
-                    else if (await _appConfigService.IsDynamicFeatureEnabled(Features.SimulateTimeoutOAuthDatasource, "HighQ"))
+                    else if (await _appConfigService.IsDynamicFeatureEnabled(Features.SimulateTimeoutOAuthDatasource, Constants.AppCodes.HighQ))
                     {
                         response.StatusCode = System.Net.HttpStatusCode.GatewayTimeout;
                     }
