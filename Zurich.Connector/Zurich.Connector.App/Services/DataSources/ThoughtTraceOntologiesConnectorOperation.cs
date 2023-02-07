@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Zurich.Connector.App.Model;
 using Zurich.Connector.Data;
@@ -57,7 +58,7 @@ namespace Zurich.Connector.App.Services.DataSources
             string clauseType = allParameters["clauseType"];
             allParameters.Remove("clauseType");
 
-            String[] clauseTerms = allParameters["clauseTerms"].Trim('[', ']').Replace("\r",String.Empty).Replace("\n",String.Empty).Replace(" ",String.Empty).Split(',', StringSplitOptions.RemoveEmptyEntries);
+            String[] clauseTerms = Regex.Replace(allParameters["clauseTerms"], "[^0-9,]", "").Split(',', StringSplitOptions.RemoveEmptyEntries);
             allParameters.Remove("clauseTerms");
 
             //For the given clauseType/thoughTypeId, we first need to extract the provision thoughFieldTypeId from onotlogies
