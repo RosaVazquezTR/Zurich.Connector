@@ -39,6 +39,10 @@ namespace Zurich.Connector.Data.Repositories.CosmosDocuments
         /// </summary>
         public ConnectorResponse Response { get; set; }
         /// <summary>
+        /// Facets details
+        /// </summary>
+        public ConnectorFacet FacetsInformation { get; set; }
+        /// <summary>
         /// Filter details
         /// </summary>
         public List<ConnectorFilter> Filters { get; set; }

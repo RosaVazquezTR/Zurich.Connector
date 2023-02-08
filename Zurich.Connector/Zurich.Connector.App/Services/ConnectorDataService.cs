@@ -190,9 +190,13 @@ namespace Zurich.Connector.Data.Services
 
                     NameValueCollection mappedQueryParameters = MapQueryParametersFromDB(queryParameters, connectorModel);
                     Dictionary<string, string> headerParameters = await _dataExtractionService.ExtractDataSource(mappedQueryParameters, queryParameters, hostname, connectorDocument);
+
+                    // As parameters are removed when making a request, we need a copy of them to addtitional requests if needed
+                    NameValueCollection mappedQueryParametersCopy = new NameValueCollection(mappedQueryParameters);
+
                     // Thinking about using the instance domain instead of its name
                     data = await service.GetAndMapResults<dynamic>(connectorDocument, transferToken, mappedQueryParameters, headerParameters, queryParameters);
-                    data = await EnrichConnectorData(connectorModel, data, queryParameters);
+                    data = await EnrichConnectorData(connectorModel, data, mappedQueryParametersCopy, queryParameters);
                 }
 
                 if (data == null)
@@ -410,7 +414,7 @@ namespace Zurich.Connector.Data.Services
         /// <param name="connector">The data connector</param>
         /// <param name="data">The entity data</param>
         /// <returns></returns>
-        private async Task<dynamic> EnrichConnectorData(ConnectorModel connector, dynamic data, Dictionary<string, string> queryParameters = null)
+        private async Task<dynamic> EnrichConnectorData(ConnectorModel connector, dynamic data, NameValueCollection mappedQueryParameters = null, Dictionary<string, string> queryParameters = null)
         {
             var dataSourceOperationsService = _dataSourceOperationsFactory.GetDataSourceOperationsService(connector?.DataSource?.AppCode);
 
@@ -418,6 +422,12 @@ namespace Zurich.Connector.Data.Services
             {
                 data.Documents = ManualOffset(data, queryParameters);
             }
+
+            if(connector?.FacetsInformation?.ConnectorId != null)
+            {
+                data = await AddFacetsFromAdditionalRequest(data, connector, mappedQueryParameters);
+            }
+
             if (dataSourceOperationsService != null)
             {
                 data = await dataSourceOperationsService.SetItemLink(connector.Info.EntityType, data, connector?.DataSource?.AppCode, connector.HostName);
@@ -446,6 +456,18 @@ namespace Zurich.Connector.Data.Services
             }
 
             return offsetDocuments;
+        }
+
+        private async Task<dynamic> AddFacetsFromAdditionalRequest(dynamic data, ConnectorModel baseConnector, NameValueCollection mappedQueryParameters)
+        {
+            ConnectorModel connectorModel = await _cosmosService.GetConnector(baseConnector?.FacetsInformation?.ConnectorId, true);
+            ConnectorDocument connectorDocument = _mapper.Map<ConnectorDocument>(connectorModel);
+
+            IDataMapping service = _dataMappingFactory.GetImplementation(connectorModel?.DataSource?.SecurityDefinition?.Type);
+            JToken facetsResponse = await service.GetAndMapResults<JToken>(connectorDocument, null, mappedQueryParameters, null, null);
+
+            ((JObject) data).TryAdd("facets", facetsResponse);
+            return data;
         }
 
         private async Task<dynamic> GetDataForMultiInstanceConnector(ConnectorModel connectorModel, ConnectorDocument connectorDocument, List<DataSourceInformation> availableRegistrations, IDataMapping service, Dictionary<string, string> queryParameters, string transferToken, string hostname)

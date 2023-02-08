@@ -34,6 +34,10 @@ namespace Zurich.Connector.App.Model
         /// </summary>
         public ConnectorResponseModel Response { get; set; }
         /// <summary>
+        /// Facets details
+        /// </summary>
+        public ConnectorsFacetsModel FacetsInformation { get; set; }
+        /// <summary>
         /// Filter details
         /// </summary>
         public List<ConnectorsFiltersModel> Filters { get; set; }

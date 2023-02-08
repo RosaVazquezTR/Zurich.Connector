@@ -43,7 +43,8 @@ namespace Zurich.Connector.Data.Model
         Search,
         ActionItems,
         Folder,
-        Ontologies
+        Ontologies,
+        Facets
     }
 
     /// <summary>

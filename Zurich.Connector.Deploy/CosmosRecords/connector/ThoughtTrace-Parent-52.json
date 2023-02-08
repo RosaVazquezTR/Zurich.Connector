@@ -155,6 +155,9 @@
     "response": {
         "type": "JSON"
     },
+    "facetsInformation": {
+        "connectorId": "65"
+    },
     "filters": [
         {
             "name": "DocumentType",

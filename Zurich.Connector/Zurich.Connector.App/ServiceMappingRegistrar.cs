@@ -45,6 +45,7 @@ namespace Zurich.Connector.App
             CreateMap<ConnectorResponse, ConnectorResponseModel>();
             CreateMap<ConnectorReponseSchema, ConnectorReponseSchemaModel>();
             CreateMap<ConnectorReponseProperties, ConnectorReponsePropertiesModel>();
+            CreateMap<ConnectorFacet, ConnectorsFacetsModel>();
             CreateMap<ConnectorFilter, ConnectorsFiltersModel>();
 
             CreateMap<DataSourceDocument, DataSourceModel>();
@@ -73,6 +74,7 @@ namespace Zurich.Connector.App
             CreateMap<ConnectorResponseModel, ConnectorResponse>();
             CreateMap<ConnectorReponseSchemaModel, ConnectorReponseSchema>();
             CreateMap<ConnectorReponsePropertiesModel, ConnectorReponseProperties>();
+            CreateMap<ConnectorsFacetsModel, ConnectorFacet>();
             CreateMap<ConnectorsFiltersModel, ConnectorFilter>();
             CreateMap<FilterListModel, FilterList>();
 
