@@ -77,7 +77,7 @@ namespace Zurich.Connector.Data.DataMap
 
                 if (connectorDocument.Response.Type.ToString() == "JSON")
                     //TODO: sent the connectorDocument.Datasource object as well
-                    jsonResponse = await httpResponseService.GetJTokenResponse(response, connectorDocument.Response, connectorDocument.Id, requestParameter, query);
+                    jsonResponse = await httpResponseService.GetJTokenResponse(response, connectorDocument.Response, connectorDocument.Id, requestParameter, query, _httpClientFactory);
                 if (jsonResponse is null)
                     jsonResponse = await httpResponseService.GetJTokenResponse(response, connectorDocument.Response);
 

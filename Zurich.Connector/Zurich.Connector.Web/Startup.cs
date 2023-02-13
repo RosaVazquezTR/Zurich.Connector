@@ -141,7 +141,8 @@ namespace Zurich.Connector.Web
             services.AddConnectorCosmosServices(_connectorCosmosDbOptions, _connectorCosmosClientOptions);
             services.ConfigureExceptonhandler();
             services.AddOAuthHttpClient(Configuration.GetValue<string>(AppSettings.OAuthUrl));
-            services.AddAppConfigServices(Configuration.GetValue<string>("splitIOApiKey")); 
+            services.AddAppConfigServices(Configuration.GetValue<string>("splitIOApiKey"));
+            services.AddInternalAPIHttpClient(HttpClientNames.IHDocumentStorage, Configuration.GetValue<string>("IHDocumentStorageBaseUrl"));
 
             AddAuthServices(services, _legalPlatformAuthOptions, _ciamAuthOptions);
         }

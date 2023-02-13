@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Zurich.Connector.Data.Factories;
 using Zurich.Connector.Data.Repositories.CosmosDocuments;
@@ -42,6 +43,6 @@ namespace Zurich.Connector.Data.Services
         /// <returns>
         /// A <see cref="JToken"/>JToken response</returns>
         /// </returns>
-        Task<JToken> GetJTokenResponse(string response1, ConnectorResponse response2, string id, Dictionary<string, string> requestParameter, System.Collections.Specialized.NameValueCollection query);
+        Task<JToken> GetJTokenResponse(string response1, ConnectorResponse response2, string id, Dictionary<string, string> requestParameter, System.Collections.Specialized.NameValueCollection query, IHttpClientFactory httpClientFactory);
     }
 }

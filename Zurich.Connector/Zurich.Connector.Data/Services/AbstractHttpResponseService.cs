@@ -7,6 +7,10 @@ using System.Collections.Generic;
 using System;
 using System.Linq;
 using System.Collections.Specialized;
+using System.Net.Http;
+using Zurich.Common.Repositories;
+using Zurich.Common.Services;
+
 namespace Zurich.Connector.Data.Services
 {
     public abstract class AbstractHttpResponseService
@@ -16,7 +20,7 @@ namespace Zurich.Connector.Data.Services
         {
             return JToken.Parse(response);
         }
-        public async virtual Task<JToken> GetJTokenResponse(string response, ConnectorResponse connectorResponse, string connectorId, Dictionary<string, string> requestParameter, NameValueCollection query)
+        public async virtual Task<JToken> GetJTokenResponse(string response, ConnectorResponse connectorResponse, string connectorId, Dictionary<string, string> requestParameter, NameValueCollection query, IHttpClientFactory httpClientFactory)
         {
             //TODO: add a data source parameter to avoid using connector ids directly in the code
             if (connectorId != "52")

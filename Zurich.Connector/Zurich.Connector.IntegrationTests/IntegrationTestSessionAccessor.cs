@@ -21,7 +21,9 @@ namespace Zurich.Connector.IntegrationTests
 		public Guid TenantId { get; set; }
 
 		public string OrgType { get; set; }
+		public bool GuestTenantMember { get; }
 
+		public string ClientId { get; }
 
 
 		public IntegrationTestSessionAccessor()
@@ -32,6 +34,9 @@ namespace Zurich.Connector.IntegrationTests
 			UserName = "integrationTestUser";
 			TenantId = new Guid("b891c0c2-cdef-453f-af8f-08d919703e5c");
 			OrgType = "Connector Integration Test";
+			GuestTenantMember = false;
+			ClientId = "";
+
 		}
 
 		/// <summary>
