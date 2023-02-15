@@ -1,0 +1,411 @@
+{
+    "id": "66",
+    "partitionkey": "ConnectorList",
+    "alias": "ttdocs.search",
+    "info": {
+        "title": "Get Search Thought Trace documents",
+        "description": "Pull Thougth Trace documents",
+        "entityType": "Search",
+        "dataSourceId": "50",
+        "version": "1.0",
+        "subType": "Parent"
+    },
+    "preRelease": true,
+    "request": {
+        "endpointPath": "/documents/search",
+        "method": "POST",
+        "parameters": [
+            {
+                "cdmName": "ResultSize",
+                "name": "top",
+                "inClause": "Body",
+                "required": true,
+                "type": "int",
+                "defaultValue": 10
+            },
+            {
+                "cdmName": "Archived.filter",
+                "name": "archivedFilter",
+                "inClause": "Body",
+                "required": false,
+                "type": "string",
+                "defaultValue": "ExcludeArchived"
+            },
+            {
+                "cdmName": "DocumentType.filter",
+                "name": "documentTypeFilters.[]",
+                "inClause": "Body",
+                "required": false,
+                "type": "string",
+                "defaultValue": ""
+            },
+            {
+                "cdmName": "Name.filter",
+                "name": "nameFilters.filters.[].queries.[]",
+                "inClause": "Body",
+                "required": false,
+                "type": "string",
+                "defaultValue": ""
+            },
+            {
+                "cdmName": "Text.filter",
+                "name": "textFilters.filters.[].queries.[]",
+                "inClause": "Body",
+                "required": false,
+                "type": "string",
+                "defaultValue": ""
+            },
+            {
+                "cdmName": "LastModifiedStartDate.filter",
+                "name": "lastModifiedOnFilter.from",
+                "inClause": "Body",
+                "required": false,
+                "type": "string",
+                "defaultValue": ""
+            },
+            {
+                "cdmName": "LastModifiedEndDate.filter",
+                "name": "lastModifiedOnFilter.to",
+                "inClause": "Body",
+                "required": false,
+                "type": "string",
+                "defaultValue": ""
+            }
+        ],
+        "sorting": {
+            "properties": [
+                {
+                    "name": "Date",
+                    "type": "date",
+                    "element": "sort",
+                    "elementValue": "CreatedOn"
+                },
+                {
+                    "name": "Alphabetical",
+                    "type": "string",
+                    "element": "sort",
+                    "elementValue": "Name"
+                },
+                {
+                    "name": "Relevance",
+                    "type": "string",
+                    "element": "sort",
+                    "elementValue": "Score"
+                }
+            ]
+        }
+    },
+    "response": {
+        "type": "JSON"
+    },
+    "filters": [
+        {
+            "name": "DocumentType",
+            "description": "Document type",
+            "isMultiselect": "true",
+            "requestParameter": "DocumentType.filter",
+            "filterlist": [
+                {
+                    "name": "Release of Lien",
+                    "id": "02b7c89f-d1fe-4a7f-bf76-c267d96a3db8"
+                },
+                {
+                    "name": "Facade test",
+                    "id": "039dfb4e-d16c-4fab-9b96-5b9587b15166"
+                },
+                {
+                    "name": "asd",
+                    "id": "065958f3-b706-485b-97bd-aec4d6e38b8a"
+                },
+                {
+                    "name": "Power Purchase Agreement",
+                    "id": "089da2bc-0c43-41d6-90ad-e28e8ab6861d"
+                },
+                {
+                    "name": "Purchase Order",
+                    "id": "0f8c1a86-ad91-4102-92d4-e462b8b7e127"
+                },
+                {
+                    "name": "test",
+                    "id": "17a26c02-9b5e-4139-8433-4bfd6ea900ca"
+                },
+                {
+                    "name": "Farm Out Agreement",
+                    "id": "1bf1024d-f97d-481b-9375-94faf6fd8659"
+                },
+                {
+                    "name": "Right of Way",
+                    "id": "1e7b7c9d-a535-45f3-9d72-2b4cafc6dfeb"
+                },
+                {
+                    "name": "Death Certificate",
+                    "id": "1f053783-767d-4edf-bb87-69f2f0988db2"
+                },
+                {
+                    "name": "Deeds & Conveyances",
+                    "id": "283ea50c-d60e-41b6-8361-1694646caad3"
+                },
+                {
+                    "name": "W9",
+                    "id": "2bc47e25-d94c-439a-aa10-08123c4a7e00"
+                },
+                {
+                    "name": "Statement of Work",
+                    "id": "3297eb44-10dc-40ae-ab43-20ecbc687894"
+                },
+                {
+                    "name": "new doc type with ontology",
+                    "id": "3550da67-c5a1-4bd6-b9f2-005be04b0915"
+                },
+                {
+                    "name": "Extension Of Oil And Gas Lease",
+                    "id": "3b629855-6bb8-475d-a54c-cef17723b74d"
+                },
+                {
+                    "name": "test doc type",
+                    "id": "3b69477c-2524-46df-a5a7-7e7a83e0e580"
+                },
+                {
+                    "name": "Amendment to Power Purchase Agreement",
+                    "id": "3d117b21-62c9-4022-8291-0eaf71312972"
+                },
+                {
+                    "name": "save",
+                    "id": "3ecc5684-0058-4dd1-b5e3-3b666d3ecf27"
+                },
+                {
+                    "name": "W-9",
+                    "id": "3f562727-d36d-48ae-b14a-bdbd9b998990"
+                },
+                {
+                    "name": "Release of Lease",
+                    "id": "416cc068-2215-4c83-bbbe-6f706cc48a72"
+                },
+                {
+                    "name": "Documents to Probate Will",
+                    "id": "41b842fb-bbce-4a87-83a1-4a530a5e69a1"
+                },
+                {
+                    "name": "Memorandum of SUAG ROW",
+                    "id": "432ae379-707c-4e98-a282-d6f8c47b4fae"
+                },
+                {
+                    "name": "Affidavit of Heirship",
+                    "id": "45f53482-0f75-44b5-bcd8-e64866af0756"
+                },
+                {
+                    "name": "Commercial Lease",
+                    "id": "4761727e-76ff-4cec-a938-ed50dd31a886"
+                },
+                {
+                    "name": "Lease Purchase Report",
+                    "id": "4bbaa93d-8904-47f3-861c-2dc9bc3448c1"
+                },
+                {
+                    "name": "Midstream Commercial Agreement",
+                    "id": "4c3efcae-72d9-4e85-b476-f1b441ba7720"
+                },
+                {
+                    "name": "Oil and Gas Lease",
+                    "id": "4eac8af1-e180-4dab-b33f-b58379ea1eff"
+                },
+                {
+                    "name": "MCA",
+                    "id": "58bcc5ba-43be-47a6-bd3c-0e67231e533d"
+                },
+                {
+                    "name": "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
+                    "id": "5aac73d5-9028-416f-ba9b-1fd3469a9af6"
+                },
+                {
+                    "name": "Letter in Lieu of Division Order",
+                    "id": "5fa000e1-c952-400a-860c-ff2b4f9840f7"
+                },
+                {
+                    "name": "Food Recipe",
+                    "id": "626a5e56-4fe9-489c-b12c-91070a03a542"
+                },
+                {
+                    "name": "Gathering and Processing Agreement",
+                    "id": "677a1cd2-2705-4bb4-a1ba-ba172551426a"
+                },
+                {
+                    "name": "testing that",
+                    "id": "75f2c5c3-c7ea-449f-a6aa-0a24279c7d10"
+                },
+                {
+                    "name": "test",
+                    "id": "79947725-3dee-4431-898e-faca6c289029"
+                },
+                {
+                    "name": "Resume",
+                    "id": "7a7377da-785f-4761-b9c6-98a73c2f789f"
+                },
+                {
+                    "name": "Technology Agreement",
+                    "id": "7af1c79a-7a26-4a0a-8129-9b519c14d6d3"
+                },
+                {
+                    "name": "Division Order",
+                    "id": "7f549179-0185-432f-94b5-8ec7a101b935"
+                },
+                {
+                    "name": "Easement - Pipeline",
+                    "id": "80f692a8-2855-4bb4-8f1c-4defa8396576"
+                },
+                {
+                    "name": "Unit Agreement",
+                    "id": "81e1772c-93ca-498d-9cab-024de2861928"
+                },
+                {
+                    "name": "Assignment",
+                    "id": "82568b5e-4721-4ff7-8d7c-7c3bf18c0f10"
+                },
+                {
+                    "name": "1099",
+                    "id": "8458b31f-8a96-452f-9b5d-e336ee42b4ae"
+                },
+                {
+                    "name": "Commercial Agreement",
+                    "id": "8b976850-5524-4a3e-ad99-e6ab7c60e41d"
+                },
+                {
+                    "name": "Interconnection Agreement",
+                    "id": "8ff41259-90d6-4b98-8ab2-bb55698c29e4"
+                },
+                {
+                    "name": "Commercial Amendment",
+                    "id": "98f765a6-9357-4801-83f2-0872177a7e99"
+                },
+                {
+                    "name": "Title Clearance Memo",
+                    "id": "a0b2b91f-79b8-4cc5-bd71-6214e4c6a11c"
+                },
+                {
+                    "name": "Hello",
+                    "id": "a14929f0-d9ea-4429-aed6-46f696357381"
+                },
+                {
+                    "name": "Title Opinion",
+                    "id": "a304e03a-c0a5-40d5-ad2a-234fb91bc70d"
+                },
+                {
+                    "name": "Last Will & Testament",
+                    "id": "a5dea47e-1059-47f2-b8c1-22a0bfe0318d"
+                },
+                {
+                    "name": "Lease Data Sheet",
+                    "id": "ab21d15f-f5cb-4d29-8bcc-cb4eff831d9a"
+                },
+                {
+                    "name": "Amendment to Interconnection Agreement",
+                    "id": "b1b79cf2-98c7-4711-ad78-03fd463f61c5"
+                },
+                {
+                    "name": "Ownership Report",
+                    "id": "b74d1a1f-ae40-44f2-8197-e0924c18bbb1"
+                },
+                {
+                    "name": "EPC Agreement",
+                    "id": "baab7120-9661-488b-a6c6-47d6b8efdabe"
+                },
+                {
+                    "name": "Mortgage",
+                    "id": "bd01797b-9b46-4204-9662-d493adaea21a"
+                },
+                {
+                    "name": "Unit Agreement Ratification",
+                    "id": "be908905-35c8-4152-bd43-ae0ce3c4cfd3"
+                },
+                {
+                    "name": "Request for Services",
+                    "id": "c06b44f5-6449-4834-9f50-423d3ee49921"
+                },
+                {
+                    "name": "Amendment to Surface Use and ROW Agreement",
+                    "id": "c0bdbbb5-8522-4536-a58d-3016106594dc"
+                },
+                {
+                    "name": "Lease Purchase Report",
+                    "id": "c2af588c-e575-4729-9d95-3957a81eeb75"
+                },
+                {
+                    "name": "Surface Site Agreement - OG",
+                    "id": "c4f2a406-ddbe-43ec-a619-30e0ba6f66d0"
+                },
+                {
+                    "name": "Site Control Agreement",
+                    "id": "cac5c476-1d38-448d-b87c-b50550a95c1f"
+                },
+                {
+                    "name": "Farmout Agreement",
+                    "id": "cb36ba94-7107-416c-b55d-0edd4aaf8d33"
+                },
+                {
+                    "name": "Easement - Access",
+                    "id": "d0555edb-e1d7-4956-baf1-c297e018e145"
+                },
+                {
+                    "name": "Joint Operating Agreement",
+                    "id": "d2839fbf-a949-4ea1-8afd-ce1cb56050ca"
+                },
+                {
+                    "name": "Lien",
+                    "id": "d4420f76-a62f-454a-9119-631840049ebd"
+                },
+                {
+                    "name": "Master Service Agreement",
+                    "id": "d8d57612-e41c-4e5c-83cd-e9e42b7eb16d"
+                },
+                {
+                    "name": "Lease Ratification",
+                    "id": "df1743f7-7a66-419c-baa5-a520c04b405d"
+                },
+                {
+                    "name": "Authority for Expenditure",
+                    "id": "e466a31b-b5d2-4229-8a79-a28fa7da02bc"
+                },
+                {
+                    "name": "Testing document type",
+                    "id": "e54f9252-3129-4625-8de7-e8a2983b4457"
+                },
+                {
+                    "name": "Correspondence",
+                    "id": "e8835657-e5c1-458d-9f01-9dbf5335fc65"
+                },
+                {
+                    "name": "Divorce",
+                    "id": "edde7c2f-ec45-4854-b29b-283c319150bd"
+                },
+                {
+                    "name": "Damage Settlement",
+                    "id": "ef199595-946f-4252-9e58-38854fb41dc9"
+                },
+                {
+                    "name": "Wind Lease",
+                    "id": "f0baae92-7e14-4229-942d-ee39de0980cc"
+                },
+                {
+                    "name": "Operation and Maintenance Agreement",
+                    "id": "f662c8de-46ab-4af9-8528-93351de371da"
+                }
+            ]
+        }
+    ],
+    "pagination": {
+        "available": true,
+        "isZeroBasedOffset": false
+    },
+    "resultLocation": "",
+    "cdmMapping": {
+        "structured": [
+            {
+                "name": "Documents",
+                "type": "object",
+                "responseElement": "{67}",
+                "_comment": ""
+            }
+        ],
+        "unstructured": []
+    }
+}

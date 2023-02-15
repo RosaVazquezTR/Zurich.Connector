@@ -1,0 +1,65 @@
+{
+    "id": "67",
+    "partitionkey": "ConnectorList",
+    "info": {
+        "title": "Get Search Thought Trace documents - Child connector for 66",
+        "description": "Pull Thougth Trace documents - Child connector for 66",
+        "entityType": "Search",
+        "dataSourceId": "50",
+        "version": "1.0",
+        "subType": "Child"
+    },
+    "preRelease": true,
+    "request": {},
+    "response": {},
+    "filters": [],
+    "resultLocation": "[]",
+    "cdmMapping": {
+        "structured": [
+            {
+                "name": "Title",
+                "type": "string",
+                "responseElement": "name",
+                "_comment": ""
+            },
+            {
+                "name": "CreationDate",
+                "type": "DateTime",
+                "responseElement": "createdOn",
+                "_comment": ""
+            },
+            {
+                "name": "Type",
+                "type": "string",
+                "responseElement": "documentTypeId",
+                "_comment": ""
+            },
+            {
+                "name": "Count",
+                "type": "short",
+                "responseElement": "pageCount",
+                "_comment": ""
+            }
+        ],
+        "unstructured": [
+            {
+                "name": "lastModifiedOn",
+                "type": "DateTime",
+                "responseElement": "lastModifiedOn",
+                "_comment": ""
+            },
+            {
+                "name": "processingStatus",
+                "type": "string",
+                "responseElement": "processingStatus",
+                "_comment": ""
+            },
+            {
+                "name": "highlightedText",
+                "type": "string",
+                "responseElement": "highlightedText",
+                "_comment": ""
+            }
+        ]
+    }
+}
