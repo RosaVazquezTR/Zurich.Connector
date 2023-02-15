@@ -9,7 +9,6 @@
     "dataSourceId": "48",
     "version": "1.0"
   },
-  "preRelease": true,
   "request": {
     "endpointPath": "/api",
     "method": "GET",
