@@ -171,5 +171,16 @@
             }
         ],
         "unstructured": []
-    }
+    },
+    "advancedSearchSyntax": {
+		"operators": {
+			"and": "&",
+			"or": "or",
+			"textualOcurrence": "\"",
+			"not": "%",
+			"wildcard": "*",
+			"proximity": "/",
+			"termGrouping": "("
+		}
+	}
 }
