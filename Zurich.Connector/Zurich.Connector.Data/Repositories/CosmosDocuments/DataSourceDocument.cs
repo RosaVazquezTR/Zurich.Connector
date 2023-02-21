@@ -77,11 +77,6 @@ namespace Zurich.Connector.Data.Repositories.CosmosDocuments
         public bool CombinedLocations { get; set; }
 
         /// <summary>
-        /// Whether or not the connector response needs to be sorted on our side
-        /// </summary>
-        public bool InternalSorting { get; set; }
-
-        /// <summary>
         /// For connectors that do not support offset
         /// </summary>
         public bool ManualOffset { get; set; }

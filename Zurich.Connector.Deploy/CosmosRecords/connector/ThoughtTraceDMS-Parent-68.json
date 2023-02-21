@@ -1,12 +1,12 @@
 {
-    "id": "52",
+    "id": "68",
     "partitionkey": "ConnectorList",
-    "alias": "tt.search",
+    "alias": "ttdocs.search",
     "info": {
-        "title": "Get Search Thought Trace documents",
-        "description": "Pull Thougth Trace documents",
+        "title": "Get Search Thought Trace  with thoughts",
+        "description": "Pull Thougth Trace documents with thoughts",
         "entityType": "Search",
-        "dataSourceId": "47",
+        "dataSourceId": "50",
         "version": "1.0",
         "subType": "Parent"
     },
@@ -155,10 +155,10 @@
     "response": {
         "type": "JSON",
         "useJsonTransformation": true,
-        "useInternalSorting": true        
+        "useInternalSorting": true
     },
     "facetsInformation": {
-        "connectorId": "65"
+        "connectorId": "71"
     },
     "filters": [
         {
@@ -464,7 +464,7 @@
             {
                 "name": "Documents",
                 "type": "object",
-                "responseElement": "{53}",
+                "responseElement": "{69}",
                 "_comment": ""
             }
         ],

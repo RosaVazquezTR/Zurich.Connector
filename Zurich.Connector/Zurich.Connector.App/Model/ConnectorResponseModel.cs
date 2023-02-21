@@ -19,6 +19,16 @@ namespace Zurich.Connector.App.Model
         public ResponseContentType Type { get; set; }
 
         /// <summary>
+        /// Whether or not the connector response needs to be sorted on our side
+        /// </summary>
+        public bool? UseInternalSorting { get; set; }
+
+        /// <summary>
+        /// Whether or not the connector JSON response needs to be transformed using JUST library
+        /// </summary>
+        public bool? UseJsonTransformation { get; set; }
+
+        /// <summary>
         /// Define connector XSLT transform record
         /// </summary>
         public string TransformationLocation { get; set; }

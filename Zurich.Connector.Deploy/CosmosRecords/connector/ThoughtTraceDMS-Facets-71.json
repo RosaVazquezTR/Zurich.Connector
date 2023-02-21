@@ -1,0 +1,151 @@
+{
+    "id": "71",
+    "partitionkey": "ConnectorList",
+    "alias": "ttdocs.facets",
+    "info": {
+        "title": "Get Search Thought Trace dynamic facets, same request as connector 68",
+        "description": "Pull Thougth Trace dynamic facets, same request as connector 68",
+        "entityType": "Facets",
+        "dataSourceId": "50",
+        "version": "1.0"
+    },
+    "request": {
+        "endpointPath": "/documents/search/facets",
+        "method": "POST",
+        "parameters": [
+		    {
+                "cdmName": "expandFieldResults",
+                "name": "expandFieldResults",
+                "inClause": "Body",
+                "required": true,
+                "type": "string",
+                "defaultValue": "false"
+            },
+		    {
+                "cdmName": "keyWord",
+                "name": "keyWord",
+                "inClause": "Body",
+                "required": false,
+                "type": "string",
+                "defaultValue": ""
+            },
+			{
+                "cdmName": "threshold",
+                "name": "threshold",
+                "inClause": "Body",
+                "required": false,
+                "type": "string",
+                "defaultValue": "0"
+            },
+            {
+                "cdmName": "ResultSize",
+                "name": "top",
+                "inClause": "Body",
+                "required": true,
+                "type": "int",
+                "defaultValue": 250
+            },
+            {
+                "cdmName": "Archived.filter",
+                "name": "archivedFilter",
+                "inClause": "Body",
+                "required": false,
+                "type": "string",
+                "defaultValue": "ExcludeArchived"
+            },
+            {
+                "cdmName": "DocumentType.filter",
+                "name": "documentTypeFilters.[]",
+                "inClause": "Body",
+                "required": false,
+                "type": "string",
+                "defaultValue": ""
+            },
+            {
+                "cdmName": "Name.filter",
+                "name": "nameFilters.filters.[].queries.[]",
+                "inClause": "Body",
+                "required": false,
+                "type": "string",
+                "defaultValue": ""
+            },
+            {
+                "cdmName": "Text.filter",
+                "name": "textFilters.filters.[].queries.[]",
+                "inClause": "Body",
+                "required": false,
+                "type": "string",
+                "defaultValue": ""
+            },
+            {
+                "cdmName": "LastModifiedStartDate.filter",
+                "name": "lastModifiedOnFilter.from",
+                "inClause": "Body",
+                "required": false,
+                "type": "string",
+                "defaultValue": ""
+            },
+            {
+                "cdmName": "LastModifiedEndDate.filter",
+                "name": "lastModifiedOnFilter.to",
+                "inClause": "Body",
+                "required": false,
+                "type": "string",
+                "defaultValue": ""
+            },
+            {
+                "cdmName": "thoughtFilters",
+                "name": "thoughtFilters",
+                "inClause": "Body",
+                "required": true,
+                "type": "object",
+                "defaultValue": {
+                    "operator": "and",
+                    "filters": [
+                        {
+                            "fieldTypes": [
+                                {
+                                    "thoughtTypeId": "1",
+                                    "thoughtFieldTypeId": "1746"
+                                }
+                            ],
+                            "operator": "exists",
+                            "stringValue": "",
+                            "stringValueList": null,
+                            "numberValue": null,
+                            "dateValue": null,
+                            "booleanValue": null
+                        }
+                    ]
+                }
+            },
+            {
+                "cdmName": "Filters",
+                "name": "Filters",
+                "inClause": "Body",
+                "required": false,
+                "type": "object",
+                "defaultValue": ""
+            }
+        ],
+        "sorting": {
+            "properties": []
+        }
+    },
+    "response": {
+        "type": "JSON"
+    },
+    "filters": [],
+    "resultLocation": "",
+    "cdmMapping": {
+        "structured": [
+            {
+                "name": "Facets",
+                "type": "string",
+                "responseElement": "Facets",
+                "_comment": ""
+            }
+        ],
+        "unstructured": []
+    }
+}

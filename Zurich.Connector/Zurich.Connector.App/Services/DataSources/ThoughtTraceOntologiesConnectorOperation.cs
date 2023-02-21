@@ -36,7 +36,7 @@ namespace Zurich.Connector.App.Services.DataSources
 
         public bool IsCompatible(string appCode)
         {
-            return appCode == KnownDataSources.thoughtTrace;
+            return appCode == KnownDataSources.thoughtTrace || appCode == KnownDataSources.thoughtTraceDMS;
         }
 
         public async Task<dynamic> SetItemLink(ConnectorEntityType entityType, dynamic item, string appCode, string hostName)
@@ -47,7 +47,7 @@ namespace Zurich.Connector.App.Services.DataSources
         public async Task<Dictionary<string, string>> SetParametersSpecialCases(ConnectorModel connector, Dictionary<string, string> allParameters)
         {
             //TODO: changing this from a specific connector id to a parameter in the data source
-            if (!connector.DataSource.InternalSorting)
+            if (!(connector.Response?.UseInternalSorting ?? false))
                 return allParameters;
 
 
@@ -112,7 +112,7 @@ namespace Zurich.Connector.App.Services.DataSources
         public async Task<dynamic> AddAditionalInformation(ConnectorModel connector, dynamic item)
         {
             //TODO: changing this from a specific connector id to a parameter in the data source
-            if (connector.Id != "52")
+            if (connector.Id != "52" || connector.Id != "68")
                 return item;
 
             JArray thoughtTypes = await GetThoughtTypesFromOntologies();

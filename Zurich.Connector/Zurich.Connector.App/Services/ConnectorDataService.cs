@@ -204,8 +204,8 @@ namespace Zurich.Connector.Data.Services
 
                 // TODO: Check if the count for TT response can be sent the same way the other connectors do so we can change this validation
                 //if (data?.Count > 0)
-                if (connectorModel.DataSource.CombinedLocations || connectorModel.DataSource.InternalSorting)
-                    data.Documents = SortingResponseDocuments(data.Documents, connectorModel.DataSource, queryParameters);
+                if (connectorModel.DataSource.CombinedLocations || (connectorModel.Response?.UseInternalSorting ?? false))
+                    data.Documents = SortingResponseDocuments(data.Documents, connectorModel, queryParameters);
                 if (data is JObject && data["AdditionalProperties"] != null && data.AdditionalProperties.pagination != null)
                 {
                     var pagination_to = (int)data.AdditionalProperties.pagination.to;
@@ -523,13 +523,13 @@ namespace Zurich.Connector.Data.Services
             return aux;
         }
 
-        private static JArray SortingResponseDocuments(JArray documents, DataSourceModel dataSource, Dictionary<string, string> queryParameters)
+        private static JArray SortingResponseDocuments(JArray documents, ConnectorModel connectorModel, Dictionary<string, string> queryParameters)
         {
             // TODO: for the moment this code is too specific for TT and HighQ, for future connectors
             // that might use internal sorting we need to find a way to do it in a more generic way
-            if (dataSource.CombinedLocations)
+            if (connectorModel.DataSource.CombinedLocations)
                 documents = new JArray(documents.OrderByDescending(obj => (DateTime)obj["CreationDate"]));
-            else if (dataSource.InternalSorting)
+            else if (connectorModel.Response?.UseInternalSorting ?? false)
             {
                 string flatResStr = documents.ToString();
                 flatResStr = flatResStr.Replace("score\": \"\"", "score\": 0.0");

@@ -143,13 +143,14 @@ namespace Zurich.Connector.IntegrationTests
         {
 
 
-
             // Note:- Workaround to skip HighQ connector check  TRMarketplace (29)
             //        and MS Graph External Search Connector (49) check (Test user didn't consent ExternalItem.Read therefore will get 403 forbidden on graph side)
-            //        and both Thought Trace connectors (52 y 66) check for the moment
+            //        and Thought Trace connectors (52, 66 and 68) check for the moment
             // TODO: remove the msgraph exception once the test tenant is setup correctly.
             // TODO: remove the PLCAU id 63 exception once the token is retrieved correctly for this test. 
-            if (connector.Id != "29" && connector.Id != "47" && connector.Id != "48" && connector.Id != "49" && connector.Id != "52" && connector.Id != "51" && connector.Id != "60" && connector.Id != "14" && connector.Id != "63" && connector.Id != "66")
+            string[] connectorsToSkipList = { "14", "29", "47", "48", "49", "51", "52", "60", "63", "66", "68" };
+
+            if (!connectorsToSkipList.Contains(connector.Id))
             {
                 // Arrange
                 var request = $"/api/v1/Connectors/{connector.Id}/Data?Query=*";

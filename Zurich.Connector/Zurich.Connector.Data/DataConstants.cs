@@ -47,6 +47,7 @@
         public const string msGraph = "MsGraph";
         public const string westLawUK = "WLUK";
         public const string thoughtTrace = "TT";
+        public const string thoughtTraceDMS = "TTDocs";
     }
     public static class DataConstants
     {
