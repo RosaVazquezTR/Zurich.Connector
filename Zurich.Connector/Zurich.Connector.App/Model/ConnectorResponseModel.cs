@@ -29,6 +29,11 @@ namespace Zurich.Connector.App.Model
         public bool? UseJsonTransformation { get; set; }
 
         /// <summary>
+        /// Whether or not the connector uses the IH permissions check workarround
+        /// </summary>
+        public bool? UsePermissionsCheck { get; set; }
+
+        /// <summary>
         /// Define connector XSLT transform record
         /// </summary>
         public string TransformationLocation { get; set; }
