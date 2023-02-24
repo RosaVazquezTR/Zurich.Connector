@@ -155,7 +155,8 @@
     "response": {
         "type": "JSON",
         "useJsonTransformation": true,
-        "useInternalSorting": true
+        "useInternalSorting": true,
+		"usePermissionsCheck": true
     },
     "facetsInformation": {
         "connectorId": "71"

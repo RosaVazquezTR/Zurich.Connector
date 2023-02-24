@@ -46,8 +46,7 @@ namespace Zurich.Connector.App.Services.DataSources
 
         public async Task<Dictionary<string, string>> SetParametersSpecialCases(ConnectorModel connector, Dictionary<string, string> allParameters)
         {
-            //TODO: changing this from a specific connector id to a parameter in the data source
-            if (!(connector.Response?.UseInternalSorting ?? false))
+            if (!(connector.Response?.UseJsonTransformation ?? false))
                 return allParameters;
 
 
@@ -61,6 +60,8 @@ namespace Zurich.Connector.App.Services.DataSources
             String[] clauseTerms = Regex.Replace(allParameters["clauseTerms"], "[^0-9,]", "").Split(',', StringSplitOptions.RemoveEmptyEntries);
             allParameters.Remove("clauseTerms");
 
+            List<string> keyWords = allParameters["keyWord"].Split(",").ToList();
+
             //For the given clauseType/thoughTypeId, we first need to extract the provision thoughFieldTypeId from onotlogies
             var provisionID = "";
             provisionID = await GetProvisionThoughtFieldTypeIdFromOntologies(clauseType);
@@ -68,27 +69,32 @@ namespace Zurich.Connector.App.Services.DataSources
                 return null;
             allParameters["provisionID"] = provisionID;
 
-            // provisionID filter allways have to be included
+            // A provisionID filter allways have to be included.
+            // With no keyword, 1 "exists" filter
+            // With n keywords, n "contains" filters
 
-            JObject fieldType = new()
+            foreach (string kw in keyWords)
             {
-                ["thoughtFieldTypeId"] = provisionID
-            };
+                JObject fieldType = new()
+                {
+                    ["thoughtFieldTypeId"] = provisionID
+                };
 
-            JObject defaultProvisionFilter = new();
-            defaultProvisionFilter["fieldTypes"] = new JArray(fieldType);
-            //If theres no KW, provisionID filter goes with "exists", if there's KW, goes with "contains"
-            if (allParameters.ContainsKey("keyWord") && String.IsNullOrEmpty(allParameters["keyWord"]))
-            {
-                defaultProvisionFilter["operator"] = "exists";
-                defaultProvisionFilter["stringValue"] = String.Empty;
+                JObject defaultProvisionFilter = new();
+                defaultProvisionFilter["fieldTypes"] = new JArray(fieldType);
+                //If theres no KW, provisionID filter goes with "exists", if there's KW, goes with "contains"
+                if (String.IsNullOrEmpty(kw))
+                {
+                    defaultProvisionFilter["operator"] = "exists";
+                    defaultProvisionFilter["stringValue"] = String.Empty;
+                }
+                else
+                {
+                    defaultProvisionFilter["operator"] = "contains";
+                    defaultProvisionFilter["stringValue"] = kw;
+                }
+                ((JArray)thoughtFilters["filters"]).Add(defaultProvisionFilter);
             }
-            else
-            {
-                defaultProvisionFilter["operator"] = "contains";
-                defaultProvisionFilter["stringValue"] = allParameters["keyWord"];
-            }
-            ((JArray)thoughtFilters["filters"]).Add(defaultProvisionFilter);
 
             //Then, foreach ClauseTerm
             clauseTerms = clauseTerms.Where(val => val != provisionID).ToArray();
@@ -111,8 +117,7 @@ namespace Zurich.Connector.App.Services.DataSources
 
         public async Task<dynamic> AddAditionalInformation(ConnectorModel connector, dynamic item)
         {
-            //TODO: changing this from a specific connector id to a parameter in the data source
-            if (connector.Id != "52" || connector.Id != "68")
+            if (!(connector.Response?.UseJsonTransformation ?? false))
                 return item;
 
             JArray thoughtTypes = await GetThoughtTypesFromOntologies();
@@ -142,7 +147,7 @@ namespace Zurich.Connector.App.Services.DataSources
         private async Task<JArray> GetThoughtTypesFromOntologies()
         {
 
-            if(!_httpContextAccessor.HttpContext.Items.TryGetValue("Ontologies", out var ontologiesResponse))
+            if (!_httpContextAccessor.HttpContext.Items.TryGetValue("Ontologies", out var ontologiesResponse))
             {
                 ConnectorModel connectorModel = await _cosmosService.GetConnector("60", true);
                 ConnectorDocument connectorDocument = _mapper.Map<ConnectorDocument>(connectorModel);
@@ -158,7 +163,7 @@ namespace Zurich.Connector.App.Services.DataSources
             // As we don't need ontology metadata, I put together all tougtTypes to make search easier
             foreach (JToken ontology in (JToken)ontologiesResponse)
             {
-                foreach(JToken thoughtType in ontology["thoughtTypes"])
+                foreach (JToken thoughtType in ontology["thoughtTypes"])
                     thoughtTypes.Add(thoughtType);
             }
 
@@ -183,7 +188,8 @@ namespace Zurich.Connector.App.Services.DataSources
             cdmQueryParameters.Remove("thoughtFilters");
             string clauseType = "";
             JArray clauseIds = new JArray();
-            string keyword = "";
+            string originalKeyword = "";
+            List<string> keyword = new List<string>();
 
             JToken requestFilters = JToken.Parse(cdmQueryParameters["Filters"]);
             foreach (var filter in requestFilters)
@@ -194,14 +200,32 @@ namespace Zurich.Connector.App.Services.DataSources
                 if (key == "clauseTypeID")
                     clauseType = (string)value;
 
-                if (key == "clauseTermIDs")
+                else if (key == "clauseTermIDs")
                     clauseIds = (JArray)value.First;
 
-                if (key == "keyword")
-                    keyword = (string)value;
+                else if (key == "keyword")
+                {
+                    originalKeyword = ((string)value);
+                    var enclosedTexts = Regex.Matches(originalKeyword, @"\" + (char)34 + @"(.+?)\" + (char)34)
+                       .Cast<Match>()
+                       .Select(m => m.Groups[1].Value)
+                       .ToList();
+                    foreach (string text in enclosedTexts)
+                    {
+                        keyword.Add(text);
+                        originalKeyword = originalKeyword.Replace(text, String.Empty);
+                    }
+                    originalKeyword = (originalKeyword.Replace("\" ", String.Empty).Replace("\"", String.Empty));
+                    if (originalKeyword[originalKeyword.Length - 1] == ' ')
+                        originalKeyword = originalKeyword.Remove(originalKeyword.Length - 1);
+                    keyword.AddRange(originalKeyword.Split(' ').ToList());
+                }
             }
             JObject thoughtFilters = new JObject();
-            thoughtFilters.Add("operator", "and");
+            if (keyword.Count > 1)
+                thoughtFilters.Add("operator", "or");
+            else
+                thoughtFilters.Add("operator", "and");
 
             JArray filters = new JArray();
             thoughtFilters.Add("filters", filters);
@@ -216,7 +240,7 @@ namespace Zurich.Connector.App.Services.DataSources
 
             cdmQueryParameters.Remove("Filters");
             cdmQueryParameters.Add("thoughtFilters", thoughtFilters.ToString());
-            cdmQueryParameters.Add("keyWord", keyword);
+            cdmQueryParameters.Add("keyWord", string.Join(",", keyword));
             cdmQueryParameters.Add("clauseType", clauseType);
             cdmQueryParameters.Add("clauseTerms", clauseIds.ToString());
             return cdmQueryParameters;
