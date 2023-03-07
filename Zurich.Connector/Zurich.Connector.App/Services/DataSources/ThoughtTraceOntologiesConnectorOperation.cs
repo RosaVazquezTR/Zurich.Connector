@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Zurich.Connector.App.Exceptions;
 using Zurich.Connector.App.Model;
 using Zurich.Connector.Data;
 using Zurich.Connector.Data.DataMap;
@@ -205,20 +206,25 @@ namespace Zurich.Connector.App.Services.DataSources
 
                 else if (key == "keyword")
                 {
-                    originalKeyword = ((string)value);
-                    var enclosedTexts = Regex.Matches(originalKeyword, @"\" + (char)34 + @"(.+?)\" + (char)34)
-                       .Cast<Match>()
-                       .Select(m => m.Groups[1].Value)
-                       .ToList();
-                    foreach (string text in enclosedTexts)
+                    originalKeyword = Regex.Replace((string)value, @"\s+", " ").Trim(); //Remove extra spaces between words.
+                    if (validateQuery(originalKeyword))
                     {
-                        keyword.Add(text);
-                        originalKeyword = originalKeyword.Replace(text, String.Empty);
+                        var enclosedTexts = Regex.Matches(originalKeyword, @"\" + (char)34 + @"(.+?)\" + (char)34)
+                       .Cast<Match>()
+                       .Select(m => m.Groups[1].Value.Trim())
+                       .ToList();
+                        foreach (string text in enclosedTexts)
+                        {
+                            keyword.Add(text);
+                            originalKeyword = originalKeyword.Replace(text, String.Empty);
+                        }
+                        originalKeyword = (originalKeyword.Replace("\" ", String.Empty).Replace("\"", String.Empty));
+                        originalKeyword = originalKeyword.Trim();
+                        if(!String.IsNullOrEmpty(originalKeyword))
+                            keyword.AddRange(originalKeyword.Split(' ').ToList());
                     }
-                    originalKeyword = (originalKeyword.Replace("\" ", String.Empty).Replace("\"", String.Empty));
-                    if (originalKeyword[originalKeyword.Length - 1] == ' ')
-                        originalKeyword = originalKeyword.Remove(originalKeyword.Length - 1);
-                    keyword.AddRange(originalKeyword.Split(' ').ToList());
+                    else
+                        throw new InvalidQueryFormatException("Query contains invalid format.");
                 }
             }
             JObject thoughtFilters = new JObject();
@@ -246,5 +252,17 @@ namespace Zurich.Connector.App.Services.DataSources
             return cdmQueryParameters;
 
         }
+
+        public static bool validateQuery(string query)
+        {
+            // The "" operator strictly open and close. 
+            int countQuotes = query.Count(f => (f == '"'));
+            var enclosedTexts = Regex.Matches(query, @"\" + (char)34 + @"(.+?)\" + (char)34);
+
+            if ((countQuotes % 2 != 0) || (countQuotes/2 != enclosedTexts.Count))
+                return false;
+            return true;
+        }
+
     }
 }
