@@ -64,7 +64,7 @@ stages:
   pool: DCO-HighQ-Platform-N
   dependsOn:
     - Build
-  condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'ES/buildWithoutIntegrationTest'))
+  condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'buildWithoutIntegrationTest'))
   jobs:
     - deployment: Prereqs
       environment: CI
@@ -244,7 +244,7 @@ stages:
 - stage: CompatibilityTesting
   pool: AutomationTestAgentPool
   dependsOn: CI
-  condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'ES/buildWithoutIntegrationTest'))
+  condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'buildWithoutIntegrationTest'))
   jobs:
   - job: 'RegressionTests'
     timeoutInMinutes: ${{ variables.regressionTestTimeout }} # how long to run the job before automatically cancelling
@@ -258,7 +258,7 @@ stages:
           xApiKey: $(postmanXApiKey)
 - stage: Swap_Slots
   dependsOn: CompatibilityTesting
-  condition: and(in(dependencies.CompatibilityTesting.result, 'Succeeded', 'Failed'), eq(variables['Build.SourceBranchName'], 'ES/buildWithoutIntegrationTest'))
+  condition: and(in(dependencies.CompatibilityTesting.result, 'Succeeded', 'Failed'), eq(variables['Build.SourceBranchName'], 'buildWithoutIntegrationTest'))
   jobs:
     - template: ../Templates/connector-swap-slots.yml
       parameters:
@@ -270,7 +270,7 @@ stages:
         subscriptionName: ${{ variables.subscriptionName }}
 - stage: Update_APIM_Product
   dependsOn: Swap_Slots
-  condition: and(eq(dependencies.Swap_Slots.result, 'Succeeded'), eq(variables['Build.SourceBranchName'], 'ES/buildWithoutIntegrationTest'))
+  condition: and(eq(dependencies.Swap_Slots.result, 'Succeeded'), eq(variables['Build.SourceBranchName'], 'buildWithoutIntegrationTest'))
   jobs:
   - job: 'UpdateApim'
     displayName: 'Update Apim Connector Service'
@@ -306,7 +306,7 @@ stages:
 - stage: Testing
   pool: AutomationTestAgentPool
   dependsOn: Update_APIM_Product
-  condition: and(eq(dependencies.Swap_Slots.result, 'Succeeded'), eq(variables['Build.SourceBranchName'], 'ES/buildWithoutIntegrationTest'))
+  condition: and(eq(dependencies.Swap_Slots.result, 'Succeeded'), eq(variables['Build.SourceBranchName'], 'buildWithoutIntegrationTest'))
   jobs:
   - job: 'RegressionTests'
     timeoutInMinutes: ${{ variables.regressionTestTimeout }} # how long to run the job before automatically cancelling
