@@ -15,6 +15,7 @@ resources:
     - repository: ZurichDeploy
       type: git
       name: Zurich.Deploy
+      ref: refs/heads/ES/buildWithoutIntegrationTest
     - repository: ZurichTesting
       type: git
       name: Zurich.Testing
