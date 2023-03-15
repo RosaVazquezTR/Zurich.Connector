@@ -25,7 +25,7 @@ namespace Zurich.Connector.Data.Services
         {
             // TT transformation response
             string provisionID = query["provisionID"];
-            string[] keyWord = query["keyWord"].Split(",");
+            string[] keyWord = query["keyWord"].Split(",", StringSplitOptions.RemoveEmptyEntries);
             string input = "{\"Documents\":" + response + "}";
             string path = Directory.GetCurrentDirectory() + "\\Transformation\\TTtransformer3.json";
             string transformer = File.ReadAllText(path);
