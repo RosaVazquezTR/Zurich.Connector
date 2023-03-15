@@ -84,7 +84,7 @@ namespace Zurich.Connector.Data.DataMap
             }
             else
             {
-                throw new AuthenticationException("Invalid token");
+                throw new AuthenticationException("Invalid or expired token");
             }
         }
     }
