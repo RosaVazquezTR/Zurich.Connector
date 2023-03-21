@@ -51,7 +51,7 @@ namespace Zurich.Connector.App.Services.DataSources
                 return allParameters;
 
 
-            allParameters = TTMap(allParameters);
+            allParameters = TTRequestMap(allParameters);
 
             var thoughtFilters = JToken.Parse(allParameters["thoughtFilters"]);
 
@@ -61,7 +61,7 @@ namespace Zurich.Connector.App.Services.DataSources
             String[] clauseTerms = Regex.Replace(allParameters["clauseTerms"], "[^0-9,]", "").Split(',', StringSplitOptions.RemoveEmptyEntries);
             allParameters.Remove("clauseTerms");
 
-            List<string> keyWords = allParameters["keyWord"].Split(",").ToList();
+            List<string> keyWords = allParameters["keyWord"].Split(",_").ToList();
 
             //For the given clauseType/thoughTypeId, we first need to extract the provision thoughFieldTypeId from onotlogies
             var provisionID = "";
@@ -184,7 +184,7 @@ namespace Zurich.Connector.App.Services.DataSources
             return provisionThought?["id"].Value<string>();
         }
 
-        public Dictionary<string, string> TTMap(Dictionary<string, string> cdmQueryParameters)
+        public Dictionary<string, string> TTRequestMap(Dictionary<string, string> cdmQueryParameters)
         {
             cdmQueryParameters.Remove("thoughtFilters");
             string clauseType = "";
@@ -246,7 +246,7 @@ namespace Zurich.Connector.App.Services.DataSources
 
             cdmQueryParameters.Remove("Filters");
             cdmQueryParameters.Add("thoughtFilters", thoughtFilters.ToString());
-            cdmQueryParameters.Add("keyWord", string.Join(",", keyword));
+            cdmQueryParameters.Add("keyWord", string.Join(",_", keyword));
             cdmQueryParameters.Add("clauseType", clauseType);
             cdmQueryParameters.Add("clauseTerms", clauseIds.ToString());
             return cdmQueryParameters;

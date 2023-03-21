@@ -25,7 +25,7 @@ namespace Zurich.Connector.Data.Services
         {
             // TT transformation response
             string provisionID = query["provisionID"];
-            string[] keyWord = query["keyWord"].Split(",", StringSplitOptions.RemoveEmptyEntries);
+            string[] keyWord = query["keyWord"].Split(",_", StringSplitOptions.RemoveEmptyEntries);
             string input = "{\"Documents\":" + response + "}";
             string path = Directory.GetCurrentDirectory() + "\\Transformation\\TTtransformer3.json";
             string transformer = File.ReadAllText(path);
@@ -61,12 +61,12 @@ namespace Zurich.Connector.Data.Services
                             field["thoughtId"] = id;
                             field["clauseTypeId"] = clauseTypeId;
 
-                            string newHighlight = field["highlightedText"].Value<string>();
+                            string newHighlight = field["highlightedText"].Value<string>().Replace("<mark>", String.Empty).Replace("</mark>", String.Empty); 
                             foreach (string word in keyWord)
                             {
-                                newHighlight = Regex.Replace(newHighlight, word, "<mark>" + word.ToUpper() + "</mark>", RegexOptions.IgnoreCase);
+                                newHighlight = Regex.Replace(newHighlight, @"\b("+word+ @"([^\s]?\w?|\w*))\b", "<mark>$1</mark>",RegexOptions.IgnoreCase);
                             }
-                            field["highlightedText"] = newHighlight.Replace("<mark><mark>", "<mark>").Replace("</mark></mark>", "</mark>");
+                            field["highlightedText"] = newHighlight;
 
                             acumulate.Add(field);
                         }
