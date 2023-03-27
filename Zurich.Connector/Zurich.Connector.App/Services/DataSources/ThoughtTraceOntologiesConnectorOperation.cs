@@ -195,18 +195,18 @@ namespace Zurich.Connector.App.Services.DataSources
             JToken requestFilters = JToken.Parse(cdmQueryParameters["Filters"]);
             foreach (var filter in requestFilters)
             {
-                var key = (string)filter.First.First;
-                var value = filter.First.Next;
+                var key = filter["key"].Value<string>();
 
                 if (key == "clauseTypeID")
-                    clauseType = (string)value;
+                    clauseType = filter["value"].Value<string>();
 
                 else if (key == "clauseTermIDs")
-                    clauseIds = (JArray)value.First;
+                    clauseIds = (JArray)filter["value"];
 
                 else if (key == "keyword")
                 {
-                    originalKeyword = Regex.Replace((string)value, @"\s+", " ").Trim(); //Remove extra spaces between words.
+                    var value = filter["value"].Value<string>();
+                    originalKeyword = Regex.Replace(value, @"\s+", " ").Trim(); //Remove extra spaces between words.
                     if (validateQuery(originalKeyword))
                     {
                         var enclosedTexts = Regex.Matches(originalKeyword, @"\" + (char)34 + @"(.+?)\" + (char)34)
@@ -218,9 +218,11 @@ namespace Zurich.Connector.App.Services.DataSources
                             keyword.Add(text);
                             originalKeyword = originalKeyword.Replace(text, String.Empty);
                         }
-                        originalKeyword = (originalKeyword.Replace("\" ", String.Empty).Replace("\"", String.Empty));
-                        originalKeyword = originalKeyword.Trim();
-                        if(!String.IsNullOrEmpty(originalKeyword))
+                        char[] bannedChars = { ',', '.', '"', ':', ';'};
+                        string regexPattern = "[" + Regex.Escape(new string(bannedChars)) + "]";
+                        originalKeyword = Regex.Replace(originalKeyword, regexPattern, "").Trim();
+                        
+                        if (!String.IsNullOrEmpty(originalKeyword))
                             keyword.AddRange(originalKeyword.Split(' ').ToList());
                     }
                     else
