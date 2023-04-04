@@ -13,6 +13,7 @@ using Zurich.Connector.Data.Factories;
 using Zurich.Connector.Data.Model;
 using Zurich.Connector.Data.Repositories.CosmosDocuments;
 using Zurich.Connector.Data.Services;
+using static Zurich.Connector.Data.Constants;
 
 namespace Zurich.Connector.App.Services.DataSources
 {
@@ -65,21 +66,28 @@ namespace Zurich.Connector.App.Services.DataSources
                     case ConnectorEntityType.Folder:
                         if (item is JObject folderResult && folderResult.ContainsKey("Items") && folderResult["Items"].HasValues && folderResult["Items"] is JArray)
                         {
-                            customerId = await GetCustomerId(appCode, hostName);
-                            foreach (JObject folder in folderResult["Items"] as JArray)
-                            {
-                                if (!folder.ContainsKey(StructuredCDMProperties.WebUrl))
-                                    folder[StructuredCDMProperties.WebUrl] = BuildLink(entityType, folder, hostName);
-                            }
+                            await SetAdditionalPropertiesFolders(entityType, folderResult["Items"] as JArray, appCode, hostName);
                         }
                         break;
                     case ConnectorEntityType.Search:
-                        if (item is JObject searchResult && searchResult.ContainsKey("Count"))
+                        if (item is JObject searchResult && searchResult.ContainsKey(PropertiesConnectorDefinition.Count))
                         {
-                            if (searchResult.ContainsKey("Documents") && searchResult["Documents"].HasValues)
+                            if (searchResult.ContainsKey(PropertiesConnectorDefinition.Folders))
+                            {
+                                await SetAdditionalPropertiesFolders(entityType, searchResult[PropertiesConnectorDefinition.Folders] as JArray, appCode, hostName);
+                                // Name change from Folders to Documents due to mapping in FedSearch
+                                // TODO: Validate with FedSearch the possibility of changing the existing model to avoid this name change.
+                                var parent = searchResult[PropertiesConnectorDefinition.Folders].Parent;
+                                if (parent != null)
+                                {
+                                    var documentsToken = new JProperty(PropertiesConnectorDefinition.Documents, searchResult[PropertiesConnectorDefinition.Folders]);
+                                    parent.Replace(documentsToken);
+                                }
+                            }
+                            else if (searchResult.ContainsKey(PropertiesConnectorDefinition.Documents) && searchResult[PropertiesConnectorDefinition.Documents].HasValues)
                             {
                                 customerId = await GetCustomerId(appCode, hostName);
-                                var documents = searchResult["Documents"] as JArray;
+                                var documents = searchResult[PropertiesConnectorDefinition.Documents] as JArray;
                                 searchResult[StructuredCDMProperties.ItemsCount] = (short)documents.Count;
                                 foreach (JObject doc in documents)
                                 {
@@ -118,6 +126,23 @@ namespace Zurich.Connector.App.Services.DataSources
         public async Task<dynamic> AddAditionalInformation(ConnectorModel connector, dynamic item)
         {
             return item;
+        }
+
+        /// <summary>
+        /// Add additional properties for folders
+        /// </summary>
+        /// <param name="entityType">The entity tipe of the connector</param>
+        /// <param name="folders">Folders found</param>
+        /// <param name="appCode">Applcation code</param>
+        /// <param name="hostName">Host name</param>
+        public async Task SetAdditionalPropertiesFolders(ConnectorEntityType entityType, JArray folders, string appCode, string hostName)
+        {
+            customerId = await GetCustomerId(appCode, hostName);
+            foreach (JObject folder in folders as JArray)
+            {
+                if (!folder.ContainsKey(StructuredCDMProperties.WebUrl))
+                    folder[StructuredCDMProperties.WebUrl] = BuildLink(entityType, folder, hostName, SearchResourceType.Folder);
+            }
         }
 
         /// <summary>
@@ -170,7 +195,7 @@ namespace Zurich.Connector.App.Services.DataSources
         /// <param name="item">The target item</param>
         /// <param name="hostName">The data source host name</param>
         /// <returns></returns>
-        private string BuildLink(ConnectorEntityType itemType, JObject item, string hostName)
+        private string BuildLink(ConnectorEntityType itemType, JObject item, string hostName, SearchResourceType searchResourceType = SearchResourceType.Document)
         {
             string result = null;
             string id = null;
@@ -189,7 +214,7 @@ namespace Zurich.Connector.App.Services.DataSources
                 case ConnectorEntityType.Search:
                     var additionalProperties = (JObject)item[StructuredCDMProperties.AdditionalProperties];
                     id = additionalProperties.ContainsKey(UnstructuredCDMProperties.Id) ? additionalProperties[UnstructuredCDMProperties.Id].Value<string>() : "";
-                    endpoint = DocumentsWebEndpoint;
+                    endpoint = searchResourceType == SearchResourceType.Document ? DocumentsWebEndpoint : FoldersWebEndpoint;
                     break;
             }
 

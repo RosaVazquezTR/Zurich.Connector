@@ -48,6 +48,15 @@ namespace Zurich.Connector.Data.Model
     }
 
     /// <summary>
+    /// Type of resource to be searched
+    /// </summary>
+    public enum SearchResourceType
+    {
+        Document,
+        Folder
+    }
+
+    /// <summary>
     /// Response content type
     /// </summary>
     public enum ResponseContentType

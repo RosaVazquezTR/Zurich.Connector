@@ -106,7 +106,10 @@
 		"type": "XML",
 		"xmlArrayAttribute": [
 			"//searchResults/detail/document",
-			"//searchResults/detail/document/jurisdictionList/jurisdiction"
+			"//searchResults/detail/document/jurisdictionList/jurisdiction",
+			"//searchResults/detail/document/jurisdictionRefList/jurisdictionRef",
+			"//searchResults/detail/document/resourceTypeRefList/resourceTypeRef",
+			"//searchResults/detail/document/practiceAreaRefList/practiceAreaRef"
 		]
 	},
 	"filters": [

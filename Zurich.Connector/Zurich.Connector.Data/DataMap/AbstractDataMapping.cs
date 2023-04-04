@@ -69,15 +69,15 @@ namespace Zurich.Connector.Data.DataMap
             string body = service.CreateBody(connectorDocument, query);
             string response = await _repository.MakeRequest(apiInfo, query, body);
 
-            if (!(string.IsNullOrWhiteSpace(response) ))
+            if (!(string.IsNullOrWhiteSpace(response)))
             {
                 IHttpResponseService httpResponseService = _httpResponseFactory.GetImplementation(connectorDocument.Response.Type.ToString());
 
                 JToken jsonResponse = null;
 
-                if (connectorDocument.Response.UseJsonTransformation ?? false)
+                if (connectorDocument?.Response.UseJsonTransformation ?? false)
                     jsonResponse = await httpResponseService.GetJTokenResponse(response, connectorDocument.Response, connectorDocument.Id, requestParameter, query, _httpClientFactory);
-                if (jsonResponse is null)
+                else
                     jsonResponse = await httpResponseService.GetJTokenResponse(response, connectorDocument.Response);
 
                 if (httpResponseService.MapResponse)

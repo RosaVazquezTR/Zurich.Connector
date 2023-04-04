@@ -62,6 +62,24 @@
         "_comment": ""
       },
       {
+        "name": "jurisdictionRefList",
+        "type": "array",
+        "responseElement": "jurisdictionRefList.jurisdictionRef",
+        "_comment": ""
+      },
+      {
+        "name": "resourceTypeRefList",
+        "type": "array",
+        "responseElement": "resourceTypeRefList.resourceTypeRef",
+        "_comment": ""
+      },
+      {
+        "name": "practiceAreaRefList",
+        "type": "array",
+        "responseElement": "practiceAreaRefList.practiceAreaRef",
+        "_comment": ""
+      },
+      {
         "name": "maintained",
         "type": "bool",
         "responseElement": "maintained",

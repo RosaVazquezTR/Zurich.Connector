@@ -1,0 +1,140 @@
+{
+    "id": "72",
+    "partitionkey": "ConnectorList",
+    "alias": "imanageserviceapp.search.folders",
+    "info": {
+        "title": "Search folders from iManage",
+        "description": "Search folders from iManage",
+        "entityType": "Search",
+        "dataSourceId": "48",
+        "version": "1.0",
+        "subType": "Parent"
+    },
+    "preRelease": true,
+    "hostName": "cloudimanage.com",
+    "request": {
+        "endpointPath": "/work/api/v2/customers/{55.customer_id}/folders",
+        "method": "GET",
+        "parameters": [
+            {
+                "cdmName": "Query",
+                "name": "name_or_description",
+                "inClause": "Query",
+                "required": false,
+                "type": "string",
+                "defaultValue": ""
+            },
+            {
+                "cdmName": "ResultSize",
+                "name": "limit",
+                "inClause": "Query",
+                "required": false,
+                "type": "int",
+                "defaultValue": "25"
+            },
+            {
+                "cdmName": "Libraries",
+                "name": "libraries",
+                "inClause": "Query",
+                "required": false,
+                "type": "string",
+                "defaultValue": ""
+            },
+            {
+                "cdmName": "Name",
+                "name": "name",
+                "inClause": "Query",
+                "required": false,
+                "type": "string",
+                "defaultValue": ""
+            },
+            {
+                "cdmName": "Description",
+                "name": "description",
+                "inClause": "Query",
+                "required": false,
+                "type": "string",
+                "defaultValue": ""
+            },
+            {
+                "cdmName": "Owner",
+                "name": "owner",
+                "inClause": "Query",
+                "required": false,
+                "type": "string",
+                "defaultValue": ""
+            },
+            {
+                "cdmName": "Offset",
+                "name": "offset",
+                "inClause": "Query",
+                "required": false,
+                "type": "string",
+                "defaultValue": "0"
+            },
+            {
+                "cdmName": "Total",
+                "name": "total",
+                "inClause": "Query",
+                "required": false,
+                "type": "boolean",
+                "defaultValue": "true"
+            }
+        ],
+        "sorting": {
+            "properties": []
+        }
+    },
+    "response": {
+        "type": "JSON"
+    },
+    "filters": [
+        {
+            "name": "Query",
+            "description": "Text to search for in the folder name or description.",
+            "isMultiselect": "false",
+            "requestParameter": "Query"
+        },
+        {
+            "name": "Libraries",
+            "description": "Libraries to limit the search.",
+            "isMultiselect": "false",
+            "requestParameter": "Libraries"
+        },
+        {
+            "name": "Name",
+            "description": "Value to be found in the name property of the folder.",
+            "isMultiselect": "false",
+            "requestParameter": "Name"
+        },
+        {
+            "name": "Description",
+            "description": "Value to be found in the description property of the folder.",
+            "isMultiselect": "false",
+            "requestParameter": "Description"
+        },
+        {
+            "name": "Owner",
+            "description": "Folder owner's name.",
+            "isMultiselect": "false",
+            "requestParameter": "Owner"
+        }
+    ],
+    "cdmMapping": {
+        "structured": [
+            {
+                "name": "Count",
+                "type": "short",
+                "responseElement": "total_count",
+                "_comment": "Total count of found libreries."
+            },
+            {
+                "name": "Folders",
+                "type": "object",
+                "responseElement": "{73}",
+                "_comment": ""
+            }
+        ],
+        "unstructured": []
+    }
+}

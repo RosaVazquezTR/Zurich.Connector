@@ -535,6 +535,38 @@ namespace Zurich.Connector.Tests.Common
             return result;
         }
 
+        internal static IEnumerable<dynamic> SetupSearchFoldersModel()
+        {
+            dynamic result;
+
+            result = JObject.Parse(@"{
+                ""Count"": 2,
+                ""Folders"": [{
+                        ""Title"": ""Secret cookie recipes 3"",
+                        ""Type"": ""regular"",
+                        ""AdditionalProperties"": {
+                            ""id"": ""Database3!2218.1"",
+                            ""dataBase"": ""Database3"",
+                            ""description"": ""New folder"",
+                            ""hasSubfolders"": false
+                        }
+                    },
+                    {
+                        ""Title"": ""Secret cookie recipes 4"",
+                        ""Type"": ""regular"",
+                        ""AdditionalProperties"": {
+                            ""id"": ""Database3!1218.1"",
+                            ""dataBase"": ""Database3"",
+                            ""description"": ""New search folder"",
+                            ""hasSubfolders"": false
+                        }
+                    }
+                ]
+            }");
+
+            return result;
+        }
+
         internal static IEnumerable<dynamic> SetupSearchDocumentsModel()
         {
             dynamic result;

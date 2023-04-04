@@ -1,0 +1,95 @@
+{
+    "id": "73",
+    "partitionkey": "ConnectorList",
+    "info": {
+        "title": "Search folders from iManage - Child connector for 72",
+        "description": "Search folders from iManage - Child connector for 72",
+        "entityType": "Search",
+        "dataSourceId": "48",
+        "version": "1.0",
+        "subType": "Child"
+    },
+    "preRelease": true,
+    "request": {},
+    "response": {},
+    "filters": [],
+    "resultLocation": "data",
+    "cdmMapping": {
+        "structured": [
+            {
+                "name": "Title",
+                "type": "string",
+                "responseElement": "name",
+                "_comment": "Folder name"
+            },
+            {
+                "name": "Type",
+                "type": "string",
+                "responseElement": "folder_type",
+                "_comment": "Folder type"
+            }
+        ],
+        "unstructured": [
+            {
+                "name": "id",
+                "type": "string",
+                "responseElement": "id",
+                "_comment": "Folder id"
+            },
+            {
+                "name": "database",
+                "type": "string",
+                "responseElement": "database",
+                "_comment": "Folder database/library name"
+            },
+            {
+                "name": "description",
+                "type": "string",
+                "responseElement": "description",
+                "_comment": "Folder database/library description"
+            },
+            {
+                "name": "lastModifiedDate",
+                "type": "DateTime",
+                "responseElement": "edit_date",
+                "_comment": "Folder last modified date"
+            },
+            {
+                "name": "hasSubfolders",
+                "type": "boolean",
+                "responseElement": "has_subfolders",
+                "_comment": "Indicates if the folder contains subfolders"
+            },
+            {
+                "name": "hasDocuments",
+                "type": "boolean",
+                "responseElement": "has_documents",
+                "_comment": "Indicates if the folder contains documents"
+            },
+            {
+                "name": "owner",
+                "type": "string",
+                "responseElement": "owner",
+                "_comment": "Folder's owner ID"
+            },
+            {
+                "name": "ownerName",
+                "type": "string",
+                "responseElement": "owner_description",
+                "_comment": "Folder's owner name"
+            },
+            {
+                "name": "workspaceId",
+                "type": "string",
+                "responseElement": "workspace_id",
+                "_comment": "Parent workspace ID"
+            },
+            {
+                "name": "workspaceName",
+                "type": "string",
+                "responseElement": "workspace_name",
+                "_comment": "Name of the parent workspace"
+            }
+        ]
+    }
+}

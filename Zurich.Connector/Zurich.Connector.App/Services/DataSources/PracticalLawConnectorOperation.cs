@@ -19,6 +19,9 @@ namespace Zurich.Connector.App.Services.DataSources
         private readonly ILogger _logger;
         private readonly IDataMapping _dataMapping;
         private readonly IConfiguration _configuration;
+        private readonly Dictionary<string, List<String>> _supportedFiltersByAppCode = new(){
+               {"PLCUK", new List<string>{ "practiceAreaRefList", "resourceTypeRefList", "jurisdictionRefList"} }
+            };
         private List<string> _supportedPracticalLawAppCodes = new List<string>() { "PracticalLawConnect", "PLCUS", "PLCUK", "PLCCA", "CBTPRACPT", "PracticalLawConnect-Search", "PLCUS-Search", "PLCUK-Search"
                                                                                    , "PLCCA-Search", "CBTPRACPT-Search" };
 
@@ -72,6 +75,66 @@ namespace Zurich.Connector.App.Services.DataSources
         }
         public async Task<dynamic> AddAditionalInformation(ConnectorModel connector, dynamic item)
         {
+            // Only enable for PLCUK at the moment
+            if (connector.DataSource.AppCode != KnownDataSources.plcUK)
+                return item;
+
+            var facetToCountDictionary = new Dictionary<string, int>();
+            var supportedFilters = _supportedFiltersByAppCode[connector.DataSource.AppCode];
+            JArray facets = new();
+
+
+            if (item is JObject searchResult && searchResult.ContainsKey("Documents") && searchResult["Documents"].HasValues)
+            {
+               
+                // Put together in a single IEnumerable all found filters id found in the documents
+                var allFacetsResponse = (searchResult["Documents"] as JArray)
+                    .Select(document => supportedFilters.SelectMany(f => document["AdditionalProperties"][f].HasValues ? document["AdditionalProperties"][f].Values<string>() : Enumerable.Empty<string>() )).SelectMany(x => x);
+
+                // Group and count repeated filters found
+                var groups = allFacetsResponse.GroupBy(f => f).Select(facet => 
+                new {
+                    Facet = facet.Key,
+                    Count = facet.Count()
+                });
+
+                facetToCountDictionary = groups.ToDictionary(g => g.Facet, g => g.Count);
+
+                foreach (var filterModel in connector.Filters)
+                {
+                    JArray facetItemList = new();
+
+                    filterModel.FilterList.ForEach(filterValue =>
+                    {
+                        if (facetToCountDictionary.TryGetValue(filterValue.Id, out int itemCount))
+                        {
+                            JObject facetItem = new()
+                            {
+                                ["Id"] = filterValue.Id,
+                                ["Count"] = itemCount
+                            };
+
+                            facetItemList.Add(facetItem);
+                        }
+                    });
+
+                    if(facetItemList.Count != 0)
+                    {
+
+                        JObject facetObject = new()
+                        {
+                            ["facetParameter"] = filterModel.RequestParameter,
+                            ["facetList"] = facetItemList
+                        };
+
+                        facets.Add(facetObject);
+                    }
+                }
+            }
+
+           
+            ((JObject)item).TryAdd("facets", facets);
+
             return item;
         }
 

@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Zurich.Connector.App.Exceptions;
 using Zurich.Connector.App.Model;
 using Zurich.Connector.Data;
 using Zurich.Connector.Data.DataMap;
@@ -46,12 +47,11 @@ namespace Zurich.Connector.App.Services.DataSources
 
         public async Task<Dictionary<string, string>> SetParametersSpecialCases(ConnectorModel connector, Dictionary<string, string> allParameters)
         {
-            //TODO: changing this from a specific connector id to a parameter in the data source
-            if (!(connector.Response?.UseInternalSorting ?? false))
+            if (!(connector.Response?.UseJsonTransformation ?? false))
                 return allParameters;
 
 
-            allParameters = TTMap(allParameters);
+            allParameters = TTRequestMap(allParameters);
 
             var thoughtFilters = JToken.Parse(allParameters["thoughtFilters"]);
 
@@ -61,6 +61,8 @@ namespace Zurich.Connector.App.Services.DataSources
             String[] clauseTerms = Regex.Replace(allParameters["clauseTerms"], "[^0-9,]", "").Split(',', StringSplitOptions.RemoveEmptyEntries);
             allParameters.Remove("clauseTerms");
 
+            List<string> keyWords = allParameters["keyWord"].Split(",_").ToList();
+
             //For the given clauseType/thoughTypeId, we first need to extract the provision thoughFieldTypeId from onotlogies
             var provisionID = "";
             provisionID = await GetProvisionThoughtFieldTypeIdFromOntologies(clauseType);
@@ -68,27 +70,32 @@ namespace Zurich.Connector.App.Services.DataSources
                 return null;
             allParameters["provisionID"] = provisionID;
 
-            // provisionID filter allways have to be included
+            // A provisionID filter allways have to be included.
+            // With no keyword, 1 "exists" filter
+            // With n keywords, n "contains" filters
 
-            JObject fieldType = new()
+            foreach (string kw in keyWords)
             {
-                ["thoughtFieldTypeId"] = provisionID
-            };
+                JObject fieldType = new()
+                {
+                    ["thoughtFieldTypeId"] = provisionID
+                };
 
-            JObject defaultProvisionFilter = new();
-            defaultProvisionFilter["fieldTypes"] = new JArray(fieldType);
-            //If theres no KW, provisionID filter goes with "exists", if there's KW, goes with "contains"
-            if (allParameters.ContainsKey("keyWord") && String.IsNullOrEmpty(allParameters["keyWord"]))
-            {
-                defaultProvisionFilter["operator"] = "exists";
-                defaultProvisionFilter["stringValue"] = String.Empty;
+                JObject defaultProvisionFilter = new();
+                defaultProvisionFilter["fieldTypes"] = new JArray(fieldType);
+                //If theres no KW, provisionID filter goes with "exists", if there's KW, goes with "contains"
+                if (String.IsNullOrEmpty(kw))
+                {
+                    defaultProvisionFilter["operator"] = "exists";
+                    defaultProvisionFilter["stringValue"] = String.Empty;
+                }
+                else
+                {
+                    defaultProvisionFilter["operator"] = "contains";
+                    defaultProvisionFilter["stringValue"] = kw;
+                }
+                ((JArray)thoughtFilters["filters"]).Add(defaultProvisionFilter);
             }
-            else
-            {
-                defaultProvisionFilter["operator"] = "contains";
-                defaultProvisionFilter["stringValue"] = allParameters["keyWord"];
-            }
-            ((JArray)thoughtFilters["filters"]).Add(defaultProvisionFilter);
 
             //Then, foreach ClauseTerm
             clauseTerms = clauseTerms.Where(val => val != provisionID).ToArray();
@@ -111,8 +118,7 @@ namespace Zurich.Connector.App.Services.DataSources
 
         public async Task<dynamic> AddAditionalInformation(ConnectorModel connector, dynamic item)
         {
-            //TODO: changing this from a specific connector id to a parameter in the data source
-            if (connector.Id != "52" || connector.Id != "68")
+            if (!(connector.Response?.UseJsonTransformation ?? false))
                 return item;
 
             JArray thoughtTypes = await GetThoughtTypesFromOntologies();
@@ -142,7 +148,7 @@ namespace Zurich.Connector.App.Services.DataSources
         private async Task<JArray> GetThoughtTypesFromOntologies()
         {
 
-            if(!_httpContextAccessor.HttpContext.Items.TryGetValue("Ontologies", out var ontologiesResponse))
+            if (!_httpContextAccessor.HttpContext.Items.TryGetValue("Ontologies", out var ontologiesResponse))
             {
                 ConnectorModel connectorModel = await _cosmosService.GetConnector("60", true);
                 ConnectorDocument connectorDocument = _mapper.Map<ConnectorDocument>(connectorModel);
@@ -158,7 +164,7 @@ namespace Zurich.Connector.App.Services.DataSources
             // As we don't need ontology metadata, I put together all tougtTypes to make search easier
             foreach (JToken ontology in (JToken)ontologiesResponse)
             {
-                foreach(JToken thoughtType in ontology["thoughtTypes"])
+                foreach (JToken thoughtType in ontology["thoughtTypes"])
                     thoughtTypes.Add(thoughtType);
             }
 
@@ -178,30 +184,56 @@ namespace Zurich.Connector.App.Services.DataSources
             return provisionThought?["id"].Value<string>();
         }
 
-        public Dictionary<string, string> TTMap(Dictionary<string, string> cdmQueryParameters)
+        public Dictionary<string, string> TTRequestMap(Dictionary<string, string> cdmQueryParameters)
         {
             cdmQueryParameters.Remove("thoughtFilters");
             string clauseType = "";
             JArray clauseIds = new JArray();
-            string keyword = "";
+            string originalKeyword = "";
+            List<string> keyword = new List<string>();
 
             JToken requestFilters = JToken.Parse(cdmQueryParameters["Filters"]);
             foreach (var filter in requestFilters)
             {
-                var key = (string)filter.First.First;
-                var value = filter.First.Next;
+                var key = filter["key"].Value<string>();
 
                 if (key == "clauseTypeID")
-                    clauseType = (string)value;
+                    clauseType = filter["value"].Value<string>();
 
-                if (key == "clauseTermIDs")
-                    clauseIds = (JArray)value.First;
+                else if (key == "clauseTermIDs")
+                    clauseIds = (JArray)filter["value"];
 
-                if (key == "keyword")
-                    keyword = (string)value;
+                else if (key == "keyword")
+                {
+                    var value = filter["value"].Value<string>();
+                    originalKeyword = Regex.Replace(value, @"\s+", " ").Trim(); //Remove extra spaces between words.
+                    if (validateQuery(originalKeyword))
+                    {
+                        var enclosedTexts = Regex.Matches(originalKeyword, @"\" + (char)34 + @"(.+?)\" + (char)34)
+                       .Cast<Match>()
+                       .Select(m => m.Groups[1].Value.Trim())
+                       .ToList();
+                        foreach (string text in enclosedTexts)
+                        {
+                            keyword.Add(text);
+                            originalKeyword = originalKeyword.Replace(text, String.Empty);
+                        }
+                        char[] bannedChars = { ',', '.', '"', ':', ';'};
+                        string regexPattern = "[" + Regex.Escape(new string(bannedChars)) + "]";
+                        originalKeyword = Regex.Replace(originalKeyword, regexPattern, "").Trim();
+                        
+                        if (!String.IsNullOrEmpty(originalKeyword))
+                            keyword.AddRange(originalKeyword.Split(' ').ToList());
+                    }
+                    else
+                        throw new InvalidQueryFormatException("Query contains invalid format.");
+                }
             }
             JObject thoughtFilters = new JObject();
-            thoughtFilters.Add("operator", "and");
+            if (keyword.Count > 1)
+                thoughtFilters.Add("operator", "or");
+            else
+                thoughtFilters.Add("operator", "and");
 
             JArray filters = new JArray();
             thoughtFilters.Add("filters", filters);
@@ -216,11 +248,23 @@ namespace Zurich.Connector.App.Services.DataSources
 
             cdmQueryParameters.Remove("Filters");
             cdmQueryParameters.Add("thoughtFilters", thoughtFilters.ToString());
-            cdmQueryParameters.Add("keyWord", keyword);
+            cdmQueryParameters.Add("keyWord", string.Join(",_", keyword));
             cdmQueryParameters.Add("clauseType", clauseType);
             cdmQueryParameters.Add("clauseTerms", clauseIds.ToString());
             return cdmQueryParameters;
 
         }
+
+        public static bool validateQuery(string query)
+        {
+            // The "" operator strictly open and close. 
+            int countQuotes = query.Count(f => (f == '"'));
+            var enclosedTexts = Regex.Matches(query, @"\" + (char)34 + @"(.+?)\" + (char)34);
+
+            if ((countQuotes % 2 != 0) || (countQuotes/2 != enclosedTexts.Count))
+                return false;
+            return true;
+        }
+
     }
 }
