@@ -11,6 +11,7 @@ using System.Net.Http;
 using Zurich.Common.Repositories;
 using Zurich.Common.Services;
 using System.Text.RegularExpressions;
+using Zurich.Common.Models.IHDocumentStorage;
 
 namespace Zurich.Connector.Data.Services
 {
@@ -110,8 +111,8 @@ namespace Zurich.Connector.Data.Services
 
             paginationDoc.PagesPaginationInfo = new JObject();
             paginationDoc.PagesPaginationInfo.current = currentPage;
-            paginationDoc.PagesPaginationInfo.totalPages = (int)totalPages;
-            int[] display = Enumerable.Range(1, (int)totalPages).ToArray();
+            paginationDoc.PagesPaginationInfo.totalPages = totalPages;
+            int[] display = Enumerable.Range(1, totalPages).ToArray();
             paginationDoc.PagesPaginationInfo.display = new JArray(display);
 
             if (currentPage + 1 > totalPages || totalPages == 1)
