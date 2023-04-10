@@ -63,6 +63,7 @@ namespace Zurich.Connector.Data.Model
     {
         JSON = 0,
         XML = 1,
-        XSLT = 2
+        XSLT = 2,
+        DUMMYJSON = 3
     }
 }
