@@ -86,7 +86,7 @@ namespace Zurich.Connector.Durable.Configuration
                         .UseFeatureFlags(featureOptions =>
                         {
                             // TODO: Make CacheExpirationTime and possibly Label values dynamic and add a variable to a global file somewhere 
-                            featureOptions.CacheExpirationTime = TimeSpan.FromMinutes(5);
+                            featureOptions.CacheExpirationInterval = TimeSpan.FromMinutes(5);
                             featureOptions.Label = configuration["LabelFilter"];
                         });
 

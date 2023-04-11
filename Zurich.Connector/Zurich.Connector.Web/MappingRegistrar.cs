@@ -44,8 +44,7 @@ namespace Zurich.Connector.Web
                 .ForMember(dest => dest.DataSource, opt => opt.MapFrom(src => src.DataSource))
                 .ForMember(dest => dest.RegistrationStatus, opt => opt.MapFrom(src => src.RegistrationStatus))
                 .ForMember(dest => dest.Alias, opt => opt.MapFrom(src => src.Alias))
-                .ForMember(dest => dest.Sort, opt => opt.MapFrom(src => src.Request.Sorting.Properties.Select(x => SortType.Parse(typeof(SortType), x.Name, true))))
-                .ForAllOtherMembers(opt => opt.Ignore());
+                .ForMember(dest => dest.Sort, opt => opt.MapFrom(src => src.Request.Sorting.Properties.Select(x => SortType.Parse(typeof(SortType), x.Name, true))));
 
 
             CreateMap<DataSourceModel, DataSourceViewModel>();
@@ -58,8 +57,7 @@ namespace Zurich.Connector.Web
                 .ForMember(dest => dest.Connectorid, opt => opt.MapFrom(src => src.ConnectorId))
                 .ForMember(dest => dest.Userid, opt => opt.MapFrom(src => src.UserId))
                 .ForMember(dest => dest.Tenantid, opt => opt.MapFrom(src => src.TenantId))
-                .ForMember(dest => dest.AppName, opt => opt.MapFrom(src => src.AppName))
-                .ForAllOtherMembers(opt => opt.Ignore());
+                .ForMember(dest => dest.AppName, opt => opt.MapFrom(src => src.AppName));
 
             CreateMap<DataSourceRegistration, DataSourceRegistrationResponseViewModel>()
                 .ForMember(dest => dest.AuthorizeUrl, opt => opt.MapFrom(src => src.AuthorizeUrl))
