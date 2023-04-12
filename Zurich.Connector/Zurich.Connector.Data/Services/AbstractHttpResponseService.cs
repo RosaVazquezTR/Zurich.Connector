@@ -22,9 +22,9 @@ namespace Zurich.Connector.Data.Services
         {
             return JToken.Parse(response);
         }
-        public async virtual Task<JToken> GetJTokenResponse(string response, ConnectorResponse connectorResponse, string connectorId, Dictionary<string, string> requestParameter, NameValueCollection query, IHttpClientFactory httpClientFactory)
+        public async virtual Task<JToken> GetJTokenResponse(string response, ConnectorResponse connectorResponse, string connectorId, Dictionary<string, string> requestParameter, NameValueCollection query)
         {
-            // TT transformation response
+            // TT ClauseBank transformation response
             string provisionID = query["provisionID"];
             string[] keyWord = query["keyWord"].Split(",_", StringSplitOptions.RemoveEmptyEntries);
             string input = "{\"Documents\":" + response + "}";
@@ -81,7 +81,7 @@ namespace Zurich.Connector.Data.Services
 
             JProperty documents = new JProperty("Documents", acumulate);
             jObjectTop.Add(documents);
-
+            
 
             // Calculating pagination data
             // TT Pagination values
@@ -131,5 +131,106 @@ namespace Zurich.Connector.Data.Services
 
             return jObjectTop;
         }
+
+        public async virtual Task<JToken> GetJTokenResponse(string response, ConnectorResponse connectorResponse, string connectorId, Dictionary<string, string> requestParameter, NameValueCollection query, IHttpClientFactory httpClientFactory)
+        {
+            // TT DMS permissions check
+
+            JObject obj = JObject.Parse("{\"Documents\":" + response + "}");
+            List<string> idList = new List<string>();
+            foreach (var document in obj["Documents"])
+            {
+                idList.Add(document["id"].ToString());
+            }
+
+            IHDocumentStorageRepository iHDocumentStorageRepository = new IHDocumentStorageRepository(httpClientFactory);
+            IHDocumentStorageService iHDocumentStorageService = new IHDocumentStorageService(iHDocumentStorageRepository);
+            IHDocumentStorageMappingRequest iHDocumentStorageMappingRequest = new IHDocumentStorageMappingRequest();
+            iHDocumentStorageMappingRequest.ids = idList;
+            IHDocumentStorageMappingResponse mappings = await iHDocumentStorageService.GetDocumentsMappings("ca353457-26ad-473e-ab46-aae01309a093", iHDocumentStorageMappingRequest);
+            List<string> documentIds = mappings.getMappedIds();
+            Dictionary<string, string> mappingDictionary = mappings.GetMappingDict();
+
+            IHDocumentStoragePermissionsRequest iHDocumentStoragePermissionsRequest = new IHDocumentStoragePermissionsRequest();
+            iHDocumentStoragePermissionsRequest.appCode = "iManageServiceApp";
+
+            //documentIds.Add("3b92b3b8-9baf-47a6-2784-08db3530831d");
+            //documentIds.Add("97d2ab2c-70aa-4864-2785-08db3530831d"); 
+
+            Dictionary<string, string> permissionsDictionary = new Dictionary<string, string>();
+            if (documentIds.Count > 0)
+            {
+                iHDocumentStoragePermissionsRequest.documentIds = documentIds;
+                IHDocumentStoragePermissionsResponse permissions = await iHDocumentStorageService.GetDocumentsPermissions(iHDocumentStoragePermissionsRequest);
+                permissionsDictionary = permissions.GetPermissionsDict();
+            }
+           
+            
+            foreach (var document in obj["Documents"])
+            {
+                string capId = document["id"].ToString();
+
+                JObject tokenObject = (JObject)document;
+                tokenObject.Add("capabilityDocId", capId);
+                tokenObject.Add("integrationDocId", mappingDictionary[capId]);
+                string permission;
+                if (!String.IsNullOrEmpty(mappingDictionary[capId]) && permissionsDictionary.TryGetValue(mappingDictionary[capId], out permission))
+                {
+                    tokenObject.Add("userPermission", permission);
+                }
+                else
+                {
+                    tokenObject.Add("userPermission", String.Empty);
+                }
+            }
+
+            // Calculating pagination data
+            // TT Pagination values
+            int currentPage = 1;
+            int totalPages = 1;
+            int totalDocs = obj["Documents"].Count();
+            int resultsPerPage = totalDocs;
+            dynamic paginationDoc = new JObject();
+
+            if (requestParameter.ContainsKey("resultsPerPage") && Convert.ToInt32(requestParameter["resultsPerPage"]) > 0)
+            {
+                resultsPerPage = Convert.ToInt32(requestParameter["resultsPerPage"]);
+                totalPages = (int)Math.Ceiling((decimal)totalDocs / (decimal)resultsPerPage);
+            }
+            if (requestParameter.ContainsKey("start") && (Convert.ToInt32(requestParameter["start"]) > 0))
+            {
+                currentPage = Convert.ToInt32(requestParameter["start"]);
+                if (currentPage > totalPages)
+                {
+                    currentPage = totalPages;
+                }
+            }
+
+            paginationDoc.from = (currentPage - 1) * resultsPerPage + 1;
+            paginationDoc.to = ((currentPage) * resultsPerPage > totalDocs) ? totalDocs : (currentPage) * resultsPerPage;
+            paginationDoc.of = totalDocs;
+
+            paginationDoc.PagesPaginationInfo = new JObject();
+            paginationDoc.PagesPaginationInfo.current = currentPage;
+            paginationDoc.PagesPaginationInfo.totalPages = totalPages;
+            int[] display = Enumerable.Range(1, totalPages).ToArray();
+            paginationDoc.PagesPaginationInfo.display = new JArray(display);
+
+            if (currentPage + 1 > totalPages || totalPages == 1)
+                paginationDoc.PagesPaginationInfo.next = null;
+            else
+                paginationDoc.PagesPaginationInfo.next = currentPage + 1;
+
+            if (currentPage - 1 == 0)
+                paginationDoc.PagesPaginationInfo.previous = null;
+            else
+                paginationDoc.PagesPaginationInfo.previous = currentPage - 1;
+
+            if (totalDocs > 0)
+                obj.Add(new JProperty("pagination", paginationDoc));
+            obj.Add(new JProperty("totalDocs", totalDocs));
+            return obj;
+        }
+
     }
 }
