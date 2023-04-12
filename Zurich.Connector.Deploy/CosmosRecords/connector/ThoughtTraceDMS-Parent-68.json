@@ -95,32 +95,6 @@
                 "defaultValue": ""
             },
             {
-                "cdmName": "thoughtFilters",
-                "name": "thoughtFilters",
-                "inClause": "Body",
-                "required": true,
-                "type": "object",
-                "defaultValue": {
-                    "operator": "and",
-                    "filters": [
-                        {
-                            "fieldTypes": [
-                                {
-                                    "thoughtTypeId": "1",
-                                    "thoughtFieldTypeId": "1746"
-                                }
-                            ],
-                            "operator": "exists",
-                            "stringValue": "",
-                            "stringValueList": null,
-                            "numberValue": null,
-                            "dateValue": null,
-                            "booleanValue": null
-                        }
-                    ]
-                }
-            },
-            {
                 "cdmName": "Filters",
                 "name": "Filters",
                 "inClause": "Body",
@@ -154,12 +128,9 @@
     },
     "response": {
         "type": "JSON",
-        "useJsonTransformation": true,
-        "useInternalSorting": true,
+        "useJsonTransformation": false,
+        "useInternalSorting": false,
 		"usePermissionsCheck": true
-    },
-    "facetsInformation": {
-        "connectorId": "71"
     },
     "filters": [
         {
