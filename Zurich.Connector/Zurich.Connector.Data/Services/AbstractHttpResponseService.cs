@@ -61,16 +61,21 @@ namespace Zurich.Connector.Data.Services
                             field["thoughtId"] = id;
                             field["clauseTypeId"] = clauseTypeId;
 
-                           string newHighlight = field["highlightedText"].Value<string>().Replace("<mark>", String.Empty).Replace("</mark>", String.Empty); 
+                            string oldHighlight = field["highlightedText"].Value<string>();
+                            string newHighlight = oldHighlight.Replace("<mark>", String.Empty).Replace("</mark>", String.Empty);
                             foreach (string word in keyWord)
                             {
-                                if (Regex.Matches(word, @"\b\w+\b").Count>1)
+                                if (Regex.Matches(word, @"\b\w+\b").Count > 1)
                                     // if theres more than 1 word in SearchTerm (that implies that is quoted), do not look for string boundaries \b in regex.
-                                    newHighlight = Regex.Replace(newHighlight, @"(" + word + @"([^\s]?\w?|\w*))", "<mark>$1</mark>",RegexOptions.IgnoreCase);
+                                    newHighlight = Regex.Replace(newHighlight, @"(" + word + @"([^\s]?\w?|\w*))", "<mark>$1</mark>", RegexOptions.IgnoreCase);
                                 else
-                                    newHighlight = Regex.Replace(newHighlight, @"\b("+word+ @"([^\s]?\w?|\w*))\b", "<mark>$1</mark>",RegexOptions.IgnoreCase);
+                                    newHighlight = Regex.Replace(newHighlight, @"\b(" + word + @"([^\s]?\w?|\w*))\b", "<mark>$1</mark>", RegexOptions.IgnoreCase);
                             }
-                            field["highlightedText"] = newHighlight;
+                            //If new highlight contains no <mark> tag, return the default highlight provided by ThoughtTrace.
+                            if (newHighlight.Contains("<mark>"))
+                                field["highlightedText"] = newHighlight;
+                            else
+                                field["highlightedText"] = oldHighlight;
 
                             acumulate.Add(field);
                         }

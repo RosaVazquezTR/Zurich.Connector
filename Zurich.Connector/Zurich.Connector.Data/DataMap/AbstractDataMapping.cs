@@ -69,15 +69,11 @@ namespace Zurich.Connector.Data.DataMap
             IHttpBodyService service = _httpBodyFactory.GetImplementation(apiInfo.Method);
             string body = service.CreateBody(connectorDocument, query);
             string response = null;
-            if(connectorDocument.Response.Type == "DUMMYJSON")
-            {
+            if (connectorDocument.Response.Type == "DUMMYJSON")
                 return ReturnDummyJson<T>(response);
-            }
             else
-            {
                 response = await _repository.MakeRequest(apiInfo, query, body);
-            }
-            
+
             if (!(string.IsNullOrWhiteSpace(response)))
             {
                 IHttpResponseService httpResponseService = _httpResponseFactory.GetImplementation(connectorDocument.Response.Type.ToString());
@@ -95,7 +91,6 @@ namespace Zurich.Connector.Data.DataMap
                 {
                     jsonResponse = await ModifyResult(jsonResponse, connectorDocument);
                     return jsonResponse.ToObject<T>();
-
                 }
             }
             else
