@@ -2,17 +2,18 @@
     "id": "69",
     "partitionkey": "ConnectorList",
     "info": {
-        "title": "Get Search Thought Trace documents with thoughts - Child connector for 68",
-        "description": "Pull Thougth Trace documents with thoughts - Child connector for 68",
+        "title": "Get Search Thought Trace DMS - Child connector for 68",
+        "description": "Pull Thougth Trace DMS - Child connector for 68",
         "entityType": "Search",
-        "dataSourceId": "50",
+        "dataSourceId": "51",
         "version": "1.0",
         "subType": "Child"
     },
+    "preRelease": true,
     "request": {},
     "response": {},
     "filters": [],
-    "resultLocation": "Documents.[]",
+    "resultLocation": "[]",
     "cdmMapping": {
         "structured": [
             {
@@ -32,27 +33,15 @@
                 "type": "string",
                 "responseElement": "documentTypeId",
                 "_comment": ""
+            },
+            {
+                "name": "Count",
+                "type": "short",
+                "responseElement": "pageCount",
+                "_comment": ""
             }
         ],
         "unstructured": [
-            {
-                "name": "documentId",
-                "type": "string",
-                "responseElement": "documentId",
-                "_comment": ""
-            },
-            {
-                "name": "thoughtId",
-                "type": "string",
-                "responseElement": "thoughtId",
-                "_comment": ""
-            },
-            {
-                "name": "fieldId",
-                "type": "string",
-                "responseElement": "fieldId",
-                "_comment": ""
-            },
             {
                 "name": "lastModifiedOn",
                 "type": "DateTime",
@@ -60,51 +49,15 @@
                 "_comment": ""
             },
             {
-                "name": "count",
-                "type": "short",
-                "responseElement": "pageCount",
-                "_comment": ""
-            },
-            {
-                "name": "position",
-                "type": "int",
-                "responseElement": "position",
-                "_comment": ""
-            },
-            {
-                "name": "stringValue",
+                "name": "processingStatus",
                 "type": "string",
-                "responseElement": "stringValue",
+                "responseElement": "processingStatus",
                 "_comment": ""
             },
             {
                 "name": "highlightedText",
                 "type": "string",
                 "responseElement": "highlightedText",
-                "_comment": ""
-            },
-            {
-                "name": "score",
-                "type": "string",
-                "responseElement": "score",
-                "_comment": ""
-            },
-            {
-                "name": "confidence",
-                "type": "string",
-                "responseElement": "confidence",
-                "_comment": ""
-            },
-            {
-                "name": "clauseTypeId",
-                "type": "string",
-                "responseElement": "clauseTypeId",
-                "_comment": ""
-            },
-            {
-                "name": "clauseTermId",
-                "type": "string",
-                "responseElement": "clauseTermId",
                 "_comment": ""
             }
         ]

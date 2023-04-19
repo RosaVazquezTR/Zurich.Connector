@@ -1,12 +1,12 @@
 {
     "id": "68",
     "partitionkey": "ConnectorList",
-    "alias": "ttdocs.search",
+    "alias": "ttdms.search",
     "info": {
-        "title": "Get Search Thought Trace  with thoughts",
-        "description": "Pull Thougth Trace documents with thoughts",
+        "title": "Thought Trace DMS",
+        "description": "Pull Thougth Trace documents for DMS flow",
         "entityType": "Search",
-        "dataSourceId": "50",
+        "dataSourceId": "51",
         "version": "1.0",
         "subType": "Parent"
     },
@@ -95,32 +95,6 @@
                 "defaultValue": ""
             },
             {
-                "cdmName": "thoughtFilters",
-                "name": "thoughtFilters",
-                "inClause": "Body",
-                "required": true,
-                "type": "object",
-                "defaultValue": {
-                    "operator": "and",
-                    "filters": [
-                        {
-                            "fieldTypes": [
-                                {
-                                    "thoughtTypeId": "1",
-                                    "thoughtFieldTypeId": "1746"
-                                }
-                            ],
-                            "operator": "exists",
-                            "stringValue": "",
-                            "stringValueList": null,
-                            "numberValue": null,
-                            "dateValue": null,
-                            "booleanValue": null
-                        }
-                    ]
-                }
-            },
-            {
                 "cdmName": "Filters",
                 "name": "Filters",
                 "inClause": "Body",
@@ -154,12 +128,9 @@
     },
     "response": {
         "type": "JSON",
-        "useJsonTransformation": true,
-        "useInternalSorting": true,
+        "useJsonTransformation": false,
+        "useInternalSorting": false,
 		"usePermissionsCheck": true
-    },
-    "facetsInformation": {
-        "connectorId": "71"
     },
     "filters": [
         {
@@ -469,19 +440,6 @@
                 "_comment": ""
             }
         ],
-        "unstructured": [
-            {
-                "name": "pagination",
-                "type": "object",
-                "responseElement": "pagination",
-                "_comment": ""
-            },
-            {
-                "name": "totalDocs",
-                "type": "object",
-                "responseElement": "totalDocs",
-                "_comment": ""
-            }
-        ]
+        "unstructured": []
     }
 }
