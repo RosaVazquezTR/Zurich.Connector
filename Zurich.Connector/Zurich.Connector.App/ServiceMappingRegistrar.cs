@@ -39,8 +39,7 @@ namespace Zurich.Connector.App
                 .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId))
                 .ForMember(dest => dest.TenantId, opt => opt.MapFrom(src => src.TenantId))
                 .ForMember(dest => dest.AppName, opt => opt.MapFrom(src => src.AppName))
-                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
-                .ForAllOtherMembers(opt => opt.Ignore());
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id));
 
             CreateMap<ConnectorResponse, ConnectorResponseModel>();
             CreateMap<ConnectorReponseSchema, ConnectorReponseSchemaModel>();
@@ -89,8 +88,7 @@ namespace Zurich.Connector.App
             CreateMap<AppToken, OAuthAPITokenResponse>()
                 .ForMember(dest => dest.AccessToken, opt => opt.MapFrom(src => src.access_token))
                 .ForMember(dest => dest.TokenType, opt => opt.MapFrom(src => src.token_type))
-                .ForMember(dest => dest.ExpiresOn, opt => opt.MapFrom(src => src.expires_on))
-                .ForAllOtherMembers(opt => opt.Ignore());
+                .ForMember(dest => dest.ExpiresOn, opt => opt.MapFrom(src => src.expires_on));
             CreateMap<OAuthAPITokenResponse, Token>(MemberList.Destination);
         }
     }

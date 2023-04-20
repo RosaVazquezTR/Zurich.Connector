@@ -70,7 +70,7 @@ namespace Zurich.Connector.App.Services.DataSources
                 return null;
             allParameters["provisionID"] = provisionID;
 
-            // A provisionID filter allways have to be included.
+            // A provisionID filter allways have to be included. 
             // With no keyword, 1 "exists" filter
             // With n keywords, n "contains" filters
 
@@ -178,9 +178,12 @@ namespace Zurich.Connector.App.Services.DataSources
         {
             JArray thoughtTypes = await GetThoughtTypesFromOntologies();
 
-            var thoughtType = thoughtTypes.Where(thoughtType => thoughtType["id"].Value<string>() == thoughtTypeId).FirstOrDefault();
-            var provisionThought = thoughtType?["fieldTypes"].Where(fieldType => fieldType["name"].Value<string>() == "Provision").FirstOrDefault();
-
+            // In case "Provision" field doesn't exists (feature included with MAN ontologies), we consider the field with the name of the clauseType
+            // as the provision (technically, it should contains only that fieldType). 
+            var thoughtType = thoughtTypes.FirstOrDefault(thoughtType => thoughtType["id"].Value<string>() == thoughtTypeId);
+            var provisionThought = thoughtType?["fieldTypes"].Where(fieldType => fieldType["name"].Value<string>() == "Provision").FirstOrDefault() 
+                ?? thoughtType?["fieldTypes"].Where(fieldType => fieldType["name"].Value<string>() == thoughtType?["name"].Value<string>()).FirstOrDefault();
+            
             return provisionThought?["id"].Value<string>();
         }
 

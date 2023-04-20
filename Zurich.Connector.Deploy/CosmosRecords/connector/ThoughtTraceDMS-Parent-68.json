@@ -1,12 +1,12 @@
 {
     "id": "68",
     "partitionkey": "ConnectorList",
-    "alias": "ttdocs.search",
+    "alias": "ttdms.search",
     "info": {
-        "title": "Get Search Thought Trace  with thoughts",
-        "description": "Pull Thougth Trace documents with thoughts",
+        "title": "Thought Trace DMS",
+        "description": "Pull Thougth Trace documents for DMS flow",
         "entityType": "Search",
-        "dataSourceId": "50",
+        "dataSourceId": "51",
         "version": "1.0",
         "subType": "Parent"
     },
@@ -440,19 +440,6 @@
                 "_comment": ""
             }
         ],
-        "unstructured": [
-            {
-                "name": "pagination",
-                "type": "object",
-                "responseElement": "pagination",
-                "_comment": ""
-            },
-            {
-                "name": "totalDocs",
-                "type": "object",
-                "responseElement": "totalDocs",
-                "_comment": ""
-            }
-        ]
+        "unstructured": []
     }
 }

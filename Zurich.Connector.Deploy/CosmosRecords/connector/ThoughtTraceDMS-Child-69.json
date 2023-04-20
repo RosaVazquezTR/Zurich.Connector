@@ -2,17 +2,18 @@
     "id": "69",
     "partitionkey": "ConnectorList",
     "info": {
-        "title": "Get Search Thought Trace documents for DMS - Child connector for 68",
-        "description": "Pull Thougth Trace documents for DMS - Child connector for 68",
+        "title": "Get Search Thought Trace DMS - Child connector for 68",
+        "description": "Pull Thougth Trace DMS - Child connector for 68",
         "entityType": "Search",
-        "dataSourceId": "50",
+        "dataSourceId": "51",
         "version": "1.0",
         "subType": "Child"
     },
+    "preRelease": true,
     "request": {},
     "response": {},
     "filters": [],
-    "resultLocation": "Documents.[]",
+    "resultLocation": "[]",
     "cdmMapping": {
         "structured": [
             {
@@ -31,6 +32,12 @@
                 "name": "Type",
                 "type": "string",
                 "responseElement": "documentTypeId",
+                "_comment": ""
+            },
+            {
+                "name": "Count",
+                "type": "short",
+                "responseElement": "pageCount",
                 "_comment": ""
             }
         ],
@@ -81,6 +88,54 @@
                 "name": "userPermission",
                 "type": "string",
                 "responseElement": "userPermission",
+                "_comment": ""
+            },
+            {
+                "name": "score",
+                "type": "string",
+                "responseElement": "score",
+                "_comment": ""
+            },
+            {
+                "name": "confidence",
+                "type": "string",
+                "responseElement": "confidence",
+                "_comment": ""
+            },
+            {
+                "name": "clauseTypeId",
+                "type": "string",
+                "responseElement": "clauseTypeId",
+                "_comment": ""
+            },
+            {
+                "name": "clauseTermId",
+                "type": "string",
+                "responseElement": "clauseTermId",
+                "_comment": ""
+            },
+            {
+                "name": "score",
+                "type": "string",
+                "responseElement": "score",
+                "_comment": ""
+            },
+            {
+                "name": "confidence",
+                "type": "string",
+                "responseElement": "confidence",
+                "_comment": ""
+            },
+            {
+                "name": "clauseTypeId",
+                "type": "string",
+                "responseElement": "clauseTypeId",
+                "_comment": ""
+            },
+            {
+                "name": "clauseTermId",
+                "type": "string",
+                "responseElement": "clauseTermId",
                 "_comment": ""
             }
         ]

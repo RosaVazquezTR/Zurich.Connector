@@ -1,0 +1,31 @@
+{
+    "id": "99",
+    "partitionkey": "DataSourceList",
+    "name": "Dummy connector",
+    "description": "This is to simulate a connector connection",
+    "infoURL": "",
+    "appCode": "DUMMY",
+    "appType": "0",
+    "extraRequestContext": "",
+    "registrationInfo": {
+      "registrationMode": "Automatic",
+      "domainRequired": "false",
+      "clientAndSecretRequired": "false",
+      "connectionMessage": "",
+      "registrationFileRequired": "false"
+    },
+    "securityDefinition": {
+      "type": "oauth2",
+      "flow": "",
+      "defaultSecurityDefinition": {
+        "authorizationURL": "",
+        "authorizationPath": "",
+        "tokenURL": "",
+        "tokenPath": "",
+        "keyVaultClientId": "",
+        "keyVaultSecret": "",
+        "grantType": "client_credentials"
+      },
+      "scopes": {}
+    }
+  }

@@ -30,6 +30,7 @@ using Zurich.TenantData;
 using Zurich.Connector.Data.Utils;
 using Zurich.Common.Models.FeatureFlags;
 using Zurich.Common.Services;
+using System.Threading;
 
 namespace Zurich.Connector.Data.DataMap
 {
@@ -67,7 +68,11 @@ namespace Zurich.Connector.Data.DataMap
 
             IHttpBodyService service = _httpBodyFactory.GetImplementation(apiInfo.Method);
             string body = service.CreateBody(connectorDocument, query);
-            string response = await _repository.MakeRequest(apiInfo, query, body);
+            string response = null;
+            if (connectorDocument.Response.Type == "DUMMYJSON")
+                return ReturnDummyJson<T>(response);
+            else
+                response = await _repository.MakeRequest(apiInfo, query, body);
 
             if (!(string.IsNullOrWhiteSpace(response)))
             {
@@ -88,13 +93,31 @@ namespace Zurich.Connector.Data.DataMap
                 {
                     jsonResponse = await ModifyResult(jsonResponse, connectorDocument);
                     return jsonResponse.ToObject<T>();
-
                 }
             }
             else
             {
                 return default(T);
             }
+        }
+
+        private static T ReturnDummyJson<T>(string response)
+        {
+            //IF NEEDED, A CUSTOM RESPONSE CAN BE CRAFTED SO IT CAN BE MAPPED PROPERLY IN THE SEARCH APP
+            response = "{}";
+            JObject jObjectTop = new JObject();
+            dynamic dummyProperty = new JObject();
+            dummyProperty.dummyProperty = "result";
+            jObjectTop.Add(new JProperty("Document", dummyProperty));
+
+            //IF NEEDED, WE CAN ADD MORE OPERATIONS HERE BELOW TO GENERATE CPU AND MEMORY USE
+
+            //WE WILL WAIT FOR A RANDOM TIME BETWEEN 1 AND 5 SECONDS
+            Random rnd = new Random();
+            int rndmWaitSeconds = rnd.Next(1,5);
+            Thread.Sleep(rndmWaitSeconds * 10000);
+
+            return jObjectTop.ToObject<T>();
         }
 
         private async Task<JToken> ModifyResult(JToken jsonResponse, ConnectorDocument connectorDocument)

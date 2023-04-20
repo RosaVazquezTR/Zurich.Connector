@@ -1,0 +1,54 @@
+{
+    "id": "99",
+    "partitionkey": "ConnectorList",
+    "alias": "dummy.search",
+    "info": {
+        "title": "Dummy connector",
+        "description": "Simulates a connector behaviour",
+        "entityType": "Search",
+        "dataSourceId": "99",
+        "version": "1.0",
+        "subType": "Parent"
+    },
+    "request": {
+        "endpointPath": "/",
+        "method": "GET",
+        "parameters": [
+            {
+              "cdmName": "Query",
+              "name": "searchTerm",
+              "inClause": "Query",
+              "required": false,
+              "type": "string",
+              "defaultValue": "*"
+            }
+        ],
+        "sorting": {
+            "properties": [
+                {
+                    "name": "Date",
+                    "type": "date",
+                    "element": "sortOrder",
+                    "elementValue": "DATE",
+                    "isDefault": false
+                }
+            ]
+        }   
+    },
+    "response": {
+        "type": "DUMMYJSON"
+    },
+    "filters": [],
+    "resultLocation": "document",
+    "cdmMapping": {
+        "structured": [
+        	{
+	          "name": "Dummyproperty",
+	          "type": "string",
+	          "responseElement" : "dummyProperty",
+	          "_comment": ""
+      		}
+        ],
+        "unstructured": []
+    }
+}

@@ -1,0 +1,33 @@
+{
+    "id": "51",
+    "partitionkey": "DataSourceList",
+    "name": "Thought Trace DMS",
+    "description": "This is connecting to Thought Trace API for DMS flow ",
+    "appCode": "TTDMS",
+    "infoURL": "",
+    "appType": "0",
+    "productType": "",
+    "domain": "",
+    "extraRequestContext": "",
+    "registrationInfo": {
+        "registrationMode": "Automatic",
+        "domainRequired": "false",
+        "clientAndSecretRequired": "false",
+        "connectionMessage": "",
+        "registrationFileRequired": "false"
+    },
+    "securityDefinition": {
+        "type": "oauth2",
+        "flow": "accessCode",
+        "defaultSecurityDefinition": {
+            "authorizationURL": "https://identity.thoughttrace.dev/connect/authorize",
+            "authorizationPath": "",
+            "tokenURL": "https://identity.thoughttrace.dev/connect/token",
+            "tokenPath": "",
+            "keyVaultClientId": "",
+            "keyVaultSecret": "",
+            "grantType": "client_credentials"
+        },
+        "scopes": {}
+    }
+}
