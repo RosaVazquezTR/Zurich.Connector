@@ -49,6 +49,27 @@ namespace Zurich.Connector.Data.DataMap
 
         public async override Task<T> GetAndMapResults<T>(ConnectorDocument connector, string transferToken, NameValueCollection query, Dictionary<string, string> headers, Dictionary<string, string> requestParameters, string domain = null)
         {
+            // Given the current structure of WLIE API this is the easiest way to call its search endpoint
+            // TODO: find a more generic way to do this, considering that WLIE doesn't require access token
+            // NOTE: WLIE doesn't return error messages or any status different of 200,
+            // in the future we will have to find a way to handle possible errors in the request, authentication or response
+            if (connector.BasicAuthentication)
+            {
+                ApiInformation apiInfo = new ApiInformation()
+                {
+                    AppCode = connector.DataSource.appCode,
+                    HostName = string.IsNullOrEmpty(connector.HostName) ? connector.DataSource.domain : connector.HostName,
+                    UrlPath = connector.Request.EndpointPath,
+                    AuthHeader = connector.DataSource.securityDefinition.defaultSecurityDefinition.authorizationHeader,
+                    Method = connector.Request.Method,
+                    Headers = headers
+                };
+
+                CleanUpApiInformation(apiInfo);
+
+                return await GetFromRepo<T>(apiInfo, connector, query, requestParameters);
+            }
+
             var token = await this.RetrieveToken(connector?.DataSource?.appCode,
                                                   connector?.DataSource?.appType,
                                                   connector?.DataSource?.locale,

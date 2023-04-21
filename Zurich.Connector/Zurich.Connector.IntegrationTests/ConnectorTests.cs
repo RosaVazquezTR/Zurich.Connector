@@ -148,7 +148,7 @@ namespace Zurich.Connector.IntegrationTests
             //        and Thought Trace connectors (52, 66 and 68) check for the moment
             // TODO: remove the msgraph exception once the test tenant is setup correctly.
             // TODO: remove the PLCAU id 63 exception once the token is retrieved correctly for this test. 
-            string[] connectorsToSkipList = { "14", "29", "47", "48", "49", "51", "52", "60", "66", "68", "99"};
+            string[] connectorsToSkipList = { "14", "29", "47", "48", "49", "51", "52", "60", "66", "68", "76", "99"};
 
             if (!connectorsToSkipList.Contains(connector.Id))
             {

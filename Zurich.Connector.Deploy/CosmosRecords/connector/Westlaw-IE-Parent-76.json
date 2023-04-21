@@ -1,0 +1,399 @@
+{
+	"id": "76",
+	"partitionkey": "ConnectorList",
+	"alias": "wlie.search",
+	"info": {
+		"title": "Get Search Westlaw documents - IE",
+		"description": "Pull Westlaw documents - IE",
+		"entityType": "Search",
+		"dataSourceId": "52",
+		"version": "1.0",
+		"subType": "Parent"
+	},
+	"preRelease": true,
+	"basicAuthentication": true,
+	"request": {
+		"endpointPath": "/app/api/searchapi",
+		"method": "GET",
+		"parameters": [
+			{
+				"cdmName": "Query",
+				"name": "frt",
+				"inClause": "Query",
+				"required": true,
+				"type": "string",
+				"defaultValue": ""
+			},
+			{
+				"cdmName": "Content.default",
+				"name": "ds",
+				"inClause": "Query",
+				"required": true,
+				"type": "string",
+				"defaultValue": "ie-cases-all"
+			},
+			{
+				"cdmName": "ResultSize",
+				"name": "rpp",
+				"inClause": "Query",
+				"required": true,
+				"type": "string",
+				"defaultValue": "50"
+			},
+			{
+				"cdmName": "SponsorCode",
+				"name": "sp",
+				"inClause": "Query",
+				"required": true,
+				"type": "string",
+				"defaultValue": "ukitrieip-1"
+			}
+		],
+		"sorting": {
+			"properties": [
+				{
+					"name": "Relevance",
+					"type": "string",
+					"element": "sortid",
+					"elementValue": "relevance",
+					"isDefault": true
+				}
+			]
+		}
+	},
+	"response": {
+		"type": "XSLT",
+		"TransformationLocation": "2"
+	},
+	"filters": [
+		{
+			"name": "Available Filters",
+			"description": "WLIE available filters",
+			"isMultiselect": "false",
+			"requestParameter": "Content.default",
+			"filterlist": [
+				{
+					"name": "All Cases",
+					"id": "ie-cases-all"
+				},
+				{
+					"name": "Employment Law Reports",
+					"id": "ie-cases-elr"
+				},
+				{
+					"name": "European Human Rights Reports",
+					"id": "ie-cases-ehrr"
+				},
+				{
+					"name": "Human Rights Law Reports",
+					"id": "ie-cases-hrlr"
+				},
+				{
+					"name": "Irish Current Law Monthly Digest",
+					"id": "ie-cases-iclmd"
+				},
+				{
+					"name": "Irish Law Reports Monthly",
+					"id": "ie-cases-ilrm"
+				},
+				{
+					"name": "Irish Law Times Reports",
+					"id": "ie-cases-iltr"
+				},
+				{
+					"name": "Unreported Judgements",
+					"id": "ie-cases-unr"
+				},
+				{
+					"name": "All Legislations",
+					"id": "ie-legis-all"
+				},
+				{
+					"name": "Consolidated",
+					"id": "ie-legis-consol"
+				},
+				{
+					"name": "Fastcheck",
+					"id": "ie-legisfastcheck"
+				},
+				{
+					"name": "Irish Employment Legislation",
+					"id": "ie-legis-iel"
+				},
+				{
+					"name": "Original Acts",
+					"id": "ie-legis-anno"
+				},
+				{
+					"name": "All Court Rules",
+					"id": "ie-crtrules-all"
+				},
+				{
+					"name": "Circuit",
+					"id": "ie-crtrules-cccr"
+				},
+				{
+					"name": "District",
+					"id": "ie-crtrules-cdcr"
+				},
+				{
+					"name": "Superior",
+					"id": "ie-crtrules-cscr"
+				},
+				{
+					"name": "All Journals",
+					"id": "ie-jnl-all"
+				},
+				{
+					"name": "Annual Review",
+					"id": "ie-jnl-ar"
+				},
+				{
+					"name": "Bar Review",
+					"id": "ie-jnl-br"
+				},
+				{
+					"name": "Commercial Law Practitioner",
+					"id": "ie-jnl-clp"
+				},
+				{
+					"name": "Construction, Engineering and Energy Law Journal",
+					"id": "ie-jnl-ceelj"
+				},
+				{
+					"name": "Conveyancing and Property Law",
+					"id": "ie-jnl-cplj"
+				},
+				{
+					"name": "Dublin University Law",
+					"id": "ie-jnl-dulj"
+				},
+				{
+					"name": "Hibernian Law",
+					"id": "ie-jnl-hlj"
+				},
+				{
+					"name": "Irish Criminal Law",
+					"id": "ie-jnl-iclj"
+				},
+				{
+					"name": "Irish Employment Law",
+					"id": "ie-jnl-ielj"
+				},
+				{
+					"name": "Irish Journal of European Law",
+					"id": "ie-jnl-ijel"
+				},
+				{
+					"name": "Irish Journal of Family Law",
+					"id": "ie-jnl-ijfl"
+				},
+				{
+					"name": "Irish Law Times",
+					"id": "ie-jnl-ilt"
+				},
+				{
+					"name": "Irish Planning and Environmental Law",
+					"id": "ie-jnl-ipelj"
+				},
+				{
+					"name": "Journal of Civil Practice and Procedure",
+					"id": "ie-jnl-jcpp"
+				},
+				{
+					"name": "Medico-Legal Journal of Ireland",
+					"id": "ie-jnl-mlji"
+				},
+				{
+					"name": "The Irish Jurist",
+					"id": "ie-jnl-ij"
+				},
+				{
+					"name": "Trinity College Law Review",
+					"id": "ie-jnl-tcl"
+				},
+				{
+					"name": "Current Awareness",
+					"id": "ie-ca-all All"
+				},
+				{
+					"name": "Abrahamson, Dwyer, Fitzpatrick; Discovery and Disclosure",
+					"id": "ie-bk-discover"
+				},
+				{
+					"name": "Ashe and Reid, Anti-Money Laundering: Risks, Compliance and Governance, 1st edn, 2013",
+					"id": "ie-bk-antimony"
+				},
+				{
+					"name": "Bland, Easements, 3rd Ed. 2015",
+					"id": "ie-bk-easement"
+				},
+				{
+					"name": "Bolger, Bruton, Kimber; Employment Equality Law",
+					"id": "ie-bk-equalemp"
+				},
+				{
+					"name": "Breslin; Banking Law",
+					"id": "ie-bk-bankbres"
+				},
+				{
+					"name": "Browne; The Law of Local Government",
+					"id": "ie-bk-localgov"
+				},
+				{
+					"name": "Browne and McGovern, Procurement Law in Ireland, 1st Ed., 2018",
+					"id": "ie-bk-procure"
+				},
+				{
+					"name": "Buckley; Insurance Law",
+					"id": "ie-bk-insubuck"
+				},
+				{
+					"name": "Canny; Limitation of Actions",
+					"id": "ie-bk-limcanny"
+				},
+				{
+					"name": "Cassidy and Ring, Landlord and Tenant Law: The Residential Sector, 2nd Ed. 2020",
+					"id": "ie-bk-landten"
+				},
+				{
+					"name": "Collins; Enforcement of Judgments",
+					"id": "ie-bk-enforc"
+				},
+				{
+					"name": "Collins and O'Reilly, Civil Proceedings and the State, 3rd Ed. 2019",
+					"id": "ie-bk-cpstate"
+				},
+				{
+					"name": "Coonan, O'Toole; Criminal Procedure in The District Court",
+					"id": "ie-bk-coontool"
+				},
+				{
+					"name": "Crowley, Family Law, 1st Ed. 2013",
+					"id": "ie-bk-family"
+				},
+				{
+					"name": "Delany and McGrath; Civil Procedure in the Superior Courts",
+					"id": "ie-bk-delany"
+				},
+				{
+					"name": "Derek Dunne; Judicial Review of Criminal Proceedings",
+					"id": "ie-bk-jrcpdunn"
+				},
+				{
+					"name": "Dodd and Carroll; NAMA - The Law Relating to the National Asset Management Agency",
+					"id": "ie-bk-namadodd"
+				},
+				{
+					"name": "Donnelly and White; Consumer Law - Rights and Regulation",
+					"id": "ie-bk-consumer"
+				},
+				{
+					"name": "Donnelly; The Law of Credit and Security",
+					"id": "ie-bk-donnely"
+				},
+				{
+					"name": "Dorgan and McKenna; Damages",
+					"id": "ie-bk-damages"
+				},
+				{
+					"name": "Dowling-Hussey, Dunne and Tackaberry; Arbitration Law",
+					"id": "ie-bk-arbtrtn"
+				},
+				{
+					"name": "Dowling; Civil Procedure in the Circuit Court",
+					"id": "ie-bk-civprocc"
+				},
+				{
+					"name": "Dowling; The Commercial Court",
+					"id": "ie-bk-comdowln"
+				},
+				{
+					"name": "Dowling and Mullally, Civil Procedure in the District Court, 2nd Ed. 2014",
+					"id": "ie-bk-civprdc"
+				},
+				{
+					"name": "Fennelly; International Law in the Irish Legal System",
+					"id": "ie-bk-intrlaw"
+				},
+				{
+					"name": "Freeman, Central Bank Acts: Annotated and Consolidated",
+					"id": "ie-bk-cenbank"
+				},
+				{
+					"name": "Forde, Kennedy and Simms, The Law of Company Insolvency, 3rd Ed., 2015",
+					"id": "ie-bk-coinsolv"
+				},
+				{
+					"name": "Hogan, Morgan; Administrative Law in Ireland",
+					"id": "ie-bk-hoganmrg"
+				},
+				{
+					"name": "Jennings, Scannell and Sheehan; The Law of Personal Injuries",
+					"id": "ie-bk-jenning"
+				},
+				{
+					"name": "Kirwan, Injunctions: Law and Practice, 3rd edn, 2020",
+					"id": "ie-bk-injunct"
+				},
+				{
+					"name": "McDonagh; Freedom of Information Law",
+					"id": "ie-bk-freeinfo"
+				},
+				{
+					"name": "McGrath; Evidence",
+					"id": "ie-bk-evidenc"
+				},
+				{
+					"name": "Meenan; Employment Law",
+					"id": "ie-bk-employm"
+				},
+				{
+					"name": "Murphy, Financial Services Law in Ireland: Authorisation, Supervision, Compliance, Enforcement, 1st Ed., 2018",
+					"id": "ie-bk-fincserv"
+				},
+				{
+					"name": "O'Malley, Sentencing Law and Practice",
+					"id": "ie-bk-sentlawp"
+				},
+				{
+					"name": "O'Malley; Sexual Offences",
+					"id": "ie-bk-somalley"
+				},
+				{
+					"name": "O'Malley; The Criminal Process",
+					"id": "ie-bk-crioma"
+				},
+				{
+					"name": "Robert Clark; Contract Law in Ireland",
+					"id": "ie-bk-contract"
+				},
+				{
+					"name": "Simons; Planning Law",
+					"id": "ie-bk-plansims"
+				},
+				{
+					"name": "Staunton, Drunken Driving, 1st Ed. 2015",
+					"id": "ie-bk-drunkdrv"
+				},
+				{
+					"name": "Walsh on Criminal Procedure",
+					"id": "ie-bk-walshcrp"
+				}
+			]
+		}
+	],
+	"pagination": {},
+	"resultLocation": "",
+	"cdmMapping": {
+		"structured": [
+			{
+				"name": "SourceDirectoryUrl",
+				"type": "interpolationString",
+				"responseElement": "https://(WestlawUKHost)/Search/Results.html?comp=wluk&query=(%Query)&saveJuris=False&contentType=RESEARCH_COMBINED_WLUK&querySubmissionGuid=(NewGuid())",
+				"_comment": ""
+			}
+		],
+		"unstructured": []
+	}
+}

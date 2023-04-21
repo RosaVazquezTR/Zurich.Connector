@@ -62,6 +62,10 @@ namespace Zurich.Connector.Web.Models
         /// Registration status
         /// </summary>
         public RegistrationStatus RegistrationStatus { get; set; }
+        /// <summary>
+        /// Determines if the connector requires to call oauth to get an authentication token
+        /// </summary>
+        public bool BasicAuthentication { get; set; }
     }
 
     /// <summary>

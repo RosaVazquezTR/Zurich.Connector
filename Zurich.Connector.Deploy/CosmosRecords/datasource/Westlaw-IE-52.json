@@ -1,0 +1,32 @@
+{
+  "id": "52",
+  "partitionkey": "DataSourceList",
+  "name": "Westlaw IE",
+  "description": "This is connecting to Westlaw IE API ",
+  "infoURL": "",
+  "appCode": "WLIE",
+  "appType": "0",
+  "locale": "IE",
+  "extraRequestContext": "",
+  "registrationInfo": {
+    "registrationMode": "Automatic",
+    "domainRequired": "false",
+    "clientAndSecretRequired": "false",
+    "connectionMessage": "",
+    "registrationFileRequired": "false"
+  },
+  "securityDefinition": {
+    "type": "oauth2",
+    "flow": "",
+    "defaultSecurityDefinition": {
+      "authorizationURL": "",
+      "authorizationPath": "",
+      "tokenURL": "",
+      "tokenPath": "",
+      "keyVaultClientId": "",
+      "keyVaultSecret": "",
+      "grantType": "client_credentials"
+    },
+    "scopes": {}
+  }
+}

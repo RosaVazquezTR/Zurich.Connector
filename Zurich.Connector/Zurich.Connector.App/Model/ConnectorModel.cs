@@ -70,6 +70,10 @@ namespace Zurich.Connector.App.Model
         /// Syntax for advanced search operators if supported
         /// </summary>
         public ConnectorAdvancedSyntaxModel AdvancedSearchSyntax { get; set; }
+        /// <summary>
+        /// Determines if the connector requires to call oauth to get an authentication token
+        /// </summary>
+        public bool BasicAuthentication { get; set; }
 
     }
 
