@@ -80,10 +80,8 @@ namespace Zurich.Connector.Data.DataMap
 
                 JToken jsonResponse = null;
 
-                if (connectorDocument?.Response.UsePermissionsCheck ?? false)
+                if (connectorDocument?.Response.UseJsonTransformation ?? false)
                     jsonResponse = await httpResponseService.GetJTokenResponse(response, connectorDocument.Response, connectorDocument.Id, requestParameter, query, _httpClientFactory);
-                else if (connectorDocument?.Response.UseJsonTransformation ?? false)
-                    jsonResponse = await httpResponseService.GetJTokenResponse(response, connectorDocument.Response, connectorDocument.Id, requestParameter, query);
                 else
                     jsonResponse = await httpResponseService.GetJTokenResponse(response, connectorDocument.Response);
 
