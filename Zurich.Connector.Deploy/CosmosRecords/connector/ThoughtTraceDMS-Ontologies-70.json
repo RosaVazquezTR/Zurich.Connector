@@ -1,12 +1,12 @@
 {
     "id": "70",
     "partitionkey": "ConnectorList",
-    "alias": "ttdocs.ontologies",
+    "alias": "ttdms.ontologies",
     "info": {
         "title": "Get Thought Trace Ontologies",
         "description": "Pull Thougth Trace ontologies",
         "entityType": "Ontologies",
-        "dataSourceId": "50",
+        "dataSourceId": "51",
         "version": "1.0"
     },
     "request": {
