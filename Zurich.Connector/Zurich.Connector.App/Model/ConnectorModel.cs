@@ -38,6 +38,10 @@ namespace Zurich.Connector.App.Model
         /// </summary>
         public ConnectorsFacetsModel FacetsInformation { get; set; }
         /// <summary>
+        /// Ontologies details
+        /// </summary>
+        public ConnectorsOntologiesModel OntologiesInformation { get; set; }
+        /// <summary>
         /// Filter details
         /// </summary>
         public List<ConnectorsFiltersModel> Filters { get; set; }
