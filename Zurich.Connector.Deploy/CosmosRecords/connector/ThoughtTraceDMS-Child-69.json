@@ -1,143 +1,131 @@
 {
-    "id": "69",
-    "partitionkey": "ConnectorList",
-    "info": {
-        "title": "Get Search Thought Trace DMS - Child connector for 68",
-        "description": "Pull Thougth Trace DMS - Child connector for 68",
-        "entityType": "Search",
-        "dataSourceId": "51",
-        "version": "1.0",
-        "subType": "Child"
-    },
-    "preRelease": true,
-    "request": {},
-    "response": {},
-    "filters": [],
-    "resultLocation": "[]",
-    "cdmMapping": {
-        "structured": [
-            {
-                "name": "Title",
-                "type": "string",
-                "responseElement": "name",
-                "_comment": ""
-            },
-            {
-                "name": "CreationDate",
-                "type": "DateTime",
-                "responseElement": "createdOn",
-                "_comment": ""
-            },
-            {
-                "name": "Type",
-                "type": "string",
-                "responseElement": "documentTypeId",
-                "_comment": ""
-            },
-            {
-                "name": "Count",
-                "type": "short",
-                "responseElement": "pageCount",
-                "_comment": ""
-            }
-        ],
-        "unstructured": [
-            {
-                "name": "createdBy",
-                "type": "string",
-                "responseElement": "createdBy",
-                "_comment": ""
-            },
-            {
-                "name": "pageCount",
-                "type": "string",
-                "responseElement": "pageCount",
-                "_comment": ""
-            },
-            {
-                "name": "lastModifiedBy",
-                "type": "string",
-                "responseElement": "lastModifiedBy",
-                "_comment": ""
-            },
-            {
-                "name": "lastModifiedOn",
-                "type": "DateTime",
-                "responseElement": "lastModifiedOn",
-                "_comment": ""
-            },
-            {
-                "name": "score",
-                "type": "string",
-                "responseElement": "score",
-                "_comment": ""
-            },
-			{
-                "name": "capabilityDocId",
-                "type": "string",
-                "responseElement": "capabilityDocId",
-                "_comment": ""
-            },
-            {
-                "name": "integrationDocId",
-                "type": "string",
-                "responseElement": "integrationDocId",
-                "_comment": ""
-            },
-			{
-                "name": "userPermission",
-                "type": "string",
-                "responseElement": "userPermission",
-                "_comment": ""
-            },
-            {
-                "name": "score",
-                "type": "string",
-                "responseElement": "score",
-                "_comment": ""
-            },
-            {
-                "name": "confidence",
-                "type": "string",
-                "responseElement": "confidence",
-                "_comment": ""
-            },
-            {
-                "name": "clauseTypeId",
-                "type": "string",
-                "responseElement": "clauseTypeId",
-                "_comment": ""
-            },
-            {
-                "name": "clauseTermId",
-                "type": "string",
-                "responseElement": "clauseTermId",
-                "_comment": ""
-            },
-            {
-                "name": "score",
-                "type": "string",
-                "responseElement": "score",
-                "_comment": ""
-            },
-            {
-                "name": "confidence",
-                "type": "string",
-                "responseElement": "confidence",
-                "_comment": ""
-            },
-            {
-                "name": "clauseTypeId",
-                "type": "string",
-                "responseElement": "clauseTypeId",
-                "_comment": ""
-            },
-            {
-                "name": "clauseTermId",
-                "type": "string",
-                "responseElement": "clauseTermId",
-                "_comment": ""
-            }
-        ]
-    }
+  "id": "69",
+  "partitionkey": "ConnectorList",
+  "info": {
+    "title": "Get Search Thought Trace DMS - Child connector for 68",
+    "description": "Pull Thougth Trace DMS - Child connector for 68",
+    "entityType": "Search",
+    "dataSourceId": "51",
+    "version": "1.0",
+    "subType": "Child"
+  },
+  "preRelease": true,
+  "request": {},
+  "response": {},
+  "filters": [],
+  "resultLocation": "Documents.[]",
+  "cdmMapping": {
+    "structured": [
+      {
+        "name": "Title",
+        "type": "string",
+        "responseElement": "name",
+        "_comment": ""
+      },
+      {
+        "name": "CreationDate",
+        "type": "DateTime",
+        "responseElement": "createdOn",
+        "_comment": ""
+      },
+      {
+        "name": "Type",
+        "type": "string",
+        "responseElement": "documentTypeId",
+        "_comment": ""
+      },
+      {
+        "name": "Count",
+        "type": "short",
+        "responseElement": "pageCount",
+        "_comment": ""
+      }
+    ],
+    "unstructured": [
+      {
+        "name": "documentId",
+        "type": "string",
+        "responseElement": "documentId",
+        "_comment": ""
+      },
+      {
+        "name": "thoughtId",
+        "type": "string",
+        "responseElement": "thoughtId",
+        "_comment": ""
+      },
+      {
+        "name": "fieldId",
+        "type": "string",
+        "responseElement": "fieldId",
+        "_comment": ""
+      },
+      {
+        "name": "lastModifiedOn",
+        "type": "DateTime",
+        "responseElement": "lastModifiedOn",
+        "_comment": ""
+      },
+      {
+        "name": "count",
+        "type": "short",
+        "responseElement": "pageCount",
+        "_comment": ""
+      },
+      {
+        "name": "position",
+        "type": "int",
+        "responseElement": "position",
+        "_comment": ""
+      },
+      {
+        "name": "stringValue",
+        "type": "string",
+        "responseElement": "stringValue",
+        "_comment": ""
+      },
+      {
+        "name": "highlightedText",
+        "type": "string",
+        "responseElement": "highlightedText",
+        "_comment": ""
+      },
+      {
+        "name": "score",
+        "type": "string",
+        "responseElement": "score",
+        "_comment": ""
+      },
+      {
+        "name": "confidence",
+        "type": "string",
+        "responseElement": "confidence",
+        "_comment": ""
+      },
+      {
+        "name": "clauseTypeId",
+        "type": "string",
+        "responseElement": "clauseTypeId",
+        "_comment": ""
+      },
+      {
+        "name": "clauseTermId",
+        "type": "string",
+        "responseElement": "clauseTermId",
+        "_comment": ""
+      },
+      {
+        "name": "capabilityDocId",
+        "type": "string",
+        "responseElement": "capabilityDocId",
+        "_comment": ""
+      },
+      {
+        "name": "integrationDocId",
+        "type": "string",
+        "responseElement": "integrationDocId",
+        "_comment": ""
+      }
+    ]
+  }
 }
