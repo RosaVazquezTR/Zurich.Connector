@@ -101,7 +101,27 @@
                 "required": false,
                 "type": "object",
                 "defaultValue": ""
-            }
+            },
+			{
+                "cdmName": "thoughtFilters",
+                "name": "thoughtFilters",
+                "inClause": "Body",
+                "required": true,
+                "type": "object",
+                "defaultValue": {
+                    "operator": "and",
+                    "filters": [
+                        {
+                            "fieldTypes": [
+                                {
+                                    "thoughtTypeId": "407"
+                                }
+                            ],
+                            "operator": "exists"
+                        }
+                    ]
+                }
+            },
         ],
         "sorting": {
             "properties": [
@@ -128,9 +148,12 @@
     },
     "response": {
         "type": "JSON",
-        "useJsonTransformation": false,
-        "useInternalSorting": false,
+        "useJsonTransformation": true,
+        "useInternalSorting": true,
 		"usePermissionsCheck": true
+    },
+	"ontologiesInformation": {
+        "connectorId": "70"
     },
     "filters": [
         {
@@ -440,6 +463,19 @@
                 "_comment": ""
             }
         ],
-        "unstructured": []
+        "unstructured": [
+            {
+                "name": "pagination",
+                "type": "object",
+                "responseElement": "pagination",
+                "_comment": ""
+            },
+            {
+                "name": "totalDocs",
+                "type": "object",
+                "responseElement": "totalDocs",
+                "_comment": ""
+            }
+        ]
     }
 }
