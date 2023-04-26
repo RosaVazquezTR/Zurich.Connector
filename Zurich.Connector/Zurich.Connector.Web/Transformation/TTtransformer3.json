@@ -1,14 +1,16 @@
 {
   "Documents": {
     "#loop($.Documents)": {
-      "documentId": "#currentvalueatpath($.id)",
-      "name": "#currentvalueatpath($.name)",
       "createdOn": "#currentvalueatpath($.createdOn)",
+      "documentId": "#currentvalueatpath($.id)",
+      "capabilityDocId": "#currentvalueatpath($.capabilityDocId)",
+      "integrationDocId": "#currentvalueatpath($.integrationDocId)",
       "documentTypeId": "#currentvalueatpath($.documentTypeId)",
-      "pageCount": "#currentvalueatpath($.pageCount)",
-      "lastModifiedOn": "#currentvalueatpath($.lastModifiedOn)",
-      "processingStatus": "#currentvalueatpath($.processingStatus)",
       "highlightedText": "#currentvalueatpath($.highlightedText)",
+      "lastModifiedOn": "#currentvalueatpath($.lastModifiedOn)",
+      "name": "#currentvalueatpath($.name)",
+      "pageCount": "#currentvalueatpath($.pageCount)",
+      "processingStatus": "#currentvalueatpath($.processingStatus)",
       "thoughts": {
         "#loopwithincontext($.thoughts)": {
           "id": "#currentvalueatpath($.id)",
