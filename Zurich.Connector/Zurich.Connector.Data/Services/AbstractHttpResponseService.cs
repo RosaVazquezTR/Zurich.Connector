@@ -126,7 +126,7 @@ namespace Zurich.Connector.Data.Services
                                 field["highlightedText"] = newHighlight;
                             else
                                 field["highlightedText"] = oldHighlight;
-                            //If there ara capabilityDocID and InternalDOcID, add them
+                            //If there are capabilityDocID and InternalDocID, add them
                             if (!String.IsNullOrEmpty(capId.ToString()) && !String.IsNullOrEmpty(integrationID.ToString()))
                             {
                                 field["capabilityDocId"] = capId;
