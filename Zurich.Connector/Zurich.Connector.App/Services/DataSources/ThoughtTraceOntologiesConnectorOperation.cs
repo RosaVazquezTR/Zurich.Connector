@@ -65,7 +65,7 @@ namespace Zurich.Connector.App.Services.DataSources
 
             //For the given clauseType/thoughTypeId, we first need to extract the provision thoughFieldTypeId from onotlogies
             var provisionID = "";
-            provisionID = await GetProvisionThoughtFieldTypeIdFromOntologies(clauseType);
+            provisionID = await GetProvisionThoughtFieldTypeIdFromOntologies(clauseType, connector.OntologiesInformation.ConnectorId);
             if (provisionID == null)
                 return null;
             allParameters["provisionID"] = provisionID;
@@ -121,7 +121,7 @@ namespace Zurich.Connector.App.Services.DataSources
             if (!(connector.Response?.UseJsonTransformation ?? false))
                 return item;
 
-            JArray thoughtTypes = await GetThoughtTypesFromOntologies();
+            JArray thoughtTypes = await GetThoughtTypesFromOntologies(connector.OntologiesInformation.ConnectorId);
 
             if (item is JObject searchResult && searchResult.ContainsKey("Documents") && searchResult["Documents"].HasValues)
             {
@@ -145,12 +145,12 @@ namespace Zurich.Connector.App.Services.DataSources
         /// <summary>
         /// Gets the ontologies information from ThoughtTrace
         /// </summary>
-        private async Task<JArray> GetThoughtTypesFromOntologies()
+        private async Task<JArray> GetThoughtTypesFromOntologies(string OntologiesConnectorId)
         {
 
             if (!_httpContextAccessor.HttpContext.Items.TryGetValue("Ontologies", out var ontologiesResponse))
             {
-                ConnectorModel connectorModel = await _cosmosService.GetConnector("60", true);
+                ConnectorModel connectorModel = await _cosmosService.GetConnector(OntologiesConnectorId, true);
                 ConnectorDocument connectorDocument = _mapper.Map<ConnectorDocument>(connectorModel);
 
                 ontologiesResponse = await _dataMapping.GetAndMapResults<JToken>(connectorDocument, string.Empty, null, null, null);
@@ -174,9 +174,9 @@ namespace Zurich.Connector.App.Services.DataSources
         /// <summary>
         /// Gets the "Provision" thought id field given a thoughtTypeId information from ontologies
         /// </summary>
-        public async Task<string> GetProvisionThoughtFieldTypeIdFromOntologies(string thoughtTypeId)
+        public async Task<string> GetProvisionThoughtFieldTypeIdFromOntologies(string thoughtTypeId, string OntologiesConnectorID)
         {
-            JArray thoughtTypes = await GetThoughtTypesFromOntologies();
+            JArray thoughtTypes = await GetThoughtTypesFromOntologies(OntologiesConnectorID);
 
             // In case "Provision" field doesn't exists (feature included with MAN ontologies), we consider the field with the name of the clauseType
             // as the provision (technically, it should contains only that fieldType). 
