@@ -320,25 +320,25 @@
       },
       {
         "name": "custom25",
-        "type": "bool",
+        "type": "nullableBool",
         "responseElement": "custom25",
         "_comment": "Custom field 25"
       },
       {
         "name": "custom26",
-        "type": "bool",
+        "type": "nullableBool",
         "responseElement": "custom26",
         "_comment": "Custom field 26"
       },
       {
         "name": "custom27",
-        "type": "bool",
+        "type": "nullableBool",
         "responseElement": "custom27",
         "_comment": "Custom field 27"
       },
       {
         "name": "custom28",
-        "type": "bool",
+        "type": "nullableBool",
         "responseElement": "custom28",
         "_comment": "Custom field 28"
       },
