@@ -33,6 +33,11 @@ namespace Zurich.Connector.Data.Repositories.CosmosDocuments
         public bool? UseJsonTransformation { get; set; }
 
         /// <summary>
+        /// Whether or not the connector uses the IH permissions check workarround
+        /// </summary>
+        public bool? UsePermissionsCheck { get; set; }
+
+        /// <summary>
         /// Define connector transform location
         /// </summary>
         public string TransformationLocation { get; set; }

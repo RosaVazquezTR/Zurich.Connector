@@ -160,6 +160,9 @@
     "facetsInformation": {
         "connectorId": "65"
     },
+	"ontologiesInformation": {
+        "connectorId": "60"
+    },
     "filters": [
         {
             "name": "DocumentType",

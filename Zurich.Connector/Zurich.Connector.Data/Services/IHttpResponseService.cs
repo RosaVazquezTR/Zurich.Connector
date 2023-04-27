@@ -29,7 +29,7 @@ namespace Zurich.Connector.Data.Services
         /// </returns>
         Task<JToken> GetJTokenResponse(string response, ConnectorResponse connectorResponse);
         /// <summary>
-        /// Apply transformation on the responseof TT passing connector ID
+        /// Overload to apply transformation and  permissions verification for TT Connectors (TTCB-52 , TTDMS-68)
         /// </summary>
         /// <param name="response">
         /// Connector response

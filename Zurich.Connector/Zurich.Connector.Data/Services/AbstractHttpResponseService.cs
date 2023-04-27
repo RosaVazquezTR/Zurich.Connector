@@ -11,6 +11,7 @@ using System.Net.Http;
 using Zurich.Common.Repositories;
 using Zurich.Common.Services;
 using System.Text.RegularExpressions;
+using Zurich.Common.Models.IHDocumentStorage;
 
 namespace Zurich.Connector.Data.Services
 {
@@ -23,10 +24,57 @@ namespace Zurich.Connector.Data.Services
         }
         public async virtual Task<JToken> GetJTokenResponse(string response, ConnectorResponse connectorResponse, string connectorId, Dictionary<string, string> requestParameter, NameValueCollection query, IHttpClientFactory httpClientFactory)
         {
-            // TT transformation response
+            string responseToTransform = response;
+            if (connectorResponse.UsePermissionsCheck ?? false)
+            {
+                // TT DMS permissions check
+                JObject response_objects = JObject.Parse("{\"Documents\":" + response + "}");
+                List<string> idList = new List<string>();
+                foreach (var document in response_objects["Documents"])
+                {
+                    idList.Add(document["id"].ToString());
+                }
+
+                IHDocumentStorageRepository iHDocumentStorageRepository = new IHDocumentStorageRepository(httpClientFactory);
+                IHDocumentStorageService iHDocumentStorageService = new IHDocumentStorageService(iHDocumentStorageRepository);
+                IHDocumentStorageMappingRequest iHDocumentStorageMappingRequest = new IHDocumentStorageMappingRequest();
+                iHDocumentStorageMappingRequest.ids = idList;
+                IHDocumentStorageMappingResponse mappings = await iHDocumentStorageService.GetDocumentsMappings("ca353457-26ad-473e-ab46-aae01309a093", iHDocumentStorageMappingRequest);
+                List<string> documentIds = mappings.getMappedIds();
+                Dictionary<string, string> mappingDictionary = mappings.GetMappingDict();
+
+                IHDocumentStoragePermissionsRequest iHDocumentStoragePermissionsRequest = new IHDocumentStoragePermissionsRequest();
+                iHDocumentStoragePermissionsRequest.appCode = "iManageServiceApp";
+
+                Dictionary<string, string> permissionsDictionary = new Dictionary<string, string>();
+                if (documentIds.Count > 0)
+                {
+                    iHDocumentStoragePermissionsRequest.documentIds = documentIds;
+                    IHDocumentStoragePermissionsResponse permissions = await iHDocumentStorageService.GetDocumentsPermissions(iHDocumentStoragePermissionsRequest);
+                    permissionsDictionary = permissions.GetPermissionsDict();
+                }
+
+                JArray filteredDocs = new JArray();
+                foreach (var document in response_objects["Documents"])
+                {
+                    string permission = String.Empty;
+                    string capId = document["id"].ToString();
+                    if (!String.IsNullOrEmpty(mappingDictionary[capId]) && permissionsDictionary.TryGetValue(mappingDictionary[capId], out permission))
+                    {
+
+                        JObject tokenObject = (JObject)document;
+                        tokenObject.Add("capabilityDocId", capId);
+                        tokenObject.Add("integrationDocId", mappingDictionary[capId]);
+                        filteredDocs.Add(tokenObject);
+                    }
+                }
+                responseToTransform = filteredDocs.ToString();
+            }
+
+            // TT ClauseBank transformation response
             string provisionID = query["provisionID"];
             string[] keyWord = query["keyWord"].Split(",_", StringSplitOptions.RemoveEmptyEntries);
-            string input = "{\"Documents\":" + response + "}";
+            string input = "{\"Documents\":" + responseToTransform + "}";
             string path = Directory.GetCurrentDirectory() + "\\Transformation\\TTtransformer3.json";
             string transformer = File.ReadAllText(path);
             string transformedString = JsonTransformer.Transform(transformer, input); //Add the thoughtId and thoughtTypeId fields to toug
@@ -37,6 +85,8 @@ namespace Zurich.Connector.Data.Services
             foreach (var document in obj["Documents"])
             {
                 var docId = document["documentId"];
+                var capId = document["capabilityDocId"];
+                var integrationID = document["integrationDocId"];
                 var name = document["name"];
                 var createdOn = document["createdOn"];
                 var documentTypeId = document["documentTypeId"];
@@ -76,6 +126,12 @@ namespace Zurich.Connector.Data.Services
                                 field["highlightedText"] = newHighlight;
                             else
                                 field["highlightedText"] = oldHighlight;
+                            //If there are capabilityDocID and InternalDocID, add them
+                            if (!String.IsNullOrEmpty(capId.ToString()) && !String.IsNullOrEmpty(integrationID.ToString()))
+                            {
+                                field["capabilityDocId"] = capId;
+                                field["integrationDocId"] = integrationID;
+                            }
 
                             acumulate.Add(field);
                         }
@@ -115,8 +171,8 @@ namespace Zurich.Connector.Data.Services
 
             paginationDoc.PagesPaginationInfo = new JObject();
             paginationDoc.PagesPaginationInfo.current = currentPage;
-            paginationDoc.PagesPaginationInfo.totalPages = (int)totalPages;
-            int[] display = Enumerable.Range(1, (int)totalPages).ToArray();
+            paginationDoc.PagesPaginationInfo.totalPages = totalPages;
+            int[] display = Enumerable.Range(1, totalPages).ToArray();
             paginationDoc.PagesPaginationInfo.display = new JArray(display);
 
             if (currentPage + 1 > totalPages || totalPages == 1)
@@ -135,5 +191,6 @@ namespace Zurich.Connector.Data.Services
 
             return jObjectTop;
         }
+
     }
 }
