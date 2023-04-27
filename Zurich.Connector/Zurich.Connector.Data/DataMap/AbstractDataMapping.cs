@@ -122,7 +122,7 @@ namespace Zurich.Connector.Data.DataMap
         {
             if (jsonResponse["Documents"] != null)
             {
-                JObject jobject = await MapProperties(connectorDocument.CdmMapping.structured, jsonResponse, null);
+                JObject jobject = await MapProperties(connectorDocument.CdmMapping.structured, jsonResponse, null, connectorDocument.SkipNullProperties);
                 foreach (var item in jobject)
                 {
                     jsonResponse[item.Key] = item.Value.ToString();
@@ -304,13 +304,13 @@ namespace Zurich.Connector.Data.DataMap
             List<CDMElement> structuredProperties = connector?.CdmMapping?.structured;
 
             if (structuredProperties != null)
-                cdmResult = await MapProperties(structuredProperties, apiResult, requestParameters);
+                cdmResult = await MapProperties(structuredProperties, apiResult, requestParameters, connector.SkipNullProperties);
 
             List<CDMElement> unstructuredProperties = connector?.CdmMapping?.unstructured;
 
             JObject additionalProps = new JObject();
             if (unstructuredProperties != null)
-                additionalProps = await MapProperties(unstructuredProperties, apiResult, requestParameters);
+                additionalProps = await MapProperties(unstructuredProperties, apiResult, requestParameters, connector.SkipNullProperties);
 
             if (!cdmResult.ContainsKey(StructuredCDMProperties.AdditionalProperties))
                 cdmResult[StructuredCDMProperties.AdditionalProperties] = additionalProps;
@@ -318,7 +318,7 @@ namespace Zurich.Connector.Data.DataMap
             return cdmResult;
         }
 
-        private async Task<JObject> MapProperties(List<CDMElement> properties, dynamic apiResult, Dictionary<string, string> requestParameters)
+        private async Task<JObject> MapProperties(List<CDMElement> properties, dynamic apiResult, Dictionary<string, string> requestParameters, bool skipNullProperties)
         {
             JObject jObjectResult = new JObject();
             foreach (var property in properties)
@@ -373,7 +373,8 @@ namespace Zurich.Connector.Data.DataMap
                         break;
                 }
 
-                jObjectResult[property.name] = tempResult;
+                if (!skipNullProperties || tempResult != null)
+                    jObjectResult[property.name] = tempResult;
             }
 
             return jObjectResult;
@@ -391,7 +392,10 @@ namespace Zurich.Connector.Data.DataMap
             dynamic response = tempResult;
             DateTime startDate;
 
-            if (!string.IsNullOrEmpty(property.type) && property.type.Equals(DataTypes.DateTime, StringComparison.OrdinalIgnoreCase))
+            if (string.IsNullOrEmpty(property.type))
+                return response;
+
+            if (property.type.Equals(DataTypes.DateTime, StringComparison.OrdinalIgnoreCase))
             {
                 if (property.format != null)
                 {
@@ -401,13 +405,19 @@ namespace Zurich.Connector.Data.DataMap
                         response = default(DateTime);
                 }
             }
-
-            if (!string.IsNullOrEmpty(property.type) && property.type.Equals(DataTypes.Bool, StringComparison.OrdinalIgnoreCase))
+            else if (property.type.Equals(DataTypes.Bool, StringComparison.OrdinalIgnoreCase))
             {
                 bool.TryParse((string)response, out bool boolValue);
                 response = boolValue;
             }
-            else if (!string.IsNullOrEmpty(property.type) && property.type.Equals(DataTypes.InterpolationString, StringComparison.OrdinalIgnoreCase))
+            else if (property.type.Equals(DataTypes.NullableBool, StringComparison.OrdinalIgnoreCase))
+            {
+                if (bool.TryParse((string)response, out bool value))
+                    response = value;
+                else
+                    response = null;
+            }
+            else if (property.type.Equals(DataTypes.InterpolationString, StringComparison.OrdinalIgnoreCase))
             {
                 var propertyResponse = property.responseElement;
                 var matches = Regex.Matches(propertyResponse, @"\((%*[\w()]+)\)");

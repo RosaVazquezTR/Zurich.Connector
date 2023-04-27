@@ -76,6 +76,10 @@ namespace Zurich.Connector.Data.Repositories.CosmosDocuments
         /// </summary>
         public bool PreRelease { get; set; }
         /// <summary>
+        /// Determines whether to skip properties that are null
+        /// </summary>
+        public bool SkipNullProperties { get; set; }
+        /// <summary>
         /// Syntax for advanced search operators if supported
         /// </summary>
         public ConnectorAdvancedSyntax AdvancedSearchSyntax { get; set; }

@@ -1,9 +1,9 @@
 {
-  "id": "75",
+  "id": "78",
   "partitionkey": "ConnectorList",
   "info": {
-    "title": "Search Documents from iManage - Child Connector for 74",
-    "description": "Search Documents from iManage - Child Connector for 74",
+    "title": "Search Documents from iManage - Child Connector for 77",
+    "description": "Search Documents from iManage - Child Connector for 77",
     "entityType": "Search",
     "dataSourceId": "48",
     "version": "1.0",
@@ -13,7 +13,7 @@
   "response": {},
   "filters": [],
   "skipNullProperties": true,
-  "resultLocation": "data",
+  "resultLocation": "data.results",
   "cdmMapping": {
     "structured": [
       {
@@ -320,25 +320,25 @@
       },
       {
         "name": "custom25",
-        "type": "bool",
+        "type": "nullableBool",
         "responseElement": "custom25",
         "_comment": "Custom field 25"
       },
       {
         "name": "custom26",
-        "type": "bool",
+        "type": "nullableBool",
         "responseElement": "custom26",
         "_comment": "Custom field 26"
       },
       {
         "name": "custom27",
-        "type": "bool",
+        "type": "nullableBool",
         "responseElement": "custom27",
         "_comment": "Custom field 27"
       },
       {
         "name": "custom28",
-        "type": "bool",
+        "type": "nullableBool",
         "responseElement": "custom28",
         "_comment": "Custom field 28"
       },

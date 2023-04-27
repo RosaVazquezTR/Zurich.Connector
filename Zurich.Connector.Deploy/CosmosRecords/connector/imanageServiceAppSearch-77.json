@@ -1,7 +1,7 @@
 {
-  "id": "74",
+  "id": "77",
   "partitionkey": "ConnectorList",
-  "alias": "imanageserviceapp.search.id",
+  "alias": "imanageserviceapp.search.documents",
   "info": {
     "title": "Search Documents from iManage",
     "description": "Search Documents from iManage",
@@ -13,13 +13,13 @@
   "preRelease": true,
   "hostName": "cloudimanage.com",
   "request": {
-    "endpointPath": "/work/api/v2/customers/{55.customer_id}/documents/search",
-    "method": "POST",
+    "endpointPath": "/work/api/v2/customers/{55.customer_id}/documents",
+    "method": "GET",
     "parameters": [
       {
         "cdmName": "Query",
-        "name": "filters.anywhere",
-        "inClause": "Body",
+        "name": "anywhere",
+        "inClause": "Query",
         "required": false,
         "type": "string",
         "defaultValue": ""
@@ -27,378 +27,392 @@
       {
         "cdmName": "ResultSize",
         "name": "limit",
-        "inClause": "Body",
+        "inClause": "Query",
         "required": false,
         "type": "int",
-        "defaultValue": "100"
+        "defaultValue": "100",
+        "tags": [
+          "pagination"
+        ]
+      },
+      {
+        "cdmName": "Offset",
+        "name": "offset",
+        "inClause": "Query",
+        "required": false,
+        "type": "string",
+        "defaultValue": "0",
+        "tags": [
+          "pagination"
+        ]
+      },
+      {
+        "cdmName": "Total",
+        "name": "total",
+        "inClause": "Query",
+        "required": true,
+        "type": "string",
+        "defaultValue": "true"
       },
       {
         "cdmName": "Name.filter",
-        "name": "filters.name",
-        "inClause": "Body",
+        "name": "name",
+        "inClause": "Query",
         "required": false,
         "type": "string",
         "defaultValue": ""
       },
       {
         "cdmName": "Type.filter",
-        "name": "filters.type",
-        "inClause": "Body",
+        "name": "type",
+        "inClause": "Query",
         "required": false,
         "type": "string",
         "defaultValue": ""
       },
       {
         "cdmName": "Author.filter",
-        "name": "filters.author",
-        "inClause": "Body",
+        "name": "author",
+        "inClause": "Query",
         "required": false,
         "type": "string",
         "defaultValue": ""
       },
       {
         "cdmName": "DocumentNumber.filter",
-        "name": "filters.document_number",
-        "inClause": "Body",
+        "name": "document_number",
+        "inClause": "Query",
         "required": false,
         "type": "string",
         "defaultValue": ""
       },
       {
         "cdmName": "LastUser.filter",
-        "name": "filters.last_user",
-        "inClause": "Body",
+        "name": "last_user",
+        "inClause": "Query",
         "required": false,
         "type": "string",
         "defaultValue": ""
       },
       {
         "cdmName": "CreateDate.start.filter",
-        "name": "filters.create_date_from",
-        "inClause": "Body",
+        "name": "create_date_from",
+        "inClause": "Query",
         "required": false,
         "type": "DateTime",
         "defaultValue": ""
       },
       {
         "cdmName": "CreateDate.end.filter",
-        "name": "filters.create_date_to",
-        "inClause": "Body",
+        "name": "create_date_to",
+        "inClause": "Query",
         "required": false,
         "type": "DateTime",
         "defaultValue": ""
       },
       {
         "cdmName": "EditDate.start.filter",
-        "name": "filters.edit_date_from",
-        "inClause": "Body",
+        "name": "edit_date_from",
+        "inClause": "Query",
         "required": false,
         "type": "DateTime",
         "defaultValue": ""
       },
       {
         "cdmName": "EditDate.end.filter",
-        "name": "filters.edit_date_to",
-        "inClause": "Body",
+        "name": "edit_date_to",
+        "inClause": "Query",
         "required": false,
         "type": "DateTime",
         "defaultValue": ""
       },
       {
         "cdmName": "Class.filter",
-        "name": "filters.class",
-        "inClause": "Body",
+        "name": "class",
+        "inClause": "Query",
         "required": false,
         "type": "string",
         "defaultValue": ""
       },
       {
         "cdmName": "Subclass.filter",
-        "name": "filters.subclass",
-        "inClause": "Body",
+        "name": "subclass",
+        "inClause": "Query",
         "required": false,
         "type": "string",
         "defaultValue": ""
       },
       {
         "cdmName": "Custom1.filter",
-        "name": "filters.custom1",
-        "inClause": "Body",
+        "name": "custom1",
+        "inClause": "Query",
         "required": false,
         "type": "string",
         "defaultValue": ""
       },
       {
         "cdmName": "Custom2.filter",
-        "name": "filters.custom2",
-        "inClause": "Body",
+        "name": "custom2",
+        "inClause": "Query",
         "required": false,
         "type": "string",
         "defaultValue": ""
       },
       {
         "cdmName": "Custom3.filter",
-        "name": "filters.custom3",
-        "inClause": "Body",
+        "name": "custom3",
+        "inClause": "Query",
         "required": false,
         "type": "string",
         "defaultValue": ""
       },
       {
         "cdmName": "Custom4.filter",
-        "name": "filters.custom4",
-        "inClause": "Body",
+        "name": "custom4",
+        "inClause": "Query",
         "required": false,
         "type": "string",
         "defaultValue": ""
       },
       {
         "cdmName": "Custom5.filter",
-        "name": "filters.custom5",
-        "inClause": "Body",
+        "name": "custom5",
+        "inClause": "Query",
         "required": false,
         "type": "string",
         "defaultValue": ""
       },
       {
         "cdmName": "Custom6.filter",
-        "name": "filters.custom6",
-        "inClause": "Body",
+        "name": "custom6",
+        "inClause": "Query",
         "required": false,
         "type": "string",
         "defaultValue": ""
       },
       {
         "cdmName": "Custom7.filter",
-        "name": "filters.custom7",
-        "inClause": "Body",
+        "name": "custom7",
+        "inClause": "Query",
         "required": false,
         "type": "string",
         "defaultValue": ""
       },
       {
         "cdmName": "Custom8.filter",
-        "name": "filters.custom8",
-        "inClause": "Body",
+        "name": "custom8",
+        "inClause": "Query",
         "required": false,
         "type": "string",
         "defaultValue": ""
       },
       {
         "cdmName": "Custom9.filter",
-        "name": "filters.custom9",
-        "inClause": "Body",
+        "name": "custom9",
+        "inClause": "Query",
         "required": false,
         "type": "string",
         "defaultValue": ""
       },
       {
         "cdmName": "Custom10.filter",
-        "name": "filters.custom10",
-        "inClause": "Body",
+        "name": "custom10",
+        "inClause": "Query",
         "required": false,
         "type": "string",
         "defaultValue": ""
       },
       {
         "cdmName": "Custom11.filter",
-        "name": "filters.custom11",
-        "inClause": "Body",
+        "name": "custom11",
+        "inClause": "Query",
         "required": false,
         "type": "string",
         "defaultValue": ""
       },
       {
         "cdmName": "Custom12.filter",
-        "name": "filters.custom12",
-        "inClause": "Body",
+        "name": "custom12",
+        "inClause": "Query",
         "required": false,
         "type": "string",
         "defaultValue": ""
       },
       {
         "cdmName": "Custom13.filter",
-        "name": "filters.custom13",
-        "inClause": "Body",
+        "name": "custom13",
+        "inClause": "Query",
         "required": false,
         "type": "string",
         "defaultValue": ""
       },
       {
         "cdmName": "Custom14.filter",
-        "name": "filters.custom14",
-        "inClause": "Body",
+        "name": "custom14",
+        "inClause": "Query",
         "required": false,
         "type": "string",
         "defaultValue": ""
       },
       {
         "cdmName": "Custom15.filter",
-        "name": "filters.custom15",
-        "inClause": "Body",
+        "name": "custom15",
+        "inClause": "Query",
         "required": false,
         "type": "string",
         "defaultValue": ""
       },
       {
         "cdmName": "Custom16.filter",
-        "name": "filters.custom16",
-        "inClause": "Body",
+        "name": "custom16",
+        "inClause": "Query",
         "required": false,
         "type": "string",
         "defaultValue": ""
       },
       {
         "cdmName": "Custom17.filter",
-        "name": "filters.custom17",
-        "inClause": "Body",
+        "name": "custom17",
+        "inClause": "Query",
         "required": false,
         "type": "int",
         "defaultValue": ""
       },
       {
         "cdmName": "Custom18.filter",
-        "name": "filters.custom18",
-        "inClause": "Body",
+        "name": "custom18",
+        "inClause": "Query",
         "required": false,
         "type": "int",
         "defaultValue": ""
       },
       {
         "cdmName": "Custom19.filter",
-        "name": "filters.custom19",
-        "inClause": "Body",
+        "name": "custom19",
+        "inClause": "Query",
         "required": false,
         "type": "int",
         "defaultValue": ""
       },
       {
         "cdmName": "Custom20.filter",
-        "name": "filters.custom20",
-        "inClause": "Body",
+        "name": "custom20",
+        "inClause": "Query",
         "required": false,
         "type": "int",
         "defaultValue": ""
       },
       {
         "cdmName": "Custom21.start.filter",
-        "name": "filters.custom21_from",
-        "inClause": "Body",
+        "name": "custom21_from",
+        "inClause": "Query",
         "required": false,
         "type": "string",
         "defaultValue": ""
       },
       {
         "cdmName": "Custom21.end.filter",
-        "name": "filters.custom21_to",
-        "inClause": "Body",
+        "name": "custom21_to",
+        "inClause": "Query",
         "required": false,
         "type": "string",
         "defaultValue": ""
       },
       {
         "cdmName": "Custom22.start.filter",
-        "name": "filters.custom22_from",
-        "inClause": "Body",
+        "name": "custom22_from",
+        "inClause": "Query",
         "required": false,
         "type": "string",
         "defaultValue": ""
       },
       {
         "cdmName": "Custom22.end.filter",
-        "name": "filters.custom22_to",
-        "inClause": "Body",
+        "name": "custom22_to",
+        "inClause": "Query",
         "required": false,
         "type": "string",
         "defaultValue": ""
       },
       {
         "cdmName": "Custom23.start.filter",
-        "name": "filters.custom23_from",
-        "inClause": "Body",
+        "name": "custom23_from",
+        "inClause": "Query",
         "required": false,
         "type": "string",
         "defaultValue": ""
       },
       {
         "cdmName": "Custom23.end.filter",
-        "name": "filters.custom23_to",
-        "inClause": "Body",
+        "name": "custom23_to",
+        "inClause": "Query",
         "required": false,
         "type": "string",
         "defaultValue": ""
       },
       {
         "cdmName": "Custom24.start.filter",
-        "name": "filters.custom24_from",
-        "inClause": "Body",
+        "name": "custom24_from",
+        "inClause": "Query",
         "required": false,
         "type": "string",
         "defaultValue": ""
       },
       {
         "cdmName": "Custom24.end.filter",
-        "name": "filters.custom24_to",
-        "inClause": "Body",
+        "name": "custom24_to",
+        "inClause": "Query",
         "required": false,
         "type": "string",
         "defaultValue": ""
       },
       {
         "cdmName": "Custom25.filter",
-        "name": "filters.custom25",
-        "inClause": "Body",
+        "name": "custom25",
+        "inClause": "Query",
         "required": false,
         "type": "bool",
         "defaultValue": ""
       },
       {
         "cdmName": "Custom26.filter",
-        "name": "filters.custom26",
-        "inClause": "Body",
+        "name": "custom26",
+        "inClause": "Query",
         "required": false,
         "type": "bool",
         "defaultValue": ""
       },
       {
         "cdmName": "Custom27.filter",
-        "name": "filters.custom27",
-        "inClause": "Body",
+        "name": "custom27",
+        "inClause": "Query",
         "required": false,
         "type": "bool",
         "defaultValue": ""
       },
       {
         "cdmName": "Custom28.filter",
-        "name": "filters.custom28",
-        "inClause": "Body",
+        "name": "custom28",
+        "inClause": "Query",
         "required": false,
         "type": "bool",
         "defaultValue": ""
       },
       {
         "cdmName": "Custom29.filter",
-        "name": "filters.custom29",
-        "inClause": "Body",
+        "name": "custom29",
+        "inClause": "Query",
         "required": false,
         "type": "string",
         "defaultValue": ""
       },
       {
         "cdmName": "Custom30.filter",
-        "name": "filters.custom30",
-        "inClause": "Body",
+        "name": "custom30",
+        "inClause": "Query",
         "required": false,
         "type": "string",
         "defaultValue": ""
-      },
-      {
-        "cdmName": "ProfileFields.default",
-        "name": "profile_fields.document.[]",
-        "inClause": "Body",
-        "required": false,
-        "type": "string",
-        "defaultValue": "name,extension,id,author_description,last_user_description,create_date,edit_date,size,version,database,author,last_user,class,subclass,custom1,custom1_description,custom2,custom2_description,custom3,custom3_description,custom4,custom4_description,custom5,custom5_description,custom6,custom6_description,custom7,custom7_description,custom8,custom8_description,custom9,custom9_description,custom10,custom10_description,custom11,custom11_description,custom12,custom12_description,custom13,custom14,custom15,custom16,custom17,custom18,custom19,custom20,custom21,custom22,custom23,custom24,custom25,custom26,custom27,custom28,custom29,custom29_description,custom30,custom30_description"
       }
     ],
     "sorting": {
@@ -702,14 +716,24 @@
       "description": "Must match the document's custom30 property.",
       "isMultiselect": "false",
       "requestParameter": "Custom30.filter"
+    },
+    {
+      "name": "Custom30",
+      "description": "Must match the document's custom30 property.",
+      "isMultiselect": "false",
+      "requestParameter": "Custom30.filter"
     }
   ],
+  "pagination": {
+    "available": true,
+    "isZeroBasedOffset": true
+  },
   "CDMmapping": {
     "structured": [
       {
         "name": "Count",
         "type": "short",
-        "responseElement": "",
+        "responseElement": "total_count",
         "_comment": ""
       },
       {
@@ -721,7 +745,7 @@
       {
         "name": "Documents",
         "type": "object",
-        "responseElement": "{75}",
+        "responseElement": "{78}",
         "_comment": ""
       }
     ],

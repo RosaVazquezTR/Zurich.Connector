@@ -58,6 +58,7 @@
     public static class DataTypes
     {
         public const string Bool = "bool";
+        public const string NullableBool = "nullableBool";
         public const string InterpolationString = "interpolationString";
         public const string DateTime = "dateTime";
     }

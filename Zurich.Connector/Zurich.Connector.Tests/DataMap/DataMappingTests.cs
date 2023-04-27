@@ -4,7 +4,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -25,7 +24,6 @@ using Zurich.Connector.Data.Model;
 using Zurich.Connector.Data.Repositories;
 using Zurich.Connector.Data.Repositories.CosmosDocuments;
 using Zurich.Connector.Data.Services;
-using Zurich.Connector.Tests.Common;
 using Zurich.ProductData.Models;
 using Zurich.TenantData;
 
@@ -204,7 +202,19 @@ namespace Zurich.Connector.Tests
 			}
 		}";
 
-		private const string TwoDocumentsListJson = @"
+        private const string TwoDocumentsIdOnlyJson = @"
+		{
+			""data"": {
+				""results"": [{
+						""id"": ""Database2!1678.1""
+					}, {
+						""id"": ""ContractExpress!1840.1""
+					}
+				]
+			}
+		}";
+
+        private const string TwoDocumentsListJson = @"
 		[{
 						""author_description"": ""Ryan Hunecke"",
 						""author"": ""RYAN.HUNECKE"",
@@ -823,7 +833,61 @@ namespace Zurich.Connector.Tests
             Assert.AreEqual("fakeDesc2", documents[0].ObjectArray[1].DescriptionProp.ToString());
         }
 
-		[TestMethod]
+        [TestMethod]
+        public async Task TestMappingWithSkipNullProperties()
+        {
+            // ARRANGE
+            string appCode = "TestApp";
+            var defaultSecurityDefinition = new SecurityDefinitionDetails() { authorizationHeader = "differentAuthHeader" };
+            var securityDefinition = new SecurityDefinition() { defaultSecurityDefinition = defaultSecurityDefinition };
+            _mockRepository.Setup(x => x.MakeRequest(It.IsAny<ApiInformation>(), It.IsAny<NameValueCollection>(), It.IsAny<string>())).Returns(Task.FromResult(TwoDocumentsJson));
+
+            ConnectorDocument connectorDocument = new ConnectorDocument()
+            {
+                Info = new ConnectorInfo() { SubType = "Child" },
+                SkipNullProperties = true,
+                ResultLocation = "data.results",
+                Request = new ConnectorRequest(){ EndpointPath = "https://fakeaddress.thomsonreuters.com" },
+                Response = new ConnectorResponse(){ Type = ResponseContentType.JSON.ToString() },
+                DataSource = new DataSourceDocument()
+                {
+                    appCode = appCode,
+                    securityDefinition = securityDefinition
+                },
+				CdmMapping = new CDMMapping()
+                {
+                    structured = new List<CDMElement>()
+					{
+						{ new CDMElement(){ name = "Name", responseElement = "name", type = "string" }},
+						{ new CDMElement(){ name = "Id", responseElement = "id", type = "string" }},
+                        { new CDMElement(){ name = "Custom25", responseElement = "custom25", type = "nullableBool" }}
+                    }
+				}
+			};
+
+            Mock<IHttpBodyService> mockBodyService = new Mock<IHttpBodyService>();
+            _mockHttpBodyFactory.Setup(x => x.GetImplementation(It.IsAny<string>())).Returns(mockBodyService.Object);
+
+            Mock<IHttpResponseService> mockResponseService = new Mock<IHttpResponseService>();
+            mockResponseService.Setup(x => x.GetJTokenResponse(It.IsAny<string>(), It.IsAny<ConnectorResponse>())).Returns(Task.FromResult(JToken.Parse(TwoDocumentsIdOnlyJson)));
+            mockResponseService.Setup(x => x.MapResponse).Returns(true);
+            _mockHttpResponseFactory.Setup(x => x.GetImplementation(It.IsAny<string>())).Returns(mockResponseService.Object);
+
+            DataMappingOAuth documentMap = CreateDataMapping();
+
+            // ACT
+            dynamic documents = await documentMap.GetAndMapResults<dynamic>(connectorDocument, null, null, null, null);
+
+            // ASSERT
+            Assert.IsNotNull(documents);
+            Assert.AreEqual(2, documents.Count);
+			Type type = documents[0].GetType();
+            Assert.IsFalse(type.GetProperties().Any(p => p.Name == "Name"));
+            Assert.IsFalse(type.GetProperties().Any(p => p.Name == "Custom25"));
+            Assert.AreEqual("Database2!1678.1", documents[0].Id.ToString());
+        }
+
+        [TestMethod]
 		public async Task TestMappingWithLegalHomeAccess()
 		{
 			// ARRANGE
