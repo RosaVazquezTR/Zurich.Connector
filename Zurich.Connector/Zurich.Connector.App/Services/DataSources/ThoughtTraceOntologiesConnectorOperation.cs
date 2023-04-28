@@ -134,7 +134,12 @@ namespace Zurich.Connector.App.Services.DataSources
                     var thoughtFieldType = thoughtType?["fieldTypes"].Where(fieldType =>
                         fieldType["id"].Value<string>() == document["AdditionalProperties"]["clauseTermId"].Value<string>()).FirstOrDefault();
 
-                    document["AdditionalProperties"]["clauseTypeName"] = thoughtType?["name"].Value<string>();
+                    document["AdditionalProperties"]["clauseTypeName"] = 
+                        thoughtType?["customMetadata"]["USOverride"].Value<string>() ??
+                        thoughtType?["customMetadata"]["UKOverride"].Value<string>() ??
+                        thoughtType?["customMetadata"]["DealTerm"].Value<string>() ??
+                        thoughtType?["name"].Value<string>();
+
                     document["AdditionalProperties"]["clauseTermName"] = thoughtFieldType?["name"].Value<string>();
                 }
             }
