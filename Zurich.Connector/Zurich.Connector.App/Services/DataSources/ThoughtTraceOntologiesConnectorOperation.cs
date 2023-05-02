@@ -135,9 +135,9 @@ namespace Zurich.Connector.App.Services.DataSources
                         fieldType["id"].Value<string>() == document["AdditionalProperties"]["clauseTermId"].Value<string>()).FirstOrDefault();
 
                     document["AdditionalProperties"]["clauseTypeName"] = 
-                        thoughtType?["customMetadata"]["USOverride"].Value<string>() ??
-                        thoughtType?["customMetadata"]["UKOverride"].Value<string>() ??
-                        thoughtType?["customMetadata"]["DealTerm"].Value<string>() ??
+                        thoughtType?["customMetadata"]?["USOverride"]?.Value<string>() ??
+                        thoughtType?["customMetadata"]?["UKOverride"]?.Value<string>() ??
+                        thoughtType?["customMetadata"]?["DealTerm"]?.Value<string>() ??
                         thoughtType?["name"].Value<string>();
 
                     document["AdditionalProperties"]["clauseTermName"] = thoughtFieldType?["name"].Value<string>();

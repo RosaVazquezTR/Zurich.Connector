@@ -73,6 +73,7 @@ namespace Zurich.Connector.Data.Services
 
             // TT ClauseBank transformation response
             string provisionID = query["provisionID"];
+            JToken clauseTerms = JArray.Parse(requestParameter["filters"])[2]["value"];
             string[] keyWord = query["keyWord"].Split(",_", StringSplitOptions.RemoveEmptyEntries);
             string input = "{\"Documents\":" + responseToTransform + "}";
             string path = Directory.GetCurrentDirectory() + "\\Transformation\\TTtransformer3.json";
@@ -81,6 +82,7 @@ namespace Zurich.Connector.Data.Services
             JObject jObjectTop = new JObject();
             var obj = JObject.Parse(transformedString);
             JArray acumulate = new JArray();
+            List<string> validThoughtIds = new List<string>();
 
             foreach (var document in obj["Documents"])
             {
@@ -135,10 +137,18 @@ namespace Zurich.Connector.Data.Services
 
                             acumulate.Add(field);
                         }
+                        else if (clauseTerms.Any(x => x.Value<string>() == field["clauseTermId"].ToString()))
+                        {
+                            validThoughtIds.Add(id);
+                        }
                     }
                 }
             }
-
+            //Direct damage cap condition. If clauseterm is selected, it only returns the Provision fields that comes together a clauseTerm field. (See US #174875)
+            if (validThoughtIds.Any())
+            {
+                acumulate = new JArray(acumulate.Where(x => validThoughtIds.Contains(x["thoughtId"].Value<string>())));
+            }
             JProperty documents = new JProperty("Documents", acumulate);
             jObjectTop.Add(documents);
 
