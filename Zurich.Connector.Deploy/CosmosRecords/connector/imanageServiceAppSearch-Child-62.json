@@ -12,7 +12,7 @@
   "request": {},
   "response": {},
   "filters": [],
-  "resultLocation": "data",
+  "resultLocation": "data.results",
   "cdmMapping": {
     "structured": [
       {

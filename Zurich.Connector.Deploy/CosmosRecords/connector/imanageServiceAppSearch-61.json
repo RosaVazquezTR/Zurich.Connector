@@ -12,13 +12,13 @@
   },
   "hostName": "cloudimanage.com",
   "request": {
-    "endpointPath": "/work/api/v2/customers/{55.customer_id}/documents/search",
-    "method": "POST",
+    "endpointPath": "/work/api/v2/customers/{55.customer_id}/documents",
+    "method": "GET",
     "parameters": [
       {
         "cdmName": "Query",
-        "name": "filters.anywhere",
-        "inClause": "Body",
+        "name": "anywhere",
+        "inClause": "Query",
         "required": false,
         "type": "string",
         "defaultValue": ""
@@ -26,98 +26,90 @@
       {
         "cdmName": "ResultSize",
         "name": "limit",
-        "inClause": "Body",
+        "inClause": "Query",
         "required": false,
         "type": "int",
         "defaultValue": "100"
       },
       {
         "cdmName": "Name.filter",
-        "name": "filters.name",
-        "inClause": "Body",
+        "name": "name",
+        "inClause": "Query",
         "required": false,
         "type": "string",
         "defaultValue": ""
       },
       {
         "cdmName": "Type.filter",
-        "name": "filters.type",
-        "inClause": "Body",
+        "name": "type",
+        "inClause": "Query",
         "required": false,
         "type": "string",
         "defaultValue": ""
       },
       {
         "cdmName": "Author.filter",
-        "name": "filters.author",
-        "inClause": "Body",
+        "name": "author",
+        "inClause": "Query",
         "required": false,
         "type": "string",
         "defaultValue": ""
       },
       {
         "cdmName": "LastUser.filter",
-        "name": "filters.last_user",
-        "inClause": "Body",
+        "name": "last_user",
+        "inClause": "Query",
         "required": false,
         "type": "string",
         "defaultValue": ""
       },
       {
         "cdmName": "CreateDate.start.filter",
-        "name": "filters.create_date_from",
-        "inClause": "Body",
+        "name": "create_date_from",
+        "inClause": "Query",
         "required": false,
         "type": "DateTime",
         "defaultValue": ""
       },
       {
         "cdmName": "CreateDate.end.filter",
-        "name": "filters.create_date_to",
-        "inClause": "Body",
+        "name": "create_date_to",
+        "inClause": "Query",
         "required": false,
         "type": "DateTime",
         "defaultValue": ""
       },
       {
         "cdmName": "EditDate.start.filter",
-        "name": "filters.edit_date_from",
-        "inClause": "Body",
+        "name": "edit_date_from",
+        "inClause": "Query",
         "required": false,
         "type": "DateTime",
         "defaultValue": ""
       },
       {
         "cdmName": "EditDate.end.filter",
-        "name": "filters.edit_date_to",
-        "inClause": "Body",
+        "name": "edit_date_to",
+        "inClause": "Query",
         "required": false,
         "type": "DateTime",
         "defaultValue": ""
       },
       {
         "cdmName": "Class.filter",
-        "name": "filters.class",
-        "inClause": "Body",
+        "name": "class",
+        "inClause": "Query",
         "required": false,
         "type": "string",
         "defaultValue": ""
       },
       {
         "cdmName": "Subclass.filter",
-        "name": "filters.subclass",
-        "inClause": "Body",
+        "name": "subclass",
+        "inClause": "Query",
         "required": false,
         "type": "string",
         "defaultValue": ""
-      },
-      {
-        "cdmName": "ProfileFields.default",
-        "name": "profile_fields.document.[]",
-        "inClause": "Body",
-        "required": false,
-        "type": "string",
-        "defaultValue": "name,extension,id,author_description,last_user_description,create_date,edit_date,size,version,database,author,last_user,class,subclass"
       }
     ],
     "sorting": {
@@ -176,30 +168,30 @@
       "isMultiselect": "false",
       "requestParameter": "LastUser.filter"
     },
-	{
-	  "name": "Document created start date",
-	  "description": "Matches documents that were created on or after this date.",
-	  "isMultiselect": "false",
-	  "requestParameter": "CreateDate.start.filter"
-	},
-	{
-	  "name": "Document created end date",
-	  "description": "Matches documents that were created on or before this date.",
-	  "isMultiselect": "false",
-	  "requestParameter": "CreateDate.end.filter"
-	},
-	{
-	  "name": "Modified date start date",
-	  "description": "Matches documents that were last modified on or after this date.",
-	  "isMultiselect": "false",
-	  "requestParameter": "EditDate.start.filter"
-	},
-	{
-	  "name": "Modified date end date",
-	  "description": "Matches documents that were last modified on or before this date.",
-	  "isMultiselect": "false",
-	  "requestParameter": "EditDate.end.filter"
-	},
+    {
+      "name": "Document created start date",
+      "description": "Matches documents that were created on or after this date.",
+      "isMultiselect": "false",
+      "requestParameter": "CreateDate.start.filter"
+    },
+    {
+      "name": "Document created end date",
+      "description": "Matches documents that were created on or before this date.",
+      "isMultiselect": "false",
+      "requestParameter": "CreateDate.end.filter"
+    },
+    {
+      "name": "Modified date start date",
+      "description": "Matches documents that were last modified on or after this date.",
+      "isMultiselect": "false",
+      "requestParameter": "EditDate.start.filter"
+    },
+    {
+      "name": "Modified date end date",
+      "description": "Matches documents that were last modified on or before this date.",
+      "isMultiselect": "false",
+      "requestParameter": "EditDate.end.filter"
+    },
     {
       "name": "Class",
       "description": "Must match the document author's class ID.",
