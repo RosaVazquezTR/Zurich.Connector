@@ -225,11 +225,11 @@ namespace Zurich.Connector.App.Services.DataSources
                         {
                             keyword.Add(text);
                             originalKeyword = originalKeyword.Replace(text, String.Empty);
-                        }
+                        }                        
                         char[] bannedChars = { ',', '.', '"', ':', ';'};
-                        string regexPattern = "[" + Regex.Escape(new string(bannedChars)) + "]";
+                        string regexPattern = "[" + Regex.Escape(new string(bannedChars)) + "]+\\s*";
                         originalKeyword = Regex.Replace(originalKeyword, regexPattern, "").Trim();
-                        
+
                         if (!String.IsNullOrEmpty(originalKeyword))
                             keyword.AddRange(originalKeyword.Split(' ').ToList());
                     }
