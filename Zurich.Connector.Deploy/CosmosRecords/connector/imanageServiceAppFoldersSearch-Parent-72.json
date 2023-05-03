@@ -65,6 +65,14 @@
                 "defaultValue": ""
             },
             {
+                "cdmName": "ParentId",
+                "name": "container_id",
+                "inClause": "Query",
+                "required": false,
+                "type": "string",
+                "defaultValue": ""
+            },
+            {
                 "cdmName": "Offset",
                 "name": "offset",
                 "inClause": "Query",
@@ -118,6 +126,12 @@
             "description": "Folder owner's name.",
             "isMultiselect": "false",
             "requestParameter": "Owner"
+        },
+        {
+            "name": "ParentId",
+            "description": "Container id to narrow the search.",
+            "isMultiselect": "false",
+            "requestParameter": "ParentId"
         }
     ],
     "cdmMapping": {
