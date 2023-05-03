@@ -73,7 +73,10 @@ namespace Zurich.Connector.Data.Services
 
             // TT ClauseBank transformation response
             string provisionID = query["provisionID"];
-            JToken clauseTerms = JArray.Parse(requestParameter["filters"])[2]["value"];
+
+            JToken targetObject = JArray.Parse(requestParameter["filters"]).FirstOrDefault(x => (string)x["key"] == "clauseTermIDs");
+            JToken clauseTerms = targetObject?["value"];
+
             string[] keyWord = query["keyWord"].Split(",_", StringSplitOptions.RemoveEmptyEntries);
             string input = "{\"Documents\":" + responseToTransform + "}";
             string path = Directory.GetCurrentDirectory() + "\\Transformation\\TTtransformer3.json";
