@@ -1,7 +1,7 @@
 {
     "id": "68",
     "partitionkey": "ConnectorList",
-    "alias": "ttdms.search",
+    "alias": "tttenantapp.search",
     "info": {
         "title": "Thought Trace DMS",
         "description": "Pull Thougth Trace documents for DMS flow",

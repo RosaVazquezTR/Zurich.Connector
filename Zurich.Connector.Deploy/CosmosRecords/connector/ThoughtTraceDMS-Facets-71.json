@@ -1,7 +1,7 @@
 {
     "id": "71",
     "partitionkey": "ConnectorList",
-    "alias": "ttdocs.facets",
+    "alias": "tttenantapp.facets",
     "info": {
         "title": "Get Search Thought Trace dynamic facets, same request as connector 68",
         "description": "Pull Thougth Trace dynamic facets, same request as connector 68",
