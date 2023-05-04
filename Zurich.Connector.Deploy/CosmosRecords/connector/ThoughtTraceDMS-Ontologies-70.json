@@ -1,7 +1,7 @@
 {
     "id": "70",
     "partitionkey": "ConnectorList",
-    "alias": "ttdms.ontologies",
+    "alias": "tttenantapp.ontologies",
     "info": {
         "title": "Get Thought Trace Ontologies",
         "description": "Pull Thougth Trace ontologies",
