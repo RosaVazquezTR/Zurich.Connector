@@ -67,7 +67,7 @@ namespace Zurich.Connector.App.Services.DataSources
             var provisionID = "";
             provisionID = await GetProvisionThoughtFieldTypeIdFromOntologies(clauseType, connector.OntologiesInformation.ConnectorId);
             if (provisionID == null)
-                return null;
+                throw new InvalidQueryFormatException("Invalid clauseType. Cannot found Provision");
             allParameters["provisionID"] = provisionID;
 
             // A provisionID filter allways have to be included. 
@@ -134,11 +134,12 @@ namespace Zurich.Connector.App.Services.DataSources
                     var thoughtFieldType = thoughtType?["fieldTypes"].Where(fieldType =>
                         fieldType["id"].Value<string>() == document["AdditionalProperties"]["clauseTermId"].Value<string>()).FirstOrDefault();
 
-                    document["AdditionalProperties"]["clauseTypeName"] = 
-                        thoughtType?["customMetadata"]?["USOverride"]?.Value<string>() ??
-                        thoughtType?["customMetadata"]?["UKOverride"]?.Value<string>() ??
-                        thoughtType?["customMetadata"]?["DealTerm"]?.Value<string>() ??
-                        thoughtType?["name"].Value<string>();
+                    document["AdditionalProperties"]["clauseTypeName"] =
+                    thoughtType["customMetadata"].HasValues ?
+                        thoughtType["customMetadata"]?["USOverride"]?.Value<string>() ??
+                        thoughtType["customMetadata"]?["UKOverride"]?.Value<string>() ??
+                        thoughtType["customMetadata"]?["DealTerm"]?.Value<string>() :
+                    thoughtType?["name"].Value<string>();
 
                     document["AdditionalProperties"]["clauseTermName"] = thoughtFieldType?["name"].Value<string>();
                 }
@@ -186,9 +187,9 @@ namespace Zurich.Connector.App.Services.DataSources
             // In case "Provision" field doesn't exists (feature included with MAN ontologies), we consider the field with the name of the clauseType
             // as the provision (technically, it should contains only that fieldType). 
             var thoughtType = thoughtTypes.FirstOrDefault(thoughtType => thoughtType["id"].Value<string>() == thoughtTypeId);
-            var provisionThought = thoughtType?["fieldTypes"].Where(fieldType => fieldType["name"].Value<string>() == "Provision").FirstOrDefault() 
+            var provisionThought = thoughtType?["fieldTypes"].Where(fieldType => fieldType["name"].Value<string>() == "Provision").FirstOrDefault()
                 ?? thoughtType?["fieldTypes"].Where(fieldType => fieldType["name"].Value<string>() == thoughtType?["name"].Value<string>()).FirstOrDefault();
-            
+
             return provisionThought?["id"].Value<string>();
         }
 
@@ -225,8 +226,8 @@ namespace Zurich.Connector.App.Services.DataSources
                         {
                             keyword.Add(text);
                             originalKeyword = originalKeyword.Replace(text, String.Empty);
-                        }                        
-                        char[] bannedChars = { ',', '.', '"', ':', ';'};
+                        }
+                        char[] bannedChars = { ',', '.', '"', ':', ';' };
                         string regexPattern = "[" + Regex.Escape(new string(bannedChars)) + "]+\\s*";
                         originalKeyword = Regex.Replace(originalKeyword, regexPattern, "").Trim();
 
@@ -269,7 +270,7 @@ namespace Zurich.Connector.App.Services.DataSources
             int countQuotes = query.Count(f => (f == '"'));
             var enclosedTexts = Regex.Matches(query, @"\" + (char)34 + @"(.+?)\" + (char)34);
 
-            if ((countQuotes % 2 != 0) || (countQuotes/2 != enclosedTexts.Count))
+            if ((countQuotes % 2 != 0) || (countQuotes / 2 != enclosedTexts.Count))
                 return false;
             return true;
         }
