@@ -25,7 +25,7 @@ namespace Zurich.Connector.Data.Services
         public async virtual Task<JToken> GetJTokenResponse(string response, ConnectorResponse connectorResponse, string connectorId, Dictionary<string, string> requestParameter, NameValueCollection query, IHttpClientFactory httpClientFactory)
         {
             string responseToTransform = response;
-            if (connectorResponse.UsePermissionsCheck ?? false)
+            if ((connectorResponse.UsePermissionsCheck ?? false) && (responseToTransform != "[]"))
             {
                 // TT DMS permissions check
                 JObject response_objects = JObject.Parse("{\"Documents\":" + response + "}");
