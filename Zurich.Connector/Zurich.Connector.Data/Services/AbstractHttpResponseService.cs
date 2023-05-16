@@ -47,13 +47,17 @@ namespace Zurich.Connector.Data.Services
                 iHDocumentStoragePermissionsRequest.appCode = "iManageServiceApp";
 
                 Dictionary<string, string> permissionsDictionary = new Dictionary<string, string>();
+                IHDocumentStoragePermissionsResponse permissions = new IHDocumentStoragePermissionsResponse();
                 if (documentIds.Count > 0)
                 {
                     iHDocumentStoragePermissionsRequest.documentIds = documentIds;
-                    IHDocumentStoragePermissionsResponse permissions = await iHDocumentStorageService.GetDocumentsPermissions(iHDocumentStoragePermissionsRequest);
+                    permissions = await iHDocumentStorageService.GetDocumentsPermissions(iHDocumentStoragePermissionsRequest);
+                }
+                // If document is not found at user's iManage repo, Permissions endpoint returns a 204 and IHDocumentStoragePermissionsResponse object becomes null.
+                if (permissions != null)
+                {
                     permissionsDictionary = permissions.GetPermissionsDict();
                 }
-
                 JArray filteredDocs = new JArray();
                 foreach (var document in response_objects["Documents"])
                 {
