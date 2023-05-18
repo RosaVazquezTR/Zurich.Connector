@@ -54,7 +54,7 @@ namespace Zurich.Connector.Data.Services
                     permissions = await iHDocumentStorageService.GetDocumentsPermissions(iHDocumentStoragePermissionsRequest);
                 }
                 // If document is not found at user's iManage repo, Permissions endpoint returns a 204 and IHDocumentStoragePermissionsResponse object becomes null.
-                if (permissions != null)
+                if ((permissions != null ) && (permissions.permissions != null ))
                 {
                     permissionsDictionary = permissions.GetPermissionsDict();
                 }
