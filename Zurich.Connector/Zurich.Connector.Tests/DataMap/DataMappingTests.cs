@@ -206,9 +206,11 @@ namespace Zurich.Connector.Tests
 		{
 			""data"": {
 				""results"": [{
-						""id"": ""Database2!1678.1""
+						""id"": ""Database2!1678.1"",
+						""document_number"": 1678
 					}, {
-						""id"": ""ContractExpress!1840.1""
+						""id"": ""ContractExpress!1840.1"",
+						""document_number"": 1840
 					}
 				]
 			}
@@ -860,6 +862,7 @@ namespace Zurich.Connector.Tests
 					{
 						{ new CDMElement(){ name = "Name", responseElement = "name", type = "string" }},
 						{ new CDMElement(){ name = "Id", responseElement = "id", type = "string" }},
+                        { new CDMElement(){ name = "DocumentId", responseElement = "document_number", type = "convertedString" }},
                         { new CDMElement(){ name = "Custom25", responseElement = "custom25", type = "nullableBool" }}
                     }
 				}
@@ -884,7 +887,8 @@ namespace Zurich.Connector.Tests
 			Type type = documents[0].GetType();
             Assert.IsFalse(type.GetProperties().Any(p => p.Name == "Name"));
             Assert.IsFalse(type.GetProperties().Any(p => p.Name == "Custom25"));
-            Assert.AreEqual("Database2!1678.1", documents[0].Id.ToString());
+            Assert.AreEqual("Database2!1678.1", documents[0].Id.Value);
+            Assert.AreEqual("1678", documents[0].DocumentId.Value);
         }
 
         [TestMethod]

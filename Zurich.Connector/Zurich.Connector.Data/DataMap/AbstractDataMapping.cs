@@ -451,6 +451,10 @@ namespace Zurich.Connector.Data.DataMap
                 }
                 response = propertyResponse;
             }
+            else if (property.type.Equals(DataTypes.ConvertedString, StringComparison.OrdinalIgnoreCase))
+            {
+                response = response?.ToString();
+            }
 
             return response;
         }

@@ -61,5 +61,10 @@
         public const string NullableBool = "nullableBool";
         public const string InterpolationString = "interpolationString";
         public const string DateTime = "dateTime";
+
+        // Most existing connectors uses "string" as the data type, 
+        // but it is not enforced. To avoid breaking old connectors,
+        // this datatype is used to enforce ToString() mapping on non-string values.
+        public const string ConvertedString = "convertedString";
     }
 }
