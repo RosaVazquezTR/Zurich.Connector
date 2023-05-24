@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -134,12 +135,9 @@ namespace Zurich.Connector.App.Services.DataSources
                     var thoughtFieldType = thoughtType?["fieldTypes"].Where(fieldType =>
                         fieldType["id"].Value<string>() == document["AdditionalProperties"]["clauseTermId"].Value<string>()).FirstOrDefault();
 
-                    document["AdditionalProperties"]["clauseTypeName"] =
-                    thoughtType["customMetadata"].HasValues ?
-                        thoughtType["customMetadata"]?["USOverride"]?.Value<string>() ??
-                        thoughtType["customMetadata"]?["UKOverride"]?.Value<string>() ??
-                        thoughtType["customMetadata"]?["DealTerm"]?.Value<string>() :
-                    thoughtType?["name"].Value<string>();
+                    //TODO: For the moment we are ignoring UKOverride, we may add it when needed.
+                    JToken usOverride = thoughtType["customMetadata"].SelectToken("USOverride");
+                    document["AdditionalProperties"]["clauseTypeName"] = usOverride ?? thoughtType?["name"].Value<string>();
 
                     document["AdditionalProperties"]["clauseTermName"] = thoughtFieldType?["name"].Value<string>();
                 }

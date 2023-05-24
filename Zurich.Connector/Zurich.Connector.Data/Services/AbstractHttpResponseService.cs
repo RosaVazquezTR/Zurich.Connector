@@ -54,7 +54,7 @@ namespace Zurich.Connector.Data.Services
                     permissions = await iHDocumentStorageService.GetDocumentsPermissions(iHDocumentStoragePermissionsRequest);
                 }
                 // If document is not found at user's iManage repo, Permissions endpoint returns a 204 and IHDocumentStoragePermissionsResponse object becomes null.
-                if ((permissions != null ) && (permissions.permissions != null ))
+                if ((permissions != null) && (permissions.permissions != null))
                 {
                     permissionsDictionary = permissions.GetPermissionsDict();
                 }
@@ -78,8 +78,8 @@ namespace Zurich.Connector.Data.Services
             // TT ClauseBank transformation response
             string provisionID = query["provisionID"];
 
-            JToken targetObject = JArray.Parse(requestParameter["filters"]).FirstOrDefault(x => (string)x["key"] == "clauseTermIDs");
-            JToken clauseTerms = targetObject?["value"];
+            JToken clauseTermsObject = JArray.Parse(requestParameter["filters"]).FirstOrDefault(x => (string)x["key"] == "clauseTermIDs");
+            JToken clauseTerms = clauseTermsObject?["value"];
 
             string[] keyWord = query["keyWord"].Split(",_", StringSplitOptions.RemoveEmptyEntries);
             string input = "{\"Documents\":" + responseToTransform + "}";
@@ -89,6 +89,7 @@ namespace Zurich.Connector.Data.Services
             JObject jObjectTop = new JObject();
             var obj = JObject.Parse(transformedString);
             JArray acumulate = new JArray();
+            JArray fieldsInThought = new JArray();
             List<string> validThoughtIds = new List<string>();
 
             foreach (var document in obj["Documents"])
@@ -104,6 +105,7 @@ namespace Zurich.Connector.Data.Services
                 var processingStatus = document["processingStatus"];
                 foreach (var thought in document["thoughts"])
                 {
+                    fieldsInThought = new JArray();
                     var id = thought["id"].Value<string>();
                     var clauseTypeId = thought["clauseTypeId"].Value<string>();
                     foreach (var field in thought["fields"])
@@ -144,10 +146,14 @@ namespace Zurich.Connector.Data.Services
 
                             acumulate.Add(field);
                         }
-                        else if (clauseTerms.Any(x => x.Value<string>() == field["clauseTermId"].ToString()))
+                       else if (clauseTerms.Any(x => x.Value<string>() == field["clauseTermId"].ToString()))
                         {
-                            validThoughtIds.Add(id);
+                            fieldsInThought.Add(field["clauseTermId"].Value<int>());
                         }
+                    }
+                    if (JToken.DeepEquals(new JArray(fieldsInThought.OrderBy(t => t)), new JArray(clauseTerms.OrderBy(t => t))))
+                    {
+                        validThoughtIds.Add(id);
                     }
                 }
             }
