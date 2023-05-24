@@ -40,6 +40,14 @@
         "defaultValue": "0"
       },
       {
+        "cdmName": "TotalCount",
+        "name": "total",
+        "inClause": "Query",
+        "required": false,
+        "type": "bool",
+        "defaultValue": "true"
+      },
+      {
         "cdmName": "Name.filter",
         "name": "name",
         "inClause": "Query",
@@ -215,6 +223,12 @@
   ],
   "CDMmapping": {
     "structured": [
+      {
+        "name": "TotalCount",
+        "type": "int",
+        "responseElement": "total_count",
+        "_comment": ""
+      },
       {
         "name": "Count",
         "type": "short",
