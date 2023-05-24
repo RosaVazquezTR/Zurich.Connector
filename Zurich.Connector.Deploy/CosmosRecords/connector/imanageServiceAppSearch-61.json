@@ -32,6 +32,14 @@
         "defaultValue": "100"
       },
       {
+        "cdmName": "Offset",
+        "name": "offset",
+        "inClause": "Query",
+        "required": false,
+        "type": "int",
+        "defaultValue": "0"
+      },
+      {
         "cdmName": "Name.filter",
         "name": "name",
         "inClause": "Query",
