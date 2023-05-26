@@ -195,6 +195,7 @@ namespace Zurich.Connector.Data.Services
                     NameValueCollection mappedQueryParametersCopy = new NameValueCollection(mappedQueryParameters);
 
                     // Thinking about using the instance domain instead of its name
+                    queryParameters.Add("IHClauseBankCapabilityId", _configuration.GetValue<string>(AppSettings.IHClauseBankCapabilityId));
                     data = await service.GetAndMapResults<dynamic>(connectorDocument, transferToken, mappedQueryParameters, headerParameters, queryParameters);
                     data = await EnrichConnectorData(connectorModel, data, mappedQueryParametersCopy, queryParameters);
                 }

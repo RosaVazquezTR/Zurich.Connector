@@ -17,6 +17,7 @@ namespace Zurich.Connector.App
         public const string ShowPreReleaseConnectors = "ShowPreReleaseConnectors";
         public const string InstanceLimit = "InstanceLimit";
         public const string MaxRecordSizePerInstance = "MaxRecordSizePerInstance";
+        public const string IHClauseBankCapabilityId = "IHClauseBankCapabilityId";
     }
 
     public static class QueryParameters
