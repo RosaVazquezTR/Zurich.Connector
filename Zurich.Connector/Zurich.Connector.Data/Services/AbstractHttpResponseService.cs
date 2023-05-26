@@ -28,6 +28,7 @@ namespace Zurich.Connector.Data.Services
             if ((connectorResponse.UsePermissionsCheck ?? false) && (responseToTransform != "[]"))
             {
                 // TT DMS permissions check
+                string clauseBankCapabilityId = requestParameter["IHClauseBankCapabilityId"];
                 JObject response_objects = JObject.Parse("{\"Documents\":" + response + "}");
                 List<string> idList = new List<string>();
                 foreach (var document in response_objects["Documents"])
@@ -39,7 +40,7 @@ namespace Zurich.Connector.Data.Services
                 IHDocumentStorageService iHDocumentStorageService = new IHDocumentStorageService(iHDocumentStorageRepository);
                 IHDocumentStorageMappingRequest iHDocumentStorageMappingRequest = new IHDocumentStorageMappingRequest();
                 iHDocumentStorageMappingRequest.ids = idList;
-                IHDocumentStorageMappingResponse mappings = await iHDocumentStorageService.GetDocumentsMappings("ca353457-26ad-473e-ab46-aae01309a093", iHDocumentStorageMappingRequest);
+                IHDocumentStorageMappingResponse mappings = await iHDocumentStorageService.GetDocumentsMappings(clauseBankCapabilityId, iHDocumentStorageMappingRequest);
                 List<string> documentIds = mappings.getMappedIds();
                 Dictionary<string, string> mappingDictionary = mappings.GetMappingDict();
 
