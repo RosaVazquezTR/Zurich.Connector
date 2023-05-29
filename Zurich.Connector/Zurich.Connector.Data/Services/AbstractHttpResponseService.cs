@@ -80,7 +80,7 @@ namespace Zurich.Connector.Data.Services
             string provisionID = query["provisionID"];
 
             JToken clauseTermsObject = JArray.Parse(requestParameter["filters"]).FirstOrDefault(x => (string)x["key"] == "clauseTermIDs");
-            JToken clauseTerms = clauseTermsObject?["value"];
+            JToken clauseTerms = clauseTermsObject?["value"] ?? new JArray();
 
             string[] keyWord = query["keyWord"].Split(",_", StringSplitOptions.RemoveEmptyEntries);
             string input = "{\"Documents\":" + responseToTransform + "}";
