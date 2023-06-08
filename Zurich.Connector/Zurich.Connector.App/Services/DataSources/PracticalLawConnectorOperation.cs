@@ -22,8 +22,8 @@ namespace Zurich.Connector.App.Services.DataSources
         private readonly Dictionary<string, List<String>> _supportedFiltersByAppCode = new(){
                {"PLCUK", new List<string>{ "practiceAreaRefList", "resourceTypeRefList", "jurisdictionRefList"} }
             };
-        private List<string> _supportedPracticalLawAppCodes = new List<string>() { "PracticalLawConnect", "PLCUS", "PLCUK", "PLCCA", "CBTPRACPT", "PracticalLawConnect-Search", "PLCUS-Search", "PLCUK-Search"
-                                                                                   , "PLCCA-Search", "CBTPRACPT-Search" };
+        private List<string> _supportedPracticalLawAppCodes = new List<string>() { "PracticalLawConnect", "PLCUS", "PLCUK", "PLCCA", "PLCAU", "CBTPRACPT", "PracticalLawConnect-Search", "PLCUS-Search", "PLCUK-Search"
+                                                                                   , "PLCCA-Search", "PLCAU-Search", "CBTPRACPT-Search" };
 
         public PracticalLawConnectorOperation(ILogger<IConnectorDataSourceOperations> logger, IDataMappingFactory dataMappingFactory, IConfiguration configuration)
         {
@@ -158,6 +158,8 @@ namespace Zurich.Connector.App.Services.DataSources
                 configuredUrl = _configuration.GetValue<string>(AppConfigKeys.PracticalLawUKHost);
             else if (appCode == KnownDataSources.plcCA || appCode == KnownDataSources.plcCASearch)
                 configuredUrl = _configuration.GetValue<string>(AppConfigKeys.PracticalLawCAHost);
+            else if (appCode == KnownDataSources.plcAU || appCode == KnownDataSources.plcAUSearch)
+                configuredUrl = _configuration.GetValue<string>(AppSettings.PracticalLawAUHost);
 
             if (!string.IsNullOrEmpty(configuredUrl))
             {

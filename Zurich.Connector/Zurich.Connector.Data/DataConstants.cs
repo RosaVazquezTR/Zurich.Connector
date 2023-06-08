@@ -39,11 +39,13 @@
         public const string plcUS = "PLCUS";
         public const string plcUK = "PLCUK";
         public const string plcCA = "PLCCA";
+        public const string plcAU = "PLCAU";
         public const string practicalLawConnectSearch = "PracticalLawConnect-Search";
         public const string practicalLawConnectSearchOnePass = "CBTPRACPT-Search";
         public const string plcUSSearch = "PLCUS-Search";
         public const string plcUKSearch = "PLCUK-Search";
         public const string plcCASearch = "PLCCA-Search";
+        public const string plcAUSearch = "PLCAU-Search";
         public const string msGraph = "MsGraph";
         public const string westLawUK = "WLUK";
         public const string thoughtTrace = "TT";

@@ -18,6 +18,7 @@ namespace Zurich.Connector.App
         public const string InstanceLimit = "InstanceLimit";
         public const string MaxRecordSizePerInstance = "MaxRecordSizePerInstance";
         public const string IHClauseBankCapabilityId = "IHClauseBankCapabilityId";
+        public const string PracticalLawAUHost = "PracticalLawAUHost";
     }
 
     public static class QueryParameters
