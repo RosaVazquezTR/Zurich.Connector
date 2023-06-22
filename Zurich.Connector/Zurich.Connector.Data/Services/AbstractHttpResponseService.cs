@@ -81,6 +81,7 @@ namespace Zurich.Connector.Data.Services
 
             JToken clauseTermsObject = JArray.Parse(requestParameter["filters"]).FirstOrDefault(x => (string)x["key"] == "clauseTermIDs");
             JToken clauseTerms = clauseTermsObject?["value"] ?? new JArray();
+            JArray clauseTermsParsed = new JArray(clauseTerms.Select(token => (JToken)int.Parse(token.ToString())));
 
             string[] keyWord = query["keyWord"].Split(",_", StringSplitOptions.RemoveEmptyEntries);
             string input = "{\"Documents\":" + responseToTransform + "}";
@@ -152,7 +153,7 @@ namespace Zurich.Connector.Data.Services
                             fieldsInThought.Add(field["clauseTermId"].Value<int>());
                         }
                     }
-                    if (JToken.DeepEquals(new JArray(fieldsInThought.OrderBy(t => t)), new JArray(clauseTerms.OrderBy(t => t))))
+                    if (JToken.DeepEquals(new JArray(fieldsInThought.OrderBy(t => t)), new JArray(clauseTermsParsed.OrderBy(t => t))))
                     {
                         validThoughtIds.Add(id);
                     }
@@ -162,7 +163,7 @@ namespace Zurich.Connector.Data.Services
             if (validThoughtIds.Any())
             {
                 acumulate = new JArray(acumulate.Where(x => validThoughtIds.Contains(x["thoughtId"].Value<string>())));
-            }
+            }    
             JProperty documents = new JProperty("Documents", acumulate);
             jObjectTop.Add(documents);
 
