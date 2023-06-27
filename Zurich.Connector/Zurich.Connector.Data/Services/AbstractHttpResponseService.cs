@@ -80,7 +80,9 @@ namespace Zurich.Connector.Data.Services
             string provisionID = query["provisionID"];
 
             JToken clauseTermsObject = JArray.Parse(requestParameter["filters"]).FirstOrDefault(x => (string)x["key"] == "clauseTermIDs");
-            JToken clauseTerms = clauseTermsObject?["value"] ?? new JArray();
+            JArray clauseTermsArray = (JArray)clauseTermsObject?["value"] ?? new JArray();
+            clauseTermsArray.Add(provisionID);
+            JToken clauseTerms = clauseTermsArray;
             JArray clauseTermsParsed = new JArray(clauseTerms.Select(token => (JToken)int.Parse(token.ToString())));
 
             string[] keyWord = query["keyWord"].Split(",_", StringSplitOptions.RemoveEmptyEntries);
@@ -147,10 +149,13 @@ namespace Zurich.Connector.Data.Services
                             }
 
                             acumulate.Add(field);
-                        }
-                       else if (clauseTerms.Any(x => x.Value<string>() == field["clauseTermId"].ToString()))
+                        }                
+                        if (clauseTerms.Any(x => x.Value<string>() == field["clauseTermId"].ToString()))
                         {
-                            fieldsInThought.Add(field["clauseTermId"].Value<int>());
+                            if (!fieldsInThought.Any(item => item.Value<int>() == field["clauseTermId"].Value<int>()))
+                            {
+                                fieldsInThought.Add(field["clauseTermId"].Value<int>());
+                            }
                         }
                     }
                     if (JToken.DeepEquals(new JArray(fieldsInThought.OrderBy(t => t)), new JArray(clauseTermsParsed.OrderBy(t => t))))
@@ -160,10 +165,8 @@ namespace Zurich.Connector.Data.Services
                 }
             }
             //Direct damage cap condition. If clauseterm is selected, it only returns the Provision fields that comes together a clauseTerm field. (See US #174875)
-            if (validThoughtIds.Any())
-            {
-                acumulate = new JArray(acumulate.Where(x => validThoughtIds.Contains(x["thoughtId"].Value<string>())));
-            }    
+            acumulate = new JArray(acumulate.Where(x => validThoughtIds.Contains(x["thoughtId"].Value<string>())));
+
             JProperty documents = new JProperty("Documents", acumulate);
             jObjectTop.Add(documents);
 
