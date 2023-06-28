@@ -1,7 +1,7 @@
 {
   "id": "48",
   "partitionkey": "DataSourceList",
-  "name": "iManage Work",
+  "name": "iManage Work IH",
   "description": "Connects to the iManage APIs",
   "appCode": "iManageServiceApp",
   "infoURL": "",
