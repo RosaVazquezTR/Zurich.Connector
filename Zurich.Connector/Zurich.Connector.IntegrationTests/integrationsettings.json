@@ -11,6 +11,11 @@
   "AllowedCORSOrigins": [ "http://localhost:4200" ],
   "PartnerOAuthApps": {
     "Connections": {
+      "MsGraph": {
+        "BaseUrl": "https://graph.microsoft.com",
+        "TokenUrl": "https://login.microsoftonline.com/organizations/oauth2/v2.0/token",
+        "Id": "e5f35fb2-4017-4d17-b695-e8e5204bd454"
+      },
       "MsGraph-GPS": {
         "Id": "4f5aaed1-0258-45a7-86d6-fcfb5d70f171",
         "TokenUrl": "https://login.microsoftonline.com/organizations/oauth2/v2.0/token",
