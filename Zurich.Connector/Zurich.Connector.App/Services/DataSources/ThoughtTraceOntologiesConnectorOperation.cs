@@ -216,18 +216,21 @@ namespace Zurich.Connector.App.Services.DataSources
                     originalKeyword = Regex.Replace(value, @"\s+", " ").Trim(); //Remove extra spaces between words.
                     if (validateQuery(originalKeyword))
                     {
+                        char[] bannedChars = { ',', '.', ':', ';', '(', ')', '{', '}', '/', '"' };
+                        string regexPattern = "[" + Regex.Escape(new string(bannedChars)) + "]+\\s*";
+
                         var enclosedTexts = Regex.Matches(originalKeyword, @"\" + (char)34 + @"(.+?)\" + (char)34)
                        .Cast<Match>()
                        .Select(m => m.Groups[1].Value.Trim())
                        .ToList();
+
                         foreach (string text in enclosedTexts)
                         {
-                            keyword.Add(text);
+                            string auxText = Regex.Replace(text, regexPattern, " ").Replace('[', ' ').Replace(']', ' ').Trim();
+                            keyword.Add(auxText);
                             originalKeyword = originalKeyword.Replace(text, String.Empty);
                         }
-                        char[] bannedChars = { ',', '.', '"', ':', ';' };
-                        string regexPattern = "[" + Regex.Escape(new string(bannedChars)) + "]+\\s*";
-                        originalKeyword = Regex.Replace(originalKeyword, regexPattern, "").Trim();
+                        originalKeyword = Regex.Replace(originalKeyword, regexPattern, " ").Replace('[', ' ').Replace(']', ' ').Trim();
 
                         if (!String.IsNullOrEmpty(originalKeyword))
                             keyword.AddRange(originalKeyword.Split(' ').ToList());
