@@ -36,7 +36,7 @@
     "AuditApplicationId": "ConnectorService",
     "OfferThroughput": "400"
   },
-  "OAuthBaseUrl": "https://ci.api.legalplatform.thomsonreuters.com/",
+  "OAuthBaseUrl": "https://ci.api.legalplatform.thomsonreuters.com/oauth/",
   "TokenIssuer": "https://ci.login.legalplatform.thomsonreuters.com/is",
   "ShowPreReleaseConnectors": true,
   "IntegrationTestHosts": {
@@ -50,6 +50,6 @@
     "IdentityServerEndpoint": " https://ci.login.legalplatform.thomsonreuters.com/is/connect/token",
     "ClientId": "LegalHomeAT",
     "GrantType": "password",
-    "Scope": "legalhome.full legalhomests.user search.full connectors.full"
+    "Scope": "search.full connectors.full"
   }
 }
