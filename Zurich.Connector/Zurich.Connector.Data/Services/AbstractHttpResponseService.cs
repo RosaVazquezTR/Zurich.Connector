@@ -132,7 +132,7 @@ namespace Zurich.Connector.Data.Services
                             {
                                 if (Regex.Matches(word, @"\b\w+\b").Count > 1)
                                     // if theres more than 1 word in SearchTerm (that implies that is quoted), do not look for string boundaries \b in regex.
-                                    newHighlight = Regex.Replace(newHighlight, @"(" + word + @"([^\s]?\w?|\w*))", "<mark>$1</mark>", RegexOptions.IgnoreCase);
+                                    newHighlight = Regex.Replace(newHighlight, @"(" + word.Replace(' ','.') + @"([^\s]?\w?|\w*))", "<mark>$1</mark>", RegexOptions.IgnoreCase);
                                 else
                                     newHighlight = Regex.Replace(newHighlight, @"\b(" + word + @"([^\s]?\w?|\w*))\b", "<mark>$1</mark>", RegexOptions.IgnoreCase);
                             }

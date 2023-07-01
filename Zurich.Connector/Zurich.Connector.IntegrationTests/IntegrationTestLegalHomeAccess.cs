@@ -11,7 +11,7 @@ namespace Zurich.Connector.IntegrationTests
     {
         public bool isLegalHomeUser()
         {
-            return true;
+            return false;
         }
     }
 }
