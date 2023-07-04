@@ -66,11 +66,14 @@ namespace Zurich.Connector.Data.Services
                     string capId = document["id"].ToString();
                     if (!String.IsNullOrEmpty(mappingDictionary[capId]) && permissionsDictionary.TryGetValue(mappingDictionary[capId], out permission))
                     {
+                        if (permission != "NoAccess")
+                        {
 
-                        JObject tokenObject = (JObject)document;
-                        tokenObject.Add("capabilityDocId", capId);
-                        tokenObject.Add("integrationDocId", mappingDictionary[capId]);
-                        filteredDocs.Add(tokenObject);
+                            JObject tokenObject = (JObject)document;
+                            tokenObject.Add("capabilityDocId", capId);
+                            tokenObject.Add("integrationDocId", mappingDictionary[capId]);
+                            filteredDocs.Add(tokenObject);
+                        }
                     }
                 }
                 responseToTransform = filteredDocs.ToString();
