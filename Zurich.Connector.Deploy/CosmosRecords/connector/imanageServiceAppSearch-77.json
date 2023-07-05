@@ -1,7 +1,7 @@
 {
   "id": "77",
   "partitionkey": "ConnectorList",
-  "alias": "imanageserviceapp.search.documents",
+  "alias": "imanageserviceapp.search.v2",
   "info": {
     "title": "Search Documents from iManage",
     "description": "Search Documents from iManage",
@@ -30,28 +30,22 @@
         "inClause": "Query",
         "required": false,
         "type": "int",
-        "defaultValue": "100",
-        "tags": [
-          "pagination"
-        ]
+        "defaultValue": "100"
       },
       {
         "cdmName": "Offset",
         "name": "offset",
         "inClause": "Query",
         "required": false,
-        "type": "string",
-        "defaultValue": "0",
-        "tags": [
-          "pagination"
-        ]
+        "type": "int",
+        "defaultValue": "0"
       },
       {
-        "cdmName": "Total",
+        "cdmName": "TotalCount",
         "name": "total",
         "inClause": "Query",
-        "required": true,
-        "type": "string",
+        "required": false,
+        "type": "bool",
         "defaultValue": "true"
       },
       {
@@ -478,25 +472,25 @@
       "requestParameter": "LastUser.filter"
     },
     {
-      "name": "Document created start date",
+      "name": "Created Date",
       "description": "Matches documents that were created on or after this date.",
       "isMultiselect": "false",
       "requestParameter": "CreateDate.start.filter"
     },
     {
-      "name": "Document created end date",
+      "name": "Created Date",
       "description": "Matches documents that were created on or before this date.",
       "isMultiselect": "false",
       "requestParameter": "CreateDate.end.filter"
     },
     {
-      "name": "Modified date start date",
+      "name": "Modified Date",
       "description": "Matches documents that were last modified on or after this date.",
       "isMultiselect": "false",
       "requestParameter": "EditDate.start.filter"
     },
     {
-      "name": "Modified date end date",
+      "name": "Modified Date",
       "description": "Matches documents that were last modified on or before this date.",
       "isMultiselect": "false",
       "requestParameter": "EditDate.end.filter"
@@ -634,49 +628,49 @@
       "requestParameter": "Custom20.filter"
     },
     {
-      "name": "Custom21 start date",
+      "name": "Custom21",
       "description": "Matches document's custom21 property on or after this date.",
       "isMultiselect": "false",
       "requestParameter": "Custom21.start.filter"
     },
     {
-      "name": "Custom21 end date",
+      "name": "Custom21",
       "description": "Matches document's custom21 property on or before this date.",
       "isMultiselect": "false",
       "requestParameter": "Custom21.end.filter"
     },
     {
-      "name": "Custom22 start date",
+      "name": "Custom22",
       "description": "Matches document's custom22 property on or after this date.",
       "isMultiselect": "false",
       "requestParameter": "Custom22.start.filter"
     },
     {
-      "name": "Custom22 end date",
+      "name": "Custom22",
       "description": "Matches document's custom22 property on or before this date.",
       "isMultiselect": "false",
       "requestParameter": "Custom22.end.filter"
     },
     {
-      "name": "Custom23 start date",
+      "name": "Custom23",
       "description": "Matches document's custom23 property on or after this date.",
       "isMultiselect": "false",
       "requestParameter": "Custom23.start.filter"
     },
     {
-      "name": "Custom23 end date",
+      "name": "Custom23",
       "description": "Matches document's custom23 property on or before this date.",
       "isMultiselect": "false",
       "requestParameter": "Custom23.end.filter"
     },
     {
-      "name": "Custom24 start date",
+      "name": "Custom24",
       "description": "Matches document's custom24 property on or after this date.",
       "isMultiselect": "false",
       "requestParameter": "Custom24.start.filter"
     },
     {
-      "name": "Custom24 end date",
+      "name": "Custom24",
       "description": "Matches document's custom24 property on or before this date.",
       "isMultiselect": "false",
       "requestParameter": "Custom24.end.filter"
@@ -716,24 +710,20 @@
       "description": "Must match the document's custom30 property.",
       "isMultiselect": "false",
       "requestParameter": "Custom30.filter"
-    },
-    {
-      "name": "Custom30",
-      "description": "Must match the document's custom30 property.",
-      "isMultiselect": "false",
-      "requestParameter": "Custom30.filter"
     }
   ],
-  "pagination": {
-    "available": true,
-    "isZeroBasedOffset": true
-  },
   "CDMmapping": {
     "structured": [
       {
+        "name": "TotalCount",
+        "type": "int",
+        "responseElement": "total_count",
+        "_comment": ""
+      },
+      {
         "name": "Count",
         "type": "short",
-        "responseElement": "total_count",
+        "responseElement": "",
         "_comment": ""
       },
       {

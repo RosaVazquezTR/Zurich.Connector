@@ -73,10 +73,16 @@
         "_comment": "Document ID"
       },
       {
-        "name": "database",
+        "name": "documentId",
+        "type": "convertedString",
+        "responseElement": "document_number",
+        "_comment": "Document version-agnostic ID"
+      },
+      {
+        "name": "driveId",
         "type": "string",
         "responseElement": "database",
-        "_comment": "Document database/library name"
+        "_comment": "Document drive ID"
       },
       {
         "name": "size",
@@ -86,7 +92,7 @@
       },
       {
         "name": "version",
-        "type": "string",
+        "type": "convertedString",
         "responseElement": "version",
         "_comment": "Document version"
       },
