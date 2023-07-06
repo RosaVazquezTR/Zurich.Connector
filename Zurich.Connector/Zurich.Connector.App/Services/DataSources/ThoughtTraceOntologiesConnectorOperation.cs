@@ -6,6 +6,7 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Authentication;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -26,14 +27,16 @@ namespace Zurich.Connector.App.Services.DataSources
         private readonly IMapper _mapper;
         private readonly ILogger _logger;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IntegrationHubAccessCheck _IHAccess;
 
-        public ThoughtTraceOntologiesConnectorOperation(ILogger<IConnectorDataSourceOperations> logger, IDataMappingFactory dataMappingFactory, IMapper mapper, ICosmosService cosmosService, IHttpContextAccessor httpContextAccessor)
+        public ThoughtTraceOntologiesConnectorOperation(ILogger<IConnectorDataSourceOperations> logger, IDataMappingFactory dataMappingFactory, IMapper mapper, ICosmosService cosmosService, IHttpContextAccessor httpContextAccessor, IntegrationHubAccessCheck iHAccess)
         {
             _logger = logger;
             _mapper = mapper;
             _cosmosService = cosmosService;
             _dataMapping = dataMappingFactory.GetImplementation(AuthType.OAuth2.ToString());
             _httpContextAccessor = httpContextAccessor;
+            _IHAccess = iHAccess;
         }
 
         public bool IsCompatible(string appCode)
@@ -48,9 +51,15 @@ namespace Zurich.Connector.App.Services.DataSources
 
         public async Task<Dictionary<string, string>> SetParametersSpecialCases(ConnectorModel connector, Dictionary<string, string> allParameters)
         {
+            bool isIHUser = _IHAccess.isIntegrationHubUser();
             if (!(connector.Response?.UseJsonTransformation ?? false))
+            {
                 return allParameters;
-
+            }
+            if (connector.Response?.UsePermissionsCheck== true && !isIHUser)
+            {
+                throw new AuthenticationException("Invalid token. One or more scopes are missing: integrationhub.documents.read openid profile email extended_profile connectors.full search.full");
+            }
 
             allParameters = TTRequestMap(allParameters);
 

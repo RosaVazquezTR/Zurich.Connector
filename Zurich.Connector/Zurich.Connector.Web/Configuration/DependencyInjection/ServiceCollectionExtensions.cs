@@ -70,7 +70,8 @@ namespace Microsoft.Extensions.DependencyInjection
 			services.AddScoped<IOAuthApiServices, OAuthApiServices>();
 			services.AddScoped<IOAuthApiRepository, OAuthApiRepository>();
 			services.AddScoped<ILegalHomeAccessCheck, LegalHomeAccess>();
-			services.AddScoped<IDataExtractionService, DataExtractionService>();
+            services.AddScoped<IntegrationHubAccessCheck, IntegrationHubAccess>();
+            services.AddScoped<IDataExtractionService, DataExtractionService>();
 			services.AddAppConfigServices();
 		}
 

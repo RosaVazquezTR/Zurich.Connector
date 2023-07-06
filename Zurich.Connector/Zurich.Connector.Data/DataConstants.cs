@@ -55,6 +55,7 @@
     {
         public const string LegalHomeScope = "legalhome.full";
         public const string OAuthUrl = "oauth";
+        public static readonly string[] IntegrationHubScopes = { "connectors.full", "email", "extended_profile", "integrationhub.documents.read", "openid", "profile", "search.full" };
     }
 
     public static class DataTypes
