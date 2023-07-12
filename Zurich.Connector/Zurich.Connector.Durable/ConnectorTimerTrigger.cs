@@ -20,7 +20,7 @@ namespace Zurich.Connector.Durable
 
 
         [Function("UpdateDynamicFilter")]
-        public async void UpdateDynamicFilter([TimerTrigger("0 0 2 * * *")] DurableInfo durableTimer, FunctionContext context)
+        public async Task UpdateDynamicFilter([TimerTrigger("0 0 2 * * *")] DurableInfo durableTimer, FunctionContext context)
         {
             var logger = context.GetLogger("Function1");
 

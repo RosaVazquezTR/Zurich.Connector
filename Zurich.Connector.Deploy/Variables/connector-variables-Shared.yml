@@ -50,7 +50,7 @@ variables:
   - name: functionStorageName
     value: "connectorsfunc"
   - name: functionVersion
-    value: "~3"
+    value: "~4"
   - name: functionWorkerRuntime
     value: "dotnet-isolated"
   - name: functionZipLocation
