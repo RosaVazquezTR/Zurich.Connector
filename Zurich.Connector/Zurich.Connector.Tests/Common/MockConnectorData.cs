@@ -35,8 +35,13 @@ namespace Zurich.Connector.Tests.Common
                         Parameters = new List<ConnectorRequestParameterModel>()
                         {
                             new ConnectorRequestParameterModel() { CdmName = "Query", Name = "searchTerm", DefaultValue = "*"},
-                            new ConnectorRequestParameterModel() { CdmName = "Offset", Name = "resultsStartIndex", DefaultValue = "1"},
-                            new ConnectorRequestParameterModel() { CdmName = "ResultSize", Name = "resultsCount", DefaultValue = "25"},
+                            new ConnectorRequestParameterModel() { CdmName = "Offset", Type = "int", Name = "resultsStartIndex", DefaultValue = "1"},
+                            new ConnectorRequestParameterModel() { CdmName = "ResultSize", Type = "int", Name = "resultsCount", DefaultValue = "25"},
+                            new ConnectorRequestParameterModel() { CdmName = "Name.filter", Type = "string", Name = "nameFilter" },
+                            new ConnectorRequestParameterModel() { CdmName = "Chocolate.cookie.filter", Type = "bool", Name = "isChocolateCookie" },
+                            new ConnectorRequestParameterModel() { CdmName = "Types.filter", Type = "object", Name = "typeFilter" },
+                            new ConnectorRequestParameterModel() { CdmName = "Date.filter", Type = "DateTime", Name = "dateFilter" },
+                            new ConnectorRequestParameterModel() { CdmName = "Unknow.type.filter", Type = "newDataType", Name = "unknowFilter" }
                         },
                         Sorting = new ConnectorRequestSortingModel(){Properties = new List<ConnectorRequestSortingPropertiesModel>(){ }}
                     },
@@ -295,8 +300,8 @@ namespace Zurich.Connector.Tests.Common
                         Parameters = new List<ConnectorRequestParameterModel>()
                         {
                             new ConnectorRequestParameterModel() { CdmName = "Query", Name = "searchTerm", DefaultValue = "*"},
-                            new ConnectorRequestParameterModel() { CdmName = "Offset", Name = "resultsStartIndex", DefaultValue = "1"},
-                            new ConnectorRequestParameterModel() { CdmName = "ResultSize", Name = "resultsCount", DefaultValue = "25"},
+                            new ConnectorRequestParameterModel() { CdmName = "Offset", Type = "int", Name = "resultsStartIndex", DefaultValue = "1"},
+                            new ConnectorRequestParameterModel() { CdmName = "ResultSize", Type = "int", Name = "resultsCount", DefaultValue = "25"},
                         }
                     },
                     DataSource = new DataSourceModel()
@@ -445,8 +450,8 @@ namespace Zurich.Connector.Tests.Common
                         Parameters = new List<ConnectorRequestParameterModel>()
                         {
                             new ConnectorRequestParameterModel() { CdmName = "Query", Name = "searchTerm", Required = true, DefaultValue = ""},
-                            new ConnectorRequestParameterModel() { CdmName = "Offset", Name = "resultsStartIndex", DefaultValue = "1"},
-                            new ConnectorRequestParameterModel() { CdmName = "ResultSize", Name = "resultsCount", DefaultValue = "25"}
+                            new ConnectorRequestParameterModel() { CdmName = "Offset", Type = "int", Name = "resultsStartIndex", DefaultValue = "1"},
+                            new ConnectorRequestParameterModel() { CdmName = "ResultSize", Type = "int", Name = "resultsCount", DefaultValue = "25"}
                         }
                     },
                     DataSource = new DataSourceModel()

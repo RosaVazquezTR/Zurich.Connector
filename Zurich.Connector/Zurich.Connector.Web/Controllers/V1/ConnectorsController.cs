@@ -104,7 +104,10 @@ namespace Zurich.Connector.Web.Controllers
             }
             catch (Exception e)
             {
-                if (e is MaxResultSizeException || e is RequiredParameterMissingException || e.InnerException is InvalidQueryFormatException)
+                if (e is MaxResultSizeException ||
+                    e is RequiredParameterMissingException ||
+                    e is InvalidQueryParameterDataType ||
+                    e.InnerException is InvalidQueryFormatException)
                 {
                     return BadRequest(e.Message);
                 }

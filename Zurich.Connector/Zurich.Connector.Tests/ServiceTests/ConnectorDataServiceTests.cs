@@ -100,7 +100,13 @@ namespace Zurich.Connector.Tests.ServiceTests
         public async Task CallMapQueryParametersFromDB()
         {
             // ARRANGE
-            var cdmQueryParameters = new Dictionary<string, string>() { { "Offset", "1" }, { "ResultSize", "10" } };
+            var cdmQueryParameters = new Dictionary<string, string>() {
+                { "Offset", "1" },
+                { "ResultSize", "10" },
+                { "Chocolate.cookie.filter", "true" },
+                { "Name.filter", "string" },
+                { "Date.filter", "2023-07-01T00:00:00.000Z" }
+            };
             var connector = MockConnectorData.SetupConnectorModel().Where(t => t.Id == "1").FirstOrDefault();
 
             ConnectorDataService service = CreateConnectorDataService();
@@ -285,6 +291,71 @@ namespace Zurich.Connector.Tests.ServiceTests
 
             // ACT & ASSERT
             Assert.ThrowsException<RequiredParameterMissingException>(() => service.MapQueryParametersFromDB(cdmQueryParameters, connector));
+        }
+
+        [TestMethod]
+        public void CallMapQueryParametersFromDBW_ThrowsException_InvalidQueryParameterInt()
+        {
+            // ARRANGE
+            var cdmQueryParameters = new Dictionary<string, string>() { { "Offset", "string" } };
+            var connector = MockConnectorData.SetupConnectorModel().Where(t => t.Id == "1").FirstOrDefault();
+
+            ConnectorDataService service = CreateConnectorDataService();
+
+            // ACT & ASSERT
+            Assert.ThrowsException<InvalidQueryParameterDataType>(() => service.MapQueryParametersFromDB(cdmQueryParameters, connector));
+        }
+
+        [TestMethod]
+        public void CallMapQueryParametersFromDBW_ThrowsException_InvalidQueryParameterBool()
+        {
+            // ARRANGE
+            var cdmQueryParameters = new Dictionary<string, string>() { { "Chocolate.cookie.filter", "123" } };
+            var connector = MockConnectorData.SetupConnectorModel().Where(t => t.Id == "1").FirstOrDefault();
+
+            ConnectorDataService service = CreateConnectorDataService();
+
+            // ACT & ASSERT
+            Assert.ThrowsException<InvalidQueryParameterDataType>(() => service.MapQueryParametersFromDB(cdmQueryParameters, connector));
+        }
+
+        [TestMethod]
+        public void CallMapQueryParametersFromDBW_ThrowsException_InvalidQueryParameterObject()
+        {
+            // ARRANGE
+            var cdmQueryParameters = new Dictionary<string, string>() { { "Types.filter", "123" } };
+            var connector = MockConnectorData.SetupConnectorModel().Where(t => t.Id == "1").FirstOrDefault();
+
+            ConnectorDataService service = CreateConnectorDataService();
+
+            // ACT & ASSERT
+            Assert.ThrowsException<InvalidQueryParameterDataType>(() => service.MapQueryParametersFromDB(cdmQueryParameters, connector));
+        }
+
+        [TestMethod]
+        public void CallMapQueryParametersFromDBW_ThrowsException_InvalidDQueryParameterDateTime()
+        {
+            // ARRANGE
+            var cdmQueryParameters = new Dictionary<string, string>() { { "Date.filter", "true" } };
+            var connector = MockConnectorData.SetupConnectorModel().Where(t => t.Id == "1").FirstOrDefault();
+
+            ConnectorDataService service = CreateConnectorDataService();
+
+            // ACT & ASSERT
+            Assert.ThrowsException<InvalidQueryParameterDataType>(() => service.MapQueryParametersFromDB(cdmQueryParameters, connector));
+        }
+
+        [TestMethod]
+        public void CallMapQueryParametersFromDBW_ThrowsException_UnknowQueryParameterDataType()
+        {
+            // ARRANGE
+            var cdmQueryParameters = new Dictionary<string, string>() { { "Unknow.type.filter", "string" } };
+            var connector = MockConnectorData.SetupConnectorModel().Where(t => t.Id == "1").FirstOrDefault();
+
+            ConnectorDataService service = CreateConnectorDataService();
+
+            // ACT & ASSERT
+            Assert.ThrowsException<InvalidQueryParameterDataType>(() => service.MapQueryParametersFromDB(cdmQueryParameters, connector));
         }
 
         [TestMethod]

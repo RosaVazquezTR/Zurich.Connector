@@ -291,6 +291,7 @@ namespace Zurich.Connector.Data.Services
                                        where requestParam.InClause != ODataConstants.OData && requestParam.InClause != InClauseConstants.Child
                                        select new { name = requestParam.Name, value = param.Value.ToString() }).ToDictionary(c => c.name, c => c.value);
 
+                ValidateQueryParametersDataType(queryParameters, connectorModel.Request?.Parameters);
 
                 if (connectorModel.Request?.Sorting != null)
                 {
@@ -351,6 +352,57 @@ namespace Zurich.Connector.Data.Services
 
             return modifiedQueryParameters;
         }
+
+        private void ValidateQueryParametersDataType(Dictionary<string, string> queryParameters, IEnumerable<ConnectorRequestParameterModel> connectorParameters)
+        {
+            foreach (var (key, value) in queryParameters)
+            {
+                var connectorParameter = connectorParameters.FirstOrDefault(query => query.Name == key);
+                var isValid = false;
+
+                switch (connectorParameter?.Type)
+                {
+                    case "string":
+                        isValid = true;
+                        break;
+                    case "int":
+                        isValid = int.TryParse(value, out _);
+                        break;
+                    case "bool":
+                        isValid = bool.TryParse(value, out _);
+                        break;
+                    case "DateTime":
+                        isValid = DateTime.TryParse(value, out _);
+                        break;
+                    case "object":
+                        try
+                        {
+                            JContainer.Parse(value);
+                            isValid = !int.TryParse(value, out _) && !bool.TryParse(value, out _);
+                        }
+                        catch (Exception)
+                        {
+                            isValid = false;
+                        }
+                        break;
+                    default:
+                        break;
+                }
+
+                if (!isValid)
+                {
+                    var invalidFilterMessage = connectorParameter?.CdmName == null ? 
+                        "Invalid data type provided for a filter." :
+                        string.Format("Invalid data type provided for filter {0}.", connectorParameter.CdmName);
+                    var invalidDataTypeMessage = connectorParameter?.Type == null ?
+                        "Data type not found." :
+                        string.Format("Value {0} cannot be parsed to {1}.", value, connectorParameter.Type);
+
+                    throw new InvalidQueryParameterDataType($"{invalidFilterMessage} {invalidDataTypeMessage}");
+                }
+            }
+        }
+
         private async Task<dynamic> GetBaseUrl(ConnectorModel connectorModel)
         {
             if (_legalHomeAccess.isLegalHomeUser())
