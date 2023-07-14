@@ -10,7 +10,6 @@
     "version": "1.0",
     "subType": "Parent"
   },
-  "preRelease": true,
   "hostName": "cloudimanage.com",
   "request": {
     "endpointPath": "/work/api/v2/customers/{55.customer_id}/documents",
@@ -436,16 +435,8 @@
       "requestParameter": "Type.filter",
       "filterlist": [
         {
-          "name": "Document",
+          "name": "Document (.docx, .doc, etc.)",
           "id": "WORD,WORDX,WORDXT,DOCM,DOTX,PAGES,RTF,WPF"
-        },
-        {
-          "name": "Spreadsheet",
-          "id": "EXCEL,EXCELX,EXCELM,XLSB,XLSM,NUMBERS"
-        },
-        {
-          "name": "Presentation",
-          "id": "PPT,PPTX,PPTM,KEY"
         },
         {
           "name": "Pdf",
@@ -462,7 +453,7 @@
     {
       "name": "Document Number",
       "description": "Must match the document number.",
-      "isMultiselect": "true",
+      "isMultiselect": "false",
       "requestParameter": "DocumentNumber.filter"
     },
     {
