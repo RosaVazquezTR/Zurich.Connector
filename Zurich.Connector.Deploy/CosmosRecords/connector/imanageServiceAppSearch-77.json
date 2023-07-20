@@ -300,7 +300,7 @@
         "name": "custom21_from",
         "inClause": "Query",
         "required": false,
-        "type": "string",
+        "type": "DateTime",
         "defaultValue": ""
       },
       {
@@ -308,7 +308,7 @@
         "name": "custom21_to",
         "inClause": "Query",
         "required": false,
-        "type": "string",
+        "type": "DateTime",
         "defaultValue": ""
       },
       {
@@ -316,7 +316,7 @@
         "name": "custom22_from",
         "inClause": "Query",
         "required": false,
-        "type": "string",
+        "type": "DateTime",
         "defaultValue": ""
       },
       {
@@ -324,7 +324,7 @@
         "name": "custom22_to",
         "inClause": "Query",
         "required": false,
-        "type": "string",
+        "type": "DateTime",
         "defaultValue": ""
       },
       {
@@ -332,7 +332,7 @@
         "name": "custom23_from",
         "inClause": "Query",
         "required": false,
-        "type": "string",
+        "type": "DateTime",
         "defaultValue": ""
       },
       {
@@ -340,7 +340,7 @@
         "name": "custom23_to",
         "inClause": "Query",
         "required": false,
-        "type": "string",
+        "type": "DateTime",
         "defaultValue": ""
       },
       {
@@ -348,7 +348,7 @@
         "name": "custom24_from",
         "inClause": "Query",
         "required": false,
-        "type": "string",
+        "type": "DateTime",
         "defaultValue": ""
       },
       {
@@ -356,7 +356,7 @@
         "name": "custom24_to",
         "inClause": "Query",
         "required": false,
-        "type": "string",
+        "type": "DateTime",
         "defaultValue": ""
       },
       {
