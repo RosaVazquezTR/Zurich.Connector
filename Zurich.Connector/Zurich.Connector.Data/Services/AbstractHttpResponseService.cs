@@ -40,7 +40,15 @@ namespace Zurich.Connector.Data.Services
                 IHDocumentStorageService iHDocumentStorageService = new IHDocumentStorageService(iHDocumentStorageRepository);
                 IHDocumentStorageMappingRequest iHDocumentStorageMappingRequest = new IHDocumentStorageMappingRequest();
                 iHDocumentStorageMappingRequest.ids = idList;
-                IHDocumentStorageMappingResponse mappings = await iHDocumentStorageService.GetDocumentsMappings(clauseBankCapabilityId, iHDocumentStorageMappingRequest);
+                IHDocumentStorageMappingResponse mappings = new IHDocumentStorageMappingResponse();
+                try
+                {
+                    mappings = await iHDocumentStorageService.GetDocumentsMappings(clauseBankCapabilityId, iHDocumentStorageMappingRequest);
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception("Non-successfull response from IH Mappings endpoint");
+                }
                 List<string> documentIds = mappings.getMappedIds();
                 Dictionary<string, string> mappingDictionary = mappings.GetMappingDict();
 
@@ -52,7 +60,14 @@ namespace Zurich.Connector.Data.Services
                 if (documentIds.Count > 0)
                 {
                     iHDocumentStoragePermissionsRequest.documentIds = documentIds;
-                    permissions = await iHDocumentStorageService.GetDocumentsPermissions(iHDocumentStoragePermissionsRequest);
+                    try
+                    {
+                        permissions = await iHDocumentStorageService.GetDocumentsPermissions(null);
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new Exception("Non-successfull response from IH Permissions endpoint");
+                    }
                 }
                 // If document is not found at user's iManage repo, Permissions endpoint returns a 204 and IHDocumentStoragePermissionsResponse object becomes null.
                 if ((permissions != null) && (permissions.permissions != null))
@@ -135,7 +150,7 @@ namespace Zurich.Connector.Data.Services
                             {
                                 if (Regex.Matches(word, @"\b\w+\b").Count > 1)
                                     // if theres more than 1 word in SearchTerm (that implies that is quoted), do not look for string boundaries \b in regex.
-                                    newHighlight = Regex.Replace(newHighlight, @"(" + word.Replace(' ','.') + @"([^\s]?\w?|\w*))", "<mark>$1</mark>", RegexOptions.IgnoreCase);
+                                    newHighlight = Regex.Replace(newHighlight, @"(" + word.Replace(' ', '.') + @"([^\s]?\w?|\w*))", "<mark>$1</mark>", RegexOptions.IgnoreCase);
                                 else
                                     newHighlight = Regex.Replace(newHighlight, @"\b(" + word + @"([^\s]?\w?|\w*))\b", "<mark>$1</mark>", RegexOptions.IgnoreCase);
                             }
@@ -152,7 +167,7 @@ namespace Zurich.Connector.Data.Services
                             }
 
                             acumulate.Add(field);
-                        }                
+                        }
                         if (clauseTerms.Any(x => x.Value<string>() == field["clauseTermId"].ToString()))
                         {
                             if (!fieldsInThought.Any(item => item.Value<int>() == field["clauseTermId"].Value<int>()))
