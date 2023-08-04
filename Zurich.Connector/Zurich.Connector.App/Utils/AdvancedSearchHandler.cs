@@ -52,16 +52,17 @@ namespace Zurich.Connector.App.Utils
         public static string HandleOperator(string query, ConnectorModel connectorModel)
         {
             // MsGraph connector adds some system parameters through query, we should not modify them
-            string systemQuery = "";
+            string originalQuery = query;
+            string realQuery = "";
 
             if (connectorModel.Id == "14")
             {
                 modifyedQuery = Regex.Matches(query, @"\((.+?)\)");
                 if (modifyedQuery.Count > 0)
                 {
-                    systemQuery = modifyedQuery[1].Value;
-                    query = query.Replace(systemQuery, "");
-                    query = query.Substring(1, query.Length - 3);
+                    //If query contains filters: (query AND filters)(), if not contains filters: (query)
+                    realQuery = modifyedQuery[0].Value.Split("AND")[0].Replace("(", "").Replace(")", "").Trim();
+                    query = realQuery;
                 }
             }
             
@@ -116,7 +117,7 @@ namespace Zurich.Connector.App.Utils
                 }
                 if (connectorModel.Id == "14") 
                     if (modifyedQuery.Count > 0)
-                        return "(" + newQuery + ") " + systemQuery;
+                        return originalQuery.Replace(realQuery, newQuery);
                 return newQuery;
             }
             else
