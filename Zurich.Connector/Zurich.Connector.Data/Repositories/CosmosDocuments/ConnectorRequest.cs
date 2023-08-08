@@ -10,6 +10,10 @@ namespace Zurich.Connector.Data.Repositories.CosmosDocuments
     public class ConnectorRequest
     {
         /// <summary>
+        /// Flag to indicate if query parameters in POST request must be skiped. True fot TT connectors
+        /// </summary>
+        public bool SkipQueryParams { get; set; }
+        /// <summary>
         /// End point path. Ex: "/api/6/sites",
         /// </summary>
         public string EndpointPath { get; set; }

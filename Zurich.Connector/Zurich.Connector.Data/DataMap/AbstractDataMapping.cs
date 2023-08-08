@@ -71,6 +71,8 @@ namespace Zurich.Connector.Data.DataMap
             string response = null;
             if (connectorDocument.Response.Type == "DUMMYJSON")
                 return ReturnDummyJson<T>(response);
+            else if (connectorDocument?.Request?.SkipQueryParams == true)
+                response = await _repository.MakeRequest(apiInfo, null, body);
             else
                 response = await _repository.MakeRequest(apiInfo, query, body);
 
@@ -112,7 +114,7 @@ namespace Zurich.Connector.Data.DataMap
 
             //WE WILL WAIT FOR A RANDOM TIME BETWEEN 1 AND 5 SECONDS
             Random rnd = new Random();
-            int rndmWaitSeconds = rnd.Next(1,5);
+            int rndmWaitSeconds = rnd.Next(1, 5);
             Thread.Sleep(rndmWaitSeconds * 10000);
 
             return jObjectTop.ToObject<T>();

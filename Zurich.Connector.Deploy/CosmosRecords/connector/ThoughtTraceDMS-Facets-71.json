@@ -10,6 +10,7 @@
         "version": "1.0"
     },
     "request": {
+		"skipQueryParams": true,
         "endpointPath": "/documents/search/facets",
         "method": "POST",
         "parameters": [

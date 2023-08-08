@@ -56,7 +56,7 @@ namespace Zurich.Connector.App.Services.DataSources
             {
                 return allParameters;
             }
-            if (connector.Response?.UsePermissionsCheck== true && !isIHUser)
+            if (connector.Response?.UsePermissionsCheck == true && !isIHUser)
             {
                 throw new AuthenticationException("Invalid token. One or more scopes are missing: integrationhub.documents.read openid profile email extended_profile connectors.full search.full");
             }
@@ -223,26 +223,34 @@ namespace Zurich.Connector.App.Services.DataSources
                 {
                     var value = filter["value"].Value<string>();
                     originalKeyword = Regex.Replace(value, @"\s+", " ").Trim(); //Remove extra spaces between words.
+                    originalKeyword = originalKeyword.Replace("“","\"").Replace("”","\"");
                     if (validateQuery(originalKeyword))
                     {
-                        char[] bannedChars = { ',', '.', ':', ';', '(', ')', '{', '}', '/', '"' };
-                        string regexPattern = "[" + Regex.Escape(new string(bannedChars)) + "]+\\s*";
-
-                        var enclosedTexts = Regex.Matches(originalKeyword, @"\" + (char)34 + @"(.+?)\" + (char)34)
-                       .Cast<Match>()
-                       .Select(m => m.Groups[1].Value.Trim())
-                       .ToList();
-
-                        foreach (string text in enclosedTexts)
+                        if (int.TryParse(originalKeyword, out _) || decimal.TryParse(originalKeyword, out _))
                         {
-                            string auxText = Regex.Replace(text, regexPattern, " ").Replace('[', ' ').Replace(']', ' ').Trim();
-                            keyword.Add(auxText);
-                            originalKeyword = originalKeyword.Replace(text, String.Empty);
+                            keyword.Add(originalKeyword);
                         }
-                        originalKeyword = Regex.Replace(originalKeyword, regexPattern, " ").Replace('[', ' ').Replace(']', ' ').Trim();
+                        else
+                        {
+                            char[] bannedChars = { ':', ';', '(', ')', '{', '}', '/', '"', '>', '<' };
+                            string regexPattern = "[" + Regex.Escape(new string(bannedChars)) + "]+\\s*";
 
-                        if (!String.IsNullOrEmpty(originalKeyword))
-                            keyword.AddRange(originalKeyword.Split(' ').ToList());
+                            var enclosedTexts = Regex.Matches(originalKeyword, @"\" + (char)34 + @"(.+?)\" + (char)34)
+                           .Cast<Match>()
+                           .Select(m => m.Groups[1].Value.Trim())
+                           .ToList();
+
+                            foreach (string text in enclosedTexts)
+                            {
+                                string auxText = Regex.Replace(text, regexPattern, " ").Replace('[', ' ').Replace(']', ' ').Trim();
+                                keyword.Add(auxText);
+                                originalKeyword = originalKeyword.Replace(text, String.Empty);
+                            }
+                            originalKeyword = Regex.Replace(originalKeyword, regexPattern, " ").Replace('[', ' ').Replace(']', ' ').Trim();
+
+                            if (!String.IsNullOrEmpty(originalKeyword))
+                                keyword.AddRange(originalKeyword.Split(' ').ToList());
+                        }
                     }
                     else
                         throw new InvalidQueryFormatException("Query contains invalid format.");

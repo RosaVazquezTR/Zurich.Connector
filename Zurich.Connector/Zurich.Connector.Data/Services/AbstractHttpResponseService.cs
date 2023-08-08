@@ -148,11 +148,19 @@ namespace Zurich.Connector.Data.Services
                             string newHighlight = oldHighlight.Replace("<mark>", String.Empty).Replace("</mark>", String.Empty);
                             foreach (string word in keyWord)
                             {
-                                if (Regex.Matches(word, @"\b\w+\b").Count > 1)
+                                if (int.TryParse(word, out _) || decimal.TryParse(word, out _))
+                                {
+                                    newHighlight = newHighlight.Replace(word, $"<mark>{word}</mark>");
+                                } 
+                                else if (Regex.Matches(word, @"\b\w+\b").Count > 1)
+                                {
                                     // if theres more than 1 word in SearchTerm (that implies that is quoted), do not look for string boundaries \b in regex.
                                     newHighlight = Regex.Replace(newHighlight, @"(" + word.Replace(' ', '.') + @"([^\s]?\w?|\w*))", "<mark>$1</mark>", RegexOptions.IgnoreCase);
+                                }
                                 else
-                                    newHighlight = Regex.Replace(newHighlight, @"\b(" + word + @"([^\s]?\w?|\w*))\b", "<mark>$1</mark>", RegexOptions.IgnoreCase);
+                                {
+                                    newHighlight = Regex.Replace(newHighlight, @"\b(" + word + @"([^.\s]?\w?|\w*))\b", "<mark>$1</mark>", RegexOptions.IgnoreCase);
+                                }
                             }
                             //If new highlight contains no <mark> tag, return the default highlight provided by ThoughtTrace.
                             if (newHighlight.Contains("<mark>"))

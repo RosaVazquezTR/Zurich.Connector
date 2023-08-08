@@ -11,6 +11,7 @@
         "subType": "Parent"
     },
     "request": {
+		"skipQueryParams": true,
         "endpointPath": "/documents/search",
         "method": "POST",
         "parameters": [
