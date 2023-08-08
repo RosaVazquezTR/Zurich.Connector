@@ -62,7 +62,7 @@ namespace Zurich.Connector.Data.Services
                     iHDocumentStoragePermissionsRequest.documentIds = documentIds;
                     try
                     {
-                        permissions = await iHDocumentStorageService.GetDocumentsPermissions(null);
+                        permissions = await iHDocumentStorageService.GetDocumentsPermissions(iHDocumentStoragePermissionsRequest);
                     }
                     catch (Exception ex)
                     {
