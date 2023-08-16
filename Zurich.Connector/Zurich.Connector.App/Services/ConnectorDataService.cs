@@ -22,6 +22,8 @@ using Microsoft.Extensions.Configuration;
 using Zurich.Connector.App.Exceptions;
 using Zurich.Common.Repositories;
 using AppCodes = Zurich.Connector.Data.Constants.AppCodes;
+using Newtonsoft.Json;
+using System.Text.Json.Nodes;
 
 namespace Zurich.Connector.Data.Services
 {
@@ -120,7 +122,8 @@ namespace Zurich.Connector.Data.Services
             availableRegistrations = availableRegistrations?.FindAll(x => x.AppCode == connectorModel.DataSource.AppCode).Take(instanceLimit).ToList<DataSourceInformation>();
 
             ValidateResultSize(queryParameters, connectorModel);
-
+            ValidateQueryParams(queryParameters, connectorModel);
+           
             // TODO: This is a legalhome workaround until legalhome uses OAuth
             if (string.IsNullOrEmpty(connectorModel.DataSource.Domain) && string.IsNullOrEmpty(hostname))
             {
@@ -238,6 +241,41 @@ namespace Zurich.Connector.Data.Services
             return data;
         }
 
+        private void ValidateQueryParams(Dictionary<string, string> queryParameters, ConnectorModel connectorModel)
+        {
+            if (connectorModel.Response?.UseJsonTransformation ?? false) //Query Params validation only applies to CB & DMS connectors 52,68
+            {
+                try
+                {
+                    JObject logObjectTTRequest = new JObject();
+                    logObjectTTRequest.Add("message", "TT Request started with following parameters:");
+                  
+                    var requestJsonObject = JsonConvert.DeserializeObject<List<JObject>>(queryParameters["Filters"]);
+                    foreach (JObject parameter in requestJsonObject)
+                    {
+                        logObjectTTRequest.Add(parameter["key"].ToString(), parameter["value"].ToString());
+                    }
+
+                    if (!logObjectTTRequest.ContainsKey("clauseTypeID"))
+                    {
+                        throw new RequiredParameterMissingException("Invalid request format. Missing filters object or ClauseTypeID parameter.");
+                    }
+
+                    if (queryParameters.ContainsKey("threshold"))
+                    {
+                        logObjectTTRequest.Add("threshold", queryParameters["threshold"]);
+                    }
+                    else
+                    {
+                        logObjectTTRequest.Add("threshold", 0);
+                    }
+                    _logger.LogInformation(logObjectTTRequest.ToString());
+                }
+                catch {
+                    throw new RequiredParameterMissingException("Invalid request format. Missing filters object or ClauseTypeID parameter.");
+                }
+            } 
+        }
         private void ValidateResultSize(Dictionary<string, string> queryParameters, ConnectorModel connectorModel)
         {
             int maxRecordSizePerInstance = _configuration.GetValue(AppSettings.MaxRecordSizePerInstance, 1000);
