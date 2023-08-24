@@ -155,7 +155,8 @@ namespace Zurich.Connector.Data.Services
                                 else if (Regex.Matches(word, @"\b\w+\b").Count > 1)
                                 {
                                     // if theres more than 1 word in SearchTerm (that implies that is quoted), do not look for string boundaries \b in regex.
-                                    newHighlight = Regex.Replace(newHighlight, @"(" + word.Replace(' ', '.') + @"([^\s]?\w?|\w*))", "<mark>$1</mark>", RegexOptions.IgnoreCase);
+                                    string escapedWord = Regex.Escape(word);
+                                    newHighlight = Regex.Replace(newHighlight, @"(" + escapedWord + @"([^\s]?\w?|\w*))", "<mark>$1</mark>", RegexOptions.IgnoreCase);
                                 }
                                 else
                                 {

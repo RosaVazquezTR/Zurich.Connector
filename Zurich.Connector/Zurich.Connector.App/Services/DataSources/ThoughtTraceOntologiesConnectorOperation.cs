@@ -232,7 +232,7 @@ namespace Zurich.Connector.App.Services.DataSources
                         }
                         else
                         {
-                            char[] bannedChars = { ':', ';', '(', ')', '{', '}', '/', '"', '>', '<' };
+                            char[] bannedChars = { ':', ';', '(', ')', '{', '}', '/', '"', '>', '<', ',' };
                             string regexPattern = "[" + Regex.Escape(new string(bannedChars)) + "]+\\s*";
 
                             var enclosedTexts = Regex.Matches(originalKeyword, @"\" + (char)34 + @"(.+?)\" + (char)34)
@@ -242,8 +242,7 @@ namespace Zurich.Connector.App.Services.DataSources
 
                             foreach (string text in enclosedTexts)
                             {
-                                string auxText = Regex.Replace(text, regexPattern, " ").Replace('[', ' ').Replace(']', ' ').Trim();
-                                keyword.Add(auxText);
+                                keyword.Add(text);
                                 originalKeyword = originalKeyword.Replace(text, String.Empty);
                             }
                             originalKeyword = Regex.Replace(originalKeyword, regexPattern, " ").Replace('[', ' ').Replace(']', ' ').Trim();
