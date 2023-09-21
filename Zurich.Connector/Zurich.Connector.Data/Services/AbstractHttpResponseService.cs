@@ -96,6 +96,7 @@ namespace Zurich.Connector.Data.Services
 
             // TT ClauseBank transformation response
             string provisionID = query["provisionID"];
+            string jurisdiction = query["jurisdiction"];
 
             JToken clauseTermsObject = JArray.Parse(requestParameter["filters"]).FirstOrDefault(x => (string)x["key"] == "clauseTermIDs");
             JArray clauseTermsArray = (JArray)clauseTermsObject?["value"] ?? new JArray();
@@ -243,6 +244,7 @@ namespace Zurich.Connector.Data.Services
             if (totalThoughts > 0)
                 jObjectTop.Add(new JProperty("pagination", paginationDoc));
             jObjectTop.Add(new JProperty("totalDocs", totalThoughts));
+            jObjectTop.Add(new JProperty("jurisdiction", jurisdiction));
 
             return jObjectTop;
         }

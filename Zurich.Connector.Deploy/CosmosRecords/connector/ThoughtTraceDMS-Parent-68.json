@@ -476,6 +476,12 @@
                 "type": "object",
                 "responseElement": "totalDocs",
                 "_comment": ""
+            },
+            {
+                "name": "jurisdiction",
+                "type": "string",
+                "responseElement": "jurisdiction",
+                "_comment": ""
             }
         ]
     }

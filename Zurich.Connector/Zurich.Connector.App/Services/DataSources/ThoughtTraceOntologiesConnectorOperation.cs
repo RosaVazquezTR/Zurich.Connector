@@ -132,6 +132,7 @@ namespace Zurich.Connector.App.Services.DataSources
                 return item;
 
             JArray thoughtTypes = await GetThoughtTypesFromOntologies(connector.OntologiesInformation.ConnectorId);
+            string jurisdiction = item["AdditionalProperties"]["jurisdiction"].ToString();
 
             if (item is JObject searchResult && searchResult.ContainsKey("Documents") && searchResult["Documents"].HasValues)
             {
@@ -144,7 +145,8 @@ namespace Zurich.Connector.App.Services.DataSources
                     var thoughtFieldType = thoughtType?["fieldTypes"].Where(fieldType =>
                         fieldType["id"].Value<string>() == document["AdditionalProperties"]["clauseTermId"].Value<string>()).FirstOrDefault();
 
-                    //TODO: For the moment we are ignoring UKOverride, we may add it when needed.
+                    //TODO: We have the requested jurisdiction available to implement any required logic. 
+                    //      Requirements and validations to be confirmed.
                     JToken usOverride = thoughtType["customMetadata"].SelectToken("USOverride");
                     document["AdditionalProperties"]["clauseTypeName"] = usOverride ?? thoughtType?["name"].Value<string>();
 
@@ -204,6 +206,7 @@ namespace Zurich.Connector.App.Services.DataSources
         {
             cdmQueryParameters.Remove("thoughtFilters");
             string clauseType = "";
+            string jurisdiction = "US";
             JArray clauseIds = new JArray();
             string originalKeyword = "";
             List<string> keyword = new List<string>();
@@ -218,6 +221,9 @@ namespace Zurich.Connector.App.Services.DataSources
 
                 else if (key == "clauseTermIDs")
                     clauseIds = (JArray)filter["value"];
+
+                else if (key == "jurisdiction")
+                    jurisdiction = filter["value"].Value<string>();
 
                 else if (key == "keyword")
                 {
@@ -276,6 +282,7 @@ namespace Zurich.Connector.App.Services.DataSources
             cdmQueryParameters.Add("thoughtFilters", thoughtFilters.ToString());
             cdmQueryParameters.Add("keyWord", string.Join(",_", keyword));
             cdmQueryParameters.Add("clauseType", clauseType);
+            cdmQueryParameters.Add("jurisdiction", jurisdiction);
             cdmQueryParameters.Add("clauseTerms", clauseIds.ToString());
             return cdmQueryParameters;
 
