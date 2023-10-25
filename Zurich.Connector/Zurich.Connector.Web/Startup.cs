@@ -31,6 +31,7 @@ using IdentityModel;
 using System.Linq;
 using Zurich.Connector.Web.Extensions;
 using Zurich.Connector.Web.Configuration;
+using Microsoft.AspNetCore.Cors;
 
 namespace Zurich.Connector.Web
 {
@@ -136,6 +137,25 @@ namespace Zurich.Connector.Web
                     // can also be used to control the format of the API version in route templates
                     options.SubstituteApiVersionInUrl = true;
                 });
+
+            var corsOrigins = Configuration.GetSection("AllowedCORSOrigins")?.Get<string[]>();
+            if (corsOrigins != null && corsOrigins.Length > 0)
+            {
+                services.AddCors(options =>
+                {
+                    options.AddPolicy(name: CORSPolicies.DefaultPolicy,
+                        builder =>
+                        {
+                            builder
+                                .SetIsOriginAllowedToAllowWildcardSubdomains()
+                                .WithOrigins(corsOrigins)
+                                .AllowAnyMethod()
+                                .AllowAnyHeader()
+                                .AllowCredentials();
+                        });
+                });
+            }
+
             services.AddPartnerAppAuth(tenantConnectionString, _legalPlatformAuthOptions.TokenIssuer, _oAuthOptions, _microServOptions);
             services.AddAutoMapper(typeof(CommonMappingsProfile), typeof(ServiceMappingRegistrar), typeof(MappingRegistrar));
             services.AddConnectorCosmosServices(_connectorCosmosDbOptions, _connectorCosmosClientOptions);
@@ -176,9 +196,9 @@ namespace Zurich.Connector.Web
             app.UseHttpsRedirection();
 
             app.UseRouting();
-
+            app.UseCors(CORSPolicies.DefaultPolicy);
             app.UseAuthorization();
-            app.UseClaimsTransformation();
+            app.UseClaimsTransformation();        
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapHealthChecks("/health");
