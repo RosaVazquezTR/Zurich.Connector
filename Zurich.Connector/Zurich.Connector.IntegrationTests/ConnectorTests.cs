@@ -141,39 +141,17 @@ namespace Zurich.Connector.IntegrationTests
         [MemberData(nameof(GetConnectorsTestCases), parameters: new object[] { "Search", true })]
         public async Task MakeSearchCalls(ConnectorDocument connector)
         {
-
-
-            // Note:- Workaround to skip HighQ connector check  TRMarketplace (29)
+            // Note:- Workaround to skip HighQ connector check
             //        and MS Graph External Search Connector (49) check (Test user didn't consent ExternalItem.Read therefore will get 403 forbidden on graph side)
             //        and Thought Trace connectors (52, 66 and 68) check for the moment
             // TODO: remove the msgraph exception once the test tenant is setup correctly.
             // TODO: remove the PLCAU id 63 exception once the token is retrieved correctly for this test. 
-            string[] connectorsToSkipList = { "14", "29", "47", "48", "49", "51", "52", "60", "66", "68", "76", "99"};
+            string[] connectorsToSkipList = { "14", "47", "48", "49", "51", "52", "60", "66", "68", "76", "99"};
 
             if (!connectorsToSkipList.Contains(connector.Id))
             {
                 // Arrange
                 var request = $"/api/v1/Connectors/{connector.Id}/Data?Query=*";
-
-                HttpRequestMessage getRequest = new Helper().TokenRequest(request);
-
-                //Act
-                var response = await _client.SendAsync(getRequest);
-
-                // Assert
-                await CheckResponse<SearchObject>(response);
-            }
-        }
-        [Theory]
-        [MemberData(nameof(GetConnectorsTestCases), parameters: new object[] { "Search", true })]
-        public async Task MakeSearchCallsBasicAuth(ConnectorDocument connector)
-        {
-            //At the moment, TRMarketplace (id 29) is the only connector that uses basic auth
-            //Some othere connectors that use that authentication should be tested in here.
-            if (connector.Id == "29")
-            {
-                // Arrange
-                var request = $"/api/v1/Connectors/{connector.Id}/Data?Query=site&text=site&fields=%5B%22name%22%5D";
 
                 HttpRequestMessage getRequest = new Helper().TokenRequest(request);
 

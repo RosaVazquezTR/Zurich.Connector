@@ -22,14 +22,6 @@
         "AuthUrl": "https://login.microsoftonline.com/organizations/oauth2/v2.0/authorize",
         "Scopes": "User.Read Sites.Read.All Presence.Read.All offline_access Calendars.ReadWrite ChatMessage.Send Chat.ReadWrite",
         "PKCE": true
-      },
-      "TRMarketplace": {
-        "Id": "5e95d22f5aa8bf3a953eb9af",
-        "Name": "TRMarketplace",
-        "BaseUrl": "https://marketplace-api-dev.thomsonreuters.com/v2",
-        "Type": "ServiceApp",
-        "AllowAutoRegistration": true,
-        "AuthType": "BasicAuth"
       }
     }
   },
