@@ -38,7 +38,6 @@ namespace Zurich.Connector.Web.Controllers.V1
         /// <param name="docId"></param>
         /// <param name="accessToken"></param>
         /// <returns>Return the document as a FileStreamResult</returns>
-        [Authorize(Policy = Policies.ServiceConnectorPolicy)]
         [EnableCors("MainCORS")]
         [HttpGet("{applicationCode}/{docId}/{accessToken}")]
         public async Task<ActionResult<dynamic>> DocumentDownload(string applicationCode, string docId, string accessToken)
