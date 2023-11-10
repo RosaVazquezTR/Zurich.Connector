@@ -45,13 +45,18 @@ namespace Zurich.Connector.Web.Controllers.V1
             try
             {
                 var httpClient = _httpClientFactory.CreateClient();
-
-                var apiEndpoint = "https://cloudimanage.com/work/api/v2/customers/241/libraries/USERDB/documents/DOCID/download";
-                string database = docId.Split("!")[0];
-                apiEndpoint = apiEndpoint.Replace("DOCID", docId).Replace("USERDB", database);
                 httpClient.DefaultRequestHeaders.Add("X-Auth-Token", accessToken);
 
-                var response = await httpClient.GetAsync(apiEndpoint);
+                var userProfileEndpoint = "https://cloudimanage.com/work/api";
+                var userProfileResponse = await httpClient.GetAsync(userProfileEndpoint);
+                string responseBody = await userProfileResponse.Content.ReadAsStringAsync();
+                var customerId = JObject.Parse(responseBody)["data"]["user"]["customer_id"].ToString();
+
+                var documentDownloadEndpoint = "https://cloudimanage.com/work/api/v2/customers/CUSTOMERID/libraries/USERDB/documents/DOCID/download";
+                string database = docId.Split("!")[0];
+                documentDownloadEndpoint = documentDownloadEndpoint.Replace("DOCID", docId).Replace("USERDB", database).Replace("CUSTOMERID",customerId);
+
+                var response = await httpClient.GetAsync(documentDownloadEndpoint);
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -70,22 +75,29 @@ namespace Zurich.Connector.Web.Controllers.V1
                         // Convert the byte array to a Base64 string
                         base64String = Convert.ToBase64String(pdfBytes);
                     }
-
-                    using (PdfDocument pdfDocument = PdfDocument.Load(documentStream))
+                    try
                     {
-                        if (pdfDocument.PageCount > 0)
+                        using (PdfDocument pdfDocument = PdfDocument.Load(documentStream))
                         {
-                            for (int i = 0; i < pdfDocument.PageCount; ++i)
+                            if (pdfDocument.PageCount > 0)
                             {
-                                text = pdfDocument.GetPdfText(i);
-                                pageText.Add((i + 1).ToString(), text);
-                                
+                                for (int i = 0; i < pdfDocument.PageCount; ++i)
+                                {
+                                    text = pdfDocument.GetPdfText(i);
+                                    pageText.Add((i + 1).ToString(), text);
+
+                                }
                             }
                         }
+                        document.Add("documentContent", pageText);
+                        document.Add("documentBase64", base64String);
                     }
-                    
-                    document.Add("documentContent", pageText);
-                    document.Add("documentBase64", base64String);
+                    catch(Exception ex)
+                    {
+                        pageText.Add("1", "");
+                        document.Add("documentContent", pageText);
+                        document.Add("documentBase64", base64String);
+                    }
                     return new ContentResult
                     {
                         Content = document.ToString(),
