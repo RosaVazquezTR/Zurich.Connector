@@ -238,7 +238,7 @@ namespace Zurich.Connector.App.Services.DataSources
                         }
                         else
                         {
-                            char[] bannedChars = { ':', ';', '(', ')', '{', '}', '/', '"', '>', '<', ',' };
+                            char[] bannedChars = { ':', ';', '(', ')', '{', '}', '/', '"', '>', '<', ',', '$', '?', '!','¿','¡' };
                             string regexPattern = "[" + Regex.Escape(new string(bannedChars)) + "]+\\s*";
 
                             var enclosedTexts = Regex.Matches(originalKeyword, @"\" + (char)34 + @"(.+?)\" + (char)34)
@@ -251,8 +251,8 @@ namespace Zurich.Connector.App.Services.DataSources
                                 keyword.Add(text);
                                 originalKeyword = originalKeyword.Replace(text, String.Empty);
                             }
-                            originalKeyword = Regex.Replace(originalKeyword, regexPattern, " ").Replace('[', ' ').Replace(']', ' ').Trim();
-
+                            originalKeyword = Regex.Replace(originalKeyword, regexPattern, " ").Replace('[', ' ').Replace(']', ' ');
+                            originalKeyword = Regex.Replace(originalKeyword, @"\s+", " ").Trim();
                             if (!String.IsNullOrEmpty(originalKeyword))
                                 keyword.AddRange(originalKeyword.Split(' ').ToList());
                         }
