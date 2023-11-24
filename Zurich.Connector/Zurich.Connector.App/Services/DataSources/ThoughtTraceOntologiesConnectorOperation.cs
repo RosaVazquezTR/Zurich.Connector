@@ -238,7 +238,7 @@ namespace Zurich.Connector.App.Services.DataSources
                         }
                         else
                         {
-                            char[] bannedChars = { ':', ';', '(', ')', '{', '}', '/', '"', '>', '<', ',', '$', '?', '!','¿','¡' };
+                            char[] bannedChars = { ':', ';', '(', ')', '{', '}', '/','\\','"', '>', '<', ',', '$', '?', '!','¿','¡','*','.','_','#'};
                             string regexPattern = "[" + Regex.Escape(new string(bannedChars)) + "]+\\s*";
 
                             var enclosedTexts = Regex.Matches(originalKeyword, @"\" + (char)34 + @"(.+?)\" + (char)34)
