@@ -278,6 +278,14 @@ namespace Zurich.Connector.App.Services.DataSources
                 cdmQueryParameters.Remove("threshold");
             }
 
+            // Format date filters
+            if (cdmQueryParameters.ContainsKey("uploadedOnFilter.from"))
+            {
+                DateTime startDate = DateTime.Now.Date.AddYears(Convert.ToInt32(cdmQueryParameters["uploadedOnFilter.from"]) * -1);
+                string formattedDate = startDate.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ");
+                cdmQueryParameters["uploadedOnFilter.from"] = formattedDate;
+            }
+
             cdmQueryParameters.Remove("Filters");
             cdmQueryParameters.Add("thoughtFilters", thoughtFilters.ToString());
             cdmQueryParameters.Add("keyWord", string.Join(",_", keyword));

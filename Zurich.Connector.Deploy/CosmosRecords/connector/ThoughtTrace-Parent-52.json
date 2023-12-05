@@ -80,16 +80,16 @@
                 "defaultValue": ""
             },
             {
-                "cdmName": "LastModifiedStartDate.filter",
-                "name": "lastModifiedOnFilter.from",
+                "cdmName": "date.from",
+                "name": "uploadedOnFilter.from",
                 "inClause": "Body",
                 "required": false,
                 "type": "string",
                 "defaultValue": ""
             },
             {
-                "cdmName": "LastModifiedEndDate.filter",
-                "name": "lastModifiedOnFilter.to",
+                "cdmName": "date.to",
+                "name": "uploadedOnFilter.to",
                 "inClause": "Body",
                 "required": false,
                 "type": "string",

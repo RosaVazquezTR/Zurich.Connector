@@ -261,6 +261,11 @@ namespace Zurich.Connector.Data.Services
                         throw new RequiredParameterMissingException("Invalid request format. Missing filters object or ClauseTypeID parameter.");
                     }
 
+                    if (queryParameters.ContainsKey("date.from"))
+                    {
+                        logObjectTTRequest.Add("date.from", queryParameters["date.from"]);
+                    }
+
                     if (queryParameters.ContainsKey("threshold"))
                     {
                         logObjectTTRequest.Add("threshold", queryParameters["threshold"]);
