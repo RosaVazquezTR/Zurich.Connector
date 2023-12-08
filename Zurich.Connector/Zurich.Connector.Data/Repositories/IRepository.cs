@@ -17,5 +17,12 @@ namespace Zurich.Connector.Data.Repositories
         /// <param name="body">body to send to the outside party</param>
         /// <returns></returns>
         Task<string> MakeRequest(ApiInformation apiInformation, NameValueCollection parameters, string body);
+
+        /// <summary>
+        /// Makes a request to the outside party api but only for downloading document content
+        /// </summary>
+        /// <param name="apiInformation"></param>
+        /// <returns>A string containing the content of the document divided by page and in base 64</returns>
+        Task<string> DocumentDownloadMakeRequest(ApiInformation apiInformation);
 	}
 }

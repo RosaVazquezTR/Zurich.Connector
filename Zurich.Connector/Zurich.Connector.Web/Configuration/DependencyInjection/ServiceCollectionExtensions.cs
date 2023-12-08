@@ -72,6 +72,7 @@ namespace Microsoft.Extensions.DependencyInjection
 			services.AddScoped<ILegalHomeAccessCheck, LegalHomeAccess>();
             services.AddScoped<IntegrationHubAccessCheck, IntegrationHubAccess>();
             services.AddScoped<IDataExtractionService, DataExtractionService>();
+			services.AddScoped<IDocumentDownloadService, DocumentDownloadService>();
 			services.AddAppConfigServices();
 		}
 

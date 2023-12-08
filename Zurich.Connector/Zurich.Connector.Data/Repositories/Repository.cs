@@ -12,6 +12,9 @@ using System.Web;
 using Zurich.Common.Services;
 using Zurich.Common.Models.FeatureFlags;
 using System.Text.RegularExpressions;
+using Newtonsoft.Json.Linq;
+using System.IO;
+using PdfiumViewer;
 
 namespace Zurich.Connector.Data.Repositories
 {
@@ -46,6 +49,66 @@ namespace Zurich.Connector.Data.Repositories
             return response;
         }
 
+        public async Task<string> DocumentDownloadMakeRequest(ApiInformation apiInformation)
+        {
+            string uri = CreateUri(apiInformation, null);
+            using (var requestMessage = new HttpRequestMessage(HttpMethod.Get, uri))
+            {
+                SetupRequestMessage(apiInformation, requestMessage);
+                var result = await _httpClient.SendAsync(requestMessage);
+                if (result.IsSuccessStatusCode)
+                {
+                    var documentStream = await result.Content.ReadAsStreamAsync();
+                    string text = "";
+                    string base64String = "";
+                    JObject document = new JObject();
+                    JObject pageText = new JObject();
+
+                    using (var memoryStream = new MemoryStream())
+                    {
+                        await documentStream.CopyToAsync(memoryStream);
+                        byte[] pdfBytes = memoryStream.ToArray();
+
+                        // Convert the byte array to a Base64 string
+                        base64String = Convert.ToBase64String(pdfBytes);
+                    }
+                    try
+                    {
+                        using (PdfDocument pdfDocument = PdfDocument.Load(documentStream))
+                        {
+                            if (pdfDocument.PageCount > 0)
+                            {
+                                for (int i = 0; i < pdfDocument.PageCount; ++i)
+                                {
+                                    text = pdfDocument.GetPdfText(i);
+                                    pageText.Add((i + 1).ToString(), text);
+
+                                }
+                            }
+                        }
+                        document.Add("documentContent", pageText);
+                        document.Add("documentBase64", base64String);
+                    }
+                    catch (Exception ex)
+                    {
+                        pageText.Add("1", "");
+                        document.Add("documentContent", pageText);
+                        document.Add("documentBase64", base64String);
+                    }
+                    return document.ToString();
+                }
+                else if (result.StatusCode == System.Net.HttpStatusCode.NotFound)
+                {
+                    _logger.LogError($"{result.StatusCode} - Unable to find specified document from {apiInformation.AppCode}: {uri}");
+                    throw new KeyNotFoundException($"Unable to find specified document from {apiInformation.AppCode}");
+                }
+                else
+                {
+                    _logger.LogError($"{result.StatusCode} Non Successful response from {apiInformation.AppCode}: {requestMessage.RequestUri.Host}");
+                    throw new ApplicationException($"Non Successful Response from {apiInformation.AppCode}");
+                }
+            }
+        }
 
         public async Task<string> Get(ApiInformation apiInformation, NameValueCollection parameters)
         {
