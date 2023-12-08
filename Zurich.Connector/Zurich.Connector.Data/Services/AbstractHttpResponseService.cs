@@ -53,7 +53,6 @@ namespace Zurich.Connector.Data.Services
                 Dictionary<string, string> mappingDictionary = mappings.GetMappingDict();
 
                 IHDocumentStoragePermissionsRequest iHDocumentStoragePermissionsRequest = new IHDocumentStoragePermissionsRequest();
-                iHDocumentStoragePermissionsRequest.appCode = "iManageServiceApp";
 
                 Dictionary<string, string> permissionsDictionary = new Dictionary<string, string>();
                 IHDocumentStoragePermissionsResponse permissions = new IHDocumentStoragePermissionsResponse();
