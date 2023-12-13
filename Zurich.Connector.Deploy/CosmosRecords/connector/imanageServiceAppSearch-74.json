@@ -17,14 +17,6 @@
     "method": "POST",
     "parameters": [
       {
-        "cdmName": "Query",
-        "name": "filters.anywhere",
-        "inClause": "Body",
-        "required": false,
-        "type": "string",
-        "defaultValue": ""
-      },
-      {
         "cdmName": "ResultSize",
         "name": "limit",
         "inClause": "Body",

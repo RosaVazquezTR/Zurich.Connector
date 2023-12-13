@@ -16,14 +16,6 @@
     "method": "GET",
     "parameters": [
       {
-        "cdmName": "Query",
-        "name": "anywhere",
-        "inClause": "Query",
-        "required": false,
-        "type": "string",
-        "defaultValue": ""
-      },
-      {
         "cdmName": "ResultSize",
         "name": "limit",
         "inClause": "Query",
