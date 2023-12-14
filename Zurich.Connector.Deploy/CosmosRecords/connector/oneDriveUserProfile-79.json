@@ -1,0 +1,64 @@
+{
+    "id": "79",
+    "partitionkey": "ConnectorList",
+	"alias": "msgraph.userprofile.onedrive",
+    "info": {
+        "title": "User's OneDrive information",
+        "description": "Get user's OneDrive information",
+        "entityType": "UserProfile",
+        "dataSourceId": "13",
+        "version": "1.0"
+    },
+    "preRelease": true,
+    "request": {
+        "endpointPath": "/v1.0/me/drive",
+        "method": "GET",
+        "parameters": [],
+        "sorting": {
+            "properties": []
+        }
+    },
+    "response": {
+        "schema": {
+            "properties": {}
+        },
+		"type": "JSON"
+    },
+    "resultLocation": "",
+    "filters": [],
+    "cdmMapping": {
+        "structured": [
+            {
+                "name": "OwnerName",
+                "type": "string",
+                "responseElement": "owner.user.displayName",
+                "_comment": ""
+            },
+            {
+                "name": "OwnerId",
+                "type": "string",
+                "responseElement": "owner.user.id",
+                "_comment": ""
+            },
+            {
+                "name": "OwnerEmail",
+                "type": "string",
+                "responseElement": "owner.user.email",
+                "_comment": ""
+            },
+            {
+                "name": "DriveId",
+                "type": "string",
+                "responseElement": "id",
+                "_comment": ""
+            },
+            {
+                "name": "DriveUrl",
+                "type": "string",
+                "responseElement": "webUrl",
+                "_comment": ""
+            }
+        ],
+        "unstructured": []
+    }
+}

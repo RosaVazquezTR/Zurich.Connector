@@ -1,0 +1,195 @@
+{
+  "id": "80",
+  "partitionkey": "ConnectorList",
+  "alias": "msgraph.search.onedrive",
+  "info": {
+      "title": "Get Search",
+      "description": "Get Search Results from OneDrive",
+      "entityType": "Search",
+      "dataSourceId": "13",
+      "version": "1.0",
+      "subType": "Parent"
+  },
+  "preRelease": true,
+  "request": {
+      "endpointPath": "/v1.0/search/microsoft.graph.query",
+      "method": "POST",
+      "parameters": [
+          {
+              "cdmName": "Query",
+              "name": "requests.[].query.queryString",
+              "inClause": "Body",
+              "required": true,
+              "type": "string",
+              "defaultValue": "* path:\"{79.webUrl}\""
+          },
+          {
+              "cdmName": "EntityType.default",
+              "name": "requests.[].entityTypes.[]",
+              "inClause": "Body",
+              "required": false,
+              "type": "string",
+              "defaultValue": "driveItem"
+          },
+          {
+              "cdmName": "Fields.default",
+              "name": "requests.[].fields.[]",
+              "inClause": "Body",
+              "required": false,
+              "type": "string",
+              "defaultValue": "Name,CreatedDateTime,LastModifiedDateTime,LastModifiedBy,WebUrl,ParentReference,CreatedBy"
+          },
+          {
+              "cdmName": "ResultSize",
+              "name": "requests.[].size",
+              "inClause": "Body",
+              "required": true,
+              "type": "string",
+              "defaultValue": "25"
+          },
+          {
+              "cdmName": "Offset",
+              "name": "requests.[].from",
+              "inClause": "Body",
+              "required": true,
+              "type": "string",
+              "defaultValue": "0"
+          },
+          {
+              "cdmName": "SortName.default",
+              "name": "requests.[].sortProperties.[].name",
+              "inClause": "Body",
+              "required": true,
+              "type": "string",
+              "defaultValue": "lastModifiedDateTime"
+          },
+          {
+              "cdmName": "SortDescending.default",
+              "name": "requests.[].sortProperties.[].isDescending",
+              "inClause": "Body",
+              "required": true,
+              "type": "string",
+              "defaultValue": "false"
+          },
+          {
+              "cdmName": "TrimDuplicates",
+              "name": "requests.[].trimDuplicates",
+              "inClause": "Body",
+              "required": true,
+              "type": "string",
+              "defaultValue": "true"
+          }
+      ],
+      "sorting": {
+          "properties": []
+      }
+  },
+  "response": {
+      "type": "JSON"
+  },
+  "filters": [
+      {
+          "name": "LastModifiedStartDate",
+          "description": "The end date for the Modified date",
+          "isMultiselect": "false",
+          "requestParameter": "LastModifiedStartDate"
+      },
+      {
+          "name": "LastModifiedEndDate",
+          "description": "The end date for the Modified date",
+          "isMultiselect": "false",
+          "requestParameter": "LastModifiedEndDate"
+      },
+      {
+          "name": "Type",
+          "description": "The allowed file types for MSGraph",
+          "isMultiselect": "true",
+          "requestParameter": "fileType",
+          "filterlist": [
+              {
+                  "name": "Word",
+                  "id": "docx,doc"
+              },
+              {
+                  "name": "PDF",
+                  "id": "pdf"
+              },
+              {
+                  "name": "PowerPoint",
+                  "id": "pps,ppt,pptx"
+              },
+              {
+                  "name": "Excel",
+                  "id": "xlr,xls,xlsx"
+              },
+              {
+                  "name": "Access",
+                  "id": "accdb"
+              },
+              {
+                  "name": "Audio",
+                  "id": "aif,iff,m3u,m4a,mid,mp3,mpa,wav,wma"
+              },
+              {
+                  "name": "CSV",
+                  "id": "csv"
+              },
+              {
+                  "name": "Mail",
+                  "id": "msg,eml"
+              },
+              {
+                  "name": "OneNote",
+                  "id": "one"
+              },
+              {
+                  "name": "Text",
+                  "id": "odt,pages,rtf,tex,txt,wpd,wps"
+              },
+              {
+                  "name": "Video",
+                  "id": "3g2,3gp,afg,asf,avi,avchd,flv,m4v,mov,mp4,mpg,rm,srt,swf,vob,wmv"
+              },
+              {
+                  "name": "XML",
+                  "id": "xml"
+              }
+          ]
+      }
+  ],
+  "resultLocation": "value.hitsContainers.[]",
+  "cdmMapping": {
+      "structured": [
+          {
+              "name": "Count",
+              "type": "short",
+              "responseElement": "total",
+              "_comment": ""
+          },
+          {
+              "name": "SourceDirectoryUrl",
+              "type": "interpolationString",
+              "responseElement": "https://www.office.com/search/files?q=(%Query)",
+              "_comment": ""
+          },
+          {
+              "name": "Documents",
+              "type": "object",
+              "responseElement": "{15}",
+              "_comment": ""
+          }
+      ],
+      "unstructured": []
+  },
+  "advancedSearchSyntax": {
+      "operators": {
+          "and": "AND",
+          "or": "OR",
+          "textualOcurrence": "\"",
+          "not": "NOT ",
+          "wildcard": "*",
+          "proximity": "NEAR(n)",
+          "termGrouping": "("
+      }
+  }
+}
