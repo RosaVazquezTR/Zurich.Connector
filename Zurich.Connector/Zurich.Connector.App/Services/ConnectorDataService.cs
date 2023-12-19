@@ -191,6 +191,10 @@ namespace Zurich.Connector.Data.Services
                         queryParameters["resultSize"] = CalculateOffset(queryParameters).ToString();
                     }
 
+                    // Validate if the connector is Msgraph for OneDrive only to obtain user's url
+                    if (connectorDocument.Id == "80")
+                        queryParameters["Query"] = await GetAdditionalConnectorData(connectorModel, queryParameters["Query"]);
+
                     NameValueCollection mappedQueryParameters = MapQueryParametersFromDB(queryParameters, connectorModel);
                     Dictionary<string, string> headerParameters = await _dataExtractionService.ExtractDataSource(mappedQueryParameters, queryParameters, hostname, connectorDocument);
 
@@ -642,6 +646,27 @@ namespace Zurich.Connector.Data.Services
             }
 
             return documents;
+        }
+
+        /// <summary>
+        /// At this point, it will only add the user's OneDrive path to the query
+        /// </summary>
+        /// <param name="connector">The data connector</param>
+        /// <param name="query">The search query</param>
+        /// <returns>The search query with the user's OneDrive path</returns>
+        private async Task<string> GetAdditionalConnectorData(ConnectorModel connector, string query)
+        {
+            var dataSourceOperationsService = _dataSourceOperationsFactory.GetDataSourceOperationsService(connector?.DataSource?.AppCode);
+            string urlPath = "";
+            if (dataSourceOperationsService != null)
+                urlPath = await dataSourceOperationsService.SetItemLink(connector.Info.EntityType, query, connector?.DataSource?.AppCode, connector.HostName);
+            else
+                _logger.LogInformation("No data source operations service found for {appCode}", connector?.DataSource?.AppCode ?? "");
+            if (!string.IsNullOrWhiteSpace(urlPath))
+            {
+                query += $" (path:{urlPath})";
+            }
+            return query;
         }
     }
 }

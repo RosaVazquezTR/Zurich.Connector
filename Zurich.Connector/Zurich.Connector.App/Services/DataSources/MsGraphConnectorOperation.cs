@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using AutoMapper;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
 using System;
@@ -10,6 +11,7 @@ using Zurich.Connector.Data;
 using Zurich.Connector.Data.DataMap;
 using Zurich.Connector.Data.Factories;
 using Zurich.Connector.Data.Model;
+using Zurich.Connector.Data.Repositories.CosmosDocuments;
 
 namespace Zurich.Connector.App.Services.DataSources
 {
@@ -18,12 +20,16 @@ namespace Zurich.Connector.App.Services.DataSources
         private readonly ILogger _logger;
         private readonly IDataMapping _dataMapping;
         private readonly IConfiguration _configuration;
+        private readonly ICosmosService _cosmosService;
+        private readonly IMapper _mapper;
 
-        public MsGraphConnectorOperation(ILogger<IConnectorDataSourceOperations> logger, IDataMappingFactory dataMappingFactory, IConfiguration configuration)
+        public MsGraphConnectorOperation(ILogger<IConnectorDataSourceOperations> logger, IDataMappingFactory dataMappingFactory, IConfiguration configuration, ICosmosService cosmosService, IMapper mapper)
         {
             _logger = logger;
             _dataMapping = dataMappingFactory.GetImplementation(AuthType.OAuth2.ToString());
             _configuration = configuration;
+            _cosmosService = cosmosService;
+            _mapper = mapper;
         }
 
         public bool IsCompatible(string appCode)
@@ -61,6 +67,10 @@ namespace Zurich.Connector.App.Services.DataSources
                                     doc[StructuredCDMProperties.WebUrl] = UpdateWebUrl(doc);
                                 }
                             }
+                        }
+                        else if (item is string)
+                        {
+                            item = await GetOneDriveUrl(appCode, hostName);
                         }
                         break;
                 }
@@ -155,6 +165,27 @@ namespace Zurich.Connector.App.Services.DataSources
                                             $"/_layouts/15/Doc.aspx?sourcedoc=%7B{listItemUniqueId}%7D&file={title}.{extension}&action=default&mobileredirect=true&DefaultItemOpen=1";
             }
             return returnUrl;
+        }
+
+        /// <summary>
+        /// Gets the user's OneDrive url from OneDrive's user profile
+        /// </summary>
+        /// <param name="appCode">The data source app code</param>
+        /// <param name="hostName">The data source host name</param>
+        private async Task<string> GetOneDriveUrl(string appCode, string hostName)
+        {
+            ConnectorModel connectorModel = null;
+            if (appCode == KnownDataSources.msGraph)
+            {
+                // 79 = OneDrive user info
+                connectorModel = await _cosmosService.GetConnector("79", true);
+            }
+            
+            ConnectorDocument connectorDocument = _mapper.Map<ConnectorDocument>(connectorModel);
+            // Make api call to get the information for the webUrl variable
+            connectorDocument.HostName = hostName;
+            JToken userProfileResponse = await _dataMapping.GetAndMapResults<JToken>(connectorDocument, string.Empty, null, null, null);
+            return userProfileResponse["webUrl"].Value<string>();
         }
     }
 }

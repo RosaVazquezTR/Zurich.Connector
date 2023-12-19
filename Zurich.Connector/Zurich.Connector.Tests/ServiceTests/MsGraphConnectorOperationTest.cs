@@ -1,4 +1,5 @@
-﻿using FluentAssertions;
+﻿using AutoMapper;
+using FluentAssertions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -7,6 +8,7 @@ using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Zurich.Connector.App.Services;
 using Zurich.Connector.App.Services.DataSources;
 using Zurich.Connector.Data;
 using Zurich.Connector.Data.DataMap;
@@ -22,6 +24,8 @@ namespace Zurich.Connector.Tests.ServiceTests
         private Mock<IDataMappingFactory> _mockDataMappingFactory;
         private IConfiguration _mockConfiguration;
         private string _msAppCode = KnownDataSources.msGraph;
+        private Mock<ICosmosService> _mockCosmosService;
+        private Mock<IMapper> _mockMapper;
 
         #region Data Setup
         internal static IEnumerable<dynamic> HappyPath()
@@ -157,11 +161,13 @@ namespace Zurich.Connector.Tests.ServiceTests
             _mockLogger = new Mock<ILogger<PracticalLawConnectorOperation>>();
             _mockDataMapping = new Mock<IDataMapping>();
             _mockDataMappingFactory = new Mock<IDataMappingFactory>();
+            _mockCosmosService = new Mock<ICosmosService>();
+            _mockMapper = new Mock<IMapper>();
         }
 
         public MsGraphConnectorOperation GetService()
         {
-            return new MsGraphConnectorOperation(_mockLogger.Object, _mockDataMappingFactory.Object, _mockConfiguration);
+            return new MsGraphConnectorOperation(_mockLogger.Object, _mockDataMappingFactory.Object, _mockConfiguration, _mockCosmosService.Object, _mockMapper.Object);
         }
 
         [TestMethod]
