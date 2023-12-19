@@ -104,6 +104,7 @@ stages:
                   azureAdClientSecret: $(azureAdClientSecret)
                   databaseName: ${{ variables.databaseName }}
                   databaseServerName: ${{ variables.databaseServerName }}
+                  defaultCapacity: ${{ variables.defaultCapacity }}
                   developerActionGroupName: ${{ variables.developerActionGroupName }}
                   developerEmailAddress: ${{ variables.developerEmailAddress }}
                   developerEmailName: ${{ variables.developerEmailName }}
@@ -124,6 +125,8 @@ stages:
                   ltioL2ActionGroupName: ${{variables.ltioL2ActionGroupName}}
                   ltioL2EmailAddress: ${{variables.ltioL2EmailAddress}}
                   ltioL2EmailName: ${{variables.ltioL2EmailName}}
+                  minimumCapacity: ${{ variables.minimumCapacity }}
+                  maximumCapacity: ${{ variables.maximumCapacity }}
                   notificationEmailGroup: ${{ variables.notificationEmailGroup }}
                   practicalLawSecret: $(practicalLawSecret)
                   resourceGroup: ${{ variables.resourceGroup }}
@@ -198,7 +201,7 @@ stages:
             steps:
               - checkout: self
               - checkout: ZurichDeploy
-              - template: Templates\ZurichDeploy-FunctionDeploy.yml@ZurichDeploy
+              - template: Templates\V3\ZurichDeploy-FunctionDeploy.yml@ZurichDeploy
                 parameters:
                     allowedIps: "[]"
                     allowedSubnets: ${{ variables.functionSubnets }}
@@ -208,6 +211,7 @@ stages:
                     armFolder: ${{ variables.deployArmTemplates }}
                     cosmosName: ${{ variables.connectorCosmosName }}
                     cosmosResourceGroup: ${{ variables.resourceGroup }}
+                    defaultCapacity: ${{ variables.defaultCapacity }}
                     deployScriptFolder: ${{ variables.deployScriptFolder }}
                     environmentName: ${{ variables.environmentName }}
                     functionArmTemplate: ${{ variables.functionArmTemplate }}
@@ -217,6 +221,8 @@ stages:
                     functionStorageName: ${{ variables.functionStorageName }}
                     functionVersion: ${{ variables.functionVersion }}
                     keyVault: ${{ variables.keyVault }}
+                    minimumCapacity: ${{ variables.minimumCapacity }}
+                    maximumCapacity: ${{ variables.maximumCapacity }}
                     monitorAlertGroups: ${{ variables.monitorAlertGroups }}
                     monitorAlertPrefix: ${{ variables.monitorAlertPrefix }}
                     monitoringResourceGroup: ${{ variables.monitoringResourceGroup }}

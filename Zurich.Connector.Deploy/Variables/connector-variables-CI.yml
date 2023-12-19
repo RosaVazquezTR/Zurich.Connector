@@ -13,6 +13,8 @@ variables:
     value: '["connector-function-CI-backend", "connector-webApi-CI-Backend", "hqh-VM-RelMgmt-backend", "lh-VM-CI-backend"]'
   - name: connectorServiceFQND
     value: "connectorswebapici.azurewebsites.net"
+  - name: defaultCapacity
+    value: '1'
   - name: functionAppServicePlanSku
     value: '{"name": "P1v2", "size": "P1v2", "tier": "PremiumV2", "family": "Pv2", "capacity": 1}'
   - name: functionSubnets
@@ -21,6 +23,10 @@ variables:
     value: "@('Administrators','Developers')"
   - name: keyVaultSubnets
     value: "@('connector-function-CI-backend', 'connector-webApi-CI-Backend','hqh-VM-RelMgmt-backend', 'lh-VM-CI-backend')"
+  - name: minimumCapacity
+    value: '1'
+  - name: maximumCapacity
+    value: '2'
   - name: resourceGroup
     value: 'centralus-connectors-ci'
   - name: subnetConnectorBackend

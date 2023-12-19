@@ -15,6 +15,8 @@ parameters:
     type: string
   - name: databaseServerName
     type: string
+  - name: defaultCapacity
+    type: string
   - name: developerActionGroupName
     type: string
   - name: developerEmailAddress
@@ -54,6 +56,10 @@ parameters:
   - name: ltioL2EmailAddress
     type: string
   - name: ltioL2EmailName
+    type: string
+  - name: minimumCapacity
+    type: string
+  - name: maximumCapacity
     type: string
   - name: notificationEmailGroup
     type: string
@@ -155,13 +161,16 @@ steps:
 
         Write-Host  "##vso[task.setvariable variable=apimIp;isSecret=false]$apimIp"
       azurePowerShellVersion: 'LatestVersion'
-  - template: Templates\ZurichDeploy-AzureAppService.yml@ZurichDeploy
+  - template: Templates\V4\ZurichDeploy-AzureAppService.yml@ZurichDeploy
     parameters:
       appInsightsName: ${{ parameters.appInsightsName }}
       appGatewayIp: $(apimIp)
       environmentName: ${{ parameters.environmentName }}
       appServiceName: ${{ parameters.connectorServiceName }}
       appServiceSubnet: ${{ parameters.subnetConnectorBackend}}
+      defaultCapacity: ${{ parameters.defaultCapacity}}
+      minimumCapacity: ${{ parameters.minimumCapacity}}
+      maximumCapacity: ${{ parameters.maximumCapacity}}
       resourceGroup: ${{ parameters.resourceGroup }}
       resourceLocation: '${{ parameters.resourceLocation }}'
       subnetPreFix: ${{ parameters.subnetPrefix }}
