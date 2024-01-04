@@ -32,6 +32,7 @@ using System.Linq;
 using Zurich.Connector.Web.Extensions;
 using Zurich.Connector.Web.Configuration;
 using Microsoft.AspNetCore.Cors;
+using Zurich.Connector.Data.Configuration;
 
 namespace Zurich.Connector.Web
 {
@@ -163,6 +164,10 @@ namespace Zurich.Connector.Web
             services.AddOAuthHttpClient(Configuration.GetValue<string>(AppSettings.OAuthUrl));
             services.AddAppConfigServices(Configuration.GetValue<string>("splitIOApiKey"));
             services.AddInternalAPIHttpClient(HttpClientNames.IHDocumentStorage, Configuration.GetValue<string>("IHDocumentStorageBaseUrl"));
+
+            var license = Configuration.GetValue<string>("AsposeLicence");
+            AsposeLicenceProvider.SetAsposeWordsLicense(license);
+            AsposeLicenceProvider.SetAsposePDFLicense(license);
 
             AddAuthServices(services, _legalPlatformAuthOptions, _ciamAuthOptions);
         }

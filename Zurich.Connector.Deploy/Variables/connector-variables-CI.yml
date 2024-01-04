@@ -37,4 +37,3 @@ variables:
     value: 'connector'
   - name: swaggerEndpoint
     value: 'https://connectorswebapici.azurewebsites.net/swagger/v1/swagger.json'
-    

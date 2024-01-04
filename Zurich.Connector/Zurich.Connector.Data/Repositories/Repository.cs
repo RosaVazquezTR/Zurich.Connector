@@ -15,13 +15,15 @@ using System.Text.RegularExpressions;
 using Newtonsoft.Json.Linq;
 using System.IO;
 using PdfiumViewer;
+using Zurich.Connector.Data.Utils;
+using Zurich.Connector.Data.Factories;
 
 namespace Zurich.Connector.Data.Repositories
 {
     public class Repository : IRepository
-	{
-		private readonly HttpClient _httpClient;
-		private readonly ILogger<Repository> _logger;
+    {
+        private readonly HttpClient _httpClient;
+        private readonly ILogger<Repository> _logger;
         private readonly IAppConfigService _appConfigService;
 
         public Repository(HttpClient httpClient, ILogger<Repository> logger, IAppConfigService appConfigService)
@@ -64,6 +66,9 @@ namespace Zurich.Connector.Data.Repositories
                     JObject document = new JObject();
                     JObject pageText = new JObject();
 
+                    var fileExtension = FileFormatParser.FindDocumentTypeFromStream(documentStream);
+                    var asposeInstance = AsposeServiceFactory.GetAsposeImplementation(FileFormatParser.GetFileFormat(fileExtension));
+
                     using (var memoryStream = new MemoryStream())
                     {
                         await documentStream.CopyToAsync(memoryStream);
@@ -74,18 +79,11 @@ namespace Zurich.Connector.Data.Repositories
                     }
                     try
                     {
-                        using (PdfDocument pdfDocument = PdfDocument.Load(documentStream))
+                        using (documentStream)
                         {
-                            if (pdfDocument.PageCount > 0)
-                            {
-                                for (int i = 0; i < pdfDocument.PageCount; ++i)
-                                {
-                                    text = pdfDocument.GetPdfText(i);
-                                    pageText.Add((i + 1).ToString(), text);
-
-                                }
-                            }
+                            pageText = asposeInstance.CreateJObject(documentStream);
                         }
+                        
                         document.Add("documentContent", pageText);
                         document.Add("documentBase64", base64String);
                     }
@@ -107,7 +105,7 @@ namespace Zurich.Connector.Data.Repositories
                     _logger.LogError($"{result.StatusCode} Non Successful response from {apiInformation.AppCode}: {requestMessage.RequestUri.Host}");
                     throw new ApplicationException($"Non Successful Response from {apiInformation.AppCode}");
                 }
-            }
+            }          
         }
 
         public async Task<string> Get(ApiInformation apiInformation, NameValueCollection parameters)
@@ -123,7 +121,7 @@ namespace Zurich.Connector.Data.Repositories
         }
 
         public async Task<string> Post(ApiInformation apiInformation, NameValueCollection parameters, string postBody)
-		{
+        {
             string uri = CreateUri(apiInformation, parameters);
 
             using (var requestMessage = new HttpRequestMessage(HttpMethod.Post, uri))
@@ -163,12 +161,12 @@ namespace Zurich.Connector.Data.Repositories
             if (paramCollection.AllKeys.Contains("isFilterPlural"))
             {
                 string[] strParamArray = paramStr.Split('&');
-                
+
 
                 for (int s = 0; s < strParamArray.Length; s++)
                 {
                     if (strParamArray[s].Contains("%2b"))
-                        strParamArray[s]= strParamArray[s].Replace("%2b", "+");
+                        strParamArray[s] = strParamArray[s].Replace("%2b", "+");
 
                     if (strParamArray[s].Contains("%2c") && !strParamArray[s].Contains("searchTerm"))
                     {
@@ -201,17 +199,17 @@ namespace Zurich.Connector.Data.Repositories
                 {
                     requestMessage.Headers.Add(apiInformation.AuthHeader, apiInformation.Token.AccessToken);
                 }
-			}
-			requestMessage.Headers.Add("accept", "application/json");
+            }
+            requestMessage.Headers.Add("accept", "application/json");
 
-           if (apiInformation.Headers?.Count > 0)
-           {
+            if (apiInformation.Headers?.Count > 0)
+            {
                 foreach (var header in apiInformation.Headers.Keys)
                 {
                     requestMessage.Headers.Add(header, apiInformation.Headers[header]);
                 }
-           }
-		}
+            }
+        }
 
         private async Task<string> RetrieveResponse(ApiInformation apiInformation, HttpRequestMessage requestMessage)
         {
@@ -238,5 +236,5 @@ namespace Zurich.Connector.Data.Repositories
                 throw new ApplicationException($"Non Successful Response from {apiInformation.AppCode}");
             }
         }
-	}
+    }
 }

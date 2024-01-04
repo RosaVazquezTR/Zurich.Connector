@@ -149,6 +149,7 @@ stages:
                   vnetResourceGroup: ${{ variables.vnetResourceGroup }}
                   webDnsServer: ${{ variables.webDnsServer }}
                   westlawUKSecret: $(westlawUKSecret)
+                  asposeLicence: ${{ variables.asposeLicence }}
 
     - deployment: Connector
       environment: QA

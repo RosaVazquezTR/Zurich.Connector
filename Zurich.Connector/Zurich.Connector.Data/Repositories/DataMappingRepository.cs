@@ -82,7 +82,7 @@ namespace Zurich.Connector.Data.Repositories
                 Id = appMapping.Id,
                 AppCode = appMapping.AppCode,
                 AuthType = appMapping.Auth.Type,
-                DataType = (DataType)Enum.Parse(typeof(DataType), endpointMap.Name, true),
+                DataType = (DataType)System.Enum.Parse(typeof(DataType), endpointMap.Name, true),
                 Api = new DataMappingApiRequest() { Url = endpointMap.Api.Path, MethodType = endpointMap.Api.MethodType, AuthHeader = appMapping.Auth.OAuth?.AuthHeader },
                 Mapping = endpointMap.Mapping,
                 ResultLocation = endpointMap.ResultLocation
