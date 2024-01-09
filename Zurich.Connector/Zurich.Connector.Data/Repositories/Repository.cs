@@ -61,31 +61,18 @@ namespace Zurich.Connector.Data.Repositories
                 if (result.IsSuccessStatusCode)
                 {
                     var documentStream = await result.Content.ReadAsStreamAsync();
-                    string text = "";
                     string base64String = "";
                     JObject document = new JObject();
                     JObject pageText = new JObject();
-
                     var fileExtension = FileFormatParser.FindDocumentTypeFromStream(documentStream);
                     var asposeInstance = AsposeServiceFactory.GetAsposeImplementation(FileFormatParser.GetFileFormat(fileExtension));
-
-                    using (var memoryStream = new MemoryStream())
-                    {
-                        await documentStream.CopyToAsync(memoryStream);
-                        byte[] pdfBytes = memoryStream.ToArray();
-
-                        // Convert the byte array to a Base64 string
-                        base64String = Convert.ToBase64String(pdfBytes);
-                    }
+       
                     try
                     {
                         using (documentStream)
                         {
-                            pageText = asposeInstance.CreateJObject(documentStream);
+                            document = asposeInstance.CreateJObject(documentStream);
                         }
-                        
-                        document.Add("documentContent", pageText);
-                        document.Add("documentBase64", base64String);
                     }
                     catch (Exception ex)
                     {

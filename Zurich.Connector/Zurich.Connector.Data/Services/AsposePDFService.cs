@@ -20,6 +20,7 @@ namespace Zurich.Connector.Data.Services
 
         public JObject CreateJObject(Stream documentStream)
         {
+            JObject documentObject = new JObject();
             Document document = new Document(documentStream);
             JObject pageText = new JObject();
             
@@ -36,7 +37,14 @@ namespace Zurich.Connector.Data.Services
                 }
             }
 
-            return pageText;
+            MemoryStream pdfStream = new MemoryStream();
+            document.Save(pdfStream, SaveFormat.Pdf);
+            byte[] pdfBytes = pdfStream.ToArray();
+            string base64String = Convert.ToBase64String(pdfBytes);
+            documentObject.Add("documentContent", pageText);
+            documentObject.Add("documentBase64", base64String);
+
+            return documentObject;
         }
     }
 }
