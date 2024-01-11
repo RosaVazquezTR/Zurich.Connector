@@ -60,21 +60,30 @@ namespace Zurich.Connector.Data.Repositories
                 var result = await _httpClient.SendAsync(requestMessage);
                 if (result.IsSuccessStatusCode)
                 {
+                    string[] supportedFormats = { "PDF", "DOC", "DOCX", "RTF" };
                     var documentStream = await result.Content.ReadAsStreamAsync();
                     string base64String = "";
                     JObject document = new JObject();
                     JObject pageText = new JObject();
                     var fileExtension = FileFormatParser.FindDocumentTypeFromStream(documentStream);
-                    var asposeInstance = AsposeServiceFactory.GetAsposeImplementation(FileFormatParser.GetFileFormat(fileExtension));
-       
-                    try
+                    if (Array.Exists(supportedFormats, format => format.Equals(fileExtension, StringComparison.OrdinalIgnoreCase)))
                     {
-                        using (documentStream)
+                        try
                         {
-                            document = asposeInstance.CreateJObject(documentStream);
+                            var asposeInstance = AsposeServiceFactory.GetAsposeImplementation(FileFormatParser.GetFileFormat(fileExtension));
+                            using (documentStream)
+                            {
+                                document = asposeInstance.CreateJObject(documentStream);
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            pageText.Add("1", "");
+                            document.Add("documentContent", pageText);
+                            document.Add("documentBase64", base64String);
                         }
                     }
-                    catch (Exception ex)
+                    else
                     {
                         pageText.Add("1", "");
                         document.Add("documentContent", pageText);

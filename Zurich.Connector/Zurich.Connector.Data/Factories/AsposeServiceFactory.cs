@@ -19,7 +19,7 @@ namespace Zurich.Connector.Data.Factories
             {
                 case AsposeFileFormat.Pdf:
                     return new AsposePDFService();
-                case AsposeFileFormat.Docx: case AsposeFileFormat.Doc:
+                case AsposeFileFormat.Docx: case AsposeFileFormat.Doc: case AsposeFileFormat.Rtf:
                     return new AsposeWordService();
                 default:
                     throw new NotSupportedException($"{fileFormat} format is not supported!");
