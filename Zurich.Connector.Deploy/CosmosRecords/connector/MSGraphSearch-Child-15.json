@@ -70,6 +70,12 @@
           "type": "string",
           "responseElement": "resource.parentReference.sharepointIds.listItemUniqueId",
           "_comment": ""
+        },
+        {
+          "name": "driveId",
+          "type": "string",
+          "responseElement": "resource.parentReference.driveId",
+          "_comment": ""
         }
       ]
     }

@@ -56,12 +56,14 @@ namespace Zurich.Connector.App.Services
         public async Task<string> GetDocumentContent(string connectorId, string docId)
         {
             string documentContent = "";
+            string dataBaseId = "";
             List<DataSourceInformation> availableRegistrations;
-            string dataBaseId = docId.Split("!")[0];
-            Dictionary<string, string> parameters = new Dictionary<string, string>
+            // This dictionary is not really being used, but _dataExtractionService.ExtractDataSource needs queryParameters not null to work
+            // We don't need queryParameters for any document content call, so I considered better to send this parameters instead of modifying ExtractDataSource
+            Dictionary<string, string> parameters = new()
             {
-                { "docId", docId },
-                { "dbId", dataBaseId }
+                { "dataBaseId", dataBaseId },
+                { "docId", docId }
             };
 
             ConnectorModel connectorModel = await _dataMappingService.RetrieveProductInformationMap(connectorId, null, false);
@@ -74,7 +76,7 @@ namespace Zurich.Connector.App.Services
             if (availableRegistrations?.Count > 0)
             {
                 var token = await _dataMapping.RetrieveToken(connectorModel.DataSource.AppCode);
-                // This function is here just to obtain the customer_id for the UrlPath
+                // This function is here just to obtain the customer_id for the UrlPath for iManage connector
                 Dictionary<string, string> headerParameters = await _dataExtractionService.ExtractDataSource(null, parameters, null, connectorDocument);
                 if (!string.IsNullOrEmpty(token?.AccessToken))
                 {
@@ -93,8 +95,23 @@ namespace Zurich.Connector.App.Services
 
                     // TODO: If we want to add this feature for other connectors we should create a new connector definition for each data source that will
                     // support document download and have the urlpath defined there
-                    apiInfo.UrlPath = apiInfo.UrlPath.Replace("/documents", $"/libraries/{dataBaseId}/documents/{docId}/download");
-
+                    switch (connectorId)
+                    {
+                        case "44":
+                            dataBaseId = docId.Split("!")[0];
+                            apiInfo.UrlPath = apiInfo.UrlPath.Replace("/documents", $"/libraries/{dataBaseId}/documents/{docId}/download");
+                            break;
+                        case "14":
+                            dataBaseId = docId.Split(",")[0];
+                            docId = docId.Split(",")[1];
+                            apiInfo.UrlPath = apiInfo.UrlPath.Replace("/search/microsoft.graph.query", $"/drives/{dataBaseId}/items/{docId}/content");
+                            break;
+                        case "80":
+                            docId = docId.Split(",")[1];
+                            apiInfo.UrlPath = apiInfo.UrlPath.Replace("/search/microsoft.graph.query", $"/me/drive/items/{docId}/content");
+                            break;
+                    }
+                    
                     string documentStream = await _repository.DocumentDownloadMakeRequest(apiInfo);
 
                     documentContent = documentStream;

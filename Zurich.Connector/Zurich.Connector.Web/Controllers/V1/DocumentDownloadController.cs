@@ -47,7 +47,7 @@ namespace Zurich.Connector.Web.Controllers.V1
 
             try
             {
-                if (connectorId == "44")
+                if (connectorId == "44" || connectorId == "14" || connectorId == "80")
                 {
                     result = await _documentDownloadService.GetDocumentContent(connectorId, docId);
 
