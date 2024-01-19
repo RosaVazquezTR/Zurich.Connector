@@ -6,14 +6,13 @@
     "description": "Get Search details from iManage",
     "entityType": "Search",
     "dataSourceId": "10",
-    "version": "1.0",
+    "version": "2.0",
     "subType": "Child"
   },
-  "preRelease": true,
   "request": {},
   "response": {},
   "filters": [],
-  "resultLocation": "data",
+  "resultLocation": "data.results",
   "cdmMapping": {
     "structured": [
       {
@@ -37,7 +36,7 @@
       {
         "name": "Type",
         "type": "string",
-        "responseElement": "",
+        "responseElement": "type",
         "_comment": ""
       },
       {
@@ -70,12 +69,6 @@
         "name": "version",
         "type": "integer",
         "responseElement": "version",
-        "_comment": ""
-      },
-      {
-        "name": "alias",
-        "type": "string",
-        "responseElement": "alias",
         "_comment": ""
       },
       {

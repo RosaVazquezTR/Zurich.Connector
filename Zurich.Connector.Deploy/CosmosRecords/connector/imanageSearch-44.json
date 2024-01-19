@@ -7,18 +7,17 @@
     "description": "Get Search details from iManage",
     "entityType": "Search",
     "dataSourceId": "10",
-    "version": "1.0",
+    "version": "2.0",
     "subType": "Parent"
   },
-  "preRelease": true,
   "request": {
-    "endpointPath": "/work/api/v2/customers/{1.customer_id}/documents/search",
-    "method": "POST",
+    "endpointPath": "/work/api/v2/customers/{1.customer_id}/documents",
+    "method": "GET",
     "parameters": [
       {
         "cdmName": "Query",
-        "name": "filters.anywhere",
-        "inClause": "Body",
+        "name": "anywhere",
+        "inClause": "Query",
         "required": false,
         "type": "string",
         "defaultValue": ""
@@ -26,70 +25,78 @@
       {
         "cdmName": "ResultSize",
         "name": "limit",
-        "inClause": "Body",
+        "inClause": "Query",
         "required": true,
         "type": "int",
         "defaultValue": "100"
       },
       {
-        "cdmName": "Profile_fields.default",
-        "name": "profile_fields.document.[]",
-        "inClause": "Body",
+        "cdmName": "Offset",
+        "name": "offset",
+        "inClause": "Query",
         "required": false,
-        "type": "string",
-        "defaultValue": "database,document_number,version,name,alias,author,operator,type,class,subclass,file_create_date,create_date,retain_days,size,is_related,default_security,last_user,file_edit_date,extension"
+        "type": "int",
+        "defaultValue": "0"
+      },
+      {
+        "cdmName": "TotalCount",
+        "name": "total",
+        "inClause": "Query",
+        "required": false,
+        "type": "bool",
+        "defaultValue": "true"
       },
       {
         "cdmName": "EditDate.filter",
-        "name": "filters.edit_date",
-        "inClause": "Body",
+        "name": "edit_date",
+        "inClause": "Query",
         "required": false,
         "type": "string",
         "defaultValue": ""
       },
       {
         "cdmName": "CreateDate.filter",
-        "name": "filters.create_date",
-        "inClause": "Body",
+        "name": "create_date",
+        "inClause": "Query",
         "required": false,
         "type": "string",
         "defaultValue": ""
       },
       {
         "cdmName": "User.filter",
-        "name": "filters.user",
-        "inClause": "Body",
+        "name": "user",
+        "inClause": "Query",
         "required": false,
         "type": "string",
         "defaultValue": ""
       },
       {
         "cdmName": "Author.filter",
-        "name": "filters.author",
-        "inClause": "Body",
+        "name": "author",
+        "inClause": "Query",
         "required": false,
         "type": "string",
         "defaultValue": ""
       },
       {
         "cdmName": "Operator.filter",
-        "name": "filters.operator",
-        "inClause": "Body",
+        "name": "operator",
+        "inClause": "Query",
         "required": false,
         "type": "string",
         "defaultValue": ""
       },
       {
         "cdmName": "Owner.filter",
-        "name": "filters.owner",
-        "inClause": "Body",
+        "name": "owner",
+        "inClause": "Query",
         "required": false,
         "type": "string",
         "defaultValue": ""
       },
       {
         "cdmName": "ContainerId.filter",
-        "name": "filters.container_id",
+        "name": "container_id",
         "inClause": "Body",
         "required": false,
         "type": "string",
@@ -97,8 +104,8 @@
       },
       {
         "cdmName": "Type.filter",
-        "name": "filters.type",
-        "inClause": "Body",
+        "name": "type",
+        "inClause": "Query",
         "required": false,
         "type": "string",
         "defaultValue": ""
@@ -181,6 +188,12 @@
   ],
   "CDMmapping": {
     "structured": [
+      {
+        "name": "TotalCount",
+        "type": "int",
+        "responseElement": "total_count",
+        "_comment": ""
+      },
       {
         "name": "Count",
         "type": "short",

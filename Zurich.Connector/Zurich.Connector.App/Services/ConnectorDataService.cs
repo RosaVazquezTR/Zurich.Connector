@@ -518,6 +518,7 @@ namespace Zurich.Connector.Data.Services
         {
             var dataSourceOperationsService = _dataSourceOperationsFactory.GetDataSourceOperationsService(connector?.DataSource?.AppCode);
 
+            // TODO: iManage endpoint no longer requires a manual offset implementation, but could be useful to keep this code
             if (connector.DataSource.ManualOffset && queryParameters.ContainsKey("resultSize") && queryParameters.ContainsKey("offset"))
             {
                 data.Documents = ManualOffset(data, queryParameters);
