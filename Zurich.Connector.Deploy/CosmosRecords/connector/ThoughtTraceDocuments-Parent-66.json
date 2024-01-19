@@ -3,8 +3,8 @@
     "partitionkey": "ConnectorList",
     "alias": "ttdocs.search",
     "info": {
-        "title": "Get Search Thought Trace documents",
-        "description": "Pull Thougth Trace documents",
+        "title": "Get Search Document Intelligence documents",
+        "description": "Pull Document Intelligence documents",
         "entityType": "Search",
         "dataSourceId": "50",
         "version": "1.0",

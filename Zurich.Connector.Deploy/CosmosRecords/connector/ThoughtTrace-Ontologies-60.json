@@ -3,8 +3,8 @@
     "partitionkey": "ConnectorList",
     "alias": "tt.ontologies",
     "info": {
-        "title": "Get Thought Trace Ontologies",
-        "description": "Pull Thougth Trace ontologies",
+        "title": "Get Document Intelligence Ontologies",
+        "description": "Pull Document Intelligence ontologies",
         "entityType": "Ontologies",
         "dataSourceId": "47",
         "version": "1.0"

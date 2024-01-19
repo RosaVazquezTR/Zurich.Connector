@@ -3,8 +3,8 @@
     "partitionkey": "ConnectorList",
     "alias": "tttenantapp.facets",
     "info": {
-        "title": "Get Search Thought Trace dynamic facets, same request as connector 68",
-        "description": "Pull Thougth Trace dynamic facets, same request as connector 68",
+        "title": "Get Search Document Intelligence dynamic facets, same request as connector 68",
+        "description": "Pull Document Intelligence dynamic facets, same request as connector 68",
         "entityType": "Facets",
         "dataSourceId": "50",
         "version": "1.0"

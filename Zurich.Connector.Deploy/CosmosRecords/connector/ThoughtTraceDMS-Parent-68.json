@@ -3,8 +3,8 @@
     "partitionkey": "ConnectorList",
     "alias": "tttenantapp.search",
     "info": {
-        "title": "Thought Trace DMS",
-        "description": "Pull Thougth Trace documents for DMS flow",
+        "title": "Document Intelligence DMS",
+        "description": "Pull Document Intelligence documents for DMS flow",
         "entityType": "Search",
         "dataSourceId": "51",
         "version": "1.0",

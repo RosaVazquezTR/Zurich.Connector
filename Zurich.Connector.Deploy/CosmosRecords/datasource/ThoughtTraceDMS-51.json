@@ -1,8 +1,8 @@
 {
     "id": "51",
     "partitionkey": "DataSourceList",
-    "name": "Thought Trace DMS",
-    "description": "This is connecting to Thought Trace API for DMS flow ",
+    "name": "Document Intelligence DMS",
+    "description": "This is connecting to Document Intelligence API for DMS flow ",
     "appCode": "TTTenantApp",
     "infoURL": "",
     "appType": "2",

@@ -1,8 +1,8 @@
 {
     "id": "47",
     "partitionkey": "DataSourceList",
-    "name": "Thought Trace",
-    "description": "This is connecting to Thought Trace API ",
+    "name": "Document Intelligence",
+    "description": "This is connecting to Document Intelligence API ",
     "appCode": "TT",
     "infoURL": "",
     "appType": "1",

@@ -1,0 +1,30 @@
+{
+  "id": "33",
+  "partitionkey": "DataSourceList",
+  "name": "Sharepoint",
+  "description": "This is connecting to Graph API ",
+  "appcode": "MsGraph",
+  "domain": "graph.microsoft.com",
+  "infoURL": "",
+  "extraRequestContext": "",
+  "registrationInfo": {
+    "registrationMode": "Manual",
+    "domainRequired": "false",
+    "clientAndSecretRequired": "false",
+    "connectionMessage": "Install the applicationin the Microsoft 365 Control Center. Look for Thomson Reuters Legal home",
+    "registrationFileRequired": "false"
+  },
+  "securityDefinition": {
+    "type": "oauth2",
+    "flow": "accessCode",
+    "defaultSecurityDefinition": {
+      "authorizationURL": "",
+      "authorizationPath": "",
+      "tokenURL": "",
+      "tokenPath": "",
+      "keyVaultClientId": "",
+      "keyVaultSecret": ""
+    },
+    "scopes": {}
+  }
+}

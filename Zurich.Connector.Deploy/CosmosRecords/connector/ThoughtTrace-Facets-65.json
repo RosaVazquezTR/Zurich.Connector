@@ -3,8 +3,8 @@
     "partitionkey": "ConnectorList",
     "alias": "tt.facets",
     "info": {
-        "title": "Get Search Thought Trace dynamic facets, same request as connector 52",
-        "description": "Pull Thougth Trace dynamic facets, same request as connector 52",
+        "title": "Get Search Document Intelligence dynamic facets, same request as connector 52",
+        "description": "Pull Document Intelligence dynamic facets, same request as connector 52",
         "entityType": "Facets",
         "dataSourceId": "47",
         "version": "1.0"

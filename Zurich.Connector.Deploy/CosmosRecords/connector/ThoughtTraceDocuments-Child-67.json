@@ -2,8 +2,8 @@
     "id": "67",
     "partitionkey": "ConnectorList",
     "info": {
-        "title": "Get Search Thought Trace documents - Child connector for 66",
-        "description": "Pull Thougth Trace documents - Child connector for 66",
+        "title": "Get Search Document Intelligence documents - Child connector for 66",
+        "description": "Pull Document Intelligence documents - Child connector for 66",
         "entityType": "Search",
         "dataSourceId": "50",
         "version": "1.0",
