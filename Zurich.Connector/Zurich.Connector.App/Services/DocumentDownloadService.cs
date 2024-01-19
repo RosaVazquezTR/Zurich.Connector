@@ -58,6 +58,15 @@ namespace Zurich.Connector.App.Services
             string documentContent = "";
             string dataBaseId = "";
             List<DataSourceInformation> availableRegistrations;
+            DataSourceInformation selectedRegistration;
+
+            if (connectorId == "44")
+                dataBaseId = docId.Split("!")[0];
+            else // connectors 14, 80 & 47
+            {
+                dataBaseId = docId.Split(",")[0];
+                docId = docId.Split(",")[1];
+            }
             // This dictionary is not really being used, but _dataExtractionService.ExtractDataSource needs queryParameters not null to work
             // We don't need queryParameters for any document content call, so I considered better to send this parameters instead of modifying ExtractDataSource
             Dictionary<string, string> parameters = new()
@@ -71,11 +80,14 @@ namespace Zurich.Connector.App.Services
 
             availableRegistrations = await _OAuthService.GetUserRegistrations();
 
-            availableRegistrations = availableRegistrations?.FindAll(x => x.AppCode == connectorModel.DataSource.AppCode).ToList();
+            if (connectorId == "47")
+                selectedRegistration = availableRegistrations?.Find(x => x.AppCode == connectorModel.DataSource.AppCode && x.Domain.Contains(dataBaseId));
+            else
+                selectedRegistration = availableRegistrations?.Find(x => x.AppCode == connectorModel.DataSource.AppCode);
 
-            if (availableRegistrations?.Count > 0)
+            if (selectedRegistration != null)
             {
-                var token = await _dataMapping.RetrieveToken(connectorModel.DataSource.AppCode);
+                var token = await _dataMapping.RetrieveToken(connectorModel.DataSource.AppCode, domain: selectedRegistration.Domain);
                 // This function is here just to obtain the customer_id for the UrlPath for iManage connector
                 Dictionary<string, string> headerParameters = await _dataExtractionService.ExtractDataSource(null, parameters, null, connectorDocument);
                 if (!string.IsNullOrEmpty(token?.AccessToken))
@@ -83,11 +95,11 @@ namespace Zurich.Connector.App.Services
                     ApiInformation apiInfo = new ApiInformation()
                     {
                         AppCode = connectorDocument.DataSource.appCode,
-                        HostName = string.IsNullOrEmpty(connectorDocument.HostName) ? connectorDocument.DataSource.domain : connectorDocument.HostName,
+                        HostName = string.IsNullOrEmpty(connectorDocument.HostName) ? (connectorDocument.DataSource.domain ?? selectedRegistration.Domain) : connectorDocument.HostName,
                         UrlPath = connectorDocument.Request.EndpointPath,
                         AuthHeader = connectorDocument.DataSource.securityDefinition.defaultSecurityDefinition.authorizationHeader,
                         Token = token,
-                        Method = "get", // TODO: Once iManage (id 44) is migrated to use the new iManage GET endpoint we can replace the Method with connectorDocument.Request.Method
+                        Method = "get", // TODO: We have to overwrite the method in here until we have a connector definition for each connector that supports document download
                         Headers = headerParameters
                     };
 
@@ -97,18 +109,21 @@ namespace Zurich.Connector.App.Services
                     // support document download and have the urlpath defined there
                     switch (connectorId)
                     {
+                        // iManage
                         case "44":
-                            dataBaseId = docId.Split("!")[0];
                             apiInfo.UrlPath = apiInfo.UrlPath.Replace("/documents", $"/libraries/{dataBaseId}/documents/{docId}/download");
                             break;
+                        // MsGraph - SharePoint
                         case "14":
-                            dataBaseId = docId.Split(",")[0];
-                            docId = docId.Split(",")[1];
                             apiInfo.UrlPath = apiInfo.UrlPath.Replace("/search/microsoft.graph.query", $"/drives/{dataBaseId}/items/{docId}/content");
                             break;
+                        // MsGraph - OneDrive
                         case "80":
-                            docId = docId.Split(",")[1];
                             apiInfo.UrlPath = apiInfo.UrlPath.Replace("/search/microsoft.graph.query", $"/me/drive/items/{docId}/content");
+                            break;
+                        // HighQ
+                        case "47":
+                            apiInfo.UrlPath = apiInfo.UrlPath.Replace("/api/12/search", $"/api/18/files/{docId}/content");
                             break;
                     }
                     
