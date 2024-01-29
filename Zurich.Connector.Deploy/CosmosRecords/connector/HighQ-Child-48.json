@@ -54,6 +54,12 @@
         "_comment": ""
       },
       {
+        "name": "documentId",
+        "type": "string",
+        "responseElement": "contextId",
+        "_comment": ""
+      },
+      {
         "name": "site",
         "type": "string",
         "responseElement": "site.siteName",
