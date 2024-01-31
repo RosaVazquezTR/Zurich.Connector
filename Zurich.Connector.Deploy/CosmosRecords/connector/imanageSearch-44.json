@@ -10,6 +10,7 @@
     "version": "2.0",
     "subType": "Parent"
   },
+  "hostName": "cloudimanage.com",
   "request": {
     "endpointPath": "/work/api/v2/customers/{1.customer_id}/documents",
     "method": "GET",
