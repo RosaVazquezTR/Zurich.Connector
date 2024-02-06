@@ -44,7 +44,8 @@ namespace Zurich.Connector.Data.Model
         ActionItems,
         Folder,
         Ontologies,
-        Facets
+        Facets,
+        Download
     }
 
     /// <summary>

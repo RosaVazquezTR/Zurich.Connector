@@ -1,0 +1,58 @@
+{
+  "id": "84",
+  "partitionkey": "ConnectorList",
+  "alias": "highq.download",
+  "info": {
+    "title": "Get Document from HighQ instance",
+    "description": "Get Document from HighQ instance",
+    "entityType": "download",
+    "dataSourceId": "45",
+    "version": "1.0",
+    "subType": "Parent"
+  },
+  "preRelease": true,
+  "request": {
+    "endpointPath": "/api/18/files/{docId}/content",
+    "method": "GET",
+    "parameters": [
+      {
+        "cdmName": "docId",
+        "name": "docId",
+        "inClause": "Path",
+        "required": true,
+        "type": "string",
+        "defaultValue": "",
+        "tags": []
+      },
+      {
+        "cdmName": "dataBaseId",
+        "name": "dataBaseId",
+        "inClause": "Path",
+        "required": true,
+        "type": "string",
+        "defaultValue": "",
+        "tags": []
+      }
+    ],
+    "sorting": {
+      "properties": []
+    }
+  },
+  "response": {
+    "schema": {
+      "properties": {}
+    },
+    "type": "json"
+  },
+  "pagination": {
+    "available": false,
+    "paginationType": "",
+    "isZeroBasedOffset": true
+  },
+  "resultLocation": "",
+  "filters": [],
+  "CDMmapping": {
+    "structured": [],
+    "unstructured": []
+  }
+}

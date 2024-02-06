@@ -119,6 +119,10 @@ namespace Zurich.Connector.Data.Repositories.CosmosDocuments
         /// Used to determine if a child or Parent
         /// </summary>
         public string SubType { get; set; }
+        /// <summary>
+        /// Sets or gets the responsable connector to download documents
+        /// </summary>
+        public string DownloadConnector { get; set; }
     }
 
     /// <summary>

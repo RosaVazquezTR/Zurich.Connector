@@ -8,7 +8,8 @@
     "entityType": "Search",
     "dataSourceId": "10",
     "version": "2.0",
-    "subType": "Parent"
+    "subType": "Parent",
+    "downloadConnector": "81"
   },
   "hostName": "cloudimanage.com",
   "request": {

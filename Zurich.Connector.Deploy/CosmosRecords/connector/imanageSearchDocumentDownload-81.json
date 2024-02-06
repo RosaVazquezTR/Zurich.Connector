@@ -1,0 +1,59 @@
+{
+  "id": "81",
+  "partitionkey": "ConnectorList",
+  "alias": "imanage.download",
+  "info": {
+    "title": "Get Document from iManage library",
+    "description": "Get Document from iManage library",
+    "entityType": "download",
+    "dataSourceId": "10",
+    "version": "1.0",
+    "subType": "Parent"
+  },
+  "hostName": "cloudimanage.com",
+  "preRelease": true,
+  "request": {
+    "endpointPath": "/work/api/v2/customers/{1.customer_id}/libraries/{dataBaseId}/documents/{docId}/download",
+    "method": "GET",
+    "parameters": [
+      {
+        "cdmName": "dataBaseId",
+        "name": "dataBaseId",
+        "inClause": "Path",
+        "required": true,
+        "type": "string",
+        "defaultValue": "",
+        "tags": []
+      },
+      {
+        "cdmName": "docId",
+        "name": "docId",
+        "inClause": "Path",
+        "required": true,
+        "type": "string",
+        "defaultValue": "",
+        "tags": []
+      }
+    ],
+    "sorting": {
+      "properties": []
+    }
+  },
+  "response": {
+    "schema": {
+      "properties": {}
+    },
+    "type": "json"
+  },
+  "pagination": {
+    "available": false,
+    "paginationType": "",
+    "isZeroBasedOffset": true
+  },
+  "resultLocation": "",
+  "filters": [],
+  "CDMmapping": {
+    "structured": [],
+    "unstructured": []
+  }
+}

@@ -60,6 +60,10 @@ namespace Zurich.Connector.App.Services
             List<DataSourceInformation> availableRegistrations;
             DataSourceInformation selectedRegistration;
 
+            ConnectorModel connectorModel = await _dataMappingService.RetrieveProductInformationMap(connectorId, null, false);
+            ConnectorModel downloadConnectorModel = await _dataMappingService.RetrieveProductInformationMap(connectorModel.Info.DownloadConnector, null, false);
+            ConnectorDocument connectorDocument = _mapper.Map<ConnectorDocument>(downloadConnectorModel);
+
             if (connectorId == "44")
                 dataBaseId = docId.Split("!")[0];
             else // connectors 14, 80 & 47
@@ -75,9 +79,6 @@ namespace Zurich.Connector.App.Services
                 { "docId", docId }
             };
 
-            ConnectorModel connectorModel = await _dataMappingService.RetrieveProductInformationMap(connectorId, null, false);
-            ConnectorDocument connectorDocument = _mapper.Map<ConnectorDocument>(connectorModel);
-
             availableRegistrations = await _OAuthService.GetUserRegistrations();
 
             if (connectorId == "47")
@@ -88,8 +89,10 @@ namespace Zurich.Connector.App.Services
             if (selectedRegistration != null)
             {
                 var token = await _dataMapping.RetrieveToken(connectorModel.DataSource.AppCode, domain: selectedRegistration.Domain);
-                // This function is here just to obtain the customer_id for the UrlPath for iManage connector
+
+                //This function is here just to obtain the customer_id for the UrlPath for iManage connector and it completes the url parameters using UpdatePathParameter method
                 Dictionary<string, string> headerParameters = await _dataExtractionService.ExtractDataSource(null, parameters, null, connectorDocument);
+
                 if (!string.IsNullOrEmpty(token?.AccessToken))
                 {
                     ApiInformation apiInfo = new ApiInformation()
@@ -99,33 +102,11 @@ namespace Zurich.Connector.App.Services
                         UrlPath = connectorDocument.Request.EndpointPath,
                         AuthHeader = connectorDocument.DataSource.securityDefinition.defaultSecurityDefinition.authorizationHeader,
                         Token = token,
-                        Method = "get", // TODO: We have to overwrite the method in here until we have a connector definition for each connector that supports document download
+                        Method = connectorDocument.Request.Method,
                         Headers = headerParameters
                     };
 
                     CleanUpApiInformation(apiInfo);
-
-                    // TODO: If we want to add this feature for other connectors we should create a new connector definition for each data source that will
-                    // support document download and have the urlpath defined there
-                    switch (connectorId)
-                    {
-                        // iManage
-                        case "44":
-                            apiInfo.UrlPath = apiInfo.UrlPath.Replace("/documents", $"/libraries/{dataBaseId}/documents/{docId}/download");
-                            break;
-                        // MsGraph - SharePoint
-                        case "14":
-                            apiInfo.UrlPath = apiInfo.UrlPath.Replace("/search/microsoft.graph.query", $"/drives/{dataBaseId}/items/{docId}/content");
-                            break;
-                        // MsGraph - OneDrive
-                        case "80":
-                            apiInfo.UrlPath = apiInfo.UrlPath.Replace("/search/microsoft.graph.query", $"/me/drive/items/{docId}/content");
-                            break;
-                        // HighQ
-                        case "47":
-                            apiInfo.UrlPath = apiInfo.UrlPath.Replace("/api/12/search", $"/api/18/files/{docId}/content");
-                            break;
-                    }
                     
                     string documentStream = await _repository.DocumentDownloadMakeRequest(apiInfo);
 

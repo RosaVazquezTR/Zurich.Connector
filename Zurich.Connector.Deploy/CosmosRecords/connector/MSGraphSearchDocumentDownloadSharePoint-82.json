@@ -1,0 +1,58 @@
+{
+    "id": "82",
+    "partitionkey": "ConnectorList",
+    "alias": "msgraph.download",
+    "info": {
+      "title": "Downloads document from SharePoint",
+      "description": "Downloads document from SharePoint",
+      "entityType": "download",
+      "dataSourceId": "33",
+      "version": "1.0",
+      "subType": "Parent"
+    },
+    "preRelease": true,
+    "request": {
+      "endpointPath": "/v1.0/drives/{dataBaseId}/items/{docId}/content",
+      "method": "GET",
+      "parameters": [
+        {
+          "cdmName": "dataBaseId",
+          "name": "dataBaseId",
+          "inClause": "Path",
+          "required": true,
+          "type": "string",
+          "defaultValue": "",
+          "tags": []
+        },
+        {
+          "cdmName": "docId",
+          "name": "docId",
+          "inClause": "Path",
+          "required": true,
+          "type": "string",
+          "defaultValue": "",
+          "tags": []
+        }
+      ],
+      "sorting": {
+        "properties": []
+      }
+    },
+    "response": {
+      "schema": {
+        "properties": {}
+      },
+      "type": "json"
+    },
+    "pagination": {
+      "available": false,
+      "paginationType": "",
+      "isZeroBasedOffset": true
+    },
+    "resultLocation": "",
+    "filters": [],
+    "CDMmapping": {
+      "structured": [],
+      "unstructured": []
+    }
+  }

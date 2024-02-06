@@ -114,6 +114,10 @@ namespace Zurich.Connector.App.Model
         /// Flag to indicate if a dynamic filter is available
         /// </summary>
         public bool? IsDynamicFilter { get; set; }
+        /// <summary>
+        /// Sets or gets the responsable connector to download documents
+        /// </summary>
+        public string DownloadConnector { get; set; }
     }
 
     /// <summary>

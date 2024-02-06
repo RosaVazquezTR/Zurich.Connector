@@ -9,7 +9,8 @@
     "dataSourceId": "45",
     "version": "1.0",
     "subType": "Parent",
-    "isDynamicFilter": true
+    "isDynamicFilter": true,
+    "downloadConnector": "84"
   },
   "preRelease": true,
   "request": {
