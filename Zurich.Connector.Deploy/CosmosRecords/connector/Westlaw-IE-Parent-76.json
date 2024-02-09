@@ -383,7 +383,10 @@
 			]
 		}
 	],
-	"pagination": {},
+	"pagination": {
+		"available": true,
+		"isZeroBasedOffset": false
+	},
 	"resultLocation": "",
 	"cdmMapping": {
 		"structured": [

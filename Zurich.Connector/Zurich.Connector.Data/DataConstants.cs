@@ -50,6 +50,7 @@
         public const string westLawUK = "WLUK";
         public const string thoughtTrace = "TT";
         public const string thoughtTraceDMS = "TTTenantApp";
+        public const string westLawIE = "WLIE";
     }
     public static class DataConstants
     {
