@@ -514,7 +514,7 @@ namespace Zurich.Connector.Data.Services
         /// <param name="connector">The data connector</param>
         /// <param name="data">The entity data</param>
         /// <returns></returns>
-        private async Task<dynamic> EnrichConnectorData(ConnectorModel connector, dynamic data, NameValueCollection mappedQueryParameters = null, Dictionary<string, string> queryParameters = null)
+        private async Task<dynamic> EnrichConnectorData(ConnectorModel connector, dynamic data, NameValueCollection mappedQueryParameters = null, Dictionary<string, string> queryParameters = null, string instanceDomain = null)
         {
             var dataSourceOperationsService = _dataSourceOperationsFactory.GetDataSourceOperationsService(connector?.DataSource?.AppCode);
 
@@ -536,6 +536,15 @@ namespace Zurich.Connector.Data.Services
             }
             else
                 _logger.LogInformation("No data source operations service found for {appCode}", connector?.DataSource?.AppCode ?? "");
+
+            if (connector.DataSource.CombinedLocations)
+            {
+                foreach (var document in data.Documents)
+                {
+                    document.WebUrl = instanceDomain + document.WebUrl;
+                }
+                
+            }
             return data;
         }
 
@@ -590,7 +599,7 @@ namespace Zurich.Connector.Data.Services
                     Dictionary<string, string> headerParameters = await _dataExtractionService.ExtractDataSource(mappedQueryParameters, queryParameters, hostname, connectorDocument);
 
                     data = await service.GetAndMapResults<dynamic>(connectorDocument, transferToken, mappedQueryParameters, headerParameters, queryParameters, currentRegistration.Domain);
-                    data = await EnrichConnectorData(connectorModel, data);
+                    data = await EnrichConnectorData(connectorModel, data, instanceDomain: currentRegistration.Domain);
                     dataArray.successUrls.Add(currentRegistration.Domain);
                 }
                 catch (Exception)

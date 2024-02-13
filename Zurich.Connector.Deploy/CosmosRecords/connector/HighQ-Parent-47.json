@@ -56,6 +56,22 @@
         "required": true,
         "type": "string",
         "defaultValue": "01 Jan 2000"
+      },
+      {
+        "cdmName": "contentTypes.filter",
+        "name": "contentTypes.[]",
+        "inClause": "Body",
+        "required": true,
+        "type": "string",
+        "defaultValue": "documents"
+      },
+      {
+        "cdmName": "fileType.filter",
+        "name": "fileTypes.[]",
+        "inClause": "Body",
+        "required": false,
+        "type": "string",
+        "defaultValue": ""
       }
     ],
     "sorting": {
@@ -72,7 +88,7 @@
       "name": "Type",
       "description": "The allowed file types for HighQ",
       "isMultiselect": "true",
-      "requestParameter": "fileTypes",
+      "requestParameter": "fileType.filter",
       "filterlist": [
         {
           "name": "Word",
