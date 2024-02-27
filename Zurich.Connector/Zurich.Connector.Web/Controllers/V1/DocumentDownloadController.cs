@@ -41,15 +41,15 @@ namespace Zurich.Connector.Web.Controllers.V1
         /// <returns>Return the document as a FileStreamResult</returns>
         [EnableCors("MainCORS")]
         [HttpGet("{connectorId}/{docId}")]
-        public async Task<ActionResult<dynamic>> DocumentDownload(string connectorId, string docId)
+        public async Task<ActionResult<dynamic>> DocumentDownload(string connectorId, string docId, bool transformToPDF= true)
         {
             string result;
-
+            List<string> supportedConnectors = new List<string> { "44", "14", "80", "47" };
             try
             {
-                if (connectorId == "44" || connectorId == "14" || connectorId == "80" || connectorId == "47")
+                if(supportedConnectors.Contains(connectorId))
                 {
-                    result = await _documentDownloadService.GetDocumentContent(connectorId, docId);
+                    result = await _documentDownloadService.GetDocumentContent(connectorId, docId, transformToPDF);
 
                     return new ContentResult
                     {

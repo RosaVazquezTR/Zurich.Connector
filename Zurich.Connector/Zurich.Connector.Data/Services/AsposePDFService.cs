@@ -18,7 +18,7 @@ namespace Zurich.Connector.Data.Services
 
         }
 
-        public JObject CreateJObject(Stream documentStream)
+        public JObject CreateDocumentJObject(Stream documentStream , bool convertToPDF = true)
         {
             JObject documentObject = new JObject();
             Document document = new Document(documentStream);

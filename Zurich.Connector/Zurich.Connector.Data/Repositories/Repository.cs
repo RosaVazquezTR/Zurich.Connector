@@ -51,7 +51,7 @@ namespace Zurich.Connector.Data.Repositories
             return response;
         }
 
-        public async Task<string> DocumentDownloadMakeRequest(ApiInformation apiInformation)
+        public async Task<string> DocumentDownloadMakeRequest(ApiInformation apiInformation, bool transformToPDF = true)
         {
             string uri = CreateUri(apiInformation, null);
             using (var requestMessage = new HttpRequestMessage(HttpMethod.Get, uri))
@@ -73,7 +73,7 @@ namespace Zurich.Connector.Data.Repositories
                             var asposeInstance = AsposeServiceFactory.GetAsposeImplementation(FileFormatParser.GetFileFormat(fileExtension));
                             using (documentStream)
                             {
-                                document = asposeInstance.CreateJObject(documentStream);
+                                document = asposeInstance.CreateDocumentJObject(documentStream, transformToPDF);
                             }
                         }
                         catch (Exception ex)

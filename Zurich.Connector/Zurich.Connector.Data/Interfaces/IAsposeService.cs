@@ -11,6 +11,6 @@ namespace Zurich.Connector.Data.Interfaces
     public interface IAsposeService
     {
         //Define any other needed operation in here, ie: Convert
-        public JObject CreateJObject(Stream documentStream);
+        public JObject CreateDocumentJObject(Stream documentStream, bool transformToPDF = true);
     }
 }

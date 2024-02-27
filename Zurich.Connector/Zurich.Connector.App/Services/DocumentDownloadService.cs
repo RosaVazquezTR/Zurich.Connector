@@ -30,7 +30,7 @@ namespace Zurich.Connector.App.Services
         /// <param name="appCode"></param>
         /// <param name="docId"></param>
         /// <returns></returns>
-        Task<string> GetDocumentContent(string connectorId, string docId);
+        Task<string> GetDocumentContent(string connectorId, string docId, bool transformToPDF=true);
     }
     public class DocumentDownloadService : IDocumentDownloadService
     {
@@ -53,7 +53,7 @@ namespace Zurich.Connector.App.Services
             _mapper = mapper;
         }
 
-        public async Task<string> GetDocumentContent(string connectorId, string docId)
+        public async Task<string> GetDocumentContent(string connectorId, string docId, bool transformToPDF=true)
         {
             string documentContent = "";
             string dataBaseId = "";
@@ -108,7 +108,7 @@ namespace Zurich.Connector.App.Services
 
                     CleanUpApiInformation(apiInfo);
                     
-                    string documentStream = await _repository.DocumentDownloadMakeRequest(apiInfo);
+                    string documentStream = await _repository.DocumentDownloadMakeRequest(apiInfo, transformToPDF);
 
                     documentContent = documentStream;
                 }
