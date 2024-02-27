@@ -39,6 +39,7 @@ namespace Zurich.Connector.Web
             CreateMap<CDMElementModel, CDMElementViewModel>();
 
             CreateMap<ConnectorModel, ConnectorListViewModel>()
+                .ForMember(dest => dest.AcceptsSearchWildCard, opt => opt.MapFrom(src => src.Info.AcceptsSearchWildCard))
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.EntityType, opt => opt.MapFrom(src => src.Info.EntityType))
                 .ForMember(dest => dest.DataSource, opt => opt.MapFrom(src => src.DataSource))

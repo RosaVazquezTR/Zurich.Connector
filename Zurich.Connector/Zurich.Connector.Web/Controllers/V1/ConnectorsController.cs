@@ -50,8 +50,20 @@ namespace Zurich.Connector.Web.Controllers
                     && !param.Equals("retrievefilters", StringComparison.InvariantCultureIgnoreCase))
                     .ToDictionary(k => k, v => HttpContext?.Request.Query[v].ToString(), StringComparer.OrdinalIgnoreCase);
 
-                //ADD MANUALOFFSET PARAMETER TO CONNECTOR
                 var selectedConnector = _connectorService.GetConnector(id);
+
+                if (selectedConnector.Result.Info.AcceptsSearchWildCard.HasValue)
+                {
+                    if(!(bool)selectedConnector.Result.Info.AcceptsSearchWildCard && parameters["Query"] == "*")
+                    {
+                        return new ContentResult
+                        {
+                            Content = "Connector does not supports the * search wildcard.",
+                            ContentType = System.Net.Mime.MediaTypeNames.Application.Json,
+                            StatusCode = StatusCodes.Status400BadRequest
+                        };
+                    }
+                }
 
                 if (selectedConnector.Result.Filters != null)
                 {

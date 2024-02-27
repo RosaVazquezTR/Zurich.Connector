@@ -289,7 +289,11 @@ namespace Zurich.Connector.Tests.ControllerTests
 						}
 					}
 				}
-			}
+			},
+			Info = new ConnectorInfoModel()
+            {
+				AcceptsSearchWildCard = true
+            }
 		};
 
 		#endregion

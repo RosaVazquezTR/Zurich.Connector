@@ -52,5 +52,10 @@ namespace Zurich.Connector.Web.Models
         /// Sort type options
         /// </summary>
         public IEnumerable<SortType> Sort { get; set; }
+
+        /// <summary>
+        /// Determines if a connector accepts or not the * search wildcard
+        /// </summary>
+        public bool? AcceptsSearchWildCard { get; set; }
     }
 }

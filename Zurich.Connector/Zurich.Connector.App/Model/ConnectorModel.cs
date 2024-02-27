@@ -118,6 +118,10 @@ namespace Zurich.Connector.App.Model
         /// Sets or gets the responsable connector to download documents
         /// </summary>
         public string DownloadConnector { get; set; }
+        /// <summary>
+        /// Determines if a connector accepts or not the * search wildcard
+        /// </summary>
+        public bool? AcceptsSearchWildCard { get; set; }
     }
 
     /// <summary>

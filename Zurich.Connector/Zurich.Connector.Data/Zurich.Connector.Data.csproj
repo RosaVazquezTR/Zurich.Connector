@@ -15,7 +15,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Serilog.Extensions.Logging" Version="3.0.1" />
-    <PackageReference Include="Zurich.Common" Version="1.0.1-CI-20230802-143922" />
+    <PackageReference Include="Zurich.Common" Version="1.0.1-CI-20240227-163132" />
 	<PackageReference Include="PdfiumViewer" Version="2.13.0" />
 	<PackageReference Include="PdfiumViewer.Native.x86.v8-xfa" Version="2018.4.8.256" />
 	<PackageReference Include="PdfiumViewer.Native.x86_64.v8-xfa" Version="2018.4.8.256" />
