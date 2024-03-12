@@ -142,7 +142,7 @@
     {
       "name": "Author",
       "description": "Specifies the user ID of the document's author.",
-      "isMultiselect": "false",
+      "isMultiselect": "true",
       "requestParameter": "Author.filter"
     },
     {
