@@ -60,34 +60,33 @@ stages:
             environmentName: qa
             projectName: ${{ variables.projectName }}
             publishWebProjects: false
-# - stage: Send_Email
-#   pool: DCO-HighQ-Platform-N
-#   dependsOn:
-#   - Build
-#   jobs:
-#   - deployment: Send_Email
-#     environment: QA
-#     strategy:
-#      runOnce:
-#        deploy:
-#          steps:
-#          - download: none
-#          - checkout: self
-#          - checkout: ZurichDeploy
-#          - template: Templates\ZurichDeploy-NotifyBuildOwners.yml@ZurichDeploy
-#            parameters:
-#              additionalEmails: ${{ variables.additionalEmailsForServiceNowRequest }}
-#              applicationName: ${{ variables.applicationName }}
-#              assignmentGroup: "${{ variables.assignmentGroup }}"
-#              environmentName: ${{ variables.environmentName }}
-#              serviceNowUserName: ${{ variables.serviceNowUserName }}
-#              serviceNowPassword: ""
-#              subscriptionName: ${{ variables.subscriptionName }}
+- stage: Send_Email
+  pool: DCO-HighQ-Platform-N
+  dependsOn:
+  - Build
+  jobs:
+  - deployment: Send_Email
+    environment: QA
+    strategy:
+     runOnce:
+       deploy:
+         steps:
+         - download: none
+         - checkout: self
+         - checkout: ZurichDeploy
+         - template: Templates\ZurichDeploy-NotifyBuildOwners.yml@ZurichDeploy
+           parameters:
+             additionalEmails: ${{ variables.additionalEmailsForServiceNowRequest }}
+             applicationName: ${{ variables.applicationName }}
+             assignmentGroup: "${{ variables.assignmentGroup }}"
+             environmentName: ${{ variables.environmentName }}
+             serviceNowUserName: ${{ variables.serviceNowUserName }}
+             serviceNowPassword: ""
+             subscriptionName: ${{ variables.subscriptionName }}
 - stage: QA
   pool: DCO-HighQ-Platform-N
   dependsOn:
-    - Build
-    # - Send_Email
+    - Send_Email
   jobs:
     - deployment: Prereqs
       environment: QA
