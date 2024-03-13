@@ -101,6 +101,12 @@
           "requestParameter": "LastModifiedEndDate"
       },
       {
+        "name": "Author",
+        "description": "Specifies the name of the document's author.",
+        "isMultiselect": "true",
+        "requestParameter": "CreatedBy"
+      },
+      {
           "name": "Type",
           "description": "The allowed file types for MSGraph",
           "isMultiselect": "true",

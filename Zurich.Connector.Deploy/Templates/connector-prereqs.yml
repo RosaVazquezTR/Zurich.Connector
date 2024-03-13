@@ -139,13 +139,13 @@ steps:
       smartDetectionRuleNames: ${{ parameters.smartDetectionRuleNames }}
       subscriptionId: ${{ parameters.subscriptionId }}
       subscriptionName: ${{ parameters.subscriptionName }}
-  - task: AzureCLI@2
+  - task: AzurePowerShell@5
     displayName: 'Create SubNet and NSG'
     inputs:
       azureSubscription: '${{ parameters.subscriptionName }}'
-      scriptType: ps
-      scriptLocation: inlineScript
-      inlineScript: |
+      azurePowerShellVersion: 'LatestVersion'
+      ScriptType: 'InlineScript'
+      Inline: |
         Import-Module  -Name "$(Build.SourcesDirectory)/Zurich.Deploy/Scripts/V2/AddSubnetandNSG.psm1"
 
         $subnets = @(${{ parameters.subnetConnectorBackend }}, ${{ parameters.subnetFunctionBackend }})
