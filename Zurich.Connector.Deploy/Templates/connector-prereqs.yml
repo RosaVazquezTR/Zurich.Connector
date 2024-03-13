@@ -145,7 +145,7 @@ steps:
       azureSubscription: '${{ parameters.subscriptionName }}'
       azurePowerShellVersion: 'LatestVersion'
       scriptLocation: 'InlineScript'
-      inlineScript: |
+      Inline: |
         Import-Module  -Name "$(Build.SourcesDirectory)/Zurich.Deploy/Scripts/V2/AddSubnetandNSG.psm1"
 
         $subnets = @(${{ parameters.subnetConnectorBackend }}, ${{ parameters.subnetFunctionBackend }})
