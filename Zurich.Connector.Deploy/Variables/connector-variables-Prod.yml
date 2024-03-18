@@ -16,7 +16,7 @@ variables:
   - name: connectorServiceFQND
     value: "connectorswebapiprod.azurewebsites.net"
   - name: defaultCapacity
-    value: '6'
+    value: '2'
   - name: functionAppServicePlanSku
     value: '{"name": "P1v2", "size": "P1v2", "tier": "PremiumV2", "family": "Pv2", "capacity": 1}'
   - name: functionSubnets
@@ -26,7 +26,7 @@ variables:
   - name: keyVaultSubnets
     value: "@('connector-function-Prod-backend', 'connector-webApi-Prod-Backend','hqh-RelMgmtVM-PROD-backend')"
   - name: minimumCapacity
-    value: '6'
+    value: '2'
   - name: maximumCapacity
     value: '20'
   - name: resourceGroup
