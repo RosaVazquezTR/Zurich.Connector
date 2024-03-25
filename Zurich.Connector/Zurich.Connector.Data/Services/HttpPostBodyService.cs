@@ -14,6 +14,9 @@ namespace Zurich.Connector.Data.Services
     public class HttpPostBodyService: AbstractHttpBodyService, IHttpBodyService
 	{
         private readonly TelemetryClient _telemetry;
+        public HttpPostBodyService()
+        {
+        }
         public HttpPostBodyService(TelemetryClient telemetry)
 		{
             _telemetry = telemetry;
