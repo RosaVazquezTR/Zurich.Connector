@@ -165,6 +165,7 @@ namespace Zurich.Connector.Web
             services.AddOAuthHttpClient(Configuration.GetValue<string>(AppSettings.OAuthUrl));
             services.AddAppConfigServices(Configuration.GetValue<string>("splitIOApiKey"));
             services.AddInternalAPIHttpClient(HttpClientNames.IHDocumentStorage, Configuration.GetValue<string>("IHDocumentStorageBaseUrl"));
+            services.AddApplicationInsightsTelemetry(Configuration);
 
             var license = Configuration.GetValue<string>("AsposeLicence");
             AsposeLicenceProvider.SetAsposeWordsLicense(license);
