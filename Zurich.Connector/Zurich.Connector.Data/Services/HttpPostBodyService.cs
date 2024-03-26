@@ -5,15 +5,22 @@ using System.Collections.Specialized;
 using System.Linq;
 using Zurich.Connector.Data.Model;
 using Zurich.Connector.Data.Repositories.CosmosDocuments;
+using Microsoft.ApplicationInsights;
+using Microsoft.ApplicationInsights.DataContracts;
 
 namespace Zurich.Connector.Data.Services
 {
 
     public class HttpPostBodyService: AbstractHttpBodyService, IHttpBodyService
 	{
-		public HttpPostBodyService()
+        private readonly TelemetryClient _telemetry;
+        public HttpPostBodyService()
+        {
+        }
+        public HttpPostBodyService(TelemetryClient telemetry)
 		{
-		}
+            _telemetry = telemetry;
+        }
 
 		public override string CreateBody(ConnectorDocument connectorDocument, NameValueCollection parameters)
 		{
@@ -48,7 +55,17 @@ namespace Zurich.Connector.Data.Services
 					JsonRequest.Merge(writer.Token, settings);
 				}
 			}
-			return JsonRequest.ToString(Newtonsoft.Json.Formatting.None);
+
+			var body = JsonRequest.ToString(Newtonsoft.Json.Formatting.None);
+
+			if (_telemetry != null)
+			{
+				JObject clauseFinderBodyLog = new JObject();
+				clauseFinderBodyLog.Add("BodyRequestDI", JObject.Parse(body));
+				_telemetry.TrackTrace(clauseFinderBodyLog.ToString(), SeverityLevel.Information);
+			}
+
+			return body;
 		}
 
 		private JTokenWriter SetupPostJWriter(PostRequestParameter param)
