@@ -58,7 +58,8 @@ namespace Zurich.Connector.Data.Services
 
 			var body = JsonRequest.ToString(Newtonsoft.Json.Formatting.None);
 
-			if (_telemetry != null)
+            // TODO: Once the issue 745884 with clause finder is fixed, remove this if statement	
+            if (connectorDocument.Id=="68" && _telemetry != null)
 			{
 				JObject clauseFinderBodyLog = new JObject();
 				clauseFinderBodyLog.Add("BodyRequestDI", JObject.Parse(body));
