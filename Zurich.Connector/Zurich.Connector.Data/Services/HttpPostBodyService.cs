@@ -58,9 +58,12 @@ namespace Zurich.Connector.Data.Services
 
 			var body = JsonRequest.ToString(Newtonsoft.Json.Formatting.None);
 
-            JObject clauseFinderBodyLog = new JObject();
-            clauseFinderBodyLog.Add("BodyRequestDI", JObject.Parse(body));
-            _telemetry.TrackTrace(clauseFinderBodyLog.ToString(), SeverityLevel.Information);
+			if (_telemetry != null)
+			{
+				JObject clauseFinderBodyLog = new JObject();
+				clauseFinderBodyLog.Add("BodyRequestDI", JObject.Parse(body));
+				_telemetry.TrackTrace(clauseFinderBodyLog.ToString(), SeverityLevel.Information);
+			}
 
 			return body;
 		}
