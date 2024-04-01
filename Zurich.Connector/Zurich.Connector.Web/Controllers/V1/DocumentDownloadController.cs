@@ -69,7 +69,7 @@ namespace Zurich.Connector.Web.Controllers.V1
             }
             catch (Exception ex)
             {
-                return StatusCode((int)HttpStatusCode.InternalServerError, $"Internal Server Error: {ex.Message}");
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
             }
 
         }

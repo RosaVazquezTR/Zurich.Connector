@@ -62,7 +62,6 @@ namespace Zurich.Connector.Data.Repositories
                 {
                     string[] supportedFormats = { "PDF", "DOC", "DOCX", "RTF" };
                     var documentStream = await result.Content.ReadAsStreamAsync();
-                    string base64String = "";
                     JObject document = new JObject();
                     JObject pageText = new JObject();
                     var fileExtension = FileFormatParser.FindDocumentTypeFromStream(documentStream);
@@ -78,17 +77,14 @@ namespace Zurich.Connector.Data.Repositories
                         }
                         catch (Exception ex)
                         {
-                            pageText.Add("1", "");
-                            document.Add("documentContent", pageText);
-                            document.Add("documentBase64", base64String);
+                            throw new ApplicationException("Error parsing document: " + ex.Message);
                         }
                     }
                     else
                     {
-                        pageText.Add("1", "");
-                        document.Add("documentContent", pageText);
-                        document.Add("documentBase64", base64String);
+                        throw new ApplicationException("Unsupported document format. Supported formats are " + String.Join(" ", supportedFormats));
                     }
+
                     return document.ToString();
                 }
                 else if (result.StatusCode == System.Net.HttpStatusCode.NotFound)
