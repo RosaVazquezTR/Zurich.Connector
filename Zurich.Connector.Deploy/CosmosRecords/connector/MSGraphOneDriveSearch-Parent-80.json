@@ -11,7 +11,6 @@
       "subType": "Parent",
       "downloadConnector": "83"
   },
-  "preRelease": true,
   "request": {
       "endpointPath": "/v1.0/search/microsoft.graph.query",
       "method": "POST",

@@ -9,7 +9,6 @@
         "dataSourceId": "13",
         "version": "1.0"
     },
-    "preRelease": true,
     "request": {
         "endpointPath": "/v1.0/me/drive",
         "method": "GET",
