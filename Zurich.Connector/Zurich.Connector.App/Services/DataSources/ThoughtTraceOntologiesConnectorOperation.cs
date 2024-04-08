@@ -229,7 +229,7 @@ namespace Zurich.Connector.App.Services.DataSources
                 {
                     var value = filter["value"].Value<string>();
                     originalKeyword = Regex.Replace(value, @"\s+", " ").Trim(); //Remove extra spaces between words.
-                    originalKeyword = originalKeyword.Replace("“","\"").Replace("”","\"");
+                    originalKeyword = originalKeyword.Replace("“","\"").Replace("”","\"").Replace(".","").Replace(",", "");
                     if (validateQuery(originalKeyword))
                     {
                         if (int.TryParse(originalKeyword, out _) || decimal.TryParse(originalKeyword, out _))
@@ -248,8 +248,8 @@ namespace Zurich.Connector.App.Services.DataSources
 
                             foreach (string text in enclosedTexts)
                             {
-                                keyword.Add(text);
-                                originalKeyword = originalKeyword.Replace(text, String.Empty);
+                                keyword.Add(text);                            
+                                originalKeyword = originalKeyword.Replace("\""+text+ "\"", String.Empty);
                             }
                             originalKeyword = Regex.Replace(originalKeyword, regexPattern, " ").Replace('[', ' ').Replace(']', ' ');
                             originalKeyword = Regex.Replace(originalKeyword, @"\s+", " ").Trim();
@@ -261,6 +261,7 @@ namespace Zurich.Connector.App.Services.DataSources
                         throw new InvalidQueryFormatException("Query contains invalid format.");
                 }
             }
+            keyword = keyword.Distinct().ToList();
             JObject thoughtFilters = new JObject();
             if (keyword.Count > 1)
                 thoughtFilters.Add("operator", "or");
