@@ -43,28 +43,16 @@
         "sorting": {
             "properties": [
                 {
-                    "name": "Date desc",
+                    "name": "Date",
                     "type": "date",
                     "element": "$orderby",
-                    "elementValue": "Date desc"
+                    "elementValue": "Date"
                 },
                 {
-                    "name": "Date asc",
-                    "type": "date",
-                    "element": "$orderby",
-                    "elementValue": "Date asc"
-                },
-                {
-                    "name": "Alphabetical desc",
+                    "name": "Alphabetical",
                     "type": "string",
                     "element": "$orderby",
-                    "elementValue": "Title desc"
-                },
-                {
-                    "name": "Alphabetical asc",
-                    "type": "string",
-                    "element": "$orderby",
-                    "elementValue": "Title asc"
+                    "elementValue": "Title"
                 }
             ]
         }
@@ -80,12 +68,14 @@
                 "name": "Count",
                 "type": "short",
                 "responseElement": "@odata.count",
+                "isInner": false,
                 "_comment": ""
             },
             {
                 "name": "SourceDirectoryUrl",
                 "type": "string",
                 "responseElement": "@odata.context",
+                "isInner": false,
                 "_comment": ""
             },
             {

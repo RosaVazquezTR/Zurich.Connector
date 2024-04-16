@@ -30,13 +30,15 @@
       {
         "name": "WebUrl",
         "type": "string",
-        "responseElement": "URLApi",
+        "responseElement": "DocumentContent@odata.mediaReadLink",
+        "isInner": false,
         "_comment": ""
       },
       {
         "name": "Type",
         "type": "string",
         "responseElement": "DocumentContent@odata.mediaContentType",
+        "isInner": false,
         "_comment": ""
       },
       {

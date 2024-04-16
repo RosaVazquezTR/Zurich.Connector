@@ -322,46 +322,53 @@ namespace Zurich.Connector.Data.DataMap
 
         private async Task<JObject> MapProperties(List<CDMElement> properties, dynamic apiResult, Dictionary<string, string> requestParameters, bool skipNullProperties)
         {
-            JObject jObjectResult = new JObject();
-            foreach (var property in properties)
+            JObject jObjectResult = new();
+
+            foreach (CDMElement property in properties)
             {
                 JToken token = jObjectResult[property.name];
+
                 // If result is already found for CDM property - skip mapping.
                 if (token != null && token.Type != JTokenType.Null)
                     continue;
+
                 // Get the correct json property when not on the same level
                 string[] resultsLocation = property.responseElement.Split('.');
-                if (!string.IsNullOrEmpty(property.type) && (property.type.Equals(DataTypes.InterpolationString, StringComparison.OrdinalIgnoreCase)))
+
+                if (!string.IsNullOrEmpty(property.type) && property.type.Equals(DataTypes.InterpolationString, StringComparison.OrdinalIgnoreCase) || !property.isInner)
                 {
                     resultsLocation = new string[] { property.responseElement };
                 }
 
                 var tempResult = apiResult;
+
                 foreach (string location in resultsLocation)
                 {
                     // Perform new mapping recursively of array results
                     if (location.Contains('{'))
                     {
-                        var match = Regex.Match(location, @"{(.*?)}");
+                        Match match = Regex.Match(location, @"{(.*?)}");
+
                         if (match.Success)
                         {
-                            var connectionId = match.Groups[1].ToString();
-                            // TODO: Cache this datamapping so we don't have to call the DB for every result
-                            var childConnector = await GetConnector(connectionId);
+                            string connectionId = match.Groups[1].ToString();
 
-                            tempResult = await MapToCDM<dynamic>(tempResult,
-                                                                    childConnector.ResultLocation,
-                                                                    childConnector, requestParameters);
+                            // TODO: Cache this datamapping so we don't have to call the DB for every result
+                            ConnectorDocument childConnector = await GetConnector(connectionId);
+
+                            tempResult = await MapToCDM<dynamic>(tempResult, childConnector.ResultLocation, childConnector, requestParameters);
                         }
                     }
                     // Flatten array results instead 
                     else if (location.Contains('['))
                     {
-                        var match = Regex.Match(location, @"\[(.*?):(.*?)\]");
+                        Match match = Regex.Match(location, @"\[(.*?):(.*?)\]");
+
                         if (match.Success)
                         {
                             string propertyName = match.Groups[1].ToString();
                             string valueToFind = match.Groups[2].ToString();
+
                             JArray resultArray = (JArray)tempResult;
                             tempResult = resultArray.FirstOrDefault(x => x[propertyName].ToString() == valueToFind);
                         }
@@ -371,6 +378,7 @@ namespace Zurich.Connector.Data.DataMap
                         tempResult = tempResult[location];
                         tempResult = ModifyResult(property, tempResult, requestParameters);
                     }
+
                     if (tempResult == null)
                         break;
                 }

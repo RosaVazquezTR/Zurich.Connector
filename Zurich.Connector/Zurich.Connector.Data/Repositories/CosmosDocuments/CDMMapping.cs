@@ -43,5 +43,9 @@ namespace Zurich.Connector.Data.Repositories.CosmosDocuments
         /// Format to be used
         /// </summary>
         public string format { get; set; }
+        /// <summary>
+        /// Property to validate if is an inner property
+        /// </summary>
+        public bool isInner { get; set; } = true;
     }
 }

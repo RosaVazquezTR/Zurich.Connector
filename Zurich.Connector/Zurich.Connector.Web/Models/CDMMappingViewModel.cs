@@ -38,5 +38,9 @@ namespace Zurich.Connector.Web.Models
         /// Name of the response element
         /// </summary>
         public string ResponseElement { get; set; }
+        /// <summary>
+        /// Property to validate if is an inner property
+        /// </summary>
+        public bool IsInner { get; set; } = true;
     }
 }
