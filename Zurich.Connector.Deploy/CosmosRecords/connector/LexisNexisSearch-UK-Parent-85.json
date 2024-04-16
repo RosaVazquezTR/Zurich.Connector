@@ -1,0 +1,100 @@
+{
+    "id": "85",
+    "partitionkey": "ConnectorList",
+    "alias": "lexisnexisuk.search",
+    "info": {
+        "title": "Get Search Lexis Nexis documents - UK - Child connector for 86",
+        "description": "Pull Search Lexis Nexis documents - UK - Child connector for 86",
+        "entityType": "Search",
+        "dataSourceId": "54",
+        "version": "1.0",
+        "subType": "Parent"
+    },
+    "preRelease": true,
+    "request": {
+        "endpointPath": "/v1/UKCombined",
+        "method": "GET",
+        "parameters": [
+            {
+                "cdmName": "Query",
+                "name": "$search",
+                "inClause": "Query",
+                "required": true,
+                "type": "string",
+                "defaultValue": ""
+            },
+            {
+                "cdmName": "ResultSize",
+                "name": "$top",
+                "inClause": "Query",
+                "required": false,
+                "type": "string",
+                "defaultValue": "25"
+            },
+            {
+                "cdmName": "Offset",
+                "name": "$skip",
+                "inClause": "Query",
+                "required": false,
+                "type": "string",
+                "defaultValue": "0"
+            }
+        ],
+        "sorting": {
+            "properties": [
+                {
+                    "name": "Date desc",
+                    "type": "date",
+                    "element": "$orderby",
+                    "elementValue": "Date desc"
+                },
+                {
+                    "name": "Date asc",
+                    "type": "date",
+                    "element": "$orderby",
+                    "elementValue": "Date asc"
+                },
+                {
+                    "name": "Alphabetical desc",
+                    "type": "string",
+                    "element": "$orderby",
+                    "elementValue": "Title desc"
+                },
+                {
+                    "name": "Alphabetical asc",
+                    "type": "string",
+                    "element": "$orderby",
+                    "elementValue": "Title asc"
+                }
+            ]
+        }
+    },
+    "response": {
+        "type": "json"
+    },
+    "filters": [],
+    "resultLocation": "",
+    "cdmMapping": {
+        "structured": [
+            {
+                "name": "Count",
+                "type": "short",
+                "responseElement": "@odata.count",
+                "_comment": ""
+            },
+            {
+                "name": "SourceDirectoryUrl",
+                "type": "string",
+                "responseElement": "@odata.context",
+                "_comment": ""
+            },
+            {
+                "name": "Documents",
+                "type": "object",
+                "responseElement": "{86}",
+                "_comment": ""
+            }
+        ],
+        "unstructured": []
+    }
+}

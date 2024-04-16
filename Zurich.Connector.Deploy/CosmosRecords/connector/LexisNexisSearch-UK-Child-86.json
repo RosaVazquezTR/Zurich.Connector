@@ -1,0 +1,51 @@
+{
+  "id": "86",
+  "partitionkey": "ConnectorList",
+  "info": {
+    "title": "Get Search Lexis Nexis documents - UK - Child connector for 86",
+    "description": "Pull Search Lexis Nexis documents - UK - Child connector for 86",
+    "entityType": "Search",
+    "dataSourceId": "54",
+    "version": "1.0",
+    "subType": "Child"
+  },
+  "request": {},
+  "response": {},
+  "filters": [],
+  "resultLocation": "value.[]",
+  "cdmMapping": {
+    "structured": [
+      {
+        "name": "Snippet",
+        "type": "string",
+        "responseElement": "Overview",
+        "_comment": ""
+      },
+      {
+        "name": "Title",
+        "type": "string",
+        "responseElement": "Title",
+        "_comment": ""
+      },
+      {
+        "name": "WebUrl",
+        "type": "string",
+        "responseElement": "URLApi",
+        "_comment": ""
+      },
+      {
+        "name": "Type",
+        "type": "string",
+        "responseElement": "DocumentContent@odata.mediaContentType",
+        "_comment": ""
+      },
+      {
+        "name": "CreationDate",
+        "type": "DateTime",
+        "responseElement": "Date",
+        "_comment": ""
+      }
+    ],
+    "unstructured": []
+  }
+}

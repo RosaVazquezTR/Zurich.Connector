@@ -61,7 +61,7 @@ namespace Zurich.Connector.Data.Services
         private readonly IConfiguration _configuration;
         private readonly IOAuthApiRepository _OAuthApiRepository;
         private readonly ISessionAccessor _sessionAccessor;
-        
+
         public ConnectorDataService(
             IDataMappingFactory dataMappingFactory,
             IDataMappingRepository dataMappingRepo,
@@ -123,7 +123,7 @@ namespace Zurich.Connector.Data.Services
 
             ValidateResultSize(queryParameters, connectorModel);
             ValidateQueryParams(queryParameters, connectorModel);
-           
+
             // TODO: This is a legalhome workaround until legalhome uses OAuth
             if (string.IsNullOrEmpty(connectorModel.DataSource.Domain) && string.IsNullOrEmpty(hostname))
             {
@@ -253,7 +253,7 @@ namespace Zurich.Connector.Data.Services
                 {
                     JObject logObjectTTRequest = new JObject();
                     logObjectTTRequest.Add("message", "TT Request started with following parameters:");
-                  
+
                     var requestJsonObject = JsonConvert.DeserializeObject<List<JObject>>(queryParameters["Filters"]);
                     foreach (JObject parameter in requestJsonObject)
                     {
@@ -280,18 +280,34 @@ namespace Zurich.Connector.Data.Services
                     }
                     _logger.LogInformation(logObjectTTRequest.ToString());
                 }
-                catch {
+                catch
+                {
                     throw new RequiredParameterMissingException("Invalid request format. Missing filters object or ClauseTypeID parameter.");
                 }
-            } 
+            }
         }
+
+
         private void ValidateResultSize(Dictionary<string, string> queryParameters, ConnectorModel connectorModel)
         {
-            int maxRecordSizePerInstance = _configuration.GetValue(AppSettings.MaxRecordSizePerInstance, 1000);
-            if (connectorModel.DataSource.AppCode == AppCodes.HighQ && queryParameters.ContainsKey(QueryParameters.ResultSize))
+            if (queryParameters.ContainsKey(QueryParameters.ResultSize))
             {
-                if (Convert.ToInt64(queryParameters[QueryParameters.ResultSize]) > maxRecordSizePerInstance)
-                    throw new MaxResultSizeException("Request exceeds maximum record size per instance of 1000");
+                switch (connectorModel.DataSource.AppCode)
+                {
+                    case AppCodes.HighQ:
+                        int maxRecordSizePerInstance = _configuration.GetValue(AppSettings.MaxRecordSizePerInstance, 1000);
+
+                        if (Convert.ToInt64(queryParameters[QueryParameters.ResultSize]) > maxRecordSizePerInstance)
+                            throw new MaxResultSizeException("Request exceeds maximum record size per instance of 1000");
+                        break;
+                    case AppCodes.LexisNexisUK:
+                        //Lexis Nexis API only supports a maximum of 50 records per requests
+                        if (Convert.ToInt64(queryParameters[QueryParameters.ResultSize]) > 50)
+                            throw new MaxResultSizeException("Request exceeds maximum result size supported by Lexis Nexis of 50");
+                        break;
+                    default:
+                        break;
+                }
             }
         }
 
@@ -312,7 +328,7 @@ namespace Zurich.Connector.Data.Services
                     throw new RequiredParameterMissingException(string.Format("Missing required parameter: Query"));
                 query = defaultParameter.DefaultValue;
             }
-            
+
             string searchQuery = System.Web.HttpUtility.UrlDecode(query);
             cdmQueryParameters["Query"] = AdvancedSearchHandler.HandleOperator(searchQuery, connectorModel);
             return cdmQueryParameters;
@@ -438,7 +454,7 @@ namespace Zurich.Connector.Data.Services
 
                 if (!isValid)
                 {
-                    var invalidFilterMessage = connectorParameter?.CdmName == null ? 
+                    var invalidFilterMessage = connectorParameter?.CdmName == null ?
                         "Invalid data type provided for a filter." :
                         string.Format("Invalid data type provided for filter {0}.", connectorParameter.CdmName);
                     var invalidDataTypeMessage = connectorParameter?.Type == null ?
@@ -524,7 +540,7 @@ namespace Zurich.Connector.Data.Services
                 data.Documents = ManualOffset(data, queryParameters);
             }
 
-            if(connector?.FacetsInformation?.ConnectorId != null)
+            if (connector?.FacetsInformation?.ConnectorId != null)
             {
                 data = await AddFacetsFromAdditionalRequest(data, connector, mappedQueryParameters);
             }
@@ -543,7 +559,7 @@ namespace Zurich.Connector.Data.Services
                 {
                     document.WebUrl = instanceDomain + document.WebUrl;
                 }
-                
+
             }
             return data;
         }
@@ -576,7 +592,7 @@ namespace Zurich.Connector.Data.Services
             IDataMapping service = _dataMappingFactory.GetImplementation(connectorModel?.DataSource?.SecurityDefinition?.Type);
             JToken facetsResponse = await service.GetAndMapResults<JToken>(connectorDocument, null, mappedQueryParameters, null, null);
 
-            ((JObject) data).TryAdd("facets", facetsResponse);
+            ((JObject)data).TryAdd("facets", facetsResponse);
             return data;
         }
 
@@ -626,7 +642,8 @@ namespace Zurich.Connector.Data.Services
         private static JArray PaginationResponseDocuments(JArray documents, int from, int to)
         {
             JArray aux = new JArray();
-            for (int i = from-1; i < to; i++) {
+            for (int i = from - 1; i < to; i++)
+            {
                 documents[i]["AdditionalProperties"]["position"] = i + 1;
                 aux.Add(documents[i]);
             }
