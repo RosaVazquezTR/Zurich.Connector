@@ -22,6 +22,8 @@ namespace Zurich.Connector.Web.Controllers.V1
     [ApiVersion("1.0")]
     public class DocumentDownloadController : ControllerBase
     {
+        private readonly List<string> SUPPORTED_CONNECTORS = new() { "44", "14", "80", "47" };
+
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly IDataMapping _dataMapping;
         private readonly IDocumentDownloadService _documentDownloadService;
@@ -41,15 +43,13 @@ namespace Zurich.Connector.Web.Controllers.V1
         /// <returns>Return the document as a FileStreamResult</returns>
         [EnableCors("MainCORS")]
         [HttpGet("{connectorId}/{docId}")]
-        public async Task<ActionResult<dynamic>> DocumentDownload(string connectorId, string docId, bool transformToPDF= true)
+        public async Task<ActionResult<dynamic>> DocumentDownload(string connectorId, string docId, bool transformToPDF = true)
         {
-            string result;
-            List<string> supportedConnectors = new List<string> { "44", "14", "80", "47" };
             try
             {
-                if(supportedConnectors.Contains(connectorId))
+                if (SUPPORTED_CONNECTORS.Contains(connectorId))
                 {
-                    result = await _documentDownloadService.GetDocumentContent(connectorId, docId, transformToPDF);
+                    string result = await _documentDownloadService.GetDocumentContentAsync(connectorId, docId, transformToPDF);
 
                     return new ContentResult
                     {
@@ -63,15 +63,16 @@ namespace Zurich.Connector.Web.Controllers.V1
                     return BadRequest("Unsupported connector");
                 }
             }
-            catch (KeyNotFoundException ex)
-            {
-                return NotFound(ex.Message);
-            }
             catch (Exception ex)
             {
-                return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
-            }
+                int statusCode = ex switch
+                {
+                    KeyNotFoundException => (int)HttpStatusCode.NotFound,
+                    _ => (int)HttpStatusCode.InternalServerError
+                };
 
+                return StatusCode(statusCode, ex.Message);
+            }
         }
     }
 }

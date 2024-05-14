@@ -1,5 +1,7 @@
 ﻿using Aspose.Pdf;
+using Aspose.Pdf.Operators;
 using Aspose.Pdf.Text;
+using Microsoft.Rest.Azure;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -18,69 +20,63 @@ namespace Zurich.Connector.Data.Services
 
         }
 
-        public JObject CreateDocumentJObject(Stream documentStream , bool convertToPDF = true)
+        public JObject CreateDocumentJObject(Stream documentStream, bool transformToPDF = true)
         {
-            JObject documentObject = new JObject();
-            Document document = new Document(documentStream);
-            JObject pageText = new JObject();
-            List<Document> documents = new List<Document>();
+            JObject documentObject = new();
 
-            Document firstHalfDocument = new Document();
-            Document secondHalfDocument = new Document();
-
-            int total = document.Pages.Count;
-            int firstHalf = total / 2;
-            int secondHalf = total - firstHalf;
-
-            if (document.Pages.Count > 0)
+            using (Document document = new(documentStream))
             {
-                for (int i = 1; i < firstHalf; i++)
+                int total = document.Pages.Count;
+                int firstHalf = total / 2;
+
+                Document firstHalfDocument = new();
+                firstHalfDocument.Pages.Add(document.Pages.Take(firstHalf).ToArray());
+
+                Document secondHalfDocument = new();
+                secondHalfDocument.Pages.Add(document.Pages.Skip(firstHalf).ToArray());
+
+                JObject firstHalfObjects = new();
+                JObject secondHalfObjects = new();
+
+                Parallel.Invoke(
+                    () => ExtractText(firstHalfDocument, firstHalfObjects, 1),
+                    () => ExtractText(secondHalfDocument, secondHalfObjects, firstHalf + 1)
+                );
+
+                firstHalfObjects.Merge(secondHalfObjects, new JsonMergeSettings
                 {
-                    firstHalfDocument.Pages.Add(document.Pages[i]);
-                }
-                for (int j = firstHalf; j < total + 1; j++)
+                    MergeArrayHandling = MergeArrayHandling.Union,
+                    MergeNullValueHandling = MergeNullValueHandling.Merge
+                });
+
+                documentObject.Add("documentContent", firstHalfObjects);
+
+                if (transformToPDF)
                 {
-                    secondHalfDocument.Pages.Add(document.Pages[j]);
+                    byte[] pdfBytes = ConvertDocumentToPdf(document);
+                    documentObject.Add("documentBase64", Convert.ToBase64String(pdfBytes));
                 }
             }
-
-            JObject firstHalfObjects = new JObject();
-            JObject secondHalfObjects = new JObject();
-
-            Parallel.Invoke(
-                () => ExtractText(firstHalfDocument, firstHalfObjects, 1),
-                () => ExtractText(secondHalfDocument, secondHalfObjects, secondHalf)
-             );
-
-            firstHalfObjects.Merge(secondHalfObjects, new JsonMergeSettings
-            {
-                MergeArrayHandling = MergeArrayHandling.Union,
-                MergeNullValueHandling = MergeNullValueHandling.Merge
-            });
-
-            MemoryStream pdfStream = new MemoryStream();
-            document.Save(pdfStream, SaveFormat.Pdf);
-            byte[] pdfBytes = pdfStream.ToArray();
-            string base64String = Convert.ToBase64String(pdfBytes);
-            documentObject.Add("documentContent", firstHalfObjects);
-            documentObject.Add("documentBase64", base64String);
 
             return documentObject;
         }
 
-        public void ExtractText(Document document, JObject jObject, int startingCount)
+        private static void ExtractText(Document document, JObject jObject, int startPage)
         {
-            TextAbsorber textAbsorber = new TextAbsorber();
-
             for (int i = 0; i < document.Pages.Count; i++)
             {
-                textAbsorber = new TextAbsorber();
+                TextAbsorber textAbsorber = new();
                 document.Pages[i + 1].Accept(textAbsorber);
-                jObject.Add(startingCount.ToString(), textAbsorber.Text.Replace("\t", "").Replace("\n", "").Replace("\r", ""));
-                startingCount++;
+                jObject.Add(startPage.ToString(), textAbsorber.Text.Replace("\t", "").Replace("\n", "").Replace("\r", ""));
+                startPage++;
             }
+        }
 
-            
+        private static byte[] ConvertDocumentToPdf(Document document)
+        {
+            using MemoryStream pdfStream = new();
+            document.Save(pdfStream, SaveFormat.Pdf);
+            return pdfStream.ToArray();
         }
     }
 }

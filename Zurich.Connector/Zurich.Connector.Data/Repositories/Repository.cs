@@ -17,6 +17,8 @@ using System.IO;
 using PdfiumViewer;
 using Zurich.Connector.Data.Utils;
 using Zurich.Connector.Data.Factories;
+using System.Net;
+using Zurich.Connector.Data.Interfaces;
 
 namespace Zurich.Connector.Data.Repositories
 {
@@ -35,81 +37,89 @@ namespace Zurich.Connector.Data.Repositories
 
         public async Task<string> MakeRequest(ApiInformation apiInformation, NameValueCollection parameters, string body)
         {
-            string response;
-
-            switch (apiInformation.Method.ToUpper())
+            string response = apiInformation.Method.ToUpper() switch
             {
-                case "POST":
-                    response = await this.Post(apiInformation, parameters, body);
-                    break;
-                case "GET":
-                    response = await this.Get(apiInformation, parameters);
-                    break;
-                default:
-                    throw new NotImplementedException($"{apiInformation.Method} not currently implemented");
-            }
+                "POST" => await Post(apiInformation, parameters, body),
+                "GET" => await Get(apiInformation, parameters),
+                _ => throw new NotImplementedException($"{apiInformation.Method} not currently implemented"),
+            };
+
             return response;
         }
 
         public async Task<string> DocumentDownloadMakeRequest(ApiInformation apiInformation, bool transformToPDF = true)
         {
-            string uri = CreateUri(apiInformation, null);
-            using (var requestMessage = new HttpRequestMessage(HttpMethod.Get, uri))
-            {
-                SetupRequestMessage(apiInformation, requestMessage);
-                var result = await _httpClient.SendAsync(requestMessage);
-                if (result.IsSuccessStatusCode)
-                {
-                    string[] supportedFormats = { "PDF", "DOC", "DOCX", "RTF" };
-                    var documentStream = await result.Content.ReadAsStreamAsync();
-                    JObject document = new JObject();
-                    JObject pageText = new JObject();
-                    var fileExtension = FileFormatParser.FindDocumentTypeFromStream(documentStream);
-                    if (Array.Exists(supportedFormats, format => format.Equals(fileExtension, StringComparison.OrdinalIgnoreCase)))
-                    {
-                        try
-                        {
-                            var asposeInstance = AsposeServiceFactory.GetAsposeImplementation(FileFormatParser.GetFileFormat(fileExtension));
-                            using (documentStream)
-                            {
-                                document = asposeInstance.CreateDocumentJObject(documentStream, transformToPDF);
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            throw new ApplicationException("Error parsing document: " + ex.Message);
-                        }
-                    }
-                    else
-                    {
-                        throw new ApplicationException("Unsupported document format. Supported formats are " + String.Join(" ", supportedFormats));
-                    }
+            string uri = CreateUri(apiInformation);
 
-                    return document.ToString();
-                }
-                else if (result.StatusCode == System.Net.HttpStatusCode.NotFound)
-                {
-                    _logger.LogError($"{result.StatusCode} - Unable to find specified document from {apiInformation.AppCode}: {uri}");
-                    throw new KeyNotFoundException($"Unable to find specified document from {apiInformation.AppCode}");
-                }
-                else
-                {
-                    _logger.LogError($"{result.StatusCode} Non Successful response from {apiInformation.AppCode}: {requestMessage.RequestUri.Host}");
-                    throw new ApplicationException($"Non Successful Response from {apiInformation.AppCode}");
-                }
-            }          
+            using HttpRequestMessage requestMessage = new(HttpMethod.Get, uri);
+
+            SetupRequestMessage(apiInformation, requestMessage);
+
+            HttpResponseMessage result = await _httpClient.SendAsync(requestMessage);
+
+            if (!result.IsSuccessStatusCode)
+            {
+                return HandleErrorResponse(result, apiInformation, uri);
+            }
+
+            return await HandleSuccessResponse(result, transformToPDF);
+        }
+
+        private static async Task<string> HandleSuccessResponse(HttpResponseMessage result, bool transformToPDF)
+        {
+            HashSet<string> supportedFormats = new() { "PDF", "DOC", "DOCX", "RTF" };
+
+            await using Stream documentStream = await result.Content.ReadAsStreamAsync();
+
+            string fileExtension = FileFormatParser.FindDocumentTypeFromStream(documentStream);
+
+            if (!supportedFormats.Contains(fileExtension.ToUpper()))
+            {
+                throw new ApplicationException($"Unsupported document format. Supported formats are {string.Join(", ", supportedFormats)}");
+            }
+
+            try
+            {
+                IAsposeService asposeInstance = AsposeServiceFactory.GetAsposeImplementation(FileFormatParser.GetFileFormat(fileExtension));
+
+                JObject document = asposeInstance.CreateDocumentJObject(documentStream, transformToPDF);
+
+                return document.ToString();
+            }
+            catch (Exception ex)
+            {
+                throw new ApplicationException($"Error parsing document: {ex.Message}");
+            }
+        }
+
+        private string HandleErrorResponse(HttpResponseMessage result, ApiInformation apiInformation, string uri)
+        {
+            switch (result.StatusCode)
+            {
+                case HttpStatusCode.NotFound:
+                    {
+                        string message = $"{result.StatusCode} - Unable to find specified document from {apiInformation.AppCode}: {uri}";
+                        _logger.LogError("{message}", message);
+                        throw new KeyNotFoundException(message);
+                    }
+                default:
+                    {
+                        string message = $"{result.StatusCode} Non Successful response from {apiInformation.AppCode}: {uri}";
+                        _logger.LogError("{message}", message);
+                        throw new ApplicationException(message);
+                    }
+            }
         }
 
         public async Task<string> Get(ApiInformation apiInformation, NameValueCollection parameters)
         {
             string uri = CreateUri(apiInformation, parameters);
 
-            using (var requestMessage = new HttpRequestMessage(HttpMethod.Get, uri))
-            {
-                SetupRequestMessage(apiInformation, requestMessage);
+            using var requestMessage = new HttpRequestMessage(HttpMethod.Get, uri);
 
-                return await RetrieveResponse(apiInformation, requestMessage);
-            }
+            SetupRequestMessage(apiInformation, requestMessage);
+
+            return await RetrieveResponse(apiInformation, requestMessage);
         }
 
         public async Task<string> Post(ApiInformation apiInformation, NameValueCollection parameters, string postBody)
@@ -136,70 +146,100 @@ namespace Zurich.Connector.Data.Repositories
             throw new NotImplementedException("Delete not currently implemented");
         }
 
-        private static string CreateUri(ApiInformation apiInformation, NameValueCollection parameters)
+        private static string CreateUri(ApiInformation apiInformation, NameValueCollection parameters = null)
         {
-            // TODO: We need this to parse a query string from the relative url. 
-            // Eventually the query params should be passed in and this could be removed.
-            var index = apiInformation.UrlPath.IndexOf("?");
-            string relativePath = index > 0 ? apiInformation.UrlPath.Substring(0, index) : apiInformation.UrlPath;
-            string query = index > 0 ? apiInformation.UrlPath.Substring(index) : string.Empty;
-            NameValueCollection paramCollection = HttpUtility.ParseQueryString(query);
+            NameValueCollection queryString = ParseQueryString(apiInformation.UrlPath);
+
             if (parameters != null)
-                paramCollection.Add(parameters);
-            string scheme = "https";
-
-            UriBuilder builder = new UriBuilder(scheme, apiInformation.HostName, -1, relativePath);
-            string paramStr = paramCollection.ToString();
-            if (paramCollection.AllKeys.Contains("isFilterPlural"))
             {
-                string[] strParamArray = paramStr.Split('&');
-
-
-                for (int s = 0; s < strParamArray.Length; s++)
+                foreach (string key in parameters)
                 {
-                    if (strParamArray[s].Contains("%2b"))
-                        strParamArray[s] = strParamArray[s].Replace("%2b", "+");
-
-                    if (strParamArray[s].Contains("%2c") && !strParamArray[s].Contains("searchTerm"))
-                    {
-                        string filterName = strParamArray[s][..strParamArray[s].IndexOf("=")];
-                        strParamArray[s] = strParamArray[s].Replace("%2c", $"&{filterName}=");
-                    }
-                    // Removing the isFilterPlural parameter from uri parameters since it is only used internally
-                    else if (strParamArray[s].Contains("isFilterPlural"))
-                    {
-                        strParamArray[s] = "";
-                    }
+                    queryString[key] = parameters[key];
                 }
-                paramStr = string.Join("&", strParamArray);
-
             }
-            builder.Query = paramStr;
-            return builder.ToString();
+
+            queryString.Remove("isFilterPlural");
+
+            UriBuilder builder = new("https", apiInformation.HostName)
+            {
+                Path = GetPathWithoutQueryString(apiInformation.UrlPath),
+                Query = ToQueryString(queryString)
+            };
+
+            return builder.Uri.ToString();
         }
 
-        private void SetupRequestMessage(ApiInformation apiInformation, HttpRequestMessage requestMessage)
+        private static string GetPathWithoutQueryString(string urlPath)
         {
-            if (!string.IsNullOrWhiteSpace(apiInformation.Token?.AccessToken))
-            {
-                // Should we move this?
-                if (string.IsNullOrEmpty(apiInformation.AuthHeader))
-                {
-                    requestMessage.Headers.Authorization = new AuthenticationHeaderValue(apiInformation.Token.TokenType, apiInformation.Token.AccessToken);
-                }
-                else
-                {
-                    requestMessage.Headers.Add(apiInformation.AuthHeader, apiInformation.Token.AccessToken);
-                }
-            }
-            requestMessage.Headers.Add("accept", "application/json");
+            int queryIndex = urlPath.IndexOf("?");
 
-            if (apiInformation.Headers?.Count > 0)
+            return queryIndex > 0 ? urlPath[..queryIndex] : urlPath;
+        }
+
+        private static NameValueCollection ParseQueryString(string urlPath)
+        {
+            int queryIndex = urlPath.IndexOf("?");
+
+            if (queryIndex > 0)
             {
-                foreach (var header in apiInformation.Headers.Keys)
-                {
-                    requestMessage.Headers.Add(header, apiInformation.Headers[header]);
-                }
+                string queryString = urlPath[(queryIndex + 1)..];
+
+                return HttpUtility.ParseQueryString(queryString);
+            }
+
+            return new NameValueCollection();
+        }
+
+        private static string ToQueryString(NameValueCollection queryString)
+        {
+            string[] array = (from key in queryString.AllKeys
+                              from value in queryString.GetValues(key)
+                              select $"{HttpUtility.UrlEncode(key)}={HttpUtility.UrlEncode(value)}").ToArray();
+
+            return string.Join("&", array);
+        }
+
+        private static void SetupRequestMessage(ApiInformation apiInformation, HttpRequestMessage requestMessage)
+        {
+            AddAuthorizationHeader(apiInformation, requestMessage);
+            SetAcceptHeader(requestMessage);
+            AddCustomHeaders(apiInformation, requestMessage);
+        }
+
+        private static void AddAuthorizationHeader(ApiInformation apiInformation, HttpRequestMessage requestMessage)
+        {
+            if (string.IsNullOrWhiteSpace(apiInformation.Token?.AccessToken))
+            {
+                return;
+            }
+
+            string authHeader = !string.IsNullOrEmpty(apiInformation.AuthHeader)
+                ? apiInformation.AuthHeader
+                : "Authorization";
+
+            string authValue = !string.IsNullOrEmpty(apiInformation.AuthHeader)
+                ? apiInformation.Token.AccessToken
+                : $"{apiInformation.Token.TokenType} {apiInformation.Token.AccessToken}";
+
+            requestMessage.Headers.TryAddWithoutValidation(authHeader, authValue);
+        }
+
+        private static void SetAcceptHeader(HttpRequestMessage requestMessage)
+        {
+            requestMessage.Headers.Accept.Clear();
+            requestMessage.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        }
+
+        private static void AddCustomHeaders(ApiInformation apiInformation, HttpRequestMessage requestMessage)
+        {
+            if (apiInformation.Headers == null)
+            {
+                return;
+            }
+
+            foreach (KeyValuePair<string, string> header in apiInformation.Headers)
+            {
+                requestMessage.Headers.TryAddWithoutValidation(header.Key, header.Value);
             }
         }
 

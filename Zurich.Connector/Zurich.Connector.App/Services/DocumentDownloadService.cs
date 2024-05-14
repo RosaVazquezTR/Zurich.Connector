@@ -30,11 +30,12 @@ namespace Zurich.Connector.App.Services
         /// <param name="appCode"></param>
         /// <param name="docId"></param>
         /// <returns></returns>
-        Task<string> GetDocumentContent(string connectorId, string docId, bool transformToPDF=true);
+        Task<string> GetDocumentContentAsync(string connectorId, string docId, bool transformToPDF = true);
     }
+
     public class DocumentDownloadService : IDocumentDownloadService
     {
-        private readonly IOAuthServices _OAuthService;
+        private readonly IOAuthServices _oAuthService;
         private readonly IDataMapping _dataMapping;
         private readonly IDataMappingService _dataMappingService;
         private readonly OAuthOptions _oAuthOptions;
@@ -44,7 +45,7 @@ namespace Zurich.Connector.App.Services
 
         public DocumentDownloadService(IOAuthServices OAuthService, IDataMappingFactory dataMappingFactory, IDataMappingService dataMappingService, OAuthOptions oAuthOptions, IRepository repository, IDataExtractionService dataExtractionService, IMapper mapper)
         {
-            _OAuthService = OAuthService;
+            _oAuthService = OAuthService;
             _dataMapping = dataMappingFactory.GetImplementation(AuthType.OAuth2.ToString());
             _dataMappingService = dataMappingService;
             _oAuthOptions = oAuthOptions;
@@ -53,90 +54,101 @@ namespace Zurich.Connector.App.Services
             _mapper = mapper;
         }
 
-        public async Task<string> GetDocumentContent(string connectorId, string docId, bool transformToPDF=true)
+        public async Task<string> GetDocumentContentAsync(string connectorId, string docId, bool transformToPDF = true)
         {
-            string documentContent = "";
-            string dataBaseId = "";
-            List<DataSourceInformation> availableRegistrations;
-            DataSourceInformation selectedRegistration;
-
-            ConnectorModel connectorModel = await _dataMappingService.RetrieveProductInformationMap(connectorId, null, false);
-            ConnectorModel downloadConnectorModel = await _dataMappingService.RetrieveProductInformationMap(connectorModel.Info.DownloadConnector, null, false);
+            ConnectorModel connectorModel = await GetConnectorModelAsync(connectorId);
+            ConnectorModel downloadConnectorModel = await GetConnectorModelAsync(connectorModel.Info.DownloadConnector);
             ConnectorDocument connectorDocument = _mapper.Map<ConnectorDocument>(downloadConnectorModel);
 
-            if (connectorId == "44")
-                dataBaseId = docId.Split("!")[0];
-            else // connectors 14, 80 & 47
+            (string dataBaseId, string documentId) = ParseDocumentId(connectorId, docId);
+
+            DataSourceInformation selectedRegistration = await GetSelectedRegistrationAsync(connectorModel.DataSource.AppCode, dataBaseId);
+            OAuthAPITokenResponse token = await _dataMapping.RetrieveToken(connectorModel.DataSource.AppCode, domain: selectedRegistration.Domain);
+
+            if (string.IsNullOrEmpty(token?.AccessToken))
             {
-                dataBaseId = docId.Split(",")[0];
-                docId = docId.Split(",")[1];
+                throw new UnauthorizedAccessException("No valid token available.");
             }
-            // This dictionary is not really being used, but _dataExtractionService.ExtractDataSource needs queryParameters not null to work
-            // We don't need queryParameters for any document content call, so I considered better to send this parameters instead of modifying ExtractDataSource
-            Dictionary<string, string> parameters = new()
+
+            Dictionary<string, string> headerParameters = await _dataExtractionService.ExtractDataSource(null, new Dictionary<string, string>
             {
                 { "dataBaseId", dataBaseId },
-                { "docId", docId }
+                { "docId", documentId }
+            }, null, connectorDocument);
+
+            ApiInformation apiInfo = CreateApiInformation(connectorDocument, selectedRegistration, token, headerParameters);
+
+            return await _repository.DocumentDownloadMakeRequest(apiInfo, transformToPDF);
+        }
+
+        private async Task<ConnectorModel> GetConnectorModelAsync(string connectorId)
+        {
+            return await _dataMappingService.RetrieveProductInformationMap(connectorId, null, false);
+        }
+
+        private static (string, string) ParseDocumentId(string connectorId, string docId)
+        {
+            string databaseId;
+            string documentId;
+
+            if (connectorId == "44")
+            {
+                databaseId = docId.Split('!')[0];
+                documentId = docId;
+            }
+            else
+            {
+                string[] parts = docId.Split(',');
+
+                databaseId = parts[0];
+                documentId = parts.Length > 1 ? parts[1] : string.Empty;
+            }
+
+            return (databaseId, documentId);
+        }
+
+        private async Task<DataSourceInformation> GetSelectedRegistrationAsync(string connectorId, string dataBaseId)
+        {
+            List<DataSourceInformation> availableRegistrations = await _oAuthService.GetUserRegistrations();
+
+            return connectorId == "47"
+                ? availableRegistrations?.Find(x => x.AppCode == connectorId && x.Domain.Contains(dataBaseId))
+                : availableRegistrations?.Find(x => x.AppCode == connectorId);
+        }
+
+        private ApiInformation CreateApiInformation(ConnectorDocument connectorDocument, DataSourceInformation selectedRegistration, OAuthAPITokenResponse token, Dictionary<string, string> headerParameters)
+        {
+            ApiInformation apiInfo = new()
+            {
+                AppCode = connectorDocument.DataSource.appCode,
+                HostName = CleanUpHostName(connectorDocument.HostName, selectedRegistration.Domain, connectorDocument.DataSource.appCode),
+                UrlPath = connectorDocument.Request.EndpointPath,
+                AuthHeader = connectorDocument.DataSource.securityDefinition.defaultSecurityDefinition.authorizationHeader,
+                Token = token,
+                Method = connectorDocument.Request.Method,
+                Headers = headerParameters
             };
 
-            availableRegistrations = await _OAuthService.GetUserRegistrations();
-
-            if (connectorId == "47")
-                selectedRegistration = availableRegistrations?.Find(x => x.AppCode == connectorModel.DataSource.AppCode && x.Domain.Contains(dataBaseId));
-            else
-                selectedRegistration = availableRegistrations?.Find(x => x.AppCode == connectorModel.DataSource.AppCode);
-
-            if (selectedRegistration != null)
-            {
-                var token = await _dataMapping.RetrieveToken(connectorModel.DataSource.AppCode, domain: selectedRegistration.Domain);
-
-                //This function is here just to obtain the customer_id for the UrlPath for iManage connector and it completes the url parameters using UpdatePathParameter method
-                Dictionary<string, string> headerParameters = await _dataExtractionService.ExtractDataSource(null, parameters, null, connectorDocument);
-
-                if (!string.IsNullOrEmpty(token?.AccessToken))
-                {
-                    ApiInformation apiInfo = new ApiInformation()
-                    {
-                        AppCode = connectorDocument.DataSource.appCode,
-                        HostName = string.IsNullOrEmpty(connectorDocument.HostName) ? (connectorDocument.DataSource.domain ?? selectedRegistration.Domain) : connectorDocument.HostName,
-                        UrlPath = connectorDocument.Request.EndpointPath,
-                        AuthHeader = connectorDocument.DataSource.securityDefinition.defaultSecurityDefinition.authorizationHeader,
-                        Token = token,
-                        Method = connectorDocument.Request.Method,
-                        Headers = headerParameters
-                    };
-
-                    CleanUpApiInformation(apiInfo);
-                    
-                    string documentStream = await _repository.DocumentDownloadMakeRequest(apiInfo, transformToPDF);
-
-                    documentContent = documentStream;
-                }
-
-            }
-            else
-            {
-                throw new KeyNotFoundException("Invalid or unregistered connector");
-            }
-
-            return documentContent;
+            return apiInfo;
         }
 
-        private void CleanUpApiInformation(ApiInformation apiInfo)
+        private string CleanUpHostName(string hostName, string domain, string appCode)
         {
-            if (string.IsNullOrEmpty(apiInfo.HostName))
+            if (string.IsNullOrEmpty(hostName))
             {
-                if (_oAuthOptions.Connections.ContainsKey(apiInfo.AppCode))
+                if (_oAuthOptions.Connections.TryGetValue(appCode, out OAuthConnection connection))
                 {
-                    var appCodeBaseUrl = _oAuthOptions.Connections[apiInfo.AppCode].BaseUrl;
-                    apiInfo.HostName = UrlUtils.FormattingUrl(appCodeBaseUrl);
+                    return UrlUtils.FormattingUrl(connection.BaseUrl);
+                }
+                else
+                {
+                    return domain;
                 }
             }
             else
             {
-                apiInfo.HostName = UrlUtils.FormattingUrl(apiInfo.HostName);
+                return UrlUtils.FormattingUrl(hostName);
             }
         }
-
     }
 }
