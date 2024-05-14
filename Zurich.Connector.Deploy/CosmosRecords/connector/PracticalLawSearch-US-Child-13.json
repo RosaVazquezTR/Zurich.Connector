@@ -46,14 +46,12 @@
         "format": "yyyyMMdd",
         "_comment": ""
       },
-      
       {
         "name": "PlcReference",
         "type": "string",
         "responseElement": "plcReference",
         "_comment": "This need to removed in sprint 3, at the moment this is for backward compatibility."
       }
-
     ],
     "unstructured": [
       {
@@ -72,6 +70,12 @@
         "name": "plcReference",
         "type": "string",
         "responseElement": "plcReference",
+        "_comment": ""
+      },
+      {
+        "name": "id",
+        "type": "string",
+        "responseElement": "id",
         "_comment": ""
       }
     ]
