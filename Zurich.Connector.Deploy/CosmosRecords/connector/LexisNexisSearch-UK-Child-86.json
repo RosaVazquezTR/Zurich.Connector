@@ -48,6 +48,13 @@
         "_comment": ""
       }
     ],
-    "unstructured": []
+    "unstructured": [
+      {
+        "name": "id",
+        "type": "string",
+        "responseElement": "ResultId",
+        "_comment": ""
+      }
+    ]
   }
 }
