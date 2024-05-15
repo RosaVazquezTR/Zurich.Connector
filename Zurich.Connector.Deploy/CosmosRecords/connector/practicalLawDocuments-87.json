@@ -17,7 +17,7 @@
     "parameters": [
       {
         "cdmName": "docId",
-        "name": "guid",
+        "name": "docId",
         "inClause": "Path",
         "required": true,
         "type": "string",
