@@ -8,7 +8,8 @@
     "entityType": "Search",
     "dataSourceId": "16",
     "version": "1.0",
-    "subType": "Parent"
+    "subType": "Parent",
+    "downloadConnector": "87"
   },
   "request": {
     "endpointPath": "/v4/federatedsearch",

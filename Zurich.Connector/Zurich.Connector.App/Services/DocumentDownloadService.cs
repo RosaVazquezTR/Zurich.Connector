@@ -59,10 +59,20 @@ namespace Zurich.Connector.App.Services
             ConnectorModel connectorModel = await GetConnectorModelAsync(connectorId);
             ConnectorModel downloadConnectorModel = await GetConnectorModelAsync(connectorModel.Info.DownloadConnector);
             ConnectorDocument connectorDocument = _mapper.Map<ConnectorDocument>(downloadConnectorModel);
+            DataSourceInformation selectedRegistration;
 
             (string dataBaseId, string documentId) = ParseDocumentId(connectorId, docId);
 
-            DataSourceInformation selectedRegistration = await GetSelectedRegistrationAsync(connectorModel.DataSource.AppCode, dataBaseId);
+            if (downloadConnectorModel.DataSource.Id != connectorModel.DataSource.Id)
+            {
+                selectedRegistration = await GetSelectedRegistrationAsync(downloadConnectorModel.DataSource.AppCode, dataBaseId); 
+                connectorModel = downloadConnectorModel;
+            }
+            else
+            {
+                selectedRegistration = await GetSelectedRegistrationAsync(connectorModel.DataSource.AppCode, dataBaseId);
+            }
+                
             OAuthAPITokenResponse token = await _dataMapping.RetrieveToken(connectorModel.DataSource.AppCode, domain: selectedRegistration.Domain);
 
             if (string.IsNullOrEmpty(token?.AccessToken))
@@ -78,6 +88,11 @@ namespace Zurich.Connector.App.Services
 
             ApiInformation apiInfo = CreateApiInformation(connectorDocument, selectedRegistration, token, headerParameters);
 
+            if (!String.IsNullOrEmpty(connectorModel.Info.ExternalUserId))
+            {
+                apiInfo.Headers.Add("X-External-User-Id", connectorModel.Info.ExternalUserId);
+            }
+
             return await _repository.DocumentDownloadMakeRequest(apiInfo, transformToPDF);
         }
 
@@ -88,20 +103,22 @@ namespace Zurich.Connector.App.Services
 
         private static (string, string) ParseDocumentId(string connectorId, string docId)
         {
-            string databaseId;
-            string documentId;
+            string databaseId = string.Empty;
+            string documentId = docId;
 
-            if (connectorId == "44")
+            switch (connectorId)
             {
-                databaseId = docId.Split('!')[0];
-                documentId = docId;
-            }
-            else
-            {
-                string[] parts = docId.Split(',');
+                case "44":
+                    databaseId = docId.Split('!')[0];
+                    break;
 
-                databaseId = parts[0];
-                documentId = parts.Length > 1 ? parts[1] : string.Empty;
+                case "14":
+                case "80":
+                case "47":
+                    var parts = docId.Split(',');
+                    databaseId = parts[0];
+                    documentId = parts.Length > 1 ? parts[1] : string.Empty;
+                    break;
             }
 
             return (databaseId, documentId);

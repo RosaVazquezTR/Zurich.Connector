@@ -1,0 +1,32 @@
+{
+  "id": "55",
+  "partitionkey": "DataSourceList",
+  "name": "Practical Law Commercial Standard Document Search",
+  "description": "Get Documents from Practical Law Commercial Standard Document Search (Spellbook)",
+  "infoURL": "",
+  "appCode": "PLDocs",
+  "appType": "0",
+  "locale": "US",
+  "extraRequestContext": "",
+  "registrationInfo": {
+    "registrationMode": "Automatic",
+    "domainRequired": "false",
+    "clientAndSecretRequired": "false",
+    "connectionMessage": "",
+    "registrationFileRequired": "false"
+  },
+  "securityDefinition": {
+    "type": "oauth2",
+    "flow": "",
+    "defaultSecurityDefinition": {
+      "authorizationURL": "",
+      "authorizationPath": "",
+      "tokenURL": "",
+      "tokenPath": "",
+      "keyVaultClientId": "",
+      "keyVaultSecret": "",
+      "grantType": "client_credentials"
+    },
+    "scopes": {}
+  }
+}

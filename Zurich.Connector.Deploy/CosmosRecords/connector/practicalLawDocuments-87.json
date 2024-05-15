@@ -1,0 +1,49 @@
+{
+  "id": "87",
+  "partitionkey": "ConnectorList",
+  "alias": "pldocs.download",
+  "info": {
+    "title": "Get Document from iManage library",
+    "description": "Get Documents from Practical Law Commercial Standard Document Search",
+    "entityType": "download",
+    "dataSourceId": "55",
+    "version": "1.0",
+    "subType": "Parent",
+    "ExternalUserId": "i0ace9ff90000017aa58e5f7234507e26"
+  },
+  "request": {
+    "endpointPath": "/{docId}",
+    "method": "GET",
+    "parameters": [
+      {
+        "cdmName": "docId",
+        "name": "guid",
+        "inClause": "Path",
+        "required": true,
+        "type": "string",
+        "defaultValue": "",
+        "tags": []
+      }
+    ],
+    "sorting": {
+      "properties": []
+    }
+  },
+  "response": {
+    "schema": {
+      "properties": {}
+    },
+    "type": "json"
+  },
+  "pagination": {
+    "available": false,
+    "paginationType": "",
+    "isZeroBasedOffset": true
+  },
+  "resultLocation": "",
+  "filters": [],
+  "CDMmapping": {
+    "structured": [],
+    "unstructured": []
+  }
+}

@@ -127,6 +127,10 @@ namespace Zurich.Connector.Data.Repositories.CosmosDocuments
         /// Determines if a connector accepts or not the * search wildcard
         /// </summary>
         public bool? AcceptsSearchWildCard { get; set; }
+        /// <summary>
+        /// External User ID for the PL Docs connetor
+        /// </summary>
+        public string ExternalUserId { get; set; }
     }
 
     /// <summary>
