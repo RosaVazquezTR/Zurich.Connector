@@ -57,7 +57,7 @@ namespace Zurich.Connector.App.Utils
 
             if (connectorModel.Id == "14" || connectorModel.Id == "80")
             {
-                modifyedQuery = Regex.Matches(query, @"\((.+?)\)");
+                modifyedQuery = Regex.Matches(query, @"\((\""?.+\""?\)+)\)|\((.+?)\)");
                 if (modifyedQuery.Count > 0)
                 {
                     //If query contains filters: (query AND filters)(), if not contains filters: (query)
