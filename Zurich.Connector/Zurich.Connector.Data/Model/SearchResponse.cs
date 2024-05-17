@@ -20,6 +20,8 @@ namespace Zurich.Connector.Data.Model
         public string Snippet { get; set; }
         public string Type { get; set; }
         public string CreationDate { get; set; }
+        public string[] Snippets { get; set; }
+        public Object AdditionalProperties { get; set; }
     }
 
     public class Error
