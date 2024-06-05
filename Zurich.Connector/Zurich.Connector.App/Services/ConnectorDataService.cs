@@ -192,7 +192,8 @@ namespace Zurich.Connector.Data.Services
                     }
 
                     // Validate if the connector is Msgraph for OneDrive only to obtain user's url
-                    if (connectorDocument.Id == "80")
+                    // The id for the custom sharepoint (88) connector was added so we can obtain in here the urls for the user's folders
+                    if (connectorDocument.Id == "80" || connectorDocument.Id == "88")
                         queryParameters["Query"] = await GetAdditionalConnectorData(connectorModel, queryParameters["Query"]);
 
                     NameValueCollection mappedQueryParameters = MapQueryParametersFromDB(queryParameters, connectorModel);

@@ -22,6 +22,11 @@
         "AuthUrl": "https://login.microsoftonline.com/organizations/oauth2/v2.0/authorize",
         "Scopes": "User.Read Sites.Read.All Presence.Read.All offline_access Calendars.ReadWrite ChatMessage.Send Chat.ReadWrite",
         "PKCE": true
+      },
+      "MsGraphCustom": {
+        "BaseUrl": "https://graph.microsoft.com",
+        "TokenUrl": "https://login.microsoftonline.com/organizations/oauth2/v2.0/token",
+        "Id": "e5f35fb2-4017-4d17-b695-e8e5204bd454"
       }
     }
   },
