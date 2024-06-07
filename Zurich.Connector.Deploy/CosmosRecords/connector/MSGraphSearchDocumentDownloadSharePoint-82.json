@@ -1,7 +1,7 @@
 {
     "id": "82",
     "partitionkey": "ConnectorList",
-    "alias": "msgraph.download",
+    "alias": "msgraphsharepoint.download",
     "info": {
       "title": "Downloads document from SharePoint",
       "description": "Downloads document from SharePoint",

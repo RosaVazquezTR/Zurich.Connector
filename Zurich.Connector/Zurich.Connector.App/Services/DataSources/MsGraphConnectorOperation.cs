@@ -34,7 +34,7 @@ namespace Zurich.Connector.App.Services.DataSources
 
         public bool IsCompatible(string appCode)
         {
-            return appCode == KnownDataSources.msGraph;
+            return appCode.StartsWith(KnownDataSources.msGraph);
         }
 
         public async Task<dynamic> SetItemLink(ConnectorEntityType entityType, dynamic item, string appCode, string hostName)
@@ -175,7 +175,7 @@ namespace Zurich.Connector.App.Services.DataSources
         private async Task<string> GetOneDriveUrl(string appCode, string hostName)
         {
             ConnectorModel connectorModel = null;
-            if (appCode == KnownDataSources.msGraph)
+            if (appCode == KnownDataSources.oneDrive)
             {
                 // 79 = OneDrive user info
                 connectorModel = await _cosmosService.GetConnector("79", true);

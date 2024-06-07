@@ -1,7 +1,7 @@
 {
     "id": "14",
     "partitionkey": "ConnectorList",
-    "alias": "msgraph.search",
+    "alias": "msgraphsharepoint.search",
     "info": {
         "title": "Get Search",
         "description": "Get Search Results from MS Graph",

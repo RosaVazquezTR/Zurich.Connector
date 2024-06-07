@@ -3,7 +3,7 @@
   "partitionkey": "DataSourceList",
   "name": "OneDrive",
   "description": "This is connecting to Graph API ",
-  "appcode": "MsGraph",
+  "appcode": "MsGraphOneDrive",
   "domain": "graph.microsoft.com",
   "infoURL": "",
   "extraRequestContext": "",

@@ -1,7 +1,7 @@
 {
     "id": "80",
     "partitionkey": "ConnectorList",
-    "alias": "msgraph.search.onedrive",
+    "alias": "msgraphonedrive.search",
     "info": {
         "title": "Get Search",
         "description": "Get Search Results from OneDrive",

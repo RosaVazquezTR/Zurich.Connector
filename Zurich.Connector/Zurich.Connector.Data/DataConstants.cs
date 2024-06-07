@@ -47,6 +47,9 @@
         public const string plcCASearch = "PLCCA-Search";
         public const string plcAUSearch = "PLCAU-Search";
         public const string msGraph = "MsGraph";
+        public const string msGraphCustom = "MsGraphCustom";
+        public const string oneDrive = "MsGraphOneDrive";
+        public const string sharePoint = "MsGraphSharePoint";
         public const string westLawUK = "WLUK";
         public const string thoughtTrace = "TT";
         public const string thoughtTraceDMS = "TTTenantApp";

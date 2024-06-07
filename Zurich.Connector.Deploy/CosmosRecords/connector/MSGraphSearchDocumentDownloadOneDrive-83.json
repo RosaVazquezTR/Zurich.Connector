@@ -1,12 +1,12 @@
 {
     "id": "83",
     "partitionkey": "ConnectorList",
-    "alias": "msgraph.download",
+    "alias": "msgraphonedrive.download",
     "info": {
       "title": "Downloads document from SharePoint",
       "description": "Downloads document from SharePoint",
       "entityType": "download",
-      "dataSourceId": "33",
+      "dataSourceId": "53",
       "version": "1.0",
       "subType": "Parent"
     },

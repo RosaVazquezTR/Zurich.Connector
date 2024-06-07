@@ -1,9 +1,9 @@
 {
   "id": "33",
   "partitionkey": "DataSourceList",
-  "name": "Sharepoint",
+  "name": "SharePoint",
   "description": "This is connecting to Graph API ",
-  "appcode": "MsGraph",
+  "appcode": "MsGraphSharePoint",
   "domain": "graph.microsoft.com",
   "infoURL": "",
   "extraRequestContext": "",

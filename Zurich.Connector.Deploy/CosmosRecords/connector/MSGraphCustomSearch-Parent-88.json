@@ -1,12 +1,12 @@
 {
     "id": "88",
     "partitionkey": "ConnectorList",
-    "alias": "msgraph.search.custom",
+    "alias": "msgraphcustom.search",
     "info": {
         "title": "Get Search",
         "description": "Get Search Results from specific SharePoint folders",
         "entityType": "Search",
-        "dataSourceId": "33",
+        "dataSourceId": "28",
         "version": "1.0",
         "subType": "Parent"
     },
