@@ -1,12 +1,12 @@
 {
     "id": "79",
     "partitionkey": "ConnectorList",
-	"alias": "msgraph.userprofile.onedrive",
+	"alias": "msgraphonedrive.userprofile",
     "info": {
         "title": "User's OneDrive information",
         "description": "Get user's OneDrive information",
         "entityType": "UserProfile",
-        "dataSourceId": "13",
+        "dataSourceId": "53",
         "version": "1.0"
     },
     "request": {
