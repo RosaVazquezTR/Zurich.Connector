@@ -11,6 +11,7 @@ using Zurich.Connector.Data.Factories;
 using Zurich.Connector.Data.Model;
 using Zurich.Connector.App.Services;
 using System.Collections.Generic;
+using Asp.Versioning;
 
 namespace Zurich.Connector.Web.Controllers.V1
 {

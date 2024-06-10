@@ -22,7 +22,7 @@ namespace Zurich.Connector.Durable
         public static void Main()
         {
             var host = new HostBuilder()
-                .ConfigureFunctionsWorkerDefaults()
+                .ConfigureFunctionsWebApplication()
                 .ConfigureServices(services =>
                 {
                     ConfigurationLoader loader = new ConfigurationLoader();

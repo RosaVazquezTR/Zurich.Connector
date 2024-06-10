@@ -1,9 +1,8 @@
-﻿using AutoMapper;
+﻿using Asp.Versioning;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using System;
 using System.Threading.Tasks;
-using Zurich.Connector.App.Enum;
 using Zurich.Connector.App.Services;
 using Zurich.Connector.Data.Services;
 using Zurich.Connector.Web.Models;

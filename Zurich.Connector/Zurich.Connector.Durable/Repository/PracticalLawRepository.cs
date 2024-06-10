@@ -11,6 +11,7 @@ using System.Web;
 using Zurich.Common.Models.OAuth;
 using Zurich.Connector.Durable.Constants;
 using Zurich.Connector.Durable.Model;
+using Microsoft.AspNetCore.Http;
 
 namespace Zurich.Connector.Durable.Repository
 {
@@ -66,7 +67,6 @@ namespace Zurich.Connector.Durable.Repository
 
 				return practiceAreaList;
 			}
-
 		}
 
 		private async Task<string> MakePracticalLawAccessRequest(string token, HttpRequestMessage requestMessage)

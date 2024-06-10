@@ -121,14 +121,14 @@ namespace Zurich.Connector.Web
                 }
                 c.ResolveConflictingActions(x => x.First());
             });
-            services.AddApiVersioning(
+            var apiVersionBuilder = services.AddApiVersioning(
                options =>
                {
                    // reporting api versions will return the headers "api-supported-versions" and "api-deprecated-versions"
                    options.ReportApiVersions = true;
                    options.AssumeDefaultVersionWhenUnspecified = true;
                });
-            services.AddVersionedApiExplorer(
+            apiVersionBuilder.AddApiExplorer(
                 options =>
                 {
                     // add the versioned api explorer, which also adds IApiVersionDescriptionProvider service
