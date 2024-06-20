@@ -1,25 +1,22 @@
-﻿using Microsoft.IdentityModel.Clients.ActiveDirectory;
+﻿using Azure.Identity;
+using Microsoft.Azure.Cosmos;
+using Microsoft.Azure.Documents.Client;
+using Microsoft.Azure.KeyVault;
+using Microsoft.Azure.Services.AppAuthentication;
+using Microsoft.Data.SqlClient;
+using Microsoft.Data.SqlClient.AlwaysEncrypted.AzureKeyVaultProvider;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration.AzureAppConfiguration;
+using Microsoft.Extensions.Configuration.AzureKeyVault;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Zurich.Connector.Durable.Model;
-using Microsoft.Extensions.DependencyInjection;
 using System.IO;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Azure.Services.AppAuthentication;
-using Microsoft.Azure.KeyVault;
-using Microsoft.Extensions.Configuration.AzureKeyVault;
-using Microsoft.Extensions.Configuration.AzureAppConfiguration;
-using Zurich.Common.Models.Cosmos;
-using Microsoft.Azure.Documents.Client;
-using Microsoft.Azure.Cosmos;
-using Zurich.Common.Models.OAuth;
-using Zurich.Common.Models.HighQ;
 using Zurich.Common.Models;
-using Microsoft.Data.SqlClient.AlwaysEncrypted.AzureKeyVaultProvider;
-using Microsoft.Data.SqlClient;
+using Zurich.Common.Models.Cosmos;
+using Zurich.Common.Models.HighQ;
+using Zurich.Common.Models.OAuth;
+using Zurich.Connector.Durable.Model;
 
 namespace Zurich.Connector.Durable.Configuration
 {
@@ -29,7 +26,6 @@ namespace Zurich.Connector.Durable.Configuration
     public class ConfigurationLoader
     {
         string configurationBasePath = $"{Environment.GetEnvironmentVariable("HOME")}/site/wwwroot";
-        private ClientCredential _clientCredential;
 
         /// <summary>
         /// Setup configuration providers.
@@ -160,33 +156,15 @@ namespace Zurich.Connector.Durable.Configuration
         /// </summary>
         public void ConfigureStoreEncryption(AzureAdOptions azureAdOptions)
         {
-            _clientCredential = new ClientCredential(azureAdOptions.ClientId, azureAdOptions.ClientSecret);
+            var clientSecretCredential = new ClientSecretCredential(azureAdOptions.ApplicationTenant, azureAdOptions.ClientId, azureAdOptions.ClientSecret);
 
-            SqlColumnEncryptionAzureKeyVaultProvider azureKeyVaultProvider = new SqlColumnEncryptionAzureKeyVaultProvider(GetEncryptionKeyVaultToken);
-            var providers = new Dictionary<string, SqlColumnEncryptionKeyStoreProvider>();
-            providers.Add(SqlColumnEncryptionAzureKeyVaultProvider.ProviderName, azureKeyVaultProvider);
+            SqlColumnEncryptionAzureKeyVaultProvider azureKeyVaultProvider = new(clientSecretCredential);
+            var providers = new Dictionary<string, SqlColumnEncryptionKeyStoreProvider>
+            {
+                { SqlColumnEncryptionAzureKeyVaultProvider.ProviderName, azureKeyVaultProvider }
+            };
+
             SqlConnection.RegisterColumnEncryptionKeyStoreProviders(providers);
-
         }
-
-        /// <summary>
-        /// Requests an application token for acessing the column encryption key in an Azure keyvault
-        /// </summary>
-        /// <param name="authority">The authority requesting the token</param>
-        /// <param name="resource">The requested resource</param>
-        /// <param name="scope">The requested scope</param>
-        /// <returns></returns>
-        public async Task<string> GetEncryptionKeyVaultToken(string authority, string resource, string scope)
-        {
-            var authContext = new AuthenticationContext(authority);
-            AuthenticationResult result = await authContext.AcquireTokenAsync(resource, _clientCredential);
-
-            if (result == null)
-                throw new InvalidOperationException("Failed to obtain access token");
-
-            return result.AccessToken;
-        }
-
     }
-
 }

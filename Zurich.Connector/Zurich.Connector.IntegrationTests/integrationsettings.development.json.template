@@ -5,6 +5,7 @@
   },
   "AzureAd": {
     "ClientId": "b4a0d298-06dd-4738-83be-9b57653980b1",
-    "ClientSecret": "DoNotSetHere"
+    "ClientSecret": "DoNotSetHere",
+    "ApplicationTenant":  "DoNotSetHere"
   }
 }

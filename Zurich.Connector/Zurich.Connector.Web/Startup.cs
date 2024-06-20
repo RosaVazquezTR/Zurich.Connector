@@ -1,38 +1,35 @@
+using Azure.Identity;
+using IdentityModel;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Data.SqlClient;
+using Microsoft.Data.SqlClient.AlwaysEncrypted.AzureKeyVaultProvider;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Polly;
 using System;
-using AutoMapper;
 using System.Collections.Generic;
-using System.Threading.Tasks;
+using System.Linq;
+using System.Text.Json.Serialization;
 using Zurich.Common;
+using Zurich.Common.Models;
+using Zurich.Common.Models.Cosmos;
 using Zurich.Common.Models.HighQ;
 using Zurich.Common.Models.OAuth;
-using Zurich.Connector.Data.DataMap;
-using Zurich.Connector.Data.Repositories;
-using Microsoft.IdentityModel.Clients.ActiveDirectory;
-using Zurich.Common.Models;
-using Microsoft.Data.SqlClient;
-using Microsoft.Data.SqlClient.AlwaysEncrypted.AzureKeyVaultProvider;
-using Zurich.Connector.Data.Services;
-using Zurich.Common.Models.Cosmos;
+using Zurich.Common.Services.Security;
+using Zurich.Common.Services.Security.CIAM;
 using Zurich.Connector.App;
 using Zurich.Connector.App.Services;
 using Zurich.Connector.App.Services.DataSources;
-using System.Text.Json.Serialization;
-using Zurich.Connector.Data.Factories;
-using Zurich.Common.Services.Security.CIAM;
-using Zurich.Common.Services.Security;
-using IdentityModel;
-using System.Linq;
-using Zurich.Connector.Web.Extensions;
-using Zurich.Connector.Web.Configuration;
-using Microsoft.AspNetCore.Cors;
 using Zurich.Connector.Data.Configuration;
+using Zurich.Connector.Data.DataMap;
+using Zurich.Connector.Data.Factories;
+using Zurich.Connector.Data.Repositories;
+using Zurich.Connector.Data.Services;
+using Zurich.Connector.Web.Configuration;
+using Zurich.Connector.Web.Extensions;
 
 namespace Zurich.Connector.Web
 {
@@ -41,7 +38,6 @@ namespace Zurich.Connector.Web
         private AzureAdOptions _azureOptions;
         private static OAuthOptions _oAuthOptions;
         private static MicroServiceOptions _microServOptions;
-        private ClientCredential _clientCredential;
         private CosmosDbOptions _connectorCosmosDbOptions;
         private CosmosClientSettings _connectorCosmosClientOptions;
         private AuthIssuerOptions _legalPlatformAuthOptions;
@@ -219,31 +215,15 @@ namespace Zurich.Connector.Web
         /// <param name="app">The application request pipeline builder</param>
         protected void RegisterColumnEncryptionProvider(IApplicationBuilder app)
         {
-            _clientCredential = new ClientCredential(_azureOptions.ClientId, _azureOptions.ClientSecret);
+            var clientSecretCredential = new ClientSecretCredential(_azureOptions.ApplicationTenant, _azureOptions.ClientId, _azureOptions.ClientSecret);
 
-            SqlColumnEncryptionAzureKeyVaultProvider azureKeyVaultProvider = new SqlColumnEncryptionAzureKeyVaultProvider(GetEncryptionKeyVaultToken);
-            var providers = new Dictionary<string, SqlColumnEncryptionKeyStoreProvider>();
-            providers.Add(SqlColumnEncryptionAzureKeyVaultProvider.ProviderName, azureKeyVaultProvider);
+            SqlColumnEncryptionAzureKeyVaultProvider azureKeyVaultProvider = new(clientSecretCredential);
+            var providers = new Dictionary<string, SqlColumnEncryptionKeyStoreProvider>
+            {
+                { SqlColumnEncryptionAzureKeyVaultProvider.ProviderName, azureKeyVaultProvider }
+            };
+
             SqlConnection.RegisterColumnEncryptionKeyStoreProviders(providers);
-        }
-
-
-        /// <summary>
-        /// Requests an application token for acessing the column encryption key in an Azure keyvault
-        /// </summary>
-        /// <param name="authority">The authority requesting the token</param>
-        /// <param name="resource">The requested resource</param>
-        /// <param name="scope">The requested scope</param>
-        /// <returns></returns>
-        private async Task<string> GetEncryptionKeyVaultToken(string authority, string resource, string scope)
-        {
-            var authContext = new AuthenticationContext(authority);
-            AuthenticationResult result = await authContext.AcquireTokenAsync(resource, _clientCredential);
-
-            if (result == null)
-                throw new InvalidOperationException("Failed to obtain access token");
-
-            return result.AccessToken;
         }
 
         /// <summary>
