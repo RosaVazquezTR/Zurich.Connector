@@ -1,8 +1,8 @@
 {
   "AzureAd": {
     "ClientId": "b4a0d298-06dd-4738-83be-9b57653980b1",
-    "ClientSecret": "DoNotSetHere",
-    "ApplicationTenant": "e205bfab-7c3a-4369-86f3-030001469258"
+    "ClientSecret": "TnA8Q~CY1QTJdqd5u4i8ipddOycGsT~5_kCnLaU~",
+    "ApplicationTenant": "DoNotSetHere"
   },
   "KeyVault": {
     "Endpoint": "https://connectorsKeyVaultCI.vault.azure.net/",
