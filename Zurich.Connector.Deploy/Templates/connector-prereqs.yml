@@ -204,7 +204,7 @@ steps:
     inputs:
       azureSubscription: ${{ parameters.subscriptionName }}
       ScriptPath: '$(Build.SourcesDirectory)/Zurich.Connector/Zurich.Connector.Deploy/Scripts/AddAzureCacheRedisResource.ps1'
-      ScriptArguments: '-resourceGroupName ${{ parameters.resourceGroup }} -redisResourceName ${{ parameters.redisResourceName }} -location ${{ parameters.resourceLocation }} -vaultName "${{ parameters.keyVault }}${{ parameters.environmentName }}" -keyName "${{ parameters.redisKeyName }}" -verbose'
+      ScriptArguments: '-resourceGroupName ${{ parameters.resourceGroup }} -redisResourceName ${{ parameters.redisResourceName }} -location ${{ parameters.resourceLocation }} -keyVaultName "${{ parameters.keyVault }}${{ parameters.environmentName }}" -keyName "${{ parameters.redisKeyName }}" -verbose'
       azurePowerShellVersion: 'LatestVersion'
 
   - task: AzurePowerShell@4
@@ -216,6 +216,7 @@ steps:
       azurePowerShellVersion: LatestVersion
 
   # this can eventually get removed when we no longer need to go directly to db to get tokens
+
   - task: AzurePowerShell@4
     displayName: 'Add tenant connection string to keyvault'
     inputs:

@@ -72,10 +72,10 @@ function Add-ConnectionStringToKeyVault {
     )
     
     $currentConnectionString = Retry {
-        Get-AzKeyVaultSecret -VaultName $keyVaultName -Name $keyName -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
+        Get-AzKeyVaultSecret -VaultName $keyVaultName -Name $keyName -ErrorAction SilentlyContinue -WarningAction SilentlyContinue -AsPlainText
     }
-    
-    if ($currentConnectionString.SecretValueText -ne $connectionString) {
+
+    if ($currentConnectionString -ne $connectionString) {
         Write-Host "Adding connection string to Key Vault..."
         $secret = ConvertTo-SecureString -String $connectionString -AsPlainText -Force
         Set-AzKeyVaultSecret -VaultName $keyVaultName -Name $keyName -SecretValue $secret
@@ -84,6 +84,16 @@ function Add-ConnectionStringToKeyVault {
     else {
         Write-Host "Connection string already exists in Key Vault."
     }
+}
+
+function Get-RedisPrimaryKey {
+    param(
+        [string]$resourceGroupName,
+        [string]$redisResourceName
+    )
+
+    $redisKey = Get-RedisKey -resourceGroupName $resourceGroupName -redisResourceName $redisResourceName
+    return $redisKey.PrimaryKey
 }
 
 # Check if the resource already exists
@@ -96,9 +106,11 @@ if ($null -eq $redisCache) {
     $redisCache = New-RedisCache -resourceGroupName $resourceGroupName -redisResourceName $redisResourceName -location $location
     Write-Host "Azure Cache for Redis successfully created."
 }
+else {
+    Write-Host "Azure Cache for Redis already exists."
+}
 
-Write-Host "Azure Cache for Redis already exists. Connection string:"
-$connectionString = $redisCache.HostName + ":6380,password=" + (Get-RedisKey -resourceGroupName $resourceGroupName -redisResourceName $redisResourceName).PrimaryKey + ",ssl=True,abortConnect=False"
-Write-Host $connectionString
+$primaryKey = Get-RedisPrimaryKey -resourceGroupName $resourceGroupName -redisResourceName $redisResourceName
+$connectionString = $redisCache.HostName + ":6380,password=" + $primaryKey + ",ssl=True,abortConnect=False"
 
 Add-ConnectionStringToKeyVault -keyVaultName $keyVaultName -keyName $keyName -connectionString $connectionString
