@@ -65,6 +65,10 @@ parameters:
     type: string
   - name: practicalLawSecret
     type: string
+  - name: redisKeyName
+    type: string
+  - name: redisResourceName
+    type: string
   - name: resourceGroup
     type: string
   - name: resourceLocation
@@ -105,7 +109,6 @@ parameters:
     type: string
 
 steps:
- 
   - template: Templates\ZurichDeploy-SetupResourceGroup.yml@ZurichDeploy
     parameters:
       environmentName: '${{ parameters.environmentName }}'
@@ -197,14 +200,22 @@ steps:
       azurePowerShellVersion: LatestVersion
 
   - task: AzurePowerShell@4
+    displayName: 'Create or Update Azure Redis Cache'
+    inputs:
+      azureSubscription: ${{ parameters.subscriptionName }}
+      ScriptPath: '$(Build.SourcesDirectory)/Zurich.Connector/Zurich.Connector.Deploy/Scripts/AddAzureCacheRedisResource.ps1'
+      ScriptArguments: '-resourceGroupName ${{ parameters.resourceGroup }} -redisResourceName ${{ parameters.redisResourceName }} -location ${{ parameters.resourceLocation }} -vaultName "${{ parameters.keyVault }}${{ parameters.environmentName }}" -keyName "${{ parameters.redisKeyName }}" -verbose'
+      azurePowerShellVersion: 'LatestVersion'
+
+  - task: AzurePowerShell@4
     displayName: 'Populate Key Vault'
     inputs:
       azureSubscription: ${{ parameters.subscriptionName }}
       ScriptPath: '$(Build.SourcesDirectory)/Zurich.Deploy/Scripts/PopulateKeyVault.ps1'
       ScriptArguments: '-vaultName "${{ parameters.keyVault }}${{ parameters.environmentName }}" -nameValuePairsJson ''{"AzureAd--ClientId": "${{ parameters.azureAdClientId }}", "SplitIOApiKey":"${{ parameters.splitIOApiKey }}", "PartnerOAuthApps--Connections--PracticalLaw--Secret": "${{ parameters.practicalLawSecret }}", "PartnerOAuthApps--Connections--PLCUS--Secret": "${{ parameters.practicalLawSecret }}", "PartnerOAuthApps--Connections--PLCUK--Secret": "${{ parameters.practicalLawSecret }}", "PartnerOAuthApps--Connections--PLCCA--Secret": "${{ parameters.practicalLawSecret }}", "PartnerOAuthApps--Connections--PLCAU--Secret": "${{ parameters.practicalLawSecret }}", "PartnerOAuthApps--Connections--CBTPRACPT--Secret": "${{ parameters.practicalLawSecret }}", "PartnerOAuthApps--Connections--PracticalLawConnect--Secret": "${{ parameters.practicalLawSecret }}", "PartnerOAuthApps--Connections--TRACKR--Secret": "${{ parameters.legalTrackerSecret }}", "PartnerOAuthApps--Connections--TRACKRACTIONITEMS--Secret": "${{ parameters.legalTrackerActionItemsSecret }}", "PartnerOAuthApps--Connections--WLUK--Secret": "${{ parameters.westlawUKSecret }}", "HighqMS--Key": "${{ parameters.highqMSKey }}", "AsposeLicence": "${{ parameters.asposeLicence }}" }'''
       azurePowerShellVersion: LatestVersion
-  
-# this can eventually get removed when we no longer need to go directly to db to get tokens
+
+  # this can eventually get removed when we no longer need to go directly to db to get tokens
   - task: AzurePowerShell@4
     displayName: 'Add tenant connection string to keyvault'
     inputs:

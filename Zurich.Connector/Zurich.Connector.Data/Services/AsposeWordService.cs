@@ -13,43 +13,42 @@ namespace Zurich.Connector.Data.Services
 {
     public class AsposeWordService : IAsposeService
     {
-        public AsposeWordService() 
-        {
-
-        }
-
         public JObject CreateDocumentJObject(Stream documentStream, bool transformToPDF = true)
         {
-            JObject documentObject = new JObject();
-            Document document = new Document(documentStream);
-            JObject pageText = new JObject();
-            var pageCount = document.PageCount;
+            Document document = new(documentStream);
+            JObject pageText = ProcessDocumentPages(document);
 
-            if (pageCount > 0)
-            {
-                for (int i = 0; i < pageCount; i++)
-                {
-                    Document newdoc = document.ExtractPages(i, 1);
-                    pageText.Add((i + 1).ToString(), newdoc.ToString(SaveFormat.Text).Replace("\t", "").Replace("\n","").Replace("\r", ""));
-                }
-            }
+            string documentBase64 = ConvertDocumentToBase64(document, transformToPDF ? SaveFormat.Pdf : SaveFormat.Docx);
 
-            MemoryStream fileStream = new MemoryStream();
-            if (transformToPDF)
+            JObject documentObject = new()
             {
-                document.Save(fileStream, SaveFormat.Pdf);
-            }
-            else
-            {
-                document.Save(fileStream, SaveFormat.Docx);
-            }
-            fileStream.Position = 0;
-            byte[] fileBytes = fileStream.ToArray();
-            string base64String = Convert.ToBase64String(fileBytes);
-            documentObject.Add("documentContent", pageText);
-            documentObject.Add("documentBase64", base64String);
+                { "documentContent", pageText },
+                { "documentBase64", documentBase64 }
+            };
 
             return documentObject;
+        }
+
+        private static JObject ProcessDocumentPages(Document document)
+        {
+            JObject pageText = [];
+
+            for (int i = 0; i < document.PageCount; i++)
+            {
+                Document page = document.ExtractPages(i, 1);
+                pageText.Add((i + 1).ToString(), page.ToString(SaveFormat.Text).Replace("\t", "").Replace("\n", "").Replace("\r", ""));
+            }
+
+            return pageText;
+        }
+
+        private static string ConvertDocumentToBase64(Document document, SaveFormat format)
+        {
+            using MemoryStream memoryStream = new();
+            document.Save(memoryStream, format);
+            memoryStream.Position = 0;
+            byte[] fileBytes = memoryStream.ToArray();
+            return Convert.ToBase64String(fileBytes);
         }
     }
 }

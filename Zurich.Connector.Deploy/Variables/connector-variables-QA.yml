@@ -1,20 +1,20 @@
 variables:
-  - name: apiVersion 
-    value: "v1" 
+  - name: apiVersion
+    value: 'v1'
   - name: assignmentGroup
-    value: "LegalHomeDevs"
+    value: 'LegalHomeDevs'
   - name: azureAdClientId
     value: 'b4a0d298-06dd-4738-83be-9b57653980b1'
   - name: connectorCosmosMaxThroughput
-    value: "400"
+    value: '400'
   - name: connectorCosmosThroughput
-    value: "400"
+    value: '400'
   - name: connectorCosmosShouldAutoScale
-    value: "false"
+    value: 'false'
   - name: connectorSubnets
     value: '["connector-function-QA-backend", "connector-webApi-QA-Backend", "hqh-VM-RelMgmt-backend", "lh-VM-CI-backend"]'
   - name: connectorServiceFQND
-    value: "connectorswebapiqa.azurewebsites.net"
+    value: 'connectorswebapiqa.azurewebsites.net'
   - name: defaultCapacity
     value: '2'
   - name: functionAppServicePlanSku
@@ -29,6 +29,10 @@ variables:
     value: '2'
   - name: maximumCapacity
     value: '20'
+  - name: redisKeyName
+    value: 'RedisConnectionString'
+  - name: redisResourceName
+    value: 'ConnectorsRedisQA'
   - name: resourceGroup
     value: 'centralus-connectors-qa'
   - name: subnetConnectorBackend
@@ -39,4 +43,3 @@ variables:
     value: 'connector'
   - name: swaggerEndpoint
     value: 'https://connectorswebapiqa.azurewebsites.net/swagger/v1/swagger.json'
-    

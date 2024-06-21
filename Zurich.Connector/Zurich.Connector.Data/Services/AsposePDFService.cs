@@ -15,11 +15,6 @@ namespace Zurich.Connector.Data.Services
 {
     public class AsposePDFService : IAsposeService
     {
-        public AsposePDFService()
-        {
-
-        }
-
         public JObject CreateDocumentJObject(Stream documentStream, bool transformToPDF = true)
         {
             JObject documentObject = new();

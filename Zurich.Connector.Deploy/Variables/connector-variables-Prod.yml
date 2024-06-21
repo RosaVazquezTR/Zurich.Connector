@@ -1,20 +1,20 @@
 variables:
-  - name: apiVersion 
-    value: "v1" 
+  - name: apiVersion
+    value: 'v1'
   - name: assignmentGroup
-    value: "APP-OPS-ASE-LEGALSHARED"
+    value: 'APP-OPS-ASE-LEGALSHARED'
   - name: azureAdClientId
-    value: "3e1c6d20-9663-41bb-84fd-669fa96a1dc3"
+    value: '3e1c6d20-9663-41bb-84fd-669fa96a1dc3'
   - name: connectorCosmosMaxThroughput
-    value: "400"
+    value: '400'
   - name: connectorCosmosThroughput
-    value: "400"
+    value: '400'
   - name: connectorCosmosShouldAutoScale
-    value: "false"
+    value: 'false'
   - name: connectorSubnets
     value: '["connector-function-Prod-backend","connector-webApi-Prod-Backend", "hqh-RelMgmtVM-PROD-backend"]'
   - name: connectorServiceFQND
-    value: "connectorswebapiprod.azurewebsites.net"
+    value: 'connectorswebapiprod.azurewebsites.net'
   - name: defaultCapacity
     value: '2'
   - name: functionAppServicePlanSku
@@ -29,6 +29,10 @@ variables:
     value: '2'
   - name: maximumCapacity
     value: '20'
+  - name: redisKeyName
+    value: 'RedisConnectionString'
+  - name: redisResourceName
+    value: 'ConnectorsRedis'
   - name: resourceGroup
     value: 'centralus-connectors'
   - name: subnetConnectorBackend
@@ -39,4 +43,3 @@ variables:
     value: 'connector'
   - name: swaggerEndpoint
     value: 'https://connectorswebapiprod.azurewebsites.net/swagger/v1/swagger.json'
-    

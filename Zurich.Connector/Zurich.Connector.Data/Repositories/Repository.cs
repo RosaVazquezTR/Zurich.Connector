@@ -22,19 +22,8 @@ using Zurich.Connector.Data.Interfaces;
 
 namespace Zurich.Connector.Data.Repositories
 {
-    public class Repository : IRepository
+    public class Repository(HttpClient httpClient, ILogger<Repository> logger, IAppConfigService appConfigService) : IRepository
     {
-        private readonly HttpClient _httpClient;
-        private readonly ILogger<Repository> _logger;
-        private readonly IAppConfigService _appConfigService;
-
-        public Repository(HttpClient httpClient, ILogger<Repository> logger, IAppConfigService appConfigService)
-        {
-            _httpClient = httpClient;
-            _logger = logger;
-            _appConfigService = appConfigService;
-        }
-
         public async Task<string> MakeRequest(ApiInformation apiInformation, NameValueCollection parameters, string body)
         {
             string response = apiInformation.Method.ToUpper() switch
@@ -55,7 +44,7 @@ namespace Zurich.Connector.Data.Repositories
 
             SetupRequestMessage(apiInformation, requestMessage);
 
-            HttpResponseMessage result = await _httpClient.SendAsync(requestMessage);
+            HttpResponseMessage result = await httpClient.SendAsync(requestMessage);
 
             if (!result.IsSuccessStatusCode)
             {
@@ -99,13 +88,13 @@ namespace Zurich.Connector.Data.Repositories
                 case HttpStatusCode.NotFound:
                     {
                         string message = $"{result.StatusCode} - Unable to find specified document from {apiInformation.AppCode}: {uri}";
-                        _logger.LogError("{message}", message);
+                        logger.LogError("{message}", message);
                         throw new KeyNotFoundException(message);
                     }
                 default:
                     {
                         string message = $"{result.StatusCode} Non Successful response from {apiInformation.AppCode}: {uri}";
-                        _logger.LogError("{message}", message);
+                        logger.LogError("{message}", message);
                         throw new ApplicationException(message);
                     }
             }
@@ -245,14 +234,14 @@ namespace Zurich.Connector.Data.Repositories
 
         private async Task<string> RetrieveResponse(ApiInformation apiInformation, HttpRequestMessage requestMessage)
         {
-            var result = await _httpClient.SendAsync(requestMessage);
+            var result = await httpClient.SendAsync(requestMessage);
 
             //Feature flag to simulate error in conectors requests to test puroposes
-            if (await _appConfigService.IsDynamicFeatureEnabled(Features.SimulateErrorDatasource, apiInformation.AppCode))
+            if (await appConfigService.IsDynamicFeatureEnabled(Features.SimulateErrorDatasource, apiInformation.AppCode))
             {
                 result.StatusCode = System.Net.HttpStatusCode.InternalServerError;
             }
-            else if (await _appConfigService.IsDynamicFeatureEnabled(Features.SimulateTimeoutDatasource, apiInformation.AppCode))
+            else if (await appConfigService.IsDynamicFeatureEnabled(Features.SimulateTimeoutDatasource, apiInformation.AppCode))
             {
                 result.StatusCode = System.Net.HttpStatusCode.GatewayTimeout;
             }
@@ -264,7 +253,7 @@ namespace Zurich.Connector.Data.Repositories
             }
             else
             {
-                _logger.LogError($"{result.StatusCode} Non Successful response from {apiInformation.AppCode}: {requestMessage.RequestUri.Host}");
+                logger.LogError($"{result.StatusCode} Non Successful response from {apiInformation.AppCode}: {requestMessage.RequestUri.Host}");
                 throw new ApplicationException($"Non Successful Response from {apiInformation.AppCode}");
             }
         }

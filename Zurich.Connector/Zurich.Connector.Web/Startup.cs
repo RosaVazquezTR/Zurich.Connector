@@ -86,6 +86,7 @@ namespace Zurich.Connector.Web
             services.AddScoped<IConnectorService, ConnectorService>();
             services.AddScoped<IDataMappingRepository, DataMappingRepository>();
             services.AddScoped<IRepository, Repository>();
+            services.AddScoped<IRedisRepository, RedisRepository>();
             services.AddScoped<IConnectorDataSourceOperations, IManageConnectorOperations>();
             services.AddScoped<IConnectorDataSourceOperations, PracticalLawConnectorOperation>();
             services.AddScoped<IConnectorDataSourceOperations, MsGraphConnectorOperation>();
@@ -162,6 +163,7 @@ namespace Zurich.Connector.Web
             services.AddAppConfigServices(Configuration.GetValue<string>("splitIOApiKey"));
             services.AddInternalAPIHttpClient(HttpClientNames.IHDocumentStorage, Configuration.GetValue<string>("IHDocumentStorageBaseUrl"));
             services.AddApplicationInsightsTelemetry(Configuration);
+            services.AddRedisClient(Configuration);
 
             var license = Configuration.GetValue<string>("AsposeLicence");
             AsposeLicenceProvider.SetAsposeWordsLicense(license);
