@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Zurich.Common.Models.OAuth;
+using Zurich.Connector.App.Factories;
 using Zurich.Connector.App.Model;
 using Zurich.Connector.Data.DataMap;
 using Zurich.Connector.Data.Factories;
@@ -35,16 +36,16 @@ namespace Zurich.Connector.App.Services
 
     public class DocumentDownloadService(IOAuthServices OAuthService, IDataMappingFactory dataMappingFactory, IDataMappingService dataMappingService, IRedisRepository redisRepository, OAuthOptions oAuthOptions, IRepository repository, IDataExtractionService dataExtractionService, IMapper mapper) : IDocumentDownloadService
     {
-        private readonly IDataMapping _dataMapping = dataMappingFactory.GetImplementation(AuthType.OAuth2.ToString());
+        private readonly IDataMapping _dataMapping;
 
         public async Task<string> GetDocumentContentAsync(string connectorId, string docId, bool transformToPDF = true)
         {
             (string dataBaseId, string documentId) = ParseDocumentId(connectorId, docId);
 
-            string document = await redisRepository.GetAsync<string>(documentId);
+            //string document = await redisRepository.GetAsync<string>(documentId);
 
-            if (string.IsNullOrEmpty(document))
-            {
+            //if (string.IsNullOrEmpty(document))
+            //{
                 ConnectorModel connectorModel = await GetConnectorModelAsync(connectorId);
                 ConnectorModel downloadConnectorModel = await GetConnectorModelAsync(connectorModel.Info.DownloadConnector);
                 ConnectorDocument connectorDocument = mapper.Map<ConnectorDocument>(downloadConnectorModel);
@@ -60,12 +61,7 @@ namespace Zurich.Connector.App.Services
                     selectedRegistration = await GetSelectedRegistrationAsync(connectorModel.DataSource.AppCode, dataBaseId);
                 }
 
-                OAuthAPITokenResponse token = await _dataMapping.RetrieveToken(connectorModel.DataSource.AppCode, domain: selectedRegistration.Domain);
-
-                if (string.IsNullOrEmpty(token?.AccessToken))
-                {
-                    throw new UnauthorizedAccessException("No valid token available.");
-                }
+                IDataMapping service = dataMappingFactory.GetImplementation(connectorModel?.DataSource?.SecurityDefinition?.Type);
 
                 Dictionary<string, string> headerParameters = await dataExtractionService.ExtractDataSource(null, new Dictionary<string, string>
                 {
@@ -73,19 +69,11 @@ namespace Zurich.Connector.App.Services
                     { "docId", documentId }
                 }, null, connectorDocument);
 
-                ApiInformation apiInfo = CreateApiInformation(connectorDocument, selectedRegistration, token, headerParameters);
+                var data = await service.GetAndMapResults<dynamic>(connectorDocument, null, null, headerParameters, null);
+                //await redisRepository.SetAsync(documentId, document);
+            //}
 
-                if (!string.IsNullOrEmpty(connectorModel.Info.ExternalUserId))
-                {
-                    apiInfo.Headers.Add("X-External-User-Id", connectorModel.Info.ExternalUserId);
-                }
-
-                document = await repository.DocumentDownloadMakeRequest(apiInfo, transformToPDF);
-
-                await redisRepository.SetAsync(documentId, document);
-            }
-
-            return document;
+            return data;
         }
 
         private async Task<ConnectorModel> GetConnectorModelAsync(string connectorId)

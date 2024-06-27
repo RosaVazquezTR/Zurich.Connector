@@ -76,7 +76,11 @@ namespace Zurich.Connector.Data.DataMap
             else
                 response = await _repository.MakeRequest(apiInfo, query, body);
 
-            if (!(string.IsNullOrWhiteSpace(response)))
+            if (connectorDocument.Info.EntityType == ConnectorEntityType.Download)
+            {
+                return (dynamic)response;
+            }
+            else if (!(string.IsNullOrWhiteSpace(response)))
             {
                 IHttpResponseService httpResponseService = _httpResponseFactory.GetImplementation(connectorDocument.Response.Type.ToString());
 

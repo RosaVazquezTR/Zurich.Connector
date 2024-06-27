@@ -48,6 +48,12 @@ namespace Zurich.Connector.Data.Repositories
         /// <param name="applicationCode">The application code of the connector</param>
         /// <returns>Revoking of Tenanat application success or failure status</returns>
         Task<bool> RevokeTenantApplication(string applicationCode);
+
+        /// <summary>
+        /// Retrieves the transfer token
+        /// </summary>
+        /// <returns>Transfer token</returns>
+        Task<string> GetTransferToken();
     }
 
 
@@ -147,6 +153,18 @@ namespace Zurich.Connector.Data.Repositories
             return response;
         }
 
+        public async Task<string> GetTransferToken()
+        {
+            string result;
+            string path = "api/v1/token/transferToken";
+
+            using (var requestMessage = new HttpRequestMessage(HttpMethod.Get, path))
+            {
+                result = await MakeRequest(requestMessage);
+            }
+
+            return result;
+        }
 
         /// <summary>
         /// Makes HTTP requests to a OAuth endpoint

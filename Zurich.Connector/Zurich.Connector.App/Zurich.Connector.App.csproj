@@ -3,8 +3,7 @@
     <TargetFramework>net8.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-  </ItemGroup>
-  <ItemGroup>
+    <ProjectReference Include="..\..\..\ZurichCommon\Zurich.Common\Zurich.Common\Zurich.Common.csproj" />
     <ProjectReference Include="..\Zurich.Connector.Data\Zurich.Connector.Data.csproj" />
   </ItemGroup>
 </Project>

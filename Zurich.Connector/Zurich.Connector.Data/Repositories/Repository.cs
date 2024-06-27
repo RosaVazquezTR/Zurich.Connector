@@ -235,6 +235,7 @@ namespace Zurich.Connector.Data.Repositories
         private async Task<string> RetrieveResponse(ApiInformation apiInformation, HttpRequestMessage requestMessage)
         {
             var result = await httpClient.SendAsync(requestMessage);
+            var requestContent2 = await result.Content.ReadAsStringAsync();
 
             //Feature flag to simulate error in conectors requests to test puroposes
             if (await appConfigService.IsDynamicFeatureEnabled(Features.SimulateErrorDatasource, apiInformation.AppCode))
