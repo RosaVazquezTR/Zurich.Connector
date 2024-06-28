@@ -11,7 +11,6 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Zurich.Connector.App.Exceptions;
-using Zurich.Connector.App.Factories;
 using Zurich.Connector.App.Model;
 using Zurich.Connector.Data;
 using Zurich.Connector.Data.DataMap;

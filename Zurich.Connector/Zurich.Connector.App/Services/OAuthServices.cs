@@ -71,10 +71,5 @@ namespace Zurich.Connector.App.Services
         {
             return await _OAuthRespository.RevokeTenantApplication(applicationCode);
         }
-
-        public async Task<string> GetTransferToken()
-        {
-            return await _OAuthRespository.GetTransferToken();
-        }
     }
 }

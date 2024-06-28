@@ -21,8 +21,6 @@ using Zurich.Common.Models.OAuth;
 using Zurich.Common.Services.Security;
 using Zurich.Common.Services.Security.CIAM;
 using Zurich.Connector.App;
-using Zurich.Connector.App.DataMap;
-using Zurich.Connector.App.Factories;
 using Zurich.Connector.App.Services;
 using Zurich.Connector.App.Services.DataSources;
 using Zurich.Connector.Data.Configuration;

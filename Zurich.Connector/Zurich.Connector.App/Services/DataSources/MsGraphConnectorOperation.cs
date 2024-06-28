@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Zurich.Connector.App.Factories;
 using Zurich.Connector.App.Model;
 using Zurich.Connector.Data;
 using Zurich.Connector.Data.DataMap;

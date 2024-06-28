@@ -5,7 +5,6 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Linq;
 using System.Net.Http;
 using System.Security.Authentication;
 using System.Threading.Tasks;
@@ -13,9 +12,6 @@ using Zurich.Common.Models.OAuth;
 using Zurich.Common.Repositories;
 using Zurich.Common.Services;
 using Zurich.Common.Services.Security;
-using Zurich.Connector.App.Services;
-using Zurich.Connector.Data;
-using Zurich.Connector.Data.DataMap;
 using Zurich.Connector.Data.Factories;
 using Zurich.Connector.Data.Model;
 using Zurich.Connector.Data.Repositories;
@@ -23,7 +19,7 @@ using Zurich.Connector.Data.Repositories.CosmosDocuments;
 using Zurich.Connector.Data.Services;
 using Zurich.TenantData;
 
-namespace Zurich.Connector.App.DataMap
+namespace Zurich.Connector.Data.DataMap
 {
     public class DataMappingOAuthWithTransfer : AbstractDataMapping, IDataMapping
     {
@@ -42,8 +38,7 @@ namespace Zurich.Connector.App.DataMap
             IConfiguration configuration,
             IAppConfigService appConfigService,
             IHttpClientFactory httpClientFactory,
-            ISessionAccessor sessionAccessor,
-            IOAuthServices oauthServices)
+            ISessionAccessor sessionAccessor)
         {
             this._repository = repository;
             this._dataMappingRepository = dataMappingRepository;

@@ -1,8 +1,7 @@
 ﻿using System;
-using Zurich.Connector.App.DataMap;
 using Zurich.Connector.Data.DataMap;
 
-namespace Zurich.Connector.App.Factories
+namespace Zurich.Connector.Data.Factories
 {
     /// <summary>
     /// Service to get mapping service

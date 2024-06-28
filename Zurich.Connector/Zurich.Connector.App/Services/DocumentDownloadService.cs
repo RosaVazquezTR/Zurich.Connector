@@ -9,7 +9,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Zurich.Common.Models.OAuth;
-using Zurich.Connector.App.Factories;
 using Zurich.Connector.App.Model;
 using Zurich.Connector.Data.DataMap;
 using Zurich.Connector.Data.Factories;
