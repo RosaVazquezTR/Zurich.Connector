@@ -42,10 +42,11 @@ namespace Zurich.Connector.App.Services
         {
             (string dataBaseId, string documentId) = ParseDocumentId(connectorId, docId);
 
+            string document = string.Empty;
             //string document = await redisRepository.GetAsync<string>(documentId);
 
-            //if (string.IsNullOrEmpty(document))
-            //{
+            if (string.IsNullOrEmpty(document))
+            {
                 ConnectorModel connectorModel = await GetConnectorModelAsync(connectorId);
                 ConnectorModel downloadConnectorModel = await GetConnectorModelAsync(connectorModel.Info.DownloadConnector);
                 ConnectorDocument connectorDocument = mapper.Map<ConnectorDocument>(downloadConnectorModel);
@@ -70,10 +71,14 @@ namespace Zurich.Connector.App.Services
                 }, null, connectorDocument);
 
                 var data = await service.GetAndMapResults<dynamic>(connectorDocument, null, null, headerParameters, null);
-                //await redisRepository.SetAsync(documentId, document);
-            //}
+                if (data != null)
+                {
+                    document = await repository.HandleSuccessResponse(data, transformToPDF);
+                }
+                // await redisRepository.SetAsync(documentId, document);
+            }
 
-            return data;
+            return document;
         }
 
         private async Task<ConnectorModel> GetConnectorModelAsync(string connectorId)
