@@ -53,17 +53,12 @@ namespace Zurich.Connector.App.Services
                 ConnectorModel connectorModel = await GetConnectorModelAsync(connectorId);
                 ConnectorModel downloadConnectorModel = await GetConnectorModelAsync(connectorModel.Info.DownloadConnector);
                 ConnectorDocument connectorDocument = mapper.Map<ConnectorDocument>(downloadConnectorModel);
-                DataSourceInformation selectedRegistration;
 
                 if (downloadConnectorModel.DataSource.Id != connectorModel.DataSource.Id)
                 {
-                    selectedRegistration = await GetSelectedRegistrationAsync(downloadConnectorModel.DataSource.AppCode, dataBaseId);
                     connectorModel = downloadConnectorModel;
                 }
-                else
-                {
-                    selectedRegistration = await GetSelectedRegistrationAsync(connectorModel.DataSource.AppCode, dataBaseId);
-                }
+               
 
                 IDataMapping service = dataMappingFactory.GetImplementation(connectorModel?.DataSource?.SecurityDefinition?.Type);
 
