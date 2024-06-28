@@ -76,27 +76,30 @@ namespace Zurich.Connector.Data.DataMap
             else
                 response = await _repository.MakeRequest(apiInfo, query, body);
 
-            if (connectorDocument.Info.EntityType == ConnectorEntityType.Download)
+            if (!(string.IsNullOrWhiteSpace(response))) 
             {
-                return (dynamic)response;
-            }
-            else if (!(string.IsNullOrWhiteSpace(response)))
-            {
-                IHttpResponseService httpResponseService = _httpResponseFactory.GetImplementation(connectorDocument.Response.Type.ToString());
-
-                JToken jsonResponse = null;
-
-                if (connectorDocument?.Response.UseJsonTransformation ?? false)
-                    jsonResponse = await httpResponseService.GetJTokenResponse(response, connectorDocument.Response, connectorDocument.Id, requestParameter, query, _httpClientFactory);
-                else
-                    jsonResponse = await httpResponseService.GetJTokenResponse(response, connectorDocument.Response);
-
-                if (httpResponseService.MapResponse)
-                    return await MapToCDM<T>(jsonResponse, connectorDocument.ResultLocation, connectorDocument, requestParameter);
+                if (connectorDocument.Info.EntityType == ConnectorEntityType.Download)
+                {
+                    return (dynamic)response;
+                }
                 else
                 {
-                    jsonResponse = await ModifyResult(jsonResponse, connectorDocument);
-                    return jsonResponse.ToObject<T>();
+                    IHttpResponseService httpResponseService = _httpResponseFactory.GetImplementation(connectorDocument.Response.Type.ToString());
+
+                    JToken jsonResponse = null;
+
+                    if (connectorDocument?.Response.UseJsonTransformation ?? false)
+                        jsonResponse = await httpResponseService.GetJTokenResponse(response, connectorDocument.Response, connectorDocument.Id, requestParameter, query, _httpClientFactory);
+                    else
+                        jsonResponse = await httpResponseService.GetJTokenResponse(response, connectorDocument.Response);
+
+                    if (httpResponseService.MapResponse)
+                        return await MapToCDM<T>(jsonResponse, connectorDocument.ResultLocation, connectorDocument, requestParameter);
+                    else
+                    {
+                        jsonResponse = await ModifyResult(jsonResponse, connectorDocument);
+                        return jsonResponse.ToObject<T>();
+                    }
                 }
             }
             else
