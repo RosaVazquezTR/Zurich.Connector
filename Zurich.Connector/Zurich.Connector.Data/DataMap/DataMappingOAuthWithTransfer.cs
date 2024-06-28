@@ -13,7 +13,6 @@ using Zurich.Common.Repositories;
 using Zurich.Common.Services;
 using Zurich.Common.Services.Security;
 using Zurich.Connector.Data.Factories;
-using Zurich.Connector.Data.Model;
 using Zurich.Connector.Data.Repositories;
 using Zurich.Connector.Data.Repositories.CosmosDocuments;
 using Zurich.Connector.Data.Services;

@@ -46,8 +46,7 @@ namespace Zurich.Connector.App.Services
         {
             (string dataBaseId, string documentId) = ParseDocumentId(connectorId, docId);
 
-            string document = string.Empty;
-            //string document = await redisRepository.GetAsync<string>(documentId);
+            string document = await redisRepository.GetAsync<string>(documentId);
 
             if (string.IsNullOrEmpty(document))
             {
@@ -79,7 +78,7 @@ namespace Zurich.Connector.App.Services
                 {
                     document = await repository.HandleSuccessResponse(data, transformToPDF);
                 }
-                // await redisRepository.SetAsync(documentId, document);
+                await redisRepository.SetAsync(documentId, document);
             }
 
             return document;

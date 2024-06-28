@@ -78,7 +78,7 @@ namespace Zurich.Connector.Data.DataMap
 
             if (!(string.IsNullOrWhiteSpace(response))) 
             {
-                if (connectorDocument.Info.EntityType == ConnectorEntityType.Download)
+                if (connectorDocument?.Info?.EntityType == ConnectorEntityType.Download)
                 {
                     return (dynamic)response;
                 }
