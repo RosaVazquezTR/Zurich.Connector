@@ -195,6 +195,38 @@ namespace Zurich.Connector.Data.DataMap
             }
         }
 
+        
+        public async virtual Task<ApiInformation> CreateOAuthApiInformation(ConnectorDocument connector, string domain = null)
+        {
+            ApiInformation apiInformation = null;
+
+            var token = await RetrieveToken(connector?.DataSource?.appCode,
+                                            connector?.DataSource?.appType,
+                                            connector?.DataSource?.locale,
+                                            connector?.DataSource?.securityDefinition?.defaultSecurityDefinition?.grantType,
+                                            connector?.DataSource?.productType, domain);
+            
+            if (!string.IsNullOrEmpty(token?.AccessToken))
+            {
+                apiInformation = new ApiInformation()
+                {
+                    AppCode = connector.DataSource.appCode,
+                    HostName = string.IsNullOrEmpty(connector.HostName) ? connector.DataSource.domain : connector.HostName,
+                    UrlPath = connector.Request.EndpointPath,
+                    AuthHeader = connector.DataSource.securityDefinition.defaultSecurityDefinition.authorizationHeader,
+                    Token = token,
+                    Method = connector.Request.Method,
+                };
+
+                if (!string.IsNullOrEmpty(domain) && string.IsNullOrEmpty(apiInformation.HostName))
+                    apiInformation.HostName = domain;
+
+                CleanUpApiInformation(apiInformation);
+            }
+
+            return apiInformation;
+        }
+        
         public async virtual Task<T> MapToCDM<T>(JToken jsonResponse, string resultLocation, ConnectorDocument connectorDocument, Dictionary<string, string> requestParameters)
         {
             // TODO: Remove this JToken logic when database is set up

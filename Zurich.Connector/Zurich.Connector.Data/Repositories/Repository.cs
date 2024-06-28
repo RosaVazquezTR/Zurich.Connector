@@ -14,7 +14,6 @@ using Zurich.Common.Models.FeatureFlags;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json.Linq;
 using System.IO;
-using PdfiumViewer;
 using Zurich.Connector.Data.Utils;
 using Zurich.Connector.Data.Factories;
 using System.Net;

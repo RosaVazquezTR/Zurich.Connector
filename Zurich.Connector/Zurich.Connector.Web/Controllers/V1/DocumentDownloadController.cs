@@ -1,14 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Net.Http;
 using System.Threading.Tasks;
 using static System.Net.Mime.MediaTypeNames;
 using Microsoft.AspNetCore.Cors;
 using System.Net;
 using Microsoft.AspNetCore.Http;
-using Zurich.Connector.Data.DataMap;
-using Zurich.Connector.Data.Factories;
-using Zurich.Connector.Data.Model;
 using Zurich.Connector.App.Services;
 using System.Collections.Generic;
 using Asp.Versioning;
@@ -28,8 +24,8 @@ namespace Zurich.Connector.Web.Controllers.V1
         /// <summary>
         /// This temporal endpoint acts as a proxy for calling the iManage Document Download Enpoint for the FS UI POC.
         /// </summary>
-        /// <param name="connectorId"></param>
-        /// <param name="docId"></param>
+        /// <param name="connectorId">Connector id</param>
+        /// <param name="docId">Document id</param>
         /// <returns>Return the document as a FileStreamResult</returns>
         [EnableCors("MainCORS")]
         [HttpGet("{connectorId}/{docId}")]

@@ -1,12 +1,5 @@
 ﻿using AutoMapper;
-using Azure;
-using Newtonsoft.Json.Linq;
-using PdfiumViewer;
-using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Zurich.Common.Models.OAuth;
 using Zurich.Connector.App.Model;
@@ -20,20 +13,32 @@ using Zurich.Connector.Data.Utils;
 namespace Zurich.Connector.App.Services
 {
     /// <summary>
-    /// 
+    /// Interface to manage the document download service
     /// </summary>
     public interface IDocumentDownloadService
     {
         /// <summary>
-        /// 
+        /// Gets the content of a document
         /// </summary>
-        /// <param name="appCode"></param>
-        /// <param name="docId"></param>
-        /// <returns></returns>
+        /// <param name="connectorId">Connector id</param>
+        /// <param name="transformToPDF">Flag that determines whether the document should be converted to PDF</param>
+        /// <param name="docId">Document id</param>
+        /// <returns>Document content as string</returns>
         Task<string> GetDocumentContentAsync(string connectorId, string docId, bool transformToPDF = true);
     }
 
-    public class DocumentDownloadService(IOAuthServices OAuthService, IDataMappingFactory dataMappingFactory, IDataMappingService dataMappingService, IRedisRepository redisRepository, OAuthOptions oAuthOptions, IRepository repository, IDataExtractionService dataExtractionService, IMapper mapper) : IDocumentDownloadService
+    /// <summary>
+    /// Service that handles the logic related to document downloading
+    /// </summary>
+    public class DocumentDownloadService(
+        IOAuthServices OAuthService,
+        IDataMappingFactory dataMappingFactory,
+        IDataMappingService dataMappingService,
+        IRedisRepository redisRepository,
+        OAuthOptions oAuthOptions,
+        IRepository repository,
+        IDataExtractionService dataExtractionService,
+        IMapper mapper) : IDocumentDownloadService
     {
         private readonly IDataMapping _dataMapping;
 

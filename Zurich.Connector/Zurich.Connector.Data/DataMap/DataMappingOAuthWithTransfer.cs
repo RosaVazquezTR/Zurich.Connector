@@ -58,51 +58,37 @@ namespace Zurich.Connector.Data.DataMap
 
         public async override Task<T> GetAndMapResults<T>(ConnectorDocument connector, string transferToken, NameValueCollection query, Dictionary<string, string> headers, Dictionary<string, string> requestParameters, string domain = null)
         {
-            var idTransferToken = await _oAuthApirepository.GetTransferToken();
-            if (idTransferToken != null)
+            var identityTransferToken = await _oAuthApirepository.GetTransferToken();
+
+            if (identityTransferToken != null)
             {
-                idTransferToken = idTransferToken.Replace("\"", "");
-            }
+                identityTransferToken = identityTransferToken.Replace("\"", "");
+                var apiInformation = await this.CreateOAuthApiInformation(connector, domain);
 
-            var token = await this.RetrieveToken(connector?.DataSource?.appCode,
-                                                  connector?.DataSource?.appType,
-                                                  connector?.DataSource?.locale,
-                                                  connector?.DataSource?.securityDefinition?.defaultSecurityDefinition?.grantType,
-                                                  connector?.DataSource?.productType, domain);
-
-            headers.Add("X-AUTH-CODE", idTransferToken);
-
-            if (!string.IsNullOrEmpty(token?.AccessToken))
-            {
-                ApiInformation apiInfo = new ApiInformation()
+                if (apiInformation != null)
                 {
-                    AppCode = connector.DataSource.appCode,
-                    HostName = string.IsNullOrEmpty(connector.HostName) ? connector.DataSource.domain : connector.HostName,
-                    UrlPath = connector.Request.EndpointPath,
-                    AuthHeader = connector.DataSource.securityDefinition.defaultSecurityDefinition.authorizationHeader,
-                    Token = token,
-                    Method = connector.Request.Method,
-                    Headers = headers
-                };
+                    headers.Add("X-AUTH-CODE", identityTransferToken);
+                    apiInformation.Headers = headers;
 
-                if (!string.IsNullOrEmpty(domain) && string.IsNullOrEmpty(apiInfo.HostName))
-                    apiInfo.HostName = domain;
-
-                CleanUpApiInformation(apiInfo);
-
-                try
-                {
-                    return await GetFromRepo<T>(apiInfo, connector, query, requestParameters);
+                    try
+                    {
+                        return await GetFromRepo<T>(apiInformation, connector, query, requestParameters);
+                    }
+                    catch (Exception e)
+                    {
+                        _logger.LogError(e.Message);
+                        throw;
+                    }
                 }
-                catch (Exception e)
+                else
                 {
-                    _logger.LogError(e.Message);
-                    throw;
+                    throw new AuthenticationException("Invalid or expired token");
+
                 }
             }
             else
             {
-                throw new AuthenticationException("Invalid or expired token");
+                throw new AuthenticationException("Invalid transfer token");
             }
         }
     }
