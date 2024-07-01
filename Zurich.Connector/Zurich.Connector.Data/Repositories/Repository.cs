@@ -21,6 +21,7 @@ using Zurich.Connector.Data.Interfaces;
 
 namespace Zurich.Connector.Data.Repositories
 {
+    // TODO: Bring in XML comments for theses methods and classes.
     public class Repository(HttpClient httpClient, ILogger<Repository> logger, IAppConfigService appConfigService) : IRepository
     {
         public async Task<string> MakeRequest(ApiInformation apiInformation, NameValueCollection parameters, string body)
