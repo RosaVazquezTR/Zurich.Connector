@@ -41,5 +41,20 @@
             /// </summary>
             public const string Documents = "Documents";
         }
+
+        public static class ContentTypes
+        {
+            /// <summary>
+            /// application/json response type
+            /// </summary>
+            public const string ApplicationJson = "application/json";
+
+            /// <summary>
+            /// text/xml response type
+            /// </summary>
+            public const string TextXml = "text/xml";
+        }
     }
+
+    
 }

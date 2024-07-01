@@ -235,7 +235,7 @@ namespace Zurich.Connector.Data.Repositories
                 var requestContent = string.Empty;
                 var contentType = result.Content.Headers.ContentType.MediaType;
 
-                if (contentType == "application/json" || contentType == "text/xml")
+                if (contentType == Constants.ContentTypes.ApplicationJson  || contentType == Constants.ContentTypes.TextXml)
                 {
                    requestContent = await result.Content.ReadAsStringAsync();
                 }
