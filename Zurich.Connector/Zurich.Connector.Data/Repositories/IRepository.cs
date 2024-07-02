@@ -19,11 +19,11 @@ namespace Zurich.Connector.Data.Repositories
         Task<string> MakeRequest(ApiInformation apiInformation, NameValueCollection parameters, string body);
 
         /// <summary>
-        /// Makes a request to the outside party api but only for downloading document content
+        /// Handles the success response for outside party api downloading document content
         /// </summary>
-        /// <param name="apiInformation"></param>
+        /// <param name="data"></param>
         /// <param name="transformToPDF"></param>
         /// <returns>A string containing the content of the document divided by page and in base 64</returns>
-        Task<string> DocumentDownloadMakeRequest(ApiInformation apiInformation, bool transformToPDF=true);
+        Task<string> HandleSuccessResponse(string data, bool transformToPDF=true);
 	}
 }

@@ -53,7 +53,6 @@ namespace Zurich.Connector.Data.Repositories
         {
             this._logger = logger;
             _configuration = configuration;
- 
         }
 
         public async Task<DataMappingClass> GetMap(string connectionId)

@@ -1,12 +1,5 @@
 ﻿using AutoMapper;
-using Azure;
-using Newtonsoft.Json.Linq;
-using PdfiumViewer;
-using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Zurich.Common.Models.OAuth;
 using Zurich.Connector.App.Model;
@@ -20,22 +13,34 @@ using Zurich.Connector.Data.Utils;
 namespace Zurich.Connector.App.Services
 {
     /// <summary>
-    /// 
+    /// Interface to manage the document download service
     /// </summary>
     public interface IDocumentDownloadService
     {
         /// <summary>
-        /// 
+        /// Gets the content of a document
         /// </summary>
-        /// <param name="appCode"></param>
-        /// <param name="docId"></param>
-        /// <returns></returns>
+        /// <param name="connectorId">Connector id</param>
+        /// <param name="transformToPDF">Flag that determines whether the document should be converted to PDF</param>
+        /// <param name="docId">Document id</param>
+        /// <returns>Document content as string</returns>
         Task<string> GetDocumentContentAsync(string connectorId, string docId, bool transformToPDF = true);
     }
 
-    public class DocumentDownloadService(IOAuthServices OAuthService, IDataMappingFactory dataMappingFactory, IDataMappingService dataMappingService, IRedisRepository redisRepository, OAuthOptions oAuthOptions, IRepository repository, IDataExtractionService dataExtractionService, IMapper mapper) : IDocumentDownloadService
+    /// <summary>
+    /// Service that handles the logic related to document downloading
+    /// </summary>
+    public class DocumentDownloadService(
+        IOAuthServices OAuthService,
+        IDataMappingFactory dataMappingFactory,
+        IDataMappingService dataMappingService,
+        IRedisRepository redisRepository,
+        OAuthOptions oAuthOptions,
+        IRepository repository,
+        IDataExtractionService dataExtractionService,
+        IMapper mapper) : IDocumentDownloadService
     {
-        private readonly IDataMapping _dataMapping = dataMappingFactory.GetImplementation(AuthType.OAuth2.ToString());
+        private readonly IDataMapping _dataMapping;
 
         public async Task<string> GetDocumentContentAsync(string connectorId, string docId, bool transformToPDF = true)
         {
@@ -48,24 +53,14 @@ namespace Zurich.Connector.App.Services
                 ConnectorModel connectorModel = await GetConnectorModelAsync(connectorId);
                 ConnectorModel downloadConnectorModel = await GetConnectorModelAsync(connectorModel.Info.DownloadConnector);
                 ConnectorDocument connectorDocument = mapper.Map<ConnectorDocument>(downloadConnectorModel);
-                DataSourceInformation selectedRegistration;
 
                 if (downloadConnectorModel.DataSource.Id != connectorModel.DataSource.Id)
                 {
-                    selectedRegistration = await GetSelectedRegistrationAsync(downloadConnectorModel.DataSource.AppCode, dataBaseId);
                     connectorModel = downloadConnectorModel;
                 }
-                else
-                {
-                    selectedRegistration = await GetSelectedRegistrationAsync(connectorModel.DataSource.AppCode, dataBaseId);
-                }
+               
 
-                OAuthAPITokenResponse token = await _dataMapping.RetrieveToken(connectorModel.DataSource.AppCode, domain: selectedRegistration.Domain);
-
-                if (string.IsNullOrEmpty(token?.AccessToken))
-                {
-                    throw new UnauthorizedAccessException("No valid token available.");
-                }
+                IDataMapping service = dataMappingFactory.GetImplementation(connectorModel?.DataSource?.SecurityDefinition?.Type);
 
                 Dictionary<string, string> headerParameters = await dataExtractionService.ExtractDataSource(null, new Dictionary<string, string>
                 {
@@ -73,15 +68,11 @@ namespace Zurich.Connector.App.Services
                     { "docId", documentId }
                 }, null, connectorDocument);
 
-                ApiInformation apiInfo = CreateApiInformation(connectorDocument, selectedRegistration, token, headerParameters);
-
-                if (!string.IsNullOrEmpty(connectorModel.Info.ExternalUserId))
+                var data = await service.GetAndMapResults<dynamic>(connectorDocument, null, null, headerParameters, null);
+                if (data != null)
                 {
-                    apiInfo.Headers.Add("X-External-User-Id", connectorModel.Info.ExternalUserId);
+                    document = await repository.HandleSuccessResponse(data, transformToPDF);
                 }
-
-                document = await repository.DocumentDownloadMakeRequest(apiInfo, transformToPDF);
-
                 await redisRepository.SetAsync(documentId, document);
             }
 

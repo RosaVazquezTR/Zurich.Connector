@@ -147,7 +147,6 @@ namespace Zurich.Connector.Data.Repositories
             return response;
         }
 
-
         /// <summary>
         /// Makes HTTP requests to a OAuth endpoint
         /// </summary>

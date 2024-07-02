@@ -82,6 +82,8 @@ namespace Zurich.Connector.Web
             services.AddScoped<IDataMapping, DataMappingBasic>(s => s.GetService<DataMappingBasic>());
             services.AddScoped<DataMappingTransfer>();
             services.AddScoped<IDataMapping, DataMappingTransfer>(s => s.GetService<DataMappingTransfer>());
+            services.AddScoped<DataMappingOAuthWithTransfer>();
+            services.AddScoped<IDataMapping, DataMappingOAuthWithTransfer>(s => s.GetService<DataMappingOAuthWithTransfer>());
             services.AddScoped<IDataMappingService, DataMappingService>();
             services.AddScoped<IConnectorService, ConnectorService>();
             services.AddScoped<IDataMappingRepository, DataMappingRepository>();
@@ -203,7 +205,7 @@ namespace Zurich.Connector.Web
             app.UseRouting();
             app.UseCors(CORSPolicies.DefaultPolicy);
             app.UseAuthorization();
-            app.UseClaimsTransformation();        
+            app.UseClaimsTransformation();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapHealthChecks("/health");

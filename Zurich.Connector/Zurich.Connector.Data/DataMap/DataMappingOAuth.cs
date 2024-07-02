@@ -70,34 +70,17 @@ namespace Zurich.Connector.Data.DataMap
                 return await GetFromRepo<T>(apiInfo, connector, query, requestParameters);
             }
 
-            var token = await this.RetrieveToken(connector?.DataSource?.appCode,
-                                                  connector?.DataSource?.appType,
-                                                  connector?.DataSource?.locale,
-                                                  connector?.DataSource?.securityDefinition?.defaultSecurityDefinition?.grantType,
-                                                  connector?.DataSource?.productType, domain);         
-            
-            if (!string.IsNullOrEmpty(token?.AccessToken))
+            var apiInformation = await this.CreateOAuthApiInformation(connector, domain);
+
+            if (apiInformation != null)
             {
-                ApiInformation apiInfo = new ApiInformation()
-                {
-                    AppCode = connector.DataSource.appCode,
-                    HostName = string.IsNullOrEmpty(connector.HostName) ? connector.DataSource.domain : connector.HostName,
-                    UrlPath = connector.Request.EndpointPath,
-                    AuthHeader = connector.DataSource.securityDefinition.defaultSecurityDefinition.authorizationHeader,
-                    Token = token,
-                    Method = connector.Request.Method,
-                    Headers = headers
-                };
+                apiInformation.Headers = headers;
 
-                if (!string.IsNullOrEmpty(domain) && string.IsNullOrEmpty(apiInfo.HostName))
-                    apiInfo.HostName = domain;
-
-                CleanUpApiInformation(apiInfo);
-                
                 try
                 {
-                    return await GetFromRepo<T>(apiInfo, connector, query, requestParameters);
-                } catch(Exception e)
+                    return await GetFromRepo<T>(apiInformation, connector, query, requestParameters);
+                }
+                catch (Exception e)
                 {
                     _logger.LogError(e.Message);
                     throw;

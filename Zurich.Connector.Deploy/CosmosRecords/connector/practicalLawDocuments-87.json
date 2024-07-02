@@ -8,8 +8,7 @@
     "entityType": "download",
     "dataSourceId": "55",
     "version": "1.0",
-    "subType": "Parent",
-    "ExternalUserId": "i0ace9ff90000017aa58e5f7234507e26"
+    "subType": "Parent"
   },
   "request": {
     "endpointPath": "/{docId}",

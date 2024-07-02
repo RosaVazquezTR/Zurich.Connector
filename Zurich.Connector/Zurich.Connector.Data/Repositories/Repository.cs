@@ -14,7 +14,6 @@ using Zurich.Common.Models.FeatureFlags;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json.Linq;
 using System.IO;
-using PdfiumViewer;
 using Zurich.Connector.Data.Utils;
 using Zurich.Connector.Data.Factories;
 using System.Net;
@@ -22,6 +21,7 @@ using Zurich.Connector.Data.Interfaces;
 
 namespace Zurich.Connector.Data.Repositories
 {
+    // TODO: Bring in XML comments for theses methods and classes.
     public class Repository(HttpClient httpClient, ILogger<Repository> logger, IAppConfigService appConfigService) : IRepository
     {
         public async Task<string> MakeRequest(ApiInformation apiInformation, NameValueCollection parameters, string body)
@@ -36,29 +36,13 @@ namespace Zurich.Connector.Data.Repositories
             return response;
         }
 
-        public async Task<string> DocumentDownloadMakeRequest(ApiInformation apiInformation, bool transformToPDF = true)
-        {
-            string uri = CreateUri(apiInformation);
 
-            using HttpRequestMessage requestMessage = new(HttpMethod.Get, uri);
-
-            SetupRequestMessage(apiInformation, requestMessage);
-
-            HttpResponseMessage result = await httpClient.SendAsync(requestMessage);
-
-            if (!result.IsSuccessStatusCode)
-            {
-                return HandleErrorResponse(result, apiInformation, uri);
-            }
-
-            return await HandleSuccessResponse(result, transformToPDF);
-        }
-
-        private static async Task<string> HandleSuccessResponse(HttpResponseMessage result, bool transformToPDF)
+        public async Task<string> HandleSuccessResponse(string data, bool transformToPDF = true)
         {
             HashSet<string> supportedFormats = new() { "PDF", "DOC", "DOCX", "RTF" };
-
-            await using Stream documentStream = await result.Content.ReadAsStreamAsync();
+            
+            byte[] byteArray = Convert.FromBase64String(data);
+            await using MemoryStream documentStream = new MemoryStream(byteArray);
 
             string fileExtension = FileFormatParser.FindDocumentTypeFromStream(documentStream);
 
@@ -81,8 +65,9 @@ namespace Zurich.Connector.Data.Repositories
             }
         }
 
-        private string HandleErrorResponse(HttpResponseMessage result, ApiInformation apiInformation, string uri)
+        public string HandleErrorResponse(HttpResponseMessage result, ApiInformation apiInformation, string uri)
         {
+            var requestContent = result.Content.ReadAsStringAsync();
             switch (result.StatusCode)
             {
                 case HttpStatusCode.NotFound:
@@ -93,7 +78,7 @@ namespace Zurich.Connector.Data.Repositories
                     }
                 default:
                     {
-                        string message = $"{result.StatusCode} Non Successful response from {apiInformation.AppCode}: {uri}";
+                        string message = $"Non Successful response from {apiInformation.AppCode}\nSatuts Code: {(int)result.StatusCode} {result.StatusCode}\nURL:{uri}\nMessage: {requestContent.Result.ToString()}";
                         logger.LogError("{message}", message);
                         throw new ApplicationException(message);
                     }
@@ -248,13 +233,23 @@ namespace Zurich.Connector.Data.Repositories
 
             if (result.IsSuccessStatusCode)
             {
-                var requestContent = await result.Content.ReadAsStringAsync();
+                var requestContent = string.Empty;
+                var contentType = result.Content.Headers.ContentType.MediaType;
+
+                if (contentType == Constants.ContentTypes.ApplicationJson  || contentType == Constants.ContentTypes.TextXml)
+                {
+                   requestContent = await result.Content.ReadAsStringAsync();
+                }
+                else
+                {
+                    var content = await result.Content.ReadAsByteArrayAsync();
+                    requestContent = Convert.ToBase64String(content);
+                }
                 return requestContent;
             }
             else
             {
-                logger.LogError($"{result.StatusCode} Non Successful response from {apiInformation.AppCode}: {requestMessage.RequestUri.Host}");
-                throw new ApplicationException($"Non Successful Response from {apiInformation.AppCode}");
+                return HandleErrorResponse(result, apiInformation, requestMessage.RequestUri.ToString());
             }
         }
     }
