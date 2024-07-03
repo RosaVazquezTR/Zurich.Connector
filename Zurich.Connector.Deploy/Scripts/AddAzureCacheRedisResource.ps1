@@ -59,6 +59,10 @@ function New-RedisCache {
         [string]$location
     )
 
+    $properties = "ResourceGroupName=$resourceGroupName, RedisResourceName=$redisResourceName, Location=$location, Sku=Standard, Size=C0"
+
+    Write-Host "Creating Azure Cache for Redis $properties..."
+
     $newRedisCache = New-AzRedisCache -ResourceGroupName $resourceGroupName -Name $redisResourceName -Location $location -Sku Standard -Size C0
     return $newRedisCache
 }
