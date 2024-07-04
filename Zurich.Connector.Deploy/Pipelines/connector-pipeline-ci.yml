@@ -36,8 +36,33 @@ variables:
 name: $(BuildDefinitionName).$(SourceBranchName).$(Date:yyyyMMdd)$(Rev:.r)
 
 stages:
+  - stage: Build
+    pool: DCO-HighQ-Platform-N
+    jobs:
+      - job: 'Build'
+        displayName: 'Connectors Build'
+        steps:
+          - checkout: self
+          - checkout: ZurichDeploy
+          - task: PowerShell@2
+            displayName: 'Setup splitIOApiKey secret for testing'
+            condition: and(succeeded(), ne('$(splitIOApiKey)', ''))
+            inputs:
+              targetType: 'inline'
+              script: |
+                Write-Host  "##vso[task.setvariable variable=splitIOApiKey;isSecret=false]$(splitIOApiKey)"
+          - template: Templates\V2\ZurichDeploy-BuildWebAPI.yml@ZurichDeploy
+            parameters:
+              azureAdClientSecret: $(azureAdClientSecret)
+              environmentName: ci
+              projectName: ${{ variables.projectName }}
+              publishToNuget: true
+              publishWebProjects: false
+              sandboxName: 'Connector-CI'
   - stage: CI
     pool: DCO-HighQ-Platform-N
+    dependsOn: Build
+    condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'master'))
     jobs:
       - deployment: Prereqs
         environment: CI
@@ -222,32 +247,6 @@ stages:
                     functionAlertWindowSize: ${{ variables.functionAlertWindowSize }}
                     resourceGroup: ${{ variables.resourceGroup }}
                     subscriptionName: ${{ variables.subscriptionName }}
-  - stage: Build
-    pool: DCO-HighQ-Platform-N
-    dependsOn:
-      - CI
-    condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'master'))
-    jobs:
-      - job: 'Build'
-        displayName: 'Connectors Build'
-        steps:
-          - checkout: self
-          - checkout: ZurichDeploy
-          - task: PowerShell@2
-            displayName: 'Setup splitIOApiKey secret for testing'
-            condition: and(succeeded(), ne('$(splitIOApiKey)', ''))
-            inputs:
-              targetType: 'inline'
-              script: |
-                Write-Host  "##vso[task.setvariable variable=splitIOApiKey;isSecret=false]$(splitIOApiKey)"
-          - template: Templates\V2\ZurichDeploy-BuildWebAPI.yml@ZurichDeploy
-            parameters:
-              azureAdClientSecret: $(azureAdClientSecret)
-              environmentName: ci
-              projectName: ${{ variables.projectName }}
-              publishToNuget: true
-              publishWebProjects: false
-              sandboxName: 'Connector-CI'
   - stage: CompatibilityTesting
     pool: AutomationTestAgentPool
     dependsOn: CI
