@@ -46,35 +46,37 @@ namespace Zurich.Connector.App.Services
         {
             (string dataBaseId, string documentId) = ParseDocumentId(connectorId, docId);
 
-            string document = await redisRepository.GetAsync<string>(documentId);
+            //string document = await redisRepository.GetAsync<string>(documentId);
+            string document = string.Empty;
 
-            if (string.IsNullOrEmpty(document))
+            //if (string.IsNullOrEmpty(document))
+            //{
+            ConnectorModel connectorModel = await GetConnectorModelAsync(connectorId);
+            ConnectorModel downloadConnectorModel = await GetConnectorModelAsync(connectorModel.Info.DownloadConnector);
+            ConnectorDocument connectorDocument = mapper.Map<ConnectorDocument>(downloadConnectorModel);
+
+            if (downloadConnectorModel.DataSource.Id != connectorModel.DataSource.Id)
             {
-                ConnectorModel connectorModel = await GetConnectorModelAsync(connectorId);
-                ConnectorModel downloadConnectorModel = await GetConnectorModelAsync(connectorModel.Info.DownloadConnector);
-                ConnectorDocument connectorDocument = mapper.Map<ConnectorDocument>(downloadConnectorModel);
+                connectorModel = downloadConnectorModel;
+            }
 
-                if (downloadConnectorModel.DataSource.Id != connectorModel.DataSource.Id)
-                {
-                    connectorModel = downloadConnectorModel;
-                }
-               
 
-                IDataMapping service = dataMappingFactory.GetImplementation(connectorModel?.DataSource?.SecurityDefinition?.Type);
+            IDataMapping service = dataMappingFactory.GetImplementation(connectorModel?.DataSource?.SecurityDefinition?.Type);
 
-                Dictionary<string, string> headerParameters = await dataExtractionService.ExtractDataSource(null, new Dictionary<string, string>
+            Dictionary<string, string> headerParameters = await dataExtractionService.ExtractDataSource(null, new Dictionary<string, string>
                 {
                     { "dataBaseId", dataBaseId },
                     { "docId", documentId }
                 }, null, connectorDocument);
 
-                var data = await service.GetAndMapResults<dynamic>(connectorDocument, null, null, headerParameters, null);
-                if (data != null)
-                {
-                    document = await repository.HandleSuccessResponse(data, transformToPDF);
-                }
-                await redisRepository.SetAsync(documentId, document);
+            var data = await service.GetAndMapResults<dynamic>(connectorDocument, null, null, headerParameters, null);
+
+            if (data != null)
+            {
+                document = await repository.HandleSuccessResponse(data, transformToPDF);
             }
+            //await redisRepository.SetAsync(documentId, document);
+            //}
 
             return document;
         }

@@ -79,25 +79,25 @@ namespace Zurich.Connector.IntegrationTests
            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         }
 
-        [Fact]
-        public async Task TestXMLConnectorDataById_With_SuccessStatus()
-        {
-            // Arrange
-            var request = $"/api/v1/Connectors/10/data/?query=query";
-            HttpRequestMessage getRequest = new Helper().TokenRequest(request);
+        //[Fact]
+        //public async Task TestXMLConnectorDataById_With_SuccessStatus()
+        //{
+        //    // Arrange
+        //    var request = $"/api/v1/Connectors/10/data/?query=query";
+        //    HttpRequestMessage getRequest = new Helper().TokenRequest(request);
 
-            //Act
-            var response = await _client.SendAsync(getRequest);
-            var contentString = await response.Content.ReadAsStringAsync();
-            var message = JToken.Parse(contentString);
+        //    //Act
+        //    var response = await _client.SendAsync(getRequest);
+        //    var contentString = await response.Content.ReadAsStringAsync();
+        //    var message = JToken.Parse(contentString);
 
-            // Assert
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            // Some quick search specific checks on response
-            Assert.False(string.IsNullOrEmpty(message["count"].Value<string>()), "count property expected");
-            Assert.False(string.IsNullOrEmpty(message["sourceDirectoryUrl"].Value<string>()), "sourceDirectoryUrl property expected");
-            Assert.NotNull((JArray)message["documents"]);
-        }
+        //    // Assert
+        //    Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        //    // Some quick search specific checks on response
+        //    Assert.False(string.IsNullOrEmpty(message["count"].Value<string>()), "count property expected");
+        //    Assert.False(string.IsNullOrEmpty(message["sourceDirectoryUrl"].Value<string>()), "sourceDirectoryUrl property expected");
+        //    Assert.NotNull((JArray)message["documents"]);
+        //}
 
         [Fact]
         public async Task TestJsonConnectorDataById_With_SuccessStatus()

@@ -105,19 +105,19 @@ namespace Zurich.Connector.Tests.Services
             Assert.AreEqual("documentContent", result);
         }
 
-        [TestMethod]
-        public async Task GetDocumentContentAsync_ReturnsDocumentContent_InCache()
-        {
-            // Arrange
-            _mockRedisRepository
-                .Setup(x => x.GetAsync<string>(It.IsAny<string>()))
-                .ReturnsAsync("documentContent");
+        //[TestMethod]
+        //public async Task GetDocumentContentAsync_ReturnsDocumentContent_InCache()
+        //{
+        //    // Arrange
+        //    _mockRedisRepository
+        //        .Setup(x => x.GetAsync<string>(It.IsAny<string>()))
+        //        .ReturnsAsync("documentContent");
 
-            // Act
-            var result = await _service.GetDocumentContentAsync("ChocolateCookie", "docId");
+        //    // Act
+        //    var result = await _service.GetDocumentContentAsync("ChocolateCookie", "docId");
 
-            // Assert
-            Assert.AreEqual("documentContent", result);
-        }
+        //    // Assert
+        //    Assert.AreEqual("documentContent", result);
+        //}
     }
 }
