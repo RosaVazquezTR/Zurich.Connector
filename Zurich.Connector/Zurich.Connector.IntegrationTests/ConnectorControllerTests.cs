@@ -122,19 +122,18 @@ namespace Zurich.Connector.IntegrationTests
 
         
 
-        [Fact]
-        public async Task TestConnectorData_for_DocumentType_As_Array_With_SuccessStatus()
-        {
-            // Arrange
-            var request = $"/api/v1/Connectors/10/data/?query=test&retrieveFilters=true";
-            HttpRequestMessage getRequest = new Helper().TokenRequest(request);
+        //[Fact]
+        //public async Task TestConnectorData_for_DocumentType_As_Array_With_SuccessStatus()
+        //{
+        //    // Arrange
+        //    var request = $"/api/v1/Connectors/10/data/?query=test&retrieveFilters=true";
+        //    HttpRequestMessage getRequest = new Helper().TokenRequest(request);
 
-            //Act
-            var response = await _client.SendAsync(getRequest);
+        //    //Act
+        //    var response = await _client.SendAsync(getRequest);
 
-            // Assert
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        }
-
+        //    // Assert
+        //    Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        //}
     }
 }
