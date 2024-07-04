@@ -72,6 +72,12 @@
         "type": "string",
         "responseElement": "plcReference",
         "_comment": ""
+      },
+      {
+          "name": "id",
+          "type": "string",
+          "responseElement": "id",
+          "_comment": ""
       }
     ]
   }
