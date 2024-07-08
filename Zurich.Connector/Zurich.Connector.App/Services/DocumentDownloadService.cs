@@ -109,6 +109,7 @@ namespace Zurich.Connector.App.Services
             switch (connectorId)
             {
                 case "44":
+                case "4401":
                     databaseId = docId.Split('!')[0];
                     break;
 

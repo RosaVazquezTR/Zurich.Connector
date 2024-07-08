@@ -23,7 +23,7 @@ namespace Zurich.Connector.Web.Controllers.V1
     [ApiVersion("1.0")]
     public class DocumentDownloadController : ControllerBase
     {
-        private readonly List<string> SUPPORTED_CONNECTORS = new() { "44", "14", "80", "47", "12" };
+        private readonly List<string> SUPPORTED_CONNECTORS = new() { "44", "4401", "14", "80", "47", "12" };
 
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly IDataMapping _dataMapping;

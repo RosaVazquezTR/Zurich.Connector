@@ -1,0 +1,231 @@
+{
+  "id": "4401",
+  "partitionkey": "ConnectorList",
+  "alias": "imanageOnPrem.search",
+  "info": {
+    "title": "Get Search details from iManage",
+    "description": "Get Search details from iManage",
+    "entityType": "Search",
+    "dataSourceId": "10",
+    "version": "2.0",
+    "subType": "Parent",
+    "downloadConnector": "81"
+  },
+  "hostName": "cloudimanage.com",
+  "request": {
+    "endpointPath": "/work/api/v2/customers/{1.customer_id}/documents",
+    "method": "GET",
+    "parameters": [
+      {
+        "cdmName": "Query",
+        "name": "anywhere",
+        "inClause": "Query",
+        "required": false,
+        "type": "string",
+        "defaultValue": ""
+      },
+      {
+        "cdmName": "ResultSize",
+        "name": "limit",
+        "inClause": "Query",
+        "required": true,
+        "type": "int",
+        "defaultValue": "100"
+      },
+      {
+        "cdmName": "Offset",
+        "name": "offset",
+        "inClause": "Query",
+        "required": false,
+        "type": "int",
+        "defaultValue": "0"
+      },
+      {
+        "cdmName": "TotalCount",
+        "name": "total",
+        "inClause": "Query",
+        "required": false,
+        "type": "bool",
+        "defaultValue": "true"
+      },
+      {
+        "cdmName": "EditDate.filter",
+        "name": "edit_date",
+        "inClause": "Query",
+        "required": false,
+        "type": "string",
+        "defaultValue": ""
+      },
+      {
+        "cdmName": "CreateDate.filter",
+        "name": "create_date",
+        "inClause": "Query",
+        "required": false,
+        "type": "string",
+        "defaultValue": ""
+      },
+      {
+        "cdmName": "User.filter",
+        "name": "user",
+        "inClause": "Query",
+        "required": false,
+        "type": "string",
+        "defaultValue": ""
+      },
+      {
+        "cdmName": "Author.filter",
+        "name": "author",
+        "inClause": "Query",
+        "required": false,
+        "type": "string",
+        "defaultValue": ""
+      },
+      {
+        "cdmName": "Operator.filter",
+        "name": "operator",
+        "inClause": "Query",
+        "required": false,
+        "type": "string",
+        "defaultValue": ""
+      },
+      {
+        "cdmName": "Owner.filter",
+        "name": "owner",
+        "inClause": "Query",
+        "required": false,
+        "type": "string",
+        "defaultValue": ""
+      },
+      {
+        "cdmName": "ContainerId.filter",
+        "name": "container_id",
+        "inClause": "Body",
+        "required": false,
+        "type": "string",
+        "defaultValue": ""
+      },
+      {
+        "cdmName": "Type.filter",
+        "name": "type",
+        "inClause": "Query",
+        "required": false,
+        "type": "string",
+        "defaultValue": ""
+      }
+    ],
+    "sorting": {
+      "properties": []
+    }
+  },
+  "response": {
+    "type": "JSON"
+  },
+  "filters": [
+    {
+      "name": "Last modified date",
+      "description": "The format is [begin]:[end][timescale]. The time scale is 'd' for days, 'm' for months, 'y' for years. Example: -30:0d. These dates are relative to each other prior the current date.",
+      "isMultiselect": "false",
+      "requestParameter": "EditDate.filter"
+    },
+    {
+      "name": "Creation date",
+      "description": "The format is [begin]:[end][timescale]. The time scale is 'd' for days, 'm' for months, 'y' for years. Example: -30:0d. These dates are relative to each other prior the current date.",
+      "isMultiselect": "false",
+      "requestParameter": "CreateDate.filter"
+    },
+    {
+      "name": "User",
+      "description": "Specifies the document's user ID.",
+      "isMultiselect": "false",
+      "requestParameter": "User.filter"
+    },
+    {
+      "name": "Author",
+      "description": "Specifies the user ID of the document's author.",
+      "isMultiselect": "true",
+      "requestParameter": "Author.filter"
+    },
+    {
+      "name": "Operator",
+      "description": "Specifies the user ID of the operator of the documents.",
+      "isMultiselect": "false",
+      "requestParameter": "Operator.filter"
+    },
+    {
+      "name": "Owner",
+      "description": "Specifies the user ID of the author or operator of the documents..",
+      "isMultiselect": "false",
+      "requestParameter": "Owner.filter"
+    },
+    {
+      "name": "Container Id",
+      "description": "Returns documents or emails from the specified container_id only.",
+      "isMultiselect": "false",
+      "requestParameter": "ContainerId.filter"
+    },
+    {
+      "name": "Type",
+      "description": "Specifies documents of the document type. Values can be merge,example: WORD,EXCEL. Filter list is suggested use. Default retrieves all types.",
+      "isMultiselect": "true",
+      "requestParameter": "Type.filter",
+      "filterlist": [
+        {
+          "name": "Document",
+          "id": "WORD,WORDX,WORDXT,DOCM,DOTX,PAGES,RTF,WPF"
+        },
+        {
+          "name":"Spreadsheet",
+          "id": "EXCEL,EXCELX,EXCELM,XLSB,XLSM,NUMBERS"
+        },
+        {
+          "name":"Presentation",
+          "id": "PPT,PPTX,PPTM,KEY"
+        },
+        {
+          "name":"Pdf",
+          "id": "ACROBAT"
+        }
+      ]
+    }         
+  ],
+  "CDMmapping": {
+    "structured": [
+      {
+        "name": "TotalCount",
+        "type": "int",
+        "responseElement": "total_count",
+        "_comment": ""
+      },
+      {
+        "name": "Count",
+        "type": "short",
+        "responseElement": "",
+        "_comment": ""
+      },
+      {
+        "name": "SourceDirectoryUrl",
+        "type": "interpolationString",
+        "responseElement": "",
+        "_comment": ""
+      },
+      {
+        "name": "Documents",
+        "type": "object",
+        "responseElement": "{45}",
+        "_comment": ""
+      }
+    ],
+    "unstructured": []
+  },
+  "advancedSearchSyntax":{
+		"operators": {
+			"and": "AND",
+			"or": "OR",
+			"textualOcurrence": "\"",
+			"not": "NOT ",
+			"wildcard": "*",
+			"proximity": "NEAR",
+			"termGrouping": "("
+		}
+	}
+}
