@@ -76,23 +76,30 @@ namespace Zurich.Connector.Data.DataMap
             else
                 response = await _repository.MakeRequest(apiInfo, query, body);
 
-            if (!(string.IsNullOrWhiteSpace(response)))
+            if (!(string.IsNullOrWhiteSpace(response))) 
             {
-                IHttpResponseService httpResponseService = _httpResponseFactory.GetImplementation(connectorDocument.Response.Type.ToString());
-
-                JToken jsonResponse = null;
-
-                if (connectorDocument?.Response.UseJsonTransformation ?? false)
-                    jsonResponse = await httpResponseService.GetJTokenResponse(response, connectorDocument.Response, connectorDocument.Id, requestParameter, query, _httpClientFactory);
-                else
-                    jsonResponse = await httpResponseService.GetJTokenResponse(response, connectorDocument.Response);
-
-                if (httpResponseService.MapResponse)
-                    return await MapToCDM<T>(jsonResponse, connectorDocument.ResultLocation, connectorDocument, requestParameter);
+                if (connectorDocument?.Info?.EntityType == ConnectorEntityType.Download)
+                {
+                    return (dynamic)response;
+                }
                 else
                 {
-                    jsonResponse = await ModifyResult(jsonResponse, connectorDocument);
-                    return jsonResponse.ToObject<T>();
+                    IHttpResponseService httpResponseService = _httpResponseFactory.GetImplementation(connectorDocument.Response.Type.ToString());
+
+                    JToken jsonResponse = null;
+
+                    if (connectorDocument?.Response.UseJsonTransformation ?? false)
+                        jsonResponse = await httpResponseService.GetJTokenResponse(response, connectorDocument.Response, connectorDocument.Id, requestParameter, query, _httpClientFactory);
+                    else
+                        jsonResponse = await httpResponseService.GetJTokenResponse(response, connectorDocument.Response);
+
+                    if (httpResponseService.MapResponse)
+                        return await MapToCDM<T>(jsonResponse, connectorDocument.ResultLocation, connectorDocument, requestParameter);
+                    else
+                    {
+                        jsonResponse = await ModifyResult(jsonResponse, connectorDocument);
+                        return jsonResponse.ToObject<T>();
+                    }
                 }
             }
             else
@@ -188,6 +195,38 @@ namespace Zurich.Connector.Data.DataMap
             }
         }
 
+        
+        public async virtual Task<ApiInformation> CreateOAuthApiInformation(ConnectorDocument connector, string domain = null)
+        {
+            ApiInformation apiInformation = null;
+
+            var token = await RetrieveToken(connector?.DataSource?.appCode,
+                                            connector?.DataSource?.appType,
+                                            connector?.DataSource?.locale,
+                                            connector?.DataSource?.securityDefinition?.defaultSecurityDefinition?.grantType,
+                                            connector?.DataSource?.productType, domain);
+            
+            if (!string.IsNullOrEmpty(token?.AccessToken))
+            {
+                apiInformation = new ApiInformation()
+                {
+                    AppCode = connector.DataSource.appCode,
+                    HostName = string.IsNullOrEmpty(connector.HostName) ? connector.DataSource.domain : connector.HostName,
+                    UrlPath = connector.Request.EndpointPath,
+                    AuthHeader = connector.DataSource.securityDefinition.defaultSecurityDefinition.authorizationHeader,
+                    Token = token,
+                    Method = connector.Request.Method,
+                };
+
+                if (!string.IsNullOrEmpty(domain) && string.IsNullOrEmpty(apiInformation.HostName))
+                    apiInformation.HostName = domain;
+
+                CleanUpApiInformation(apiInformation);
+            }
+
+            return apiInformation;
+        }
+        
         public async virtual Task<T> MapToCDM<T>(JToken jsonResponse, string resultLocation, ConnectorDocument connectorDocument, Dictionary<string, string> requestParameters)
         {
             // TODO: Remove this JToken logic when database is set up

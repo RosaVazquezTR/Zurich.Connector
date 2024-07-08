@@ -1,18 +1,18 @@
 variables:
-  - name: apiVersion 
-    value: "v1" 
+  - name: apiVersion
+    value: 'v1'
   - name: azureAdClientId
     value: 'b4a0d298-06dd-4738-83be-9b57653980b1'
   - name: connectorCosmosMaxThroughput
-    value: "400"
+    value: '400'
   - name: connectorCosmosThroughput
-    value: "400"
+    value: '400'
   - name: connectorCosmosShouldAutoScale
-    value: "false"
+    value: 'false'
   - name: connectorSubnets
     value: '["connector-function-CI-backend", "connector-webApi-CI-Backend", "hqh-VM-RelMgmt-backend", "lh-VM-CI-backend"]'
   - name: connectorServiceFQND
-    value: "connectorswebapici.azurewebsites.net"
+    value: 'connectorswebapici.azurewebsites.net'
   - name: defaultCapacity
     value: '1'
   - name: functionAppServicePlanSku
@@ -27,6 +27,10 @@ variables:
     value: '1'
   - name: maximumCapacity
     value: '2'
+  - name: redisKeyName
+    value: 'RedisConnectionString'
+  - name: redisResourceName
+    value: 'ConnectorsRedisCI'
   - name: resourceGroup
     value: 'centralus-connectors-ci'
   - name: subnetConnectorBackend

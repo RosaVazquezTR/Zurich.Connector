@@ -82,10 +82,13 @@ namespace Zurich.Connector.Web
             services.AddScoped<IDataMapping, DataMappingBasic>(s => s.GetService<DataMappingBasic>());
             services.AddScoped<DataMappingTransfer>();
             services.AddScoped<IDataMapping, DataMappingTransfer>(s => s.GetService<DataMappingTransfer>());
+            services.AddScoped<DataMappingOAuthWithTransfer>();
+            services.AddScoped<IDataMapping, DataMappingOAuthWithTransfer>(s => s.GetService<DataMappingOAuthWithTransfer>());
             services.AddScoped<IDataMappingService, DataMappingService>();
             services.AddScoped<IConnectorService, ConnectorService>();
             services.AddScoped<IDataMappingRepository, DataMappingRepository>();
             services.AddScoped<IRepository, Repository>();
+            services.AddScoped<IRedisRepository, RedisRepository>();
             services.AddScoped<IConnectorDataSourceOperations, IManageConnectorOperations>();
             services.AddScoped<IConnectorDataSourceOperations, IManageOnPremConnectorOperations>();
             services.AddScoped<IConnectorDataSourceOperations, PracticalLawConnectorOperation>();
@@ -163,6 +166,7 @@ namespace Zurich.Connector.Web
             services.AddAppConfigServices(Configuration.GetValue<string>("splitIOApiKey"));
             services.AddInternalAPIHttpClient(HttpClientNames.IHDocumentStorage, Configuration.GetValue<string>("IHDocumentStorageBaseUrl"));
             services.AddApplicationInsightsTelemetry(Configuration);
+            services.AddRedisClient(Configuration);
 
             var license = Configuration.GetValue<string>("AsposeLicence");
             AsposeLicenceProvider.SetAsposeWordsLicense(license);
@@ -202,7 +206,7 @@ namespace Zurich.Connector.Web
             app.UseRouting();
             app.UseCors(CORSPolicies.DefaultPolicy);
             app.UseAuthorization();
-            app.UseClaimsTransformation();        
+            app.UseClaimsTransformation();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapHealthChecks("/health");

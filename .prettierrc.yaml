@@ -1,0 +1,7 @@
+bracketSpacing: true
+bracketSameLine: true
+semi: true
+singleQuote: true
+printWidth: 160
+trailingComma: 'all'
+tabWidth: 2

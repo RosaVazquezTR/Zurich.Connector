@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Zurich.Connector.Data.Model;
 using Zurich.Connector.Data.Repositories;
 
 namespace Zurich.Connector.App.Services
 {
-   
+
     public interface IOAuthServices
     {
         /// <summary>
@@ -44,7 +42,7 @@ namespace Zurich.Connector.App.Services
         /// <returns>Revoking of Tenanat application success or failure status</returns>
         Task<bool> RevokeTenantApplication(string applicationCode);
     }
-    public class OAuthServices :IOAuthServices
+    public class OAuthServices : IOAuthServices
     {
         private readonly IOAuthRepository _OAuthRespository;
 

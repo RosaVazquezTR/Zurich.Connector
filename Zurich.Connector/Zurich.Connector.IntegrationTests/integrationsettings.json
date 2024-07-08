@@ -1,68 +1,68 @@
 {
-  "AzureAd": {
-    "ClientId": "b4a0d298-06dd-4738-83be-9b57653980b1",
-    "ClientSecret": "TnA8Q~CY1QTJdqd5u4i8ipddOycGsT~5_kCnLaU~",
-    "ApplicationTenant": "DoNotSetHere"
-  },
-  "KeyVault": {
-    "Endpoint": "https://connectorsKeyVaultCI.vault.azure.net/",
-    "SearchEndpoint": "https://searchKeyVaultCI.vault.azure.net/"
-  },
-  "Audience": "legalhome",
-  "AllowedCORSOrigins": [ "http://localhost:4200" ],
-  "PartnerOAuthApps": {
-    "Connections": {
-      "MsGraph": {
-        "BaseUrl": "https://graph.microsoft.com",
-        "TokenUrl": "https://login.microsoftonline.com/organizations/oauth2/v2.0/token",
-        "Id": "e5f35fb2-4017-4d17-b695-e8e5204bd454"
-      },
-      "MsGraph-GPS": {
-        "Id": "4f5aaed1-0258-45a7-86d6-fcfb5d70f171",
-        "TokenUrl": "https://login.microsoftonline.com/organizations/oauth2/v2.0/token",
-        "AuthUrl": "https://login.microsoftonline.com/organizations/oauth2/v2.0/authorize",
-        "Scopes": "User.Read Sites.Read.All Presence.Read.All offline_access Calendars.ReadWrite ChatMessage.Send Chat.ReadWrite",
-        "PKCE": true
-      },
-      "MsGraphCustom": {
-        "BaseUrl": "https://graph.microsoft.com",
-        "TokenUrl": "https://login.microsoftonline.com/organizations/oauth2/v2.0/token",
-        "Id": "e5f35fb2-4017-4d17-b695-e8e5204bd454"
-      },
-      "MsGraphOneDrive": {
-        "BaseUrl": "https://graph.microsoft.com",
-        "TokenUrl": "https://login.microsoftonline.com/organizations/oauth2/v2.0/token",
-        "Id": "e5f35fb2-4017-4d17-b695-e8e5204bd454"
-      },
-      "MsGraphSharePoint": {
-        "BaseUrl": "https://graph.microsoft.com",
-        "TokenUrl": "https://login.microsoftonline.com/organizations/oauth2/v2.0/token",
-        "Id": "e5f35fb2-4017-4d17-b695-e8e5204bd454"
-      }
+    "AzureAd": {
+        "ClientId": "b4a0d298-06dd-4738-83be-9b57653980b1",
+        "ClientSecret": "DoNotSetHere",
+        "ApplicationTenant": "e205bfab-7c3a-4369-86f3-030001469258"
+    },
+    "KeyVault": {
+        "Endpoint": "https://connectorsKeyVaultCI.vault.azure.net/",
+        "SearchEndpoint": "https://searchKeyVaultCI.vault.azure.net/"
+    },
+    "Audience": "legalhome",
+    "AllowedCORSOrigins": [ "http://localhost:4200" ],
+    "PartnerOAuthApps": {
+        "Connections": {
+            "MsGraph": {
+                "BaseUrl": "https://graph.microsoft.com",
+                "TokenUrl": "https://login.microsoftonline.com/organizations/oauth2/v2.0/token",
+                "Id": "e5f35fb2-4017-4d17-b695-e8e5204bd454"
+            },
+            "MsGraph-GPS": {
+                "Id": "4f5aaed1-0258-45a7-86d6-fcfb5d70f171",
+                "TokenUrl": "https://login.microsoftonline.com/organizations/oauth2/v2.0/token",
+                "AuthUrl": "https://login.microsoftonline.com/organizations/oauth2/v2.0/authorize",
+                "Scopes": "User.Read Sites.Read.All Presence.Read.All offline_access Calendars.ReadWrite ChatMessage.Send Chat.ReadWrite",
+                "PKCE": true
+            },
+            "MsGraphCustom": {
+                "BaseUrl": "https://graph.microsoft.com",
+                "TokenUrl": "https://login.microsoftonline.com/organizations/oauth2/v2.0/token",
+                "Id": "e5f35fb2-4017-4d17-b695-e8e5204bd454"
+            },
+            "MsGraphOneDrive": {
+                "BaseUrl": "https://graph.microsoft.com",
+                "TokenUrl": "https://login.microsoftonline.com/organizations/oauth2/v2.0/token",
+                "Id": "e5f35fb2-4017-4d17-b695-e8e5204bd454"
+            },
+            "MsGraphSharePoint": {
+                "BaseUrl": "https://graph.microsoft.com",
+                "TokenUrl": "https://login.microsoftonline.com/organizations/oauth2/v2.0/token",
+                "Id": "e5f35fb2-4017-4d17-b695-e8e5204bd454"
+            }
+        }
+    },
+    "PublicBasePath": "",
+    "DataMappingFilePath": "C:\\Federate\\25-40102-Process Query 2\\Zurich.Connector\\Zurich.Connector\\Zurich.Connector.Web\\DataMapping.json",
+    "AllowedHosts": "*",
+    "CosmosDb": {
+        "Database": "connectordb",
+        "AuditApplicationId": "ConnectorService",
+        "OfferThroughput": "400"
+    },
+    "OAuthBaseUrl": "https://ci.api.legalplatform.thomsonreuters.com/oauth/",
+    "TokenIssuer": "https://ci.login.legalplatform.thomsonreuters.com/is",
+    "ShowPreReleaseConnectors": true,
+    "IntegrationTestHosts": {
+        "Host": "https://localhost:44328"
+    },
+    "onePassUsername": {
+        "RecentOptedInUser": "automationuser2.us",
+        "RecentOptedOutUser": "manualuser2.us"
+    },
+    "IdentityServer": {
+        "IdentityServerEndpoint": " https://ci.login.legalplatform.thomsonreuters.com/is/connect/token",
+        "ClientId": "LegalHomeAT",
+        "GrantType": "password",
+        "Scope": "search.full connectors.full"
     }
-  },
-  "PublicBasePath": "",
-  "DataMappingFilePath": "C:\\Federate\\25-40102-Process Query 2\\Zurich.Connector\\Zurich.Connector\\Zurich.Connector.Web\\DataMapping.json",
-  "AllowedHosts": "*",
-  "CosmosDb": {
-    "Database": "connectordb",
-    "AuditApplicationId": "ConnectorService",
-    "OfferThroughput": "400"
-  },
-  "OAuthBaseUrl": "https://ci.api.legalplatform.thomsonreuters.com/oauth/",
-  "TokenIssuer": "https://ci.login.legalplatform.thomsonreuters.com/is",
-  "ShowPreReleaseConnectors": true,
-  "IntegrationTestHosts": {
-    "Host": "https://localhost:44328"
-  },
-  "onePassUsername": {
-    "RecentOptedInUser": "automationuser2.us",
-    "RecentOptedOutUser": "manualuser2.us"
-  },
-  "IdentityServer": {
-    "IdentityServerEndpoint": " https://ci.login.legalplatform.thomsonreuters.com/is/connect/token",
-    "ClientId": "LegalHomeAT",
-    "GrantType": "password",
-    "Scope": "search.full connectors.full"
-  }
 }
