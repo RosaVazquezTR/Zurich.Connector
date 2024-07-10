@@ -229,8 +229,6 @@ stages:
                     monitorAlertGroups: ${{ variables.monitorAlertGroups }}
                     monitorAlertPrefix: ${{ variables.monitorAlertPrefix }}
                     monitoringResourceGroup: ${{ variables.monitoringResourceGroup }}
-                    redisKeyName: ${{ variables.redisKeyName }}
-                    redisResourceName: ${{ variables.redisResourceName }}
                     resourceGroup: ${{ variables.resourceGroup }}
                     resourceLocation: ${{ variables.resourceLocation }}
                     retentionDays: ${{ variables.retentionDays }}

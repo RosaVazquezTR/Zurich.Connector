@@ -27,10 +27,6 @@ variables:
     value: '1'
   - name: maximumCapacity
     value: '2'
-  - name: redisKeyName
-    value: 'RedisConnectionString'
-  - name: redisResourceName
-    value: 'ConnectorsRedisCI'
   - name: resourceGroup
     value: 'centralus-connectors-ci'
   - name: subnetConnectorBackend
