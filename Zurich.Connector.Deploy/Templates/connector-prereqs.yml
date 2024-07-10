@@ -65,6 +65,10 @@ parameters:
     type: string
   - name: practicalLawSecret
     type: string
+  - name: redisKeyName
+    type: string
+  - name: redisResourceName
+    type: string
   - name: resourceGroup
     type: string
   - name: resourceLocation
@@ -212,3 +216,11 @@ steps:
       ScriptPath: '$(Build.SourcesDirectory)/Zurich.Connector/Zurich.Connector.Deploy/Scripts/AddConnectionStringToKeyvault.ps1'
       ScriptArguments: '-resourceGroup "${{ parameters.resourceGroup }}" -vaultName "${{ parameters.keyVault }}${{ parameters.environmentName }}" -databaseServerName "${{ parameters.databaseServerName}}" -databaseName "${{ parameters.databaseName }}" -databaseUserName "${{ parameters.legalHomeDbUser }}" -databaseUserPassword "${{ parameters.legalHomeDbUserPassword }}" -environment "${{ parameters.environmentName }}" -keyName "${{ parameters.tenantDbConnStringKey}}" -alwaysEncrypted "true" -verbose'
       azurePowerShellVersion: LatestVersion
+
+  - task: AzurePowerShell@4
+    displayName: 'Create or Update Azure Redis Cache'
+    inputs:
+      azureSubscription: ${{ parameters.subscriptionName }}
+      ScriptPath: '$(Build.SourcesDirectory)/Zurich.Connector/Zurich.Connector.Deploy/Scripts/AddAzureCacheRedisResource.ps1'
+      ScriptArguments: '-resourceGroupName ${{ parameters.resourceGroup }} -redisResourceName ${{ parameters.redisResourceName }} -location ${{ parameters.resourceLocation }} -keyVaultName "${{ parameters.keyVault }}${{ parameters.environmentName }}" -keyName "${{ parameters.redisKeyName }}" -verbose'
+      azurePowerShellVersion: 'LatestVersion'

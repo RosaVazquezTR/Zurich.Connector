@@ -129,6 +129,8 @@ stages:
                     maximumCapacity: ${{ variables.maximumCapacity }}
                     notificationEmailGroup: ${{ variables.notificationEmailGroup }}
                     practicalLawSecret: $(practicalLawSecret)
+                    redisKeyName: ${{ variables.redisKeyName }}
+                    redisResourceName: ${{ variables.redisResourceName }}
                     resourceGroup: ${{ variables.resourceGroup }}
                     resourceLocation: ${{ variables.resourceLocation }}
                     resourceOwner: ${{ variables.resourceOwner }}
