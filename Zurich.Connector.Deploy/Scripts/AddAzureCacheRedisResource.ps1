@@ -104,8 +104,10 @@ function Get-RedisPrimaryKey {
 
 $context = Get-AzContext
 
-Write-Host "Service Principal ID: $($context.Account.Id)"
-Write-Host "Tenant ID: $($context.Tenant.Id)"
+$sp = Get-AzADServicePrincipal -ObjectId $context.Account.Id
+
+# Muestra el nombre del Service Principal
+Write-Host "Service Principal Name: $($sp.DisplayName)"
 
 $redisCache = Get-RedisCache -resourceGroupName $resourceGroupName -redisResourceName $redisResourceName
 
