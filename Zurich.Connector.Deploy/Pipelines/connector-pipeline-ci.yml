@@ -62,7 +62,7 @@ stages:
   - stage: CI
     pool: DCO-HighQ-Platform-N
     dependsOn: Build
-    condition: and(succeeded())
+    condition: succeeded()
     jobs:
       - deployment: Prereqs
         environment: CI
