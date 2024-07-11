@@ -102,6 +102,11 @@ function Get-RedisPrimaryKey {
 
 # Check if the resource already exists
 
+$context = Get-AzContext
+
+Write-Host "Service Principal ID: $($context.Account.Id)"
+Write-Host "Tenant ID: $($context.Tenant.Id)"
+
 $redisCache = Get-RedisCache -resourceGroupName $resourceGroupName -redisResourceName $redisResourceName
 
 if ($null -eq $redisCache) {
