@@ -16,7 +16,7 @@ namespace Zurich.Connector.App.Model
         /// <summary>
         /// Define connector response Type
         /// </summary>
-        public ResponseContentType Type { get; set; }
+        public ResponseContentType? Type { get; set; }
 
         /// <summary>
         /// Whether or not the connector response needs to be sorted on our side
