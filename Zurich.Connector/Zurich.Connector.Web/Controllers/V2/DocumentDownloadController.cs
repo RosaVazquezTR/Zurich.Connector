@@ -1,25 +1,23 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Threading.Tasks;
-using static System.Net.Mime.MediaTypeNames;
+﻿using Asp.Versioning;
 using Microsoft.AspNetCore.Cors;
-using System.Net;
 using Microsoft.AspNetCore.Http;
-using Zurich.Connector.App.Services;
+using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
-using Asp.Versioning;
+using System.Net;
+using System.Threading.Tasks;
+using System;
+using Zurich.Connector.App.Services;
+using static System.Net.Mime.MediaTypeNames;
 using Zurich.Connector.App.Model;
+using System.Linq;
 using System.IO;
 using Zurich.Connector.App.Exceptions;
 
-namespace Zurich.Connector.Web.Controllers.V1
+namespace Zurich.Connector.Web.Controllers.V2
 {
-    /// <summary>
-    /// It supports Client Credential flow for the Connectors.
-    /// </summary>
     [Route("api/v{version:apiVersion}/download/")]
     [ApiController]
-    [ApiVersion("1.0")]
+    [ApiVersion("2.0")]
     public class DocumentDownloadController(IDocumentDownloadService documentDownloadService) : ControllerBase
     {
         private readonly List<string> SUPPORTED_CONNECTORS = ["44", "14", "80", "47", "12"];
@@ -32,22 +30,15 @@ namespace Zurich.Connector.Web.Controllers.V1
         /// <returns>Return the document as a FileStreamResult</returns>
         [EnableCors("MainCORS")]
         [HttpGet("{connectorId}/{docId}")]
-        public async Task<ActionResult<dynamic>> DocumentDownload([FromRoute] DocumentDownloadRequestModel documentDownloadRequestModel)
+        public async Task<ActionResult> DocumentDownload([FromRoute] DocumentDownloadRequestModel documentDownloadRequestModel)
         {
             try
             {
                 if (SUPPORTED_CONNECTORS.Contains(documentDownloadRequestModel.ConnectorId))
                 {
-                    Stream documentStream = await documentDownloadService.GetDocumentContentAsync(documentDownloadRequestModel);
+                    Stream file = await documentDownloadService.GetDocumentContentAsync(documentDownloadRequestModel);
 
-                    string result = await documentDownloadService.GetDocumentContentAsStringAsync(documentStream);
-
-                    return new ContentResult
-                    {
-                        Content = result,
-                        ContentType = Application.Json,
-                        StatusCode = StatusCodes.Status200OK
-                    };
+                    return new FileStreamResult(file, "application/octet-stream");
                 }
                 else
                 {

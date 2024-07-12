@@ -13,6 +13,9 @@ using System.Collections.Generic;
 using Zurich.Connector.Data.DataMap;
 using System.Collections.Specialized;
 using Zurich.Connector.Data.Repositories.CosmosDocuments;
+using System.IO;
+using System;
+using System.Text;
 
 namespace Zurich.Connector.Tests.Services
 {
@@ -74,6 +77,8 @@ namespace Zurich.Connector.Tests.Services
                 AppCode = connectorModel.Id
             };
             var dataMapping = new Mock<IDataMapping>();
+            var expectedContent = "documentContent";
+            var base64String = Convert.ToBase64String(Encoding.UTF8.GetBytes(expectedContent));
 
             _mockMappingService
                 .SetupSequence(x => x.RetrieveProductInformationMap(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>()))
@@ -81,28 +86,29 @@ namespace Zurich.Connector.Tests.Services
                 .ReturnsAsync(downloadConnectorModel);
             _mockOAuthServices
                 .Setup(x => x.GetUserRegistrations())
-                .ReturnsAsync(new List<DataSourceInformation> { userRegistrations });
+                .ReturnsAsync([userRegistrations]);
             _mockDataMappingFactory
                 .Setup(x => x.GetImplementation(It.IsAny<string>()))
                 .Returns(dataMapping.Object);
             _mockDataExtractionService
                 .Setup(x => x.ExtractParams(It.IsAny<Dictionary<string, string>>(), It.IsAny<ConnectorDocument>(), It.IsAny<string>()))
-                .Returns(new Dictionary<string, string>());
+                .Returns([]);
             dataMapping
                 .Setup(x => x.GetAndMapResults<dynamic>(It.IsAny<ConnectorDocument>(), It.IsAny<string>(), It.IsAny<NameValueCollection>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<Dictionary<string, string>>(), It.IsAny<string>()))
-                .ReturnsAsync("documentContent");
+                .ReturnsAsync(base64String);
             _mockRepository
-                .Setup(x => x.HandleSuccessResponse(It.IsAny<string>(), It.IsAny<bool>()))
-                .ReturnsAsync("documentContent");
+                .Setup(x => x.HandleSuccessResponse(It.IsAny<Stream>(), It.IsAny<bool>()))
+                .ReturnsAsync(expectedContent);
             _mockRedisRepository
                 .Setup(x => x.GetAsync<string>(It.IsAny<string>()))
                 .ReturnsAsync("");
 
             // Act
-            var result = await _service.GetDocumentContentAsync("ChocolateCookie", "docId");
+            Stream data = await _service.GetDocumentContentAsync(new DocumentDownloadRequestModel { ConnectorId = "ChocolateCookie", DocId = "docId" });
+            string result = await _service.GetDocumentContentAsStringAsync(data);
 
             // Assert
-            Assert.AreEqual("documentContent", result);
+            Assert.AreEqual(expectedContent, result);
         }
 
         //[TestMethod]
