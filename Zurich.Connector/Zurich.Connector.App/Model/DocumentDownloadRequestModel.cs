@@ -6,6 +6,5 @@
 
         public string DocId { get; set; }
 
-        public bool TransformToPdf { get; set; } = true;
     }
 }

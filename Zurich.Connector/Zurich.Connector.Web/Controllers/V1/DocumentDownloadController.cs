@@ -32,7 +32,7 @@ namespace Zurich.Connector.Web.Controllers.V1
         /// <returns>Return the document as a FileStreamResult</returns>
         [EnableCors("MainCORS")]
         [HttpGet("{connectorId}/{docId}")]
-        public async Task<ActionResult<dynamic>> DocumentDownload([FromRoute] DocumentDownloadRequestModel documentDownloadRequestModel)
+        public async Task<ActionResult<dynamic>> DocumentDownload([FromRoute] DocumentDownloadRequestModel documentDownloadRequestModel, [FromQuery] bool transformToPDF = true)
         {
             try
             {
@@ -40,7 +40,7 @@ namespace Zurich.Connector.Web.Controllers.V1
                 {
                     Stream documentStream = await documentDownloadService.GetDocumentContentAsync(documentDownloadRequestModel);
 
-                    string result = await documentDownloadService.GetDocumentContentAsStringAsync(documentStream);
+                    string result = await documentDownloadService.GetDocumentContentAsStringAsync(documentStream, transformToPDF);
 
                     return new ContentResult
                     {
