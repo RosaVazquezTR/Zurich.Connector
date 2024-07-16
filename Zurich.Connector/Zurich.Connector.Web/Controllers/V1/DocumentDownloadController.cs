@@ -19,7 +19,7 @@ namespace Zurich.Connector.Web.Controllers.V1
     [ApiVersion("1.0")]
     public class DocumentDownloadController(IDocumentDownloadService documentDownloadService) : ControllerBase
     {
-        private readonly List<string> SUPPORTED_CONNECTORS = ["44", "4401", "14", "80", "47", "12"];
+        private readonly List<string> SUPPORTED_CONNECTORS = ["44", "89", "14", "80", "47", "12"];
 
         /// <summary>
         /// This temporal endpoint acts as a proxy for calling the iManage Document Download Enpoint for the FS UI POC.

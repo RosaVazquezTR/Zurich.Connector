@@ -1,5 +1,5 @@
 {
-  "id": "4401",
+  "id": "89",
   "partitionkey": "ConnectorList",
   "alias": "imanageOnPrem.search",
   "info": {
@@ -186,7 +186,7 @@
           "id": "ACROBAT"
         }
       ]
-    }         
+    }
   ],
   "CDMmapping": {
     "structured": [
