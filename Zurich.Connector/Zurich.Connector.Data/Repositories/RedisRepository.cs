@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Caching.Distributed;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,62 +18,80 @@ namespace Zurich.Connector.Data.Repositories
     /// <param name="cache">The distributed cache abstraction.</param>
     public class RedisRepository(IDistributedCache cache) : IRedisRepository
     {
-        /// <summary>
-        /// Asynchronously retrieves an object of type T from the cache using the specified key.
-        /// </summary>
-        /// <param name="key">The cache key used to retrieve the object.</param>
-        /// <typeparam name="T">The type of object to retrieve. Must be a class.</typeparam>
-        /// <returns>The object of type T retrieved from the cache, or null if not found.</returns>
-        public async Task<T> GetAsync<T>(string key) where T : class
+        private static DistributedCacheEntryOptions Options
         {
-            string base64String = await cache.GetStringAsync(key);
-
-            if (string.IsNullOrEmpty(base64String))
+            get
             {
-                return null;
+                return new() { AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(30) };
+            }
+        }
+
+        public async Task<Stream> GetAsync(string key)
+        {
+            byte[] data = await cache.GetAsync(key);
+
+            if (data is null)
+            {
+                return default;
             }
 
-            return DeserializeFromBase64String<T>(base64String);
+            return new MemoryStream(data);
+        }
+
+        public async Task SetAsync(string key, Stream stream)
+        {
+            byte[] data;
+
+            using (MemoryStream memoryStream = new())
+            {
+                await stream.CopyToAsync(memoryStream);
+                data = memoryStream.ToArray();
+            }
+
+            await cache.SetAsync(key, data, Options);
+        }
+
+        public async Task SetAsStringAsync(string key, string data)
+        {
+            await cache.SetStringAsync(key, EncodeBase64(data), Options);
+        }
+
+        public async Task<string> GetAsStringAsync(string key)
+        {
+            string data = await cache.GetStringAsync(key);
+
+            if (string.IsNullOrEmpty(data))
+            {
+                return string.Empty;
+            }
+
+            return DecodeBase64<string>(data);
         }
 
         /// <summary>
-        /// Asynchronously stores an object of type T in the cache using the specified key.
+        /// Encodes the specified data object to Base64 string.
         /// </summary>
-        /// <param name="key">The cache key to store the object under.</param>
-        /// <param name="data">The object of type T to store in the cache.</param>
-        /// <typeparam name="T">The type of object to store. Must be a class.</typeparam>
-        /// <returns>A task representing the asynchronous operation.</returns>
-        public async Task SetAsync<T>(string key, T data) where T : class
+        /// <typeparam name="T">The type of the data object.</typeparam>
+        /// <param name="data">The data object to encode.</param>
+        /// <returns>The Base64 encoded string.</returns>
+        private static string EncodeBase64<T>(T data) where T : class
         {
-            DistributedCacheEntryOptions options = new() { AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(30) };
+            string content = SerializerUtils.SerializeToJson(data);
 
-            await cache.SetStringAsync(key, GetBase64String(data), options);
+            return Base64Utils.Encode(content);
         }
 
         /// <summary>
-        /// Converts an object of type T to a base64-encoded string.
+        /// Decodes the specified Base64 string to the original data object.
         /// </summary>
-        /// <param name="data">The object to convert.</param>
-        /// <typeparam name="T">The type of object to convert. Must be a class.</typeparam>
-        /// <returns>A base64-encoded string representing the object.</returns>
-        private static string GetBase64String<T>(T data) where T : class
+        /// <typeparam name="T">The type of the data object.</typeparam>
+        /// <param name="base64String">The Base64 encoded string.</param>
+        /// <returns>The decoded data object.</returns>
+        private static string DecodeBase64<T>(string base64String) where T : class
         {
-            string json = SerializerUtils.SerializeToJson(data);
+            string encodedContent = Base64Utils.Decode(base64String);
 
-            return Base64Utils.Encode(json);
-        }
-
-        /// <summary>
-        /// Deserializes a base64-encoded string to an object of type T.
-        /// </summary>
-        /// <param name="base64String">The base64-encoded string to deserialize.</param>
-        /// <typeparam name="T">The type of object to deserialize. Must be a class.</typeparam>
-        /// <returns>The deserialized object of type T.</returns>
-        private static T DeserializeFromBase64String<T>(string base64String)
-        {
-            string json = Base64Utils.Decode(base64String);
-
-            return SerializerUtils.DeserializeFromJson<T>(json);
+            return SerializerUtils.DeserializeFromJson<string>(encodedContent);
         }
     }
 }

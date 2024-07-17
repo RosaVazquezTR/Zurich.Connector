@@ -14,36 +14,31 @@ namespace Zurich.Connector.Web.Controllers.V2
     [Route("api/v{version:apiVersion}/download/")]
     [ApiController]
     [ApiVersion("2.0")]
-    public class DocumentDownloadController : ControllerBase
+    public class DocumentDownloadController(IDocumentDownloadService documentDownloadService) : ControllerBase
     {
-        private readonly IDocumentDownloadService _documentDownloadService;
         private readonly List<string> SUPPORTED_CONNECTORS = ["44", "14", "80", "47", "12"];
-
-        public DocumentDownloadController(IDocumentDownloadService documentDownloadService)
-        {
-            _documentDownloadService = documentDownloadService;
-        }
 
         /// <summary>
         /// This temporal endpoint acts as a proxy for calling the iManage Document Download Enpoint for the FS UI POC.
         /// </summary>
         /// <param name="connectorId">Connector id</param>
         /// <param name="docId">Document id</param>
-        /// <returns>Return the document as a FileStreamResult</returns>
+        /// <returns>The document as a FileStreamResult</returns>
         [EnableCors("MainCORS")]
         [HttpGet("{connectorId}/{docId}")]
         public async Task<ActionResult> DocumentDownload(string connectorId, string docId)
         {
             try
             {
-                var documentDownloadRequestModel = new DocumentDownloadRequestModel {
-                    ConnectorId = connectorId,
-                    DocId = docId,
-                };
-
-                if (SUPPORTED_CONNECTORS.Contains(documentDownloadRequestModel.ConnectorId))
+                if (SUPPORTED_CONNECTORS.Contains(connectorId))
                 {
-                    Stream file = await _documentDownloadService.GetDocumentContentAsync(documentDownloadRequestModel);
+                    DocumentDownloadRequestModel documentDownloadRequestModel = new()
+                    {
+                        ConnectorId = connectorId,
+                        DocId = docId,
+                    };
+
+                    Stream file = await documentDownloadService.GetDocumentContentAsync(documentDownloadRequestModel);
 
                     return new FileStreamResult(file, "application/octet-stream");
                 }

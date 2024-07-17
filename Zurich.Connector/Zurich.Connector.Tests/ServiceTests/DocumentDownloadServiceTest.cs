@@ -100,30 +100,29 @@ namespace Zurich.Connector.Tests.Services
                 .Setup(x => x.HandleSuccessResponse(It.IsAny<Stream>(), It.IsAny<bool>()))
                 .ReturnsAsync(expectedContent);
             _mockRedisRepository
-                .Setup(x => x.GetAsync<string>(It.IsAny<string>()))
+                .Setup(x => x.GetAsStringAsync(It.IsAny<string>()))
                 .ReturnsAsync("");
 
             // Act
-            Stream data = await _service.GetDocumentContentAsync(new DocumentDownloadRequestModel { ConnectorId = "ChocolateCookie", DocId = "docId" });
-            string result = await _service.GetDocumentContentAsStringAsync(data);
+            string result = await _service.GetDocumentContentAsStringAsync(new DocumentDownloadRequestModel { ConnectorId = "ChocolateCookie", DocId = "docId" });
 
             // Assert
             Assert.AreEqual(expectedContent, result);
         }
 
-        //[TestMethod]
-        //public async Task GetDocumentContentAsync_ReturnsDocumentContent_InCache()
-        //{
-        //    // Arrange
-        //    _mockRedisRepository
-        //        .Setup(x => x.GetAsync<string>(It.IsAny<string>()))
-        //        .ReturnsAsync("documentContent");
+        [TestMethod]
+        public async Task GetDocumentContentAsync_ReturnsDocumentContent_InCache()
+        {
+            // Arrange
+            _mockRedisRepository
+                .Setup(x => x.GetAsStringAsync(It.IsAny<string>()))
+                .ReturnsAsync("documentContent");
 
-        //    // Act
-        //    var result = await _service.GetDocumentContentAsync("ChocolateCookie", "docId");
+            // Act
+            string result = await _service.GetDocumentContentAsStringAsync(new DocumentDownloadRequestModel { ConnectorId = "ChocolateCookie", DocId = "docId" });
 
-        //    // Assert
-        //    Assert.AreEqual("documentContent", result);
-        //}
+            // Assert
+            Assert.AreEqual("documentContent", result);
+        }
     }
 }

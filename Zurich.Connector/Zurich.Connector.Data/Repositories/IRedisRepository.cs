@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,20 +13,33 @@ namespace Zurich.Connector.Data.Repositories
     public interface IRedisRepository
     {
         /// <summary>
-        /// Asynchronously stores an object of type T in the Redis cache using the specified key.
+        /// Asynchronously stores binary data in the Redis cache using the specified key.
         /// </summary>
-        /// <param name="key">The key under which the object is to be stored in the cache.</param>
-        /// <param name="data">The object of type T to store in the cache.</param>
-        /// <typeparam name="T">The type of the object to store. Must be a class.</typeparam>
+        /// <param name="key">The key under which the binary data is to be stored in the cache.</param>
+        /// <param name="stream">The binary data to store in the cache.</param>
         /// <returns>A task representing the asynchronous operation.</returns>
-        Task SetAsync<T>(string key, T data) where T : class;
+        Task SetAsync(string key, Stream stream);
 
         /// <summary>
-        /// Asynchronously retrieves an object of type T from the Redis cache using the specified key.
+        /// Asynchronously stores a string value in the Redis cache using the specified key.
         /// </summary>
-        /// <param name="key">The key used to retrieve the object from the cache.</param>
-        /// <typeparam name="T">The type of the object to retrieve. Must be a class.</typeparam>
-        /// <returns>A task that, when completed successfully, returns the retrieved object of type T. If the object is not found, returns null.</returns>
-        Task<T> GetAsync<T>(string key) where T : class;
+        /// <param name="key">The key under which the string value is to be stored in the cache.</param>
+        /// <param name="data">The string value to store in the cache.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        Task SetAsStringAsync(string key, string data);
+
+        /// <summary>
+        /// Asynchronously retrieves binary data from the Redis cache using the specified key.
+        /// </summary>
+        /// <param name="key">The key used to retrieve the binary data from the cache.</param>
+        /// <returns>A task that, when completed successfully, returns the retrieved binary data as a Stream. If the data is not found, returns null.</returns>
+        Task<Stream> GetAsync(string key);
+
+        /// <summary>
+        /// Asynchronously retrieves a string value from the Redis cache using the specified key.
+        /// </summary>
+        /// <param name="key">The key used to retrieve the string value from the cache.</param>
+        /// <returns>A task that, when completed successfully, returns the retrieved string value. If the value is not found, returns null.</returns>
+        Task<string> GetAsStringAsync(string key);
     }
 }

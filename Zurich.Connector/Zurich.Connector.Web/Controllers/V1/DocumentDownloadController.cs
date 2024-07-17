@@ -19,39 +19,31 @@ namespace Zurich.Connector.Web.Controllers.V1
     [Route("api/v{version:apiVersion}/download/")]
     [ApiController]
     [ApiVersion("1.0")]
-    public class DocumentDownloadController : ControllerBase
+    public class DocumentDownloadController(IDocumentDownloadService documentDownloadService) : ControllerBase
     {
-        private readonly IDocumentDownloadService _documentDownloadService;
         private readonly List<string> SUPPORTED_CONNECTORS = ["44", "14", "80", "47", "12"];
-
-        public DocumentDownloadController(IDocumentDownloadService documentDownloadService)
-        {
-            _documentDownloadService = documentDownloadService;
-        }
-
+        
         /// <summary>
-        /// This temporal endpoint acts as a proxy for calling the iManage Document Download Enpoint for the FS UI POC.
+        /// Downloads a document for a specific connector.
         /// </summary>
-        /// <param name="connectorId">Connector id</param>
-        /// <param name="docId">Document id</param>
-        /// <param name="transformToPDF">Transform to pdf</param>
-        /// <returns>Return the document as a FileStreamResult</returns>
-        [EnableCors("MainCORS")]
+        /// <param name="connectorId">The ID of the connector.</param>
+        /// <param name="docId">The ID of the document.</param>
+        /// <param name="transformToPdf">Flag indicating whether to transform the document to PDF. Default is true.</param>
+        /// <returns>The document content as json.</returns>
         [HttpGet("{connectorId}/{docId}")]
-        public async Task<ActionResult<dynamic>> DocumentDownload(string connectorId, string docId, [FromQuery] bool transformToPDF = true)
+        public async Task<ActionResult<dynamic>> DocumentDownload(string connectorId, string docId, [FromQuery] bool transformToPdf = true)
         {
             try
             {
-                var documentDownloadRequestModel = new DocumentDownloadRequestModel {
+                DocumentDownloadRequestModel documentDownloadRequestModel = new()
+                {
                     ConnectorId = connectorId,
                     DocId = docId
                 };
 
                 if (SUPPORTED_CONNECTORS.Contains(documentDownloadRequestModel.ConnectorId))
                 {
-                    Stream documentStream = await _documentDownloadService.GetDocumentContentAsync(documentDownloadRequestModel);
-
-                    string result = await _documentDownloadService.GetDocumentContentAsStringAsync(documentStream, transformToPDF);
+                    string result = await documentDownloadService.GetDocumentContentAsStringAsync(documentDownloadRequestModel, transformToPdf);
 
                     return new ContentResult
                     {

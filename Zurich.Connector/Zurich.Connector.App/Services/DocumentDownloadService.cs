@@ -30,12 +30,12 @@ namespace Zurich.Connector.App.Services
         Task<Stream> GetDocumentContentAsync(DocumentDownloadRequestModel downloadRequestModel);
 
         /// <summary>
-        /// Asynchronously gets the content of a document as a string. Optionally, the document can be transformed to PDF before getting its content.
+        /// Asynchronously gets the content of a document as a string based on a download request model.
         /// </summary>
-        /// <param name="documentStream">The stream containing the document's data.</param>
-        /// <param name="transformToPdf">A flag indicating whether the document should be converted to PDF. Defaults to true.</param>
-        /// <returns>A task that represents the asynchronous operation. The task result is the document content as a string.</returns>
-        Task<string> GetDocumentContentAsStringAsync(Stream documentStream, bool transformToPdf = true);
+        /// <param name="downloadRequestModel">The model containing the details of the download request, including connector ID and document ID.</param>
+        /// <param name="transformToPdf">A flag indicating whether to transform the document to PDF format. Default is true.</param>
+        /// <returns>A task that represents the asynchronous operation. The task result contains the document content as a string.</returns>
+        Task<string> GetDocumentContentAsStringAsync(DocumentDownloadRequestModel downloadRequestModel, bool transformToPdf = true);
     }
 
     /// <summary>
@@ -51,11 +51,17 @@ namespace Zurich.Connector.App.Services
         IDataExtractionService dataExtractionService,
         IMapper mapper) : IDocumentDownloadService
     {
-        private readonly IDataMapping _dataMapping;
-
+        /// <inheritdoc/>
         public async Task<Stream> GetDocumentContentAsync(DocumentDownloadRequestModel downloadRequestModel)
         {
             (string dataBaseId, string documentId) = ParseDocumentId(downloadRequestModel.ConnectorId, downloadRequestModel.DocId);
+
+            Stream data = await redisRepository.GetAsync($"{dataBaseId}_{documentId}_stream");
+
+            if (data is not null)
+            {
+                return data;
+            }
 
             ConnectorModel connectorModel = await GetConnectorModelAsync(downloadRequestModel.ConnectorId);
             ConnectorModel downloadConnectorModel = await GetConnectorModelAsync(connectorModel.Info.DownloadConnector);
@@ -69,10 +75,10 @@ namespace Zurich.Connector.App.Services
             IDataMapping service = dataMappingFactory.GetImplementation(connectorModel?.DataSource?.SecurityDefinition?.Type);
 
             Dictionary<string, string> headerParameters = await dataExtractionService.ExtractDataSource(null, new Dictionary<string, string>
-            {
-                { "dataBaseId", dataBaseId },
-                { "docId", documentId }
-            }, null, connectorDocument);
+                {
+                    { "dataBaseId", dataBaseId },
+                    { "docId", documentId }
+                }, null, connectorDocument);
 
             string result = await service.GetAndMapResults<dynamic>(connectorDocument, null, null, headerParameters, null);
 
@@ -81,7 +87,30 @@ namespace Zurich.Connector.App.Services
                 throw new ApplicationException("Document content is empty.");
             }
 
-            return new MemoryStream(Convert.FromBase64String(result));
+            data = new MemoryStream(Convert.FromBase64String(result));
+
+            await redisRepository.SetAsync($"{dataBaseId}_{documentId}_stream", data);
+
+            return data;
+        }
+
+        /// <inheritdoc/>
+        public async Task<string> GetDocumentContentAsStringAsync(DocumentDownloadRequestModel downloadRequestModel, bool transformToPdf = true)
+        {
+            (string dataBaseId, string documentId) = ParseDocumentId(downloadRequestModel.ConnectorId, downloadRequestModel.DocId);
+
+            string data = await redisRepository.GetAsStringAsync($"{dataBaseId}_{documentId}");
+
+            if (string.IsNullOrEmpty(data))
+            {
+                Stream documentStream = await GetDocumentContentAsync(downloadRequestModel);
+
+                data = await repository.HandleSuccessResponse(documentStream, transformToPdf);
+
+                await redisRepository.SetAsStringAsync($"{dataBaseId}_{documentId}", data);
+            }
+
+            return data;
         }
 
         private async Task<ConnectorModel> GetConnectorModelAsync(string connectorId)
@@ -110,11 +139,6 @@ namespace Zurich.Connector.App.Services
             }
 
             return (databaseId, documentId);
-        }
-
-        public async Task<string> GetDocumentContentAsStringAsync(Stream documentStream, bool transformToPdf = true)
-        {
-            return await repository.HandleSuccessResponse(documentStream, transformToPdf);
         }
     }
 }
