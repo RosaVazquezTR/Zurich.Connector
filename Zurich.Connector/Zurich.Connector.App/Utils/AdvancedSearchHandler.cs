@@ -65,9 +65,11 @@ namespace Zurich.Connector.App.Utils
                     query = realQuery;
                 }
             }
-            
+
+            // TODO:  Why are we doing this? 
             query = query.Replace("- ", "");
             query = query.Replace(":", "");
+            //
             if (query.Count(f => (f == '\'')) % 2 == 0) {
                 query = query.Replace("'", "\"");
             }
@@ -87,6 +89,7 @@ namespace Zurich.Connector.App.Utils
                         // A simple replace of the fedSearch operator with the connector operator must work (with some considerations): 
                         newQuery = newQuery.Replace(fedSearchOperator, connectorOperator);
 
+                        // TODO: Maybe this is leading us to some confussions. Worth to check if this is the best approach. Jul 2K24
                         // At this first version, we follow the Westlaw/PracticalLaw convention of replacing the "&" chars by operators
                         // when its quoted and keeping it when its parentheses grouped:
                         // i.e. "Elephant & Castle" -> "Elephant AND castle"
@@ -98,6 +101,16 @@ namespace Zurich.Connector.App.Utils
                             foreach (Match text in enclosedTexts)
                             {
                                 newQuery = newQuery.Replace(text.Value.Replace("&", "AND"), text.Value);
+                            }
+                        }
+
+                        // For the Not operator, we must let the original operator char from the enclosed text in ""
+                        if (operatorName == "Not")
+                        {
+                            MatchCollection enclosedTexts = Regex.Matches(newQuery, @"\" + (char)34 + @"(.+?)\" + (char)34); //Gets the enclosed text in ""
+                            foreach (Match text in enclosedTexts)
+                            {
+                                newQuery = newQuery.Replace(text.Value, text.Value.Replace("NOT ", "%"));
                             }
                         }
 
