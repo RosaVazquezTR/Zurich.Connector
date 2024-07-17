@@ -25,8 +25,7 @@ namespace Zurich.Connector.Web.Controllers.V2
         /// <summary>
         /// This temporal endpoint acts as a proxy for calling the iManage Document Download Enpoint for the FS UI POC.
         /// </summary>
-        /// <param name="connectorId">Connector id</param>
-        /// <param name="docId">Document id</param>
+        /// <param name="documentDownloadRequestModel">Document download request model</param>
         /// <returns>Return the document as a FileStreamResult</returns>
         [EnableCors("MainCORS")]
         [HttpGet("{connectorId}/{docId}")]

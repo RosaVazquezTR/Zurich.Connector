@@ -24,11 +24,12 @@ namespace Zurich.Connector.Web.Controllers.V1
     {
         private readonly List<string> SUPPORTED_CONNECTORS = ["44", "14", "80", "47", "12"];
 
+
         /// <summary>
         /// This temporal endpoint acts as a proxy for calling the iManage Document Download Enpoint for the FS UI POC.
         /// </summary>
-        /// <param name="connectorId">Connector id</param>
-        /// <param name="docId">Document id</param>
+        /// <param name="documentDownloadRequestModel">Document download request model</param>
+        /// <param name="transformToPDF">Transform to pdf</param>
         /// <returns>Return the document as a FileStreamResult</returns>
         [EnableCors("MainCORS")]
         [HttpGet("{connectorId}/{docId}")]
