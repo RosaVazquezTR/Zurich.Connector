@@ -31,7 +31,7 @@ namespace Zurich.Connector.Web.Controllers.V1
         /// <param name="docId">Document id</param>
         /// <returns>Return the document as a FileStreamResult</returns>
         [EnableCors("MainCORS")]
-        [HttpGet("{connectorId}/{docId}")]
+        [HttpGet("{ConnectorId}/{DocId}")]
         public async Task<ActionResult<dynamic>> DocumentDownload([FromRoute] DocumentDownloadRequestModel documentDownloadRequestModel, [FromQuery] bool transformToPDF = true)
         {
             try
