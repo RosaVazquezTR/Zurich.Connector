@@ -62,7 +62,7 @@ stages:
   - stage: CI
     pool: DCO-HighQ-Platform-N
     dependsOn: Build
-    condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'master'))
+    condition: succeeded()
     jobs:
       - deployment: Prereqs
         environment: CI
@@ -248,7 +248,7 @@ stages:
   - stage: CompatibilityTesting
     pool: AutomationTestAgentPool
     dependsOn: CI
-    condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'master'))
+    condition: succeeded()
     jobs:
       - job: 'RegressionTests'
         timeoutInMinutes: ${{ variables.regressionTestTimeout }} # how long to run the job before automatically cancelling
@@ -262,7 +262,7 @@ stages:
               xApiKey: $(postmanXApiKey)
   - stage: Swap_Slots
     dependsOn: CompatibilityTesting
-    condition: and(in(dependencies.CompatibilityTesting.result, 'Succeeded', 'Failed'), eq(variables['Build.SourceBranchName'], 'master'))
+    condition: in(dependencies.CompatibilityTesting.result, 'Succeeded', 'Failed')
     jobs:
       - template: ../Templates/connector-swap-slots.yml
         parameters:
@@ -274,7 +274,7 @@ stages:
           subscriptionName: ${{ variables.subscriptionName }}
   - stage: Update_APIM_Product
     dependsOn: Swap_Slots
-    condition: and(eq(dependencies.Swap_Slots.result, 'Succeeded'), eq(variables['Build.SourceBranchName'], 'master'))
+    condition: eq(dependencies.Swap_Slots.result, 'Succeeded')
     jobs:
       - job: 'UpdateApim'
         displayName: 'Update Apim Connector Service'
@@ -310,7 +310,7 @@ stages:
   - stage: Testing
     pool: AutomationTestAgentPool
     dependsOn: Update_APIM_Product
-    condition: and(eq(dependencies.Swap_Slots.result, 'Succeeded'), eq(variables['Build.SourceBranchName'], 'master'))
+    condition: eq(dependencies.Swap_Slots.result, 'Succeeded')
     jobs:
       - job: 'RegressionTests'
         timeoutInMinutes: ${{ variables.regressionTestTimeout }} # how long to run the job before automatically cancelling
