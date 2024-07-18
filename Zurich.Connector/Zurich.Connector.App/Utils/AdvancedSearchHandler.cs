@@ -55,7 +55,7 @@ namespace Zurich.Connector.App.Utils
             string originalQuery = query;
             string realQuery = "";
 
-            if (connectorModel.Id == "14" || connectorModel.Id == "80")
+            if (connectorModel.Id == "14" || connectorModel.Id == "80" || connectorModel.Id == "88")
             {
                 modifyedQuery = Regex.Matches(query, @"\((\""?.+\""?\)+)\)|\((.+?)\)");
                 if (modifyedQuery.Count > 0)
@@ -128,7 +128,7 @@ namespace Zurich.Connector.App.Utils
                         }
                     }      
                 }
-                if (connectorModel.Id == "14" || connectorModel.Id == "80") 
+                if (connectorModel.Id == "14" || connectorModel.Id == "80" || connectorModel.Id == "88") 
                     if (modifyedQuery.Count > 0)
                         return originalQuery.Replace(realQuery, newQuery);
                 return newQuery;
