@@ -97,9 +97,11 @@ namespace Zurich.Connector.App.Services
         /// <inheritdoc/>
         public async Task<string> GetDocumentContentAsStringAsync(DocumentDownloadRequestModel downloadRequestModel, bool transformToPdf = true)
         {
+            string format = transformToPdf ? "PDF" : "original";
+
             (string dataBaseId, string documentId) = ParseDocumentId(downloadRequestModel.ConnectorId, downloadRequestModel.DocId);
 
-            string data = await redisRepository.GetAsStringAsync($"{dataBaseId}_{documentId}");
+            string data = await redisRepository.GetAsStringAsync($"{dataBaseId}_{documentId}_{format}");
 
             if (string.IsNullOrEmpty(data))
             {
@@ -107,7 +109,7 @@ namespace Zurich.Connector.App.Services
 
                 data = await repository.HandleSuccessResponse(documentStream, transformToPdf);
 
-                await redisRepository.SetAsStringAsync($"{dataBaseId}_{documentId}", data);
+                await redisRepository.SetAsStringAsync($"{dataBaseId}_{documentId}_{format}", data);
             }
 
             return data;
