@@ -1,0 +1,81 @@
+{
+    "id": "91",
+    "partitionkey": "ConnectorList",
+    "alias": "netdocs.search",
+    "info": {
+        "title": "Get search",
+        "description": "Get Search Results from dafault cabinet in NetDocuments",
+        "entityType": "Search",
+        "dataSourceId": "57",
+        "version": "1.0",
+        "subType": "Parent"
+    },
+    "preRelease": true,
+    "request": {
+        "endpointPath": "/v2/Search/{cabinet}",
+        "method": "GET",
+        "parameters": [
+            {
+                "cdmName": "cabinet",
+                "name": "cabinet",
+                "inClause": "Path",
+                "required": true,
+                "type": "string",
+                "defaultValue": "NG-37T9BLJ3",
+                "tags": []
+            },
+            {
+                "cdmName": "Query",
+                "name": "q",
+                "inClause": "Query",
+                "required": true,
+                "type": "string",
+                "defaultValue": ""
+            },
+            {
+                "cdmName": "DocAttributes",
+                "name": "select",
+                "inClause": "Query",
+                "required": false,
+                "type": "string",
+                "defaultValue": "StandardAttributes,Locations"
+            }
+        ],
+        "sorting": {
+            "properties": []
+        }
+    },
+    "response": {
+        "type": "JSON"
+    },
+    "filters": [],
+    "resultLocation": "",
+    "cdmMapping": {
+        "structured": [
+            {
+                "name": "Count",
+                "type": "short",
+                "responseElement": "TotalFound",
+                "_comment": ""
+            },
+            {
+                "name": "Documents",
+                "type": "object",
+                "responseElement": "{92}",
+                "_comment": ""
+            }
+        ],
+        "unstructured": []
+    },
+    "advancedSearchSyntax": {
+        "operators": {
+            "and": "AND",
+            "or": "OR",
+            "textualOcurrence": "\"",
+            "not": "NOT ",
+            "wildcard": "*",
+            "proximity": "NEAR(n)",
+            "termGrouping": "("
+        }
+    }
+}
