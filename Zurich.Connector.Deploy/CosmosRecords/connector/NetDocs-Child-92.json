@@ -60,7 +60,7 @@
         "_comment": ""
       },
       {
-        "name": "DocId",
+        "name": "documentId",
         "type": "string",
         "responseElement": "DocId",
         "_comment": ""
