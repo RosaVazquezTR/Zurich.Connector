@@ -68,7 +68,7 @@ namespace Zurich.Connector.App.Services.DataSources
         }
 
         /// <summary>
-        /// Gets the user's OneDrive url from OneDrive's user profile
+        /// Gets the user's Primary Cabinet id from NetDocuments's user info
         /// </summary>
         /// <param name="appCode">The data source app code</param>
         /// <param name="hostName">The data source host name</param>
@@ -77,7 +77,7 @@ namespace Zurich.Connector.App.Services.DataSources
             ConnectorModel connectorModel = null;
             if (appCode == KnownDataSources.oneDrive)
             {
-                // 79 = OneDrive user info
+                // 93 = NetDocs user info
                 connectorModel = await _cosmosService.GetConnector("93", true);
             }
             
