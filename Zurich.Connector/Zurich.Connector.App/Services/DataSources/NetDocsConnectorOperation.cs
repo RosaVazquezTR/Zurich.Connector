@@ -44,31 +44,7 @@ namespace Zurich.Connector.App.Services.DataSources
                 switch (entityType)
                 {
                     case ConnectorEntityType.Search:
-                        if (item is JObject result && result.ContainsKey("Documents") && result["Documents"].HasValues)
-                        {
-                            //foreach (JObject doc in (result["Documents"] as JArray))
-                            //{
-                            //    if (doc.ContainsKey(StructuredCDMProperties.Title))
-                            //    {
-                            //        if (doc.ContainsKey(StructuredCDMProperties.Type))
-                            //        {
-                            //            var extension = GetExtension(doc[StructuredCDMProperties.Title].ToString());
-                            //            doc[StructuredCDMProperties.Type] = ConnectorOperationsUtility.MapExtensionToDocumentType(extension);
-                            //            doc[StructuredCDMProperties.AdditionalProperties][UnstructuredCDMProperties.Extension] = extension;
-                            //        }
-                            //        doc[StructuredCDMProperties.Title] = RemoveExtension(doc[StructuredCDMProperties.Title].ToString());
-                            //    }
-                            //    if (doc.ContainsKey(StructuredCDMProperties.Snippet))
-                            //    {
-                            //        doc[StructuredCDMProperties.Snippet] = UpdateSnippet(doc[StructuredCDMProperties.Snippet].ToString());
-                            //    }
-                            //    if (doc.ContainsKey(StructuredCDMProperties.WebUrl))
-                            //    {
-                            //        doc[StructuredCDMProperties.WebUrl] = UpdateWebUrl(doc);
-                            //    }
-                            //}
-                        }
-                        else if (item is string)
+                        if (item is string)
                         {
                             item = await GetCabinetId(appCode, hostName);
                         }
