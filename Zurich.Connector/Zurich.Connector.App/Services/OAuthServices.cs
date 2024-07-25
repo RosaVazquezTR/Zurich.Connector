@@ -26,7 +26,7 @@ namespace Zurich.Connector.App.Services
         /// Gets a users current dataSource registrations
         /// </summary>
         /// <returns>returns the information around the domain, appcode and base url for user registrations</returns>
-        Task<List<DataSourceInformation>> GetUserRegistrations();
+        Task<IEnumerable<DataSourceInformation>> GetUserRegistrations();
 
         /// <summary>
         /// Using an appCode will return the corresponding authorize endpoint so the user can sign in
@@ -58,7 +58,7 @@ namespace Zurich.Connector.App.Services
         {
             return await _OAuthRespository.GetAvailableRegistrations();
         }
-        public async Task<List<DataSourceInformation>> GetUserRegistrations()
+        public async Task<IEnumerable<DataSourceInformation>> GetUserRegistrations()
         {
             return await _OAuthRespository.GetUserRegistrations();
         }

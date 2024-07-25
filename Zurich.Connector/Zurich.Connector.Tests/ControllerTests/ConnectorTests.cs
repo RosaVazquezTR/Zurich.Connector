@@ -358,7 +358,7 @@ namespace Zurich.Connector.Tests.ControllerTests
 			// ARRANGE
 			var connections = MockConnectorData.SetupConnectorModel();
             ConnectorFilterViewModel filters = new ConnectorFilterViewModel();
-			_mockConnectorservice.Setup(x => x.GetConnectors(It.IsAny<ConnectorFilterModel>())).Returns(Task.FromResult(connections.ToList()));
+			_mockConnectorservice.Setup(x => x.GetConnectors(It.IsAny<ConnectorFilterModel>())).Returns(Task.FromResult(connections));
 
             ConnectorsController connector = new ConnectorsController(_mockConnectorservice.Object, _mockConnectorDataService.Object, _mapper,null);
 

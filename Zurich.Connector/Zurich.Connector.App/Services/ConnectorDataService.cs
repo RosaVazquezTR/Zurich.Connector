@@ -115,7 +115,7 @@ namespace Zurich.Connector.Data.Services
             }
             else
             {
-                availableRegistrations = await _OAuthService.GetUserRegistrations();
+                availableRegistrations = (await _OAuthService.GetUserRegistrations()).ToList();
             }
 
             availableRegistrations = availableRegistrations?.FindAll(x => x.AppCode == connectorModel.DataSource.AppCode).Take(instanceLimit).ToList<DataSourceInformation>();

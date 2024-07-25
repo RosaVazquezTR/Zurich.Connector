@@ -114,7 +114,7 @@ namespace Zurich.Connector.Tests.ServiceTests
 			ConnectorService service = new ConnectorService(null, _mockCosmosService.Object, _mockRegistrationService.Object, config, _mockOAuthService.Object);
 
 			// ACT
-			var connectors = await service.GetConnectors(filters);
+			var connectors = (await service.GetConnectors(filters)).ToList();
 
 			// ASSERT
 			_mockCosmosService.Verify(x => x.GetConnectors(true, It.IsAny<Expression<Func<ConnectorDocument, bool>>>()), Times.Once());
@@ -149,7 +149,7 @@ namespace Zurich.Connector.Tests.ServiceTests
 			ConnectorService service = new ConnectorService(null, _mockCosmosService.Object, _mockRegistrationService.Object, config, _mockOAuthService.Object);
 
             // ACT
-            var connectors = await service.GetConnectors(filters);
+            var connectors = (await service.GetConnectors(filters)).ToList();
 
             // ASSERT
             _mockCosmosService.Verify(x => x.GetConnectors(true, It.IsAny<Expression<Func<ConnectorDocument, bool>>>()), Times.Once());
@@ -192,7 +192,7 @@ namespace Zurich.Connector.Tests.ServiceTests
 			ConnectorService service = new ConnectorService(null, _mockCosmosService.Object, _mockRegistrationService.Object, config, _mockOAuthService.Object);
 
 			// ACT
-			var connectors = await service.GetConnectors(filters);
+			var connectors = (await service.GetConnectors(filters)).ToList();
 
 			// ASSERT
 			_mockCosmosService.Verify(x => x.GetConnectors(true, It.IsAny<Expression<Func<ConnectorDocument, bool>>>()), Times.Once());
@@ -226,7 +226,7 @@ namespace Zurich.Connector.Tests.ServiceTests
 			ConnectorService service = new ConnectorService(null, _mockCosmosService.Object, _mockRegistrationService.Object, config, _mockOAuthService.Object);
 
 			// ACT
-			var connectors = await service.GetConnectors(filters);
+			var connectors = (await service.GetConnectors(filters)).ToList();
 
 			// ASSERT
 			_mockCosmosService.Verify(x => x.GetConnectors(true, It.IsAny<Expression<Func<ConnectorDocument, bool>>>()), Times.Once());
@@ -255,7 +255,7 @@ namespace Zurich.Connector.Tests.ServiceTests
 			ConnectorService service = new ConnectorService(null, _mockCosmosService.Object, _mockRegistrationService.Object, config, _mockOAuthService.Object);
 
             // ACT
-            var connectors = await service.GetConnectors(filters);
+            var connectors = (await service.GetConnectors(filters)).ToList();
 
             // ASSERT
             _mockCosmosService.Verify(x => x.GetConnectors(true, It.IsAny<Expression<Func<ConnectorDocument, bool>>>()), Times.Once());
@@ -292,7 +292,7 @@ namespace Zurich.Connector.Tests.ServiceTests
 			ConnectorService service = new ConnectorService(null, _mockCosmosService.Object, _mockRegistrationService.Object, config, _mockOAuthService.Object);
 
             // ACT
-            var connectors = await service.GetConnectors(filters);
+            var connectors = (await service.GetConnectors(filters)).ToList();
 
             // ASSERT
             _mockCosmosService.Verify(x => x.GetConnectors(true, It.IsAny<Expression<Func<ConnectorDocument, bool>>>()), Times.Once());

@@ -32,7 +32,7 @@ namespace Zurich.Connector.Data.Repositories
         /// Calls oAuth to Get a users current dataSource registrations
         /// </summary>
         /// <returns>returns the information around the domain, appcode and base url for user registrations</returns>
-        Task<List<DataSourceInformation>> GetUserRegistrations();
+        Task<IEnumerable<DataSourceInformation>> GetUserRegistrations();
 
 
         /// <summary>
@@ -97,18 +97,13 @@ namespace Zurich.Connector.Data.Repositories
             return result;
         }
 
-        public async Task<List<DataSourceInformation>> GetUserRegistrations()
+        public async Task<IEnumerable<DataSourceInformation>> GetUserRegistrations()
         {
-            List<DataSourceInformation> result;
             string path = $"api/v1/datasources/me";
-            using (var requestMessage = new HttpRequestMessage(HttpMethod.Get, path))
-            {
-                var httpContent = await MakeRequest(requestMessage);
 
-                result = JsonConvert.DeserializeObject<List<DataSourceInformation>>(httpContent);
-            }
-
-            return result;
+            using var requestMessage = new HttpRequestMessage(HttpMethod.Get, path);
+            var httpContent = await MakeRequest(requestMessage);
+            return JsonConvert.DeserializeObject<IEnumerable<DataSourceInformation>>(httpContent);
         }
 
         public async Task<AuthorizeUrlResponse> GetAuthorizeUrl(string applicationCode)
