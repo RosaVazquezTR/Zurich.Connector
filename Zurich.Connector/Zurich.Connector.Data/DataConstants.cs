@@ -54,6 +54,7 @@
         public const string thoughtTrace = "TT";
         public const string thoughtTraceDMS = "TTTenantApp";
         public const string westLawIE = "WLIE";
+        public const string netDocs = "NetDocs";
     }
     public static class DataConstants
     {
