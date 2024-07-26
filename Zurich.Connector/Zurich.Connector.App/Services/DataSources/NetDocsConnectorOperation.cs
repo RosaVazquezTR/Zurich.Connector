@@ -1,0 +1,91 @@
+﻿using AutoMapper;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json.Linq;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Zurich.Connector.App.Model;
+using Zurich.Connector.Data;
+using Zurich.Connector.Data.DataMap;
+using Zurich.Connector.Data.Factories;
+using Zurich.Connector.Data.Model;
+using Zurich.Connector.Data.Repositories.CosmosDocuments;
+
+namespace Zurich.Connector.App.Services.DataSources
+{
+    public class NetDocsConnectorOperation : IConnectorDataSourceOperations
+    {
+        private readonly ILogger _logger;
+        private readonly IDataMapping _dataMapping;
+        private readonly IConfiguration _configuration;
+        private readonly ICosmosService _cosmosService;
+        private readonly IMapper _mapper;
+
+        public NetDocsConnectorOperation(ILogger<IConnectorDataSourceOperations> logger, IDataMappingFactory dataMappingFactory, IConfiguration configuration, ICosmosService cosmosService, IMapper mapper)
+        {
+            _logger = logger;
+            _dataMapping = dataMappingFactory.GetImplementation(AuthType.OAuth2.ToString());
+            _configuration = configuration;
+            _cosmosService = cosmosService;
+            _mapper = mapper;
+        }
+
+        public bool IsCompatible(string appCode)
+        {
+            return appCode.StartsWith(KnownDataSources.netDocs);
+        }
+
+        public async Task<dynamic> SetItemLink(ConnectorEntityType entityType, dynamic item, string appCode, string hostName)
+        {
+            try
+            {
+                switch (entityType)
+                {
+                    case ConnectorEntityType.Search:
+                        if (item is string)
+                        {
+                            item = await GetCabinetId(appCode, hostName);
+                        }
+                        break;
+                }
+            }
+            catch (UriFormatException ex)
+            {
+                _logger.LogError("Unable to parse {entityType} web URL: {message}", entityType.ToString(), ex.Message ?? "");
+            }
+            return item;
+        }
+
+        public async Task<Dictionary<string, string>> SetParametersSpecialCases(ConnectorModel connector, Dictionary<string, string> allParameters)
+        {
+            return allParameters;
+        }
+        public async Task<dynamic> AddAditionalInformation(ConnectorModel connector, dynamic item)
+        {
+            return item;
+        }
+
+        /// <summary>
+        /// Gets the user's Primary Cabinet id from NetDocuments's user info
+        /// </summary>
+        /// <param name="appCode">The data source app code</param>
+        /// <param name="hostName">The data source host name</param>
+        private async Task<string> GetCabinetId(string appCode, string hostName)
+        {
+            ConnectorModel connectorModel = null;
+            if (appCode == KnownDataSources.oneDrive)
+            {
+                // 93 = NetDocs user info
+                connectorModel = await _cosmosService.GetConnector("93", true);
+            }
+            
+            ConnectorDocument connectorDocument = _mapper.Map<ConnectorDocument>(connectorModel);
+            // Make api call to get the information for the webUrl variable
+            connectorDocument.HostName = hostName;
+            JToken userProfileResponse = await _dataMapping.GetAndMapResults<JToken>(connectorDocument, string.Empty, null, null, null);
+            return userProfileResponse["primaryCabinetId"].Value<string>();
+        }
+    }
+}

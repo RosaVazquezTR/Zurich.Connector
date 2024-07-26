@@ -12,7 +12,7 @@
     },
     "preRelease": true,
     "request": {
-        "endpointPath": "/v2/Search/{cabinet}",
+        "endpointPath": "/v2/Search/{93.primaryCabinet}",
         "method": "GET",
         "parameters": [
             {
