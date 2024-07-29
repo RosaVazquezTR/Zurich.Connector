@@ -1,0 +1,57 @@
+{
+    "id": "93",
+    "partitionkey": "ConnectorList",
+	"alias": "netdocs.userprofile",
+    "info": {
+        "title": "NetDocuments user information",
+        "description": "Gets the NetDocuments user information",
+        "entityType": "UserProfile",
+        "dataSourceId": "57",
+        "version": "1.0"
+    },
+    "request": {
+        "endpointPath": "/v1/User/info",
+        "method": "GET",
+        "parameters": [],
+        "sorting": {
+            "properties": []
+        }
+    },
+    "response": {
+        "schema": {
+            "properties": {}
+        },
+		"type": "JSON"
+    },
+    "resultLocation": "",
+    "filters": [],
+    "cdmMapping": {
+        "structured": [
+            {
+                "name": "displayName",
+                "type": "string",
+                "responseElement": "displayName",
+                "_comment": ""
+            },
+            {
+                "name": "email",
+                "type": "string",
+                "responseElement": "email",
+                "_comment": ""
+            },
+            {
+                "name": "id",
+                "type": "string",
+                "responseElement": "id",
+                "_comment": ""
+            },
+            {
+                "name": "primaryCabinetId",
+                "type": "string",
+                "responseElement": "primaryCabinet",
+                "_comment": ""
+            }
+        ],
+        "unstructured": []
+    }
+}

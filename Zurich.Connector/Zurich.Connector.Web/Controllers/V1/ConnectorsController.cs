@@ -41,7 +41,7 @@ namespace Zurich.Connector.Web.Controllers
         [HttpGet("{id}/data")]
         public async Task<ActionResult<dynamic>> ConnectorData(string id, [FromQuery] string hostName, [FromQuery] string transferToken, bool retrieveFilters)
         {
-           dynamic results;
+            dynamic results;
             try
             {
                 // TODO: Eventually hostname and transferToken will be removed 
@@ -55,7 +55,7 @@ namespace Zurich.Connector.Web.Controllers
 
                 if (selectedConnector.Result.Info.AcceptsSearchWildCard.HasValue)
                 {
-                    if(!(bool)selectedConnector.Result.Info.AcceptsSearchWildCard && parameters["Query"] == "*")
+                    if (!(bool)selectedConnector.Result.Info.AcceptsSearchWildCard && parameters["Query"] == "*")
                     {
                         return new ContentResult
                         {
@@ -131,7 +131,6 @@ namespace Zurich.Connector.Web.Controllers
                     StatusCode = StatusCodes.Status500InternalServerError
                 };
             }
-            
         }
 
         /// <summary>
@@ -157,17 +156,17 @@ namespace Zurich.Connector.Web.Controllers
         public async Task<ActionResult<List<ConnectorListViewModel>>> Connectors([FromQuery] ConnectorFilterViewModel filters)
         {
             var filterRequest = _mapper.Map<ConnectorFilterModel>(filters);
-            List<ConnectorModel> connections = await _connectorService.GetConnectors(filterRequest);
-            List<ConnectorListViewModel> results = _mapper.Map<List<ConnectorListViewModel>>(connections);
+            IEnumerable<ConnectorModel> connections = await _connectorService.GetConnectors(filterRequest);
+            IEnumerable<ConnectorListViewModel> results = _mapper.Map<IEnumerable<ConnectorListViewModel>>(connections);
 
-            if (results.Count == 0)
+            if (!results.Any())
             {
                 return NoContent();
             }
 
             var jsonSettings = new JsonSerializerSettings
             {
-                ContractResolver = new Newtonsoft.Json.Serialization.CamelCasePropertyNamesContractResolver(),
+                ContractResolver = new CamelCasePropertyNamesContractResolver(),
                 Converters = new List<JsonConverter> { new StringEnumConverter { NamingStrategy = new CamelCaseNamingStrategy() } }
             };
             var jsonResults = JsonConvert.SerializeObject(results, jsonSettings);

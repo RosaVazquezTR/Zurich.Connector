@@ -1,6 +1,4 @@
 ﻿using AutoMapper;
-using Microsoft.Azure.Cosmos.Linq;
-using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -93,17 +91,16 @@ namespace Zurich.Connector.App.Services
         public async Task<IEnumerable<ConnectorModel>> GetConnectors(bool includeDataSource = false, Expression<Func<ConnectorDocument, bool>> condition = null)
         {
             var connectorDocuments = _cosmosContext.GetDocuments(CosmosConstants.ConnectorContainerId, CosmosConstants.ConnectorPartitionKey, condition);
-            var connectors = _mapper.Map<List<ConnectorModel>>(connectorDocuments);
+            var connectors = _mapper.Map<IEnumerable<ConnectorModel>>(connectorDocuments);
 
             if (includeDataSource && connectors != null)
             {
                 var dataSourceIDs = connectors.Select(t => t.Info.DataSourceId).Distinct();
+                var dataSourceResult = await GetDataSources(dataSources => dataSourceIDs.Contains(dataSources.Id));
 
-                Expression<Func<DataSourceDocument, bool>> dsCondition = dataSources => dataSourceIDs.Contains(dataSources.Id);
-                var dataSourceResult = await GetDataSources(dsCondition);
                 foreach (var connector in connectors)
                 {
-                    connector.DataSource = dataSourceResult.Where(d => d.Id == connector.Info.DataSourceId).FirstOrDefault();
+                    connector.DataSource = dataSourceResult.FirstOrDefault(d => d.Id == connector.Info.DataSourceId);
                 }
             }
 
@@ -157,8 +154,7 @@ namespace Zurich.Connector.App.Services
         public async Task<IEnumerable<DataSourceModel>> GetDataSources(Expression<Func<DataSourceDocument, bool>> condition = null)
         {
             var dataSourceDocuments = _cosmosContext.GetDocuments(CosmosConstants.DataSourceContainerId, CosmosConstants.DataSourcePartitionKey, condition);
-            List<DataSourceModel> dataSources = _mapper.Map<List<DataSourceModel>>(dataSourceDocuments);
-            return dataSources;
+            return _mapper.Map<IEnumerable<DataSourceModel>>(dataSourceDocuments);
         }
 
         /// <summary>

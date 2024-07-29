@@ -138,16 +138,12 @@ stages:
                 - template: ../Templates/connector-deploy.yml
                   parameters:
                     appInsightsName: ${{ variables.appInsightsName }}
-                    connectorCosmosContainerNames: ${{ variables.connectorCosmosContainerNames }}
                     connectorCosmosExcludedComparisonProperties: ${{ variables.connectorCosmosExcludedComparisonProperties }}
-                    connectorCosmosThroughput: ${{ variables.connectorCosmosThroughput }}
-                    connectorCosmosMaxThroughput: ${{ variables.connectorCosmosMaxThroughput }}
                     connectorCosmosDatabaseName: ${{ variables.connectorCosmosDatabaseName }}
                     connectorCosmosName: ${{ variables.connectorCosmosName }}
-                    connectorCosmosPartitionPath: ${{ variables.connectorCosmosPartitionPath }}
-                    connectorCosmosShouldAutoScale: ${{ variables.connectorCosmosShouldAutoScale }}
                     connectorCosmoskeyVaultPrefix: ${{ variables.connectorCosmoskeyVaultPrefix }}
                     connectorServiceName: ${{ variables.connectorServiceName }}
+                    connectorsCosmosContainerInformation: ${{ variables.connectorsCosmosContainerInformation }}
                     deployArmTemplates: ${{ variables.deployArmTemplates }}
                     deployScriptFolder: ${{ variables.deployScriptFolder }}
                     environmentName: ${{ variables.environmentName }}
