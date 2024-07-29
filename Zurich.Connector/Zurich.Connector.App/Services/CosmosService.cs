@@ -1,15 +1,15 @@
 ﻿using AutoMapper;
-using Microsoft.Extensions.Logging;
+using Microsoft.Azure.Cosmos.Linq;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
 using Zurich.Connector.App.Model;
+using Zurich.Connector.App.Model.ConnectorModels;
 using Zurich.Connector.Data.Repositories.CosmosDocuments;
 using Zurich.Connector.Data.Services;
-using Microsoft.Azure.Cosmos.Linq;
 
 namespace Zurich.Connector.App.Services
 {
@@ -40,6 +40,28 @@ namespace Zurich.Connector.App.Services
                 connector.DataSource = await GetDataSource(connectorDocument.Info.DataSourceId);
             }
             return connector;
+        }
+
+        /// <summary>
+        /// Fetches on prem instance data by ID
+        /// </summary>
+        /// <param name="connectorId">Id of the respective on prem instance</param>
+        /// <returns>Instance model</returns>
+        public async Task<OnPremInstanceModel> GetOnPremInstanceDetailsAsync(string connectorId)
+        {
+            var connectorDocument = await _cosmosContext.GetDocument<OnPremInstanceDocument>
+                                        (CosmosConstants.OnPremContainerId, connectorId, CosmosConstants.OnPremPartitionKey);
+
+            return _mapper.Map<OnPremInstanceModel>(connectorDocument);
+        }
+
+        /// <summary>
+        /// Write connector document to cosmos
+        /// </summary>
+        public async Task StoreOnPremInstace(OnPremInstanceModel model)
+        {
+            var documentModel = _mapper.Map<OnPremInstanceDocument>(model);
+            await _cosmosContext.UpsertDocument(documentModel, CosmosConstants.OnPremContainerId);
         }
 
         /// <summary>
@@ -160,10 +182,9 @@ namespace Zurich.Connector.App.Services
         /// </summary>
         public async Task StoreConnectorRegistration(ConnectorRegistrationDocument connectorRegistrationDocument)
         {
-
             await _cosmosContext.UpsertDocument(connectorRegistrationDocument, CosmosConstants.ConnectorRegistrationContainerId);
-
         }
+
         /// <summary>
         /// Get connector from CosmosDb by Id
         /// </summary>
@@ -192,6 +213,5 @@ namespace Zurich.Connector.App.Services
         {
             await _cosmosContext.DeleteDocument<ConnectorRegistrationDocument>(CosmosConstants.ConnectorRegistrationContainerId, connectorId, userId);
         }
-
     }
 }

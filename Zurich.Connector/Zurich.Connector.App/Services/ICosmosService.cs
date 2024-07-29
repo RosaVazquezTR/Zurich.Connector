@@ -1,18 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
 using System.Threading.Tasks;
 using Zurich.Connector.App.Model;
+using Zurich.Connector.App.Model.ConnectorModels;
 using Zurich.Connector.Data.Repositories.CosmosDocuments;
 
 namespace Zurich.Connector.App.Services
 {
-	/// <summary>
-	/// Service to manage cosmos read and write operations.
-	/// </summary>
-	public interface ICosmosService
+    /// <summary>
+    /// Service to manage cosmos read and write operations.
+    /// </summary>
+    public interface ICosmosService
 	{
 		/// <summary>
 		/// Fetch all connectors from Cosmos
@@ -80,5 +79,14 @@ namespace Zurich.Connector.App.Services
 		/// </summary>
 		public Task RemoveConnectorRegistration(string connectorId, string userId);
 
+		/// <summary>
+		/// Fetches on prem instance data by ID
+		/// </summary>
+		Task<OnPremInstanceModel> GetOnPremInstanceDetailsAsync(string connectorId);
+
+		/// <summary>
+		/// Stores data for instance
+		/// </summary>
+		Task StoreOnPremInstace(OnPremInstanceModel model);
 	}
 }

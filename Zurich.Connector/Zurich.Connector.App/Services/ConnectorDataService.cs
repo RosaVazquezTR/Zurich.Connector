@@ -196,6 +196,19 @@ namespace Zurich.Connector.Data.Services
                     if (connectorDocument.Id == "80" || connectorDocument.Id == "88")
                         queryParameters["Query"] = await GetAdditionalConnectorData(connectorModel, queryParameters["Query"]);
 
+                    if (connectorDocument.Id == "Replace here")
+                    {
+                        var instanceModel = await _cosmosService.GetOnPremInstanceDetailsAsync(connectorDocument.Id);
+                        connectorDocument.DataSource.appCode = "actual Imanage appcode";
+                        connectorDocument.HostName = instanceModel.BaseUrl;
+
+                        instanceModel.CreatedUserId = _sessionAccessor.UserId.ToString();
+                        instanceModel.LastModifiedUserId = _sessionAccessor.UserId.ToString();
+                        instanceModel.CreatedDate = DateTime.UtcNow;
+
+                        await _cosmosService.StoreOnPremInstace(instanceModel);
+                    }
+
                     NameValueCollection mappedQueryParameters = MapQueryParametersFromDB(queryParameters, connectorModel);
                     Dictionary<string, string> headerParameters = await _dataExtractionService.ExtractDataSource(mappedQueryParameters, queryParameters, hostname, connectorDocument);
 

@@ -1,8 +1,9 @@
 ﻿using AutoMapper;
-using Zurich.Connector.App.Model;
-using Zurich.Connector.Data.Repositories.CosmosDocuments;
-using Zurich.Common.Models.OAuth;
 using Zurich.Common.Models.CommonDataModels;
+using Zurich.Common.Models.OAuth;
+using Zurich.Connector.App.Model;
+using Zurich.Connector.App.Model.ConnectorModels;
+using Zurich.Connector.Data.Repositories.CosmosDocuments;
 
 namespace Zurich.Connector.App
 {
@@ -14,6 +15,8 @@ namespace Zurich.Connector.App
         public ServiceMappingRegistrar()
         {
             CreateMap<ConnectorDocument, ConnectorModel>();
+            CreateMap<OnPremInstanceDocument, OnPremInstanceModel>();
+            CreateMap<OnPremInstanceModel, OnPremInstanceDocument>();
 
             CreateMap<ConnectorInfo, ConnectorInfoModel>();
 
