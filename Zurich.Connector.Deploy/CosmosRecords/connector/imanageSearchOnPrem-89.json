@@ -11,7 +11,7 @@
     "subType": "Parent",
     "downloadConnector": "81"
   },
-  "hostName": "cloudimanage.com",
+  "hostName": "imanage.westkm.com",
   "request": {
     "endpointPath": "/work/api/v2/customers/{1.customer_id}/documents",
     "method": "GET",
