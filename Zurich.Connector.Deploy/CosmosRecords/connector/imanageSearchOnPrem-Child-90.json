@@ -1,0 +1,148 @@
+{
+  "id": "90",
+  "partitionkey": "ConnectorList",
+  "info": {
+    "title": "Get Search details from iManage",
+    "description": "Get Search details from iManage",
+    "entityType": "Search",
+    "dataSourceId": "10",
+    "version": "2.0",
+    "subType": "Child"
+  },
+  "request": {},
+  "response": {},
+  "filters": [],
+  "resultLocation": "data.results",
+  "cdmMapping": {
+    "structured": [
+      {
+        "name": "Snippet",
+        "type": "string",
+        "responseElement": "",
+        "_comment": ""
+      },
+      {
+        "name": "Title",
+        "type": "string",
+        "responseElement": "name",
+        "_comment": ""
+      },
+      {
+        "name": "WebUrl",
+        "type": "string",
+        "responseElement": "",
+        "_comment": ""
+      },
+      {
+        "name": "Type",
+        "type": "string",
+        "responseElement": "type",
+        "_comment": ""
+      },
+      {
+        "name": "CreationDate",
+        "type": "DateTime",
+        "responseElement": "file_create_date",
+        "_comment": ""
+      }
+    ],
+    "unstructured": [
+      {
+        "name": "id",
+        "type": "string",
+        "responseElement": "id",
+        "_comment": ""
+      },
+      {
+        "name": "dataBase",
+        "type": "string",
+        "responseElement": "database",
+        "_comment": ""
+      },
+      {
+        "name": "document_Number",
+        "type": "integer",
+        "responseElement": "document_number",
+        "_comment": ""
+      },
+      {
+        "name": "version",
+        "type": "integer",
+        "responseElement": "version",
+        "_comment": ""
+      },
+      {
+        "name": "author",
+        "type": "string",
+        "responseElement": "author",
+        "_comment": ""
+      },
+      {
+        "name": "operator",
+        "type": "string",
+        "responseElement": "operator",
+        "_comment": ""
+      },
+      {
+        "name": "class",
+        "type": "string",
+        "responseElement": "class",
+        "_comment": ""
+      },
+      {
+        "name": "subClass",
+        "type": "string",
+        "responseElement": "subclass",
+        "_comment": ""
+      },
+      {
+        "name": "retain_Days",
+        "type": "integer",
+        "responseElement": "retain_days",
+        "_comment": ""
+      },
+      {
+        "name": "size",
+        "type": "integer",
+        "responseElement": "size",
+        "_comment": ""
+      },
+      {
+        "name": "indexable",
+        "type": "bool",
+        "responseElement": "size",
+        "_comment": ""
+      },
+      {
+        "name": "is_related",
+        "type": "bool",
+        "responseElement": "is_related",
+        "_comment": ""
+      },
+      {
+        "name": "default_security",
+        "type": "string",
+        "responseElement": "default_security",
+        "_comment": ""
+      },
+      {
+        "name": "last_user",
+        "type": "string",
+        "responseElement": "last_user",
+        "_comment": ""
+      },
+      {
+        "name": "file_edit_date",
+        "type": "string",
+        "responseElement": "file_edit_date",
+        "_comment": ""
+      },
+      {
+        "name": "extension",
+        "type": "string",
+        "responseElement": "extension",
+        "_comment": ""
+      }
+    ]
+  }
+}

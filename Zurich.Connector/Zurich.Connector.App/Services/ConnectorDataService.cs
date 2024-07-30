@@ -469,7 +469,7 @@ namespace Zurich.Connector.Data.Services
         {
             if (_legalHomeAccess.isLegalHomeUser())
             {
-                if (connectorModel.DataSource.AppCode == KnownDataSources.iManage)
+                if (connectorModel.DataSource.AppCode is KnownDataSources.iManage or KnownDataSources.iManageOnPrem)
                 {
 
                     var tenantApps = await _tenantService.GetTenantApplication(connectorModel.DataSource.AppCode);

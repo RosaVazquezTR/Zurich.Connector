@@ -90,6 +90,7 @@ namespace Zurich.Connector.Web
             services.AddScoped<IRepository, Repository>();
             services.AddScoped<IRedisRepository, RedisRepository>();
             services.AddScoped<IConnectorDataSourceOperations, IManageConnectorOperations>();
+            services.AddScoped<IConnectorDataSourceOperations, IManageOnPremConnectorOperations>();
             services.AddScoped<IConnectorDataSourceOperations, PracticalLawConnectorOperation>();
             services.AddScoped<IConnectorDataSourceOperations, MsGraphConnectorOperation>();
             services.AddScoped<IConnectorDataSourceOperations, WestLawUKConnectorOperation>();

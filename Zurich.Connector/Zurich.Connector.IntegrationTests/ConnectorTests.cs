@@ -52,7 +52,7 @@ namespace Zurich.Connector.IntegrationTests
                         if (!isParent || string.IsNullOrEmpty(connector.Info.SubType) || connector.Info.SubType == SubType.Parent)
                         {
                             //ToDo: Needs to remove this once iManage connector token generation sucessful.
-                            if (connector.Id != "44" && connector.Id != "61" && connector.Id != "72" && connector.Id != "74" && connector.Id != "77")
+                            if (connector.Id != "44" && connector.Id != "89" && connector.Id != "61" && connector.Id != "72" && connector.Id != "74" && connector.Id != "77")
                                 connectors.Add(connector);
                         }
                     }
@@ -146,7 +146,7 @@ namespace Zurich.Connector.IntegrationTests
             //        and Thought Trace connectors (52, 66 and 68) check for the moment
             // TODO: remove the msgraph exception once the test tenant is setup correctly.
             // TODO: remove the PLCAU id 63 exception once the intermitency with is search api is fixed. 
-            string[] connectorsToSkipList = { "10", "14", "47", "48", "49", "51", "52", "60", "63", "66", "68", "76", "80", "85", "88", "91", "99" };
+            string[] connectorsToSkipList = { "10", "14", "47", "48", "49", "51", "52", "60", "63", "66", "68", "76", "80", "85", "88", "89", "91", "99" };
 
             if (!connectorsToSkipList.Contains(connector.Id))
             {
