@@ -26,7 +26,7 @@ namespace Zurich.Connector.Data.Services
         /// </summary>
         /// <param name="filters">Filters to get different connections</param>
         /// <returns>List of Data Mapping Connections <see cref="DataMappingConnection"/></returns>
-        Task<List<ConnectorModel>> GetConnectors(ConnectorFilterModel filters);
+        Task<IEnumerable<ConnectorModel>> GetConnectors(ConnectorFilterModel filters);
 
         /// <summary>
         /// Gets the data of an especific conector by its id or alias
@@ -50,7 +50,7 @@ namespace Zurich.Connector.Data.Services
             ILogger<ConnectorService> logger,
             ICosmosService cosmosService,
             IRegistrationService registrationService,
-            IConfiguration configuration, 
+            IConfiguration configuration,
             IOAuthServices OAuthService)
         {
             _cosmosService = cosmosService;
@@ -65,7 +65,7 @@ namespace Zurich.Connector.Data.Services
         /// </summary>
         /// <param name="filters">Filters to get different connections</param>
         /// <returns>List of Data Mapping Connections <see cref="DataMappingConnection"/></returns>
-        public async Task<List<ConnectorModel>> GetConnectors(ConnectorFilterModel filters)
+        public async Task<IEnumerable<ConnectorModel>> GetConnectors(ConnectorFilterModel filters)
         {
             try
             {
@@ -74,21 +74,21 @@ namespace Zurich.Connector.Data.Services
                 IEnumerable<string> entityTypeFilter = Enumerable.Empty<string>();
                 IEnumerable<string> dataSourceFilter = Enumerable.Empty<string>();
                 IEnumerable<DataSourceInformation> registeredDataSources = Enumerable.Empty<DataSourceInformation>();
-                if (filters?.EntityTypes?.ToList().Count > 0)
+
+                if (filters?.EntityTypes?.Any() ?? false)
                 {
                     isEntityTypeFilter = true;
                     entityTypeFilter = filters.EntityTypes.Select(t => t.ToString());
                 }
 
-                if (filters?.DataSources?.Count > 0)
+                if (filters?.DataSources?.Any() ?? false)
                 {
                     isDataSourceFilter = true;
                     dataSourceFilter = filters.DataSources;
                 }
 
                 var showPreReleaseConnectors = _configuration.GetValue<string>(AppSettings.ShowPreReleaseConnectors);
-                bool blnShowPreReleaseConnectors;
-                Boolean.TryParse(showPreReleaseConnectors, out blnShowPreReleaseConnectors);
+                bool blnShowPreReleaseConnectors = Convert.ToBoolean(showPreReleaseConnectors);
 
                 Expression<Func<ConnectorDocument, bool>> condition;
 
@@ -108,13 +108,14 @@ namespace Zurich.Connector.Data.Services
 
                 var connectors = await _cosmosService.GetConnectors(true, condition);
 
-                if (filters.RegistrationMode != null && filters.RegistrationMode.Any()) 
+                if (filters.RegistrationMode != null && filters.RegistrationMode.Any())
                 {
                     connectors = connectors.Where(x => filters.RegistrationMode.Contains(x.DataSource.RegistrationInfo.RegistrationMode));
                 }
 
                 registeredDataSources = await _registrationService.GetUserDataSources();
                 List<ConnectorModel> registeredConnectors = new List<ConnectorModel>();
+
                 // If the user is new and does not have any connectors registered, this validation will avoid getting a 500 response
                 if (registeredDataSources != null)
                 {
@@ -125,15 +126,14 @@ namespace Zurich.Connector.Data.Services
                         connector.DataSource.RequiresNewToken = registeredDataSources.Where(x => x.AppCode == connector.DataSource.AppCode).FirstOrDefault().RequiresNewToken;
                         registeredConnectors.Add(connector);
                     }
-
                 }
                 // Can't stick this in the cosmos query because it is looking at connectors not datasources.
-                if(filters.IsRegistered)
+                if (filters.IsRegistered)
                 {
                     connectors = registeredConnectors;
                 }
 
-                return connectors.ToList();
+                return connectors;
             }
             catch (Exception ex)
             {
@@ -150,7 +150,7 @@ namespace Zurich.Connector.Data.Services
             if (int.TryParse(connectorId, out var _))
             {
                 // This means we passed connector id
-                 connector = await _cosmosService.GetConnectorUsingPreRelease(connectorId, true);
+                connector = await _cosmosService.GetConnectorUsingPreRelease(connectorId, true);
             }
             else
             {
@@ -171,7 +171,8 @@ namespace Zurich.Connector.Data.Services
                         }
                     }
                 }
-                catch (Exception ex) {
+                catch (Exception ex)
+                {
                     _logger.LogError("Error trying to change registered status, this will not be updated", ex.Message);
                 }
             }

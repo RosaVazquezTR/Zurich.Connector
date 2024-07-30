@@ -1,5 +1,7 @@
 ﻿using Aspose.Pdf.Operators;
 using Aspose.Words;
+using GroupDocs.Parser;
+using GroupDocs.Parser.Options;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -7,18 +9,19 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Xceed.Words.NET;
 using Zurich.Connector.Data.Interfaces;
 
 namespace Zurich.Connector.Data.Services
 {
-    public class AsposeWordService : IAsposeService
+    public class WordService : IDocumentConversionService
     {
-        public JObject CreateDocumentJObject(Stream documentStream, bool transformToPDF = true)
+        public async Task<JObject> ConvertDocumentToJObjectAsync(Stream documentStream, bool transformToPdf = true)
         {
             Document document = new(documentStream);
             JObject pageText = ProcessDocumentPages(document);
 
-            string documentBase64 = ConvertDocumentToBase64(document, transformToPDF ? SaveFormat.Pdf : SaveFormat.Docx);
+            string documentBase64 = ConvertDocumentToBase64(document, transformToPdf ? SaveFormat.Pdf : SaveFormat.Docx);
 
             JObject documentObject = new()
             {
@@ -26,7 +29,7 @@ namespace Zurich.Connector.Data.Services
                 { "documentBase64", documentBase64 }
             };
 
-            return documentObject;
+            return await Task.FromResult(documentObject);
         }
 
         private static JObject ProcessDocumentPages(Document document)

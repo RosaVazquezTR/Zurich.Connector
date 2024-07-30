@@ -5,23 +5,15 @@ parameters:
   type: string
 - name: connectorSubnets
   type: string
-- name: connectorCosmosContainerNames
-  type: string
 - name: connectorCosmosExcludedComparisonProperties
-  type: string
-- name: connectorCosmosThroughput
-  type: string
-- name: connectorCosmosMaxThroughput
   type: string
 - name: connectorCosmosDatabaseName
   type: string
 - name: connectorCosmosName
   type: string
-- name: connectorCosmosPartitionPath
-  type: string
-- name: connectorCosmosShouldAutoScale
-  type: string
 - name: connectorCosmoskeyVaultPrefix
+  type: string
+- name: connectorsCosmosContainerInformation
   type: string
 - name: deployArmTemplates
   type: string
@@ -66,19 +58,16 @@ parameters:
 - name: vnetResourceGroup
   type: string
 steps:
-- template: Templates\ZurichDeploy-CosmosDeploy.yml@ZurichDeploy
+- template: Templates\V2\ZurichDeploy-CosmosDeploy.yml@ZurichDeploy
   parameters: 
-    containerNames: ${{ parameters.connectorCosmosContainerNames }}
-    cosmosMaxThroughput: ${{ parameters.connectorCosmosMaxThroughput }}
+    containerInformation: ${{ parameters.connectorsCosmosContainerInformation }}
     cosmosName: ${{ parameters.connectorCosmosName }}
-    cosmosPartitionPath: ${{ parameters.connectorCosmosPartitionPath }}
-    cosmosShouldAutoScale: ${{ parameters.connectorCosmosShouldAutoScale }}
     cosmosSubnets: ${{ parameters.connectorSubnets }}
-    cosmosThroughput: ${{ parameters.connectorCosmosThroughput }}
+    databaseName: ${{ parameters.connectorCosmosDatabaseName }}
     deployArmTemplates: ${{ parameters.deployArmTemplates }}
     deployScriptFolder: ${{ parameters.deployScriptFolder }}
-    databaseName: ${{ parameters.connectorCosmosDatabaseName }}
     environmentName: ${{ parameters.environmentName }}
+    isDRDeploy: "false"
     keyVault: ${{ parameters.keyVault }}
     keyVaultPrefix: ${{ parameters.connectorCosmoskeyVaultPrefix }}
     moduleFolder: ${{ parameters.moduleFolder }}
@@ -94,7 +83,6 @@ steps:
     tlsVersion: ${{ parameters.tlsVersion }}
     vnetName: ${{ parameters.vnetName }}
     vnetResourceGroup: ${{ parameters.vnetResourceGroup }}
-    isDRDeploy: "false"
 - task: PowerShell@2
   inputs:
     targetType: 'inline'

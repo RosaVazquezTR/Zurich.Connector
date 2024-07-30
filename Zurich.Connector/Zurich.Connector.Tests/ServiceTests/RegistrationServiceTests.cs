@@ -130,7 +130,9 @@ namespace Zurich.Connector.Tests.ServiceTests
 
             List<DataModel.DataSourceInformation> userRegistrations = new List<DataModel.DataSourceInformation>();
             userRegistrations.Add(new DataModel.DataSourceInformation() { AppCode = appCode });
-            _mockOAuthService.Setup(x => x.GetUserRegistrations()).Returns(Task.FromResult(userRegistrations));
+            _mockOAuthService
+                .Setup(x => x.GetUserRegistrations())
+                .Returns(Task.FromResult<IEnumerable<DataModel.DataSourceInformation>>(userRegistrations.AsEnumerable()));
 
             var registrationService = CreateService();
 
@@ -284,7 +286,9 @@ namespace Zurich.Connector.Tests.ServiceTests
 
             List<DataModel.DataSourceInformation> userRegistrations = new List<DataModel.DataSourceInformation>();
             userRegistrations.Add(new DataModel.DataSourceInformation() { AppCode = "PLCUK" });
-            _mockOAuthService.Setup(x => x.GetUserRegistrations()).Returns(Task.FromResult(userRegistrations));
+            _mockOAuthService
+                .Setup(x => x.GetUserRegistrations())
+                .Returns(Task.FromResult<IEnumerable<DataModel.DataSourceInformation>>(userRegistrations.AsEnumerable()));
 
             List<DataModel.DataSourceInformation> availableRegistrations = new List<DataModel.DataSourceInformation>();
             availableRegistrations.Add(new DataModel.DataSourceInformation() { AppCode = appCode, Domain = "Domain1" });
@@ -412,7 +416,9 @@ namespace Zurich.Connector.Tests.ServiceTests
 
             List<DataModel.DataSourceInformation> userRegistrations = new List<DataModel.DataSourceInformation>();
             userRegistrations.Add(new DataModel.DataSourceInformation() { AppCode = "PLCUK" });
-            _mockOAuthService.Setup(x => x.GetUserRegistrations()).Returns(Task.FromResult(userRegistrations));
+            _mockOAuthService
+                .Setup(x => x.GetUserRegistrations())
+                .Returns(Task.FromResult<IEnumerable<DataModel.DataSourceInformation>>(userRegistrations.AsEnumerable()));
 
             List<DataModel.DataSourceInformation> availableRegistrations = new List<DataModel.DataSourceInformation>();
             availableRegistrations.Add(new DataModel.DataSourceInformation() { AppCode = appCode, Domain = "Domain1" });
@@ -437,7 +443,9 @@ namespace Zurich.Connector.Tests.ServiceTests
 
             List<DataModel.DataSourceInformation> userRegistrations = new List<DataModel.DataSourceInformation>();
             userRegistrations.Add(new DataModel.DataSourceInformation() { AppCode = appCode });
-            _mockOAuthService.Setup(x => x.GetUserRegistrations()).Returns(Task.FromResult(userRegistrations));
+            _mockOAuthService
+                .Setup(x => x.GetUserRegistrations())
+                .Returns(Task.FromResult<IEnumerable<DataModel.DataSourceInformation>>(userRegistrations.AsEnumerable()));
 
             var registrationService = CreateService();
 
@@ -461,7 +469,9 @@ namespace Zurich.Connector.Tests.ServiceTests
             var productDomain = "";
 
             List<DataModel.DataSourceInformation> userRegistrations = new List<DataModel.DataSourceInformation>();
-            _mockOAuthService.Setup(x => x.GetUserRegistrations()).Returns(Task.FromResult(userRegistrations));
+            _mockOAuthService
+                .Setup(x => x.GetUserRegistrations())
+                .Returns(Task.FromResult<IEnumerable<DataModel.DataSourceInformation>>(userRegistrations.AsEnumerable()));
             _mockCosmosService.Setup(x => x.GetDataSources(It.IsAny<Expression<Func<DataSourceDocument, bool>>>()));
 
             var registrationService = CreateService();
@@ -486,7 +496,9 @@ namespace Zurich.Connector.Tests.ServiceTests
             var productDomain = "";
 
             List<DataModel.DataSourceInformation> userRegistrations = new List<DataModel.DataSourceInformation>();
-            _mockOAuthService.Setup(x => x.GetUserRegistrations()).Returns(Task.FromResult(userRegistrations));
+            _mockOAuthService
+                .Setup(x => x.GetUserRegistrations())
+                .Returns(Task.FromResult<IEnumerable<DataModel.DataSourceInformation>>(userRegistrations.AsEnumerable()));
             List<DataSourceModel> model = new List<DataSourceModel>() { new DataSourceModel() { AppCode = appCode, RegistrationInfo = new App.Model.RegistrationInfoModel() { DomainRequired = false } } };
             _mockCosmosService.Setup(x => x.GetDataSources(It.IsAny<Expression<Func<DataSourceDocument, bool>>>())).Returns(Task.FromResult<IEnumerable<DataSourceModel>>(model));
             _mockOAuthService.Setup(x => x.GetAvailableRegistrations()).Returns(Task.FromResult(new List<DataModel.DataSourceInformation>()));
@@ -513,7 +525,9 @@ namespace Zurich.Connector.Tests.ServiceTests
             var productDomain = "";
 
             List<DataModel.DataSourceInformation> userRegistrations = new List<DataModel.DataSourceInformation>();
-            _mockOAuthService.Setup(x => x.GetUserRegistrations()).Returns(Task.FromResult(userRegistrations));
+            _mockOAuthService
+                .Setup(x => x.GetUserRegistrations())
+                .Returns(Task.FromResult<IEnumerable<DataModel.DataSourceInformation>>(userRegistrations.AsEnumerable()));
             List<DataSourceModel> model = new List<DataSourceModel>() { new DataSourceModel() { AppCode = appCode, RegistrationInfo = new App.Model.RegistrationInfoModel() { DomainRequired = true } } };
             _mockCosmosService.Setup(x => x.GetDataSources(It.IsAny<Expression<Func<DataSourceDocument, bool>>>())).Returns(Task.FromResult<IEnumerable<DataSourceModel>>(model));
             List<DataModel.DataSourceInformation> dataSourceInformation = new List<DataModel.DataSourceInformation>() { new DataModel.DataSourceInformation() { AppCode = appCode } };
@@ -541,7 +555,9 @@ namespace Zurich.Connector.Tests.ServiceTests
             var productDomain = "https://productToRegister.com";
 
             List<DataModel.DataSourceInformation> userRegistrations = new List<DataModel.DataSourceInformation>();
-            _mockOAuthService.Setup(x => x.GetUserRegistrations()).Returns(Task.FromResult(userRegistrations));
+            _mockOAuthService
+                .Setup(x => x.GetUserRegistrations())
+                .Returns(Task.FromResult<IEnumerable<DataModel.DataSourceInformation>>(userRegistrations.AsEnumerable()));
             List<DataSourceModel> model = new List<DataSourceModel>() { new DataSourceModel() { AppCode = appCode, RegistrationInfo = new App.Model.RegistrationInfoModel() { RegistrationMode = RegistrationEntityMode.Automatic, DomainRequired = true } } };
             _mockCosmosService.Setup(x => x.GetDataSources(It.IsAny<Expression<Func<DataSourceDocument, bool>>>())).Returns(Task.FromResult<IEnumerable<DataSourceModel>>(model));
             List<DataModel.DataSourceInformation> dataSourceInformation = new List<DataModel.DataSourceInformation>() { new DataModel.DataSourceInformation() { AppCode = appCode, Domain = "https://SomeOtherDomain.com" } };
@@ -570,7 +586,9 @@ namespace Zurich.Connector.Tests.ServiceTests
             var productDomain = "https://productToRegister.com";
 
             List<DataModel.DataSourceInformation> userRegistrations = new List<DataModel.DataSourceInformation>();
-            _mockOAuthService.Setup(x => x.GetUserRegistrations()).Returns(Task.FromResult(userRegistrations));
+            _mockOAuthService
+                .Setup(x => x.GetUserRegistrations())
+                .Returns(Task.FromResult<IEnumerable<DataModel.DataSourceInformation>>(userRegistrations.AsEnumerable()));
             List<DataSourceModel> model = new List<DataSourceModel>() { new DataSourceModel() { AppCode = appCode, RegistrationInfo = new App.Model.RegistrationInfoModel() { RegistrationMode = RegistrationEntityMode.Automatic, DomainRequired = true } } };
             _mockCosmosService.Setup(x => x.GetDataSources(It.IsAny<Expression<Func<DataSourceDocument, bool>>>())).Returns(Task.FromResult<IEnumerable<DataSourceModel>>(model));
             List<DataModel.DataSourceInformation> dataSourceInformation = new List<DataModel.DataSourceInformation>() { new DataModel.DataSourceInformation() { AppCode = appCode, Domain = productDomain } };
@@ -599,7 +617,9 @@ namespace Zurich.Connector.Tests.ServiceTests
             var productDomain = "";
 
             List<DataModel.DataSourceInformation> userRegistrations = new List<DataModel.DataSourceInformation>();
-            _mockOAuthService.Setup(x => x.GetUserRegistrations()).Returns(Task.FromResult(userRegistrations));
+            _mockOAuthService
+                .Setup(x => x.GetUserRegistrations())
+                .Returns(Task.FromResult<IEnumerable<DataModel.DataSourceInformation>>(userRegistrations.AsEnumerable()));
             List<DataSourceModel> model = new List<DataSourceModel>() { new DataSourceModel() { AppCode = appCode, RegistrationInfo = new App.Model.RegistrationInfoModel() { RegistrationMode = RegistrationEntityMode.Automatic } } };
             _mockCosmosService.Setup(x => x.GetDataSources(It.IsAny<Expression<Func<DataSourceDocument, bool>>>())).Returns(Task.FromResult<IEnumerable<DataSourceModel>>(model));
             List<DataModel.DataSourceInformation> dataSourceInformation = new List<DataModel.DataSourceInformation>() { new DataModel.DataSourceInformation() { AppCode = appCode } };
@@ -629,7 +649,9 @@ namespace Zurich.Connector.Tests.ServiceTests
             var fakeOAuthDomain = "https://OAuth.thomsonreuters.com/";
 
             List<DataModel.DataSourceInformation> userRegistrations = new List<DataModel.DataSourceInformation>();
-            _mockOAuthService.Setup(x => x.GetUserRegistrations()).Returns(Task.FromResult(userRegistrations));
+            _mockOAuthService
+                .Setup(x => x.GetUserRegistrations())
+                .Returns(Task.FromResult<IEnumerable<DataModel.DataSourceInformation>>(userRegistrations.AsEnumerable()));
             List<DataSourceModel> model = new List<DataSourceModel>() { new DataSourceModel() { AppCode = appCode, RegistrationInfo = new App.Model.RegistrationInfoModel() { RegistrationMode = RegistrationEntityMode.Manual } } };
             _mockCosmosService.Setup(x => x.GetDataSources(It.IsAny<Expression<Func<DataSourceDocument, bool>>>())).Returns(Task.FromResult<IEnumerable<DataSourceModel>>(model));
             List<DataModel.DataSourceInformation> dataSourceInformation = new List<DataModel.DataSourceInformation>() { new DataModel.DataSourceInformation() { AppCode = appCode } };

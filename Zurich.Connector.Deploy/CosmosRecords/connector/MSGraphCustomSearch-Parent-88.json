@@ -20,7 +20,7 @@
                 "inClause": "Body",
                 "required": true,
                 "type": "string",
-                "defaultValue": "* path:\"{79.webUrl}/Documents\""
+                "defaultValue": ""
             },
             {
                 "cdmName": "EntityType.default",

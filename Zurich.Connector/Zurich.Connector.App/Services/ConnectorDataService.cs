@@ -23,7 +23,6 @@ using Zurich.Connector.App.Exceptions;
 using Zurich.Common.Repositories;
 using AppCodes = Zurich.Connector.Data.Constants.AppCodes;
 using Newtonsoft.Json;
-using System.Text.Json.Nodes;
 
 namespace Zurich.Connector.Data.Services
 {
@@ -116,7 +115,7 @@ namespace Zurich.Connector.Data.Services
             }
             else
             {
-                availableRegistrations = await _OAuthService.GetUserRegistrations();
+                availableRegistrations = (await _OAuthService.GetUserRegistrations()).ToList();
             }
 
             availableRegistrations = availableRegistrations?.FindAll(x => x.AppCode == connectorModel.DataSource.AppCode).Take(instanceLimit).ToList<DataSourceInformation>();
@@ -191,9 +190,8 @@ namespace Zurich.Connector.Data.Services
                         queryParameters["resultSize"] = CalculateOffset(queryParameters).ToString();
                     }
 
-                    // Validate if the connector is OneDrive or MsGraphCustom to obtain user's url
-                    // The id for the custom sharepoint (88) connector was added so we can obtain in here the urls for the user's folders
-                    if (connectorDocument.Id == "80" || connectorDocument.Id == "88")
+                    // Validate if the connector is OneDrive to obtain user's url
+                    if (connectorDocument.Id == "80")
                         queryParameters["Query"] = await GetAdditionalConnectorData(connectorModel, queryParameters["Query"]);
 
                     NameValueCollection mappedQueryParameters = MapQueryParametersFromDB(queryParameters, connectorModel);

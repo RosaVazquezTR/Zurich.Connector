@@ -1,10 +1,15 @@
 ﻿using AutoMapper;
+using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 using Zurich.Common.Models.OAuth;
 using Zurich.Connector.App.Model;
 using Zurich.Connector.Data.DataMap;
 using Zurich.Connector.Data.Factories;
+using Zurich.Connector.Data.Interfaces;
 using Zurich.Connector.Data.Model;
 using Zurich.Connector.Data.Repositories;
 using Zurich.Connector.Data.Repositories.CosmosDocuments;
@@ -13,18 +18,24 @@ using Zurich.Connector.Data.Utils;
 namespace Zurich.Connector.App.Services
 {
     /// <summary>
-    /// Interface to manage the document download service
+    /// Interface for managing document download services.
     /// </summary>
     public interface IDocumentDownloadService
     {
         /// <summary>
-        /// Gets the content of a document
+        /// Asynchronously gets the content of a document based on a download request model.
         /// </summary>
-        /// <param name="connectorId">Connector id</param>
-        /// <param name="transformToPDF">Flag that determines whether the document should be converted to PDF</param>
-        /// <param name="docId">Document id</param>
-        /// <returns>Document content as string</returns>
-        Task<string> GetDocumentContentAsync(string connectorId, string docId, bool transformToPDF = true);
+        /// <param name="downloadRequestModel">The model containing the details of the download request, including connector ID and document ID.</param>
+        /// <returns>A task that represents the asynchronous operation. The task result contains the document content as a stream.</returns>
+        Task<Stream> GetDocumentContentAsync(DocumentDownloadRequestModel downloadRequestModel);
+
+        /// <summary>
+        /// Asynchronously gets the content of a document as a string based on a download request model.
+        /// </summary>
+        /// <param name="downloadRequestModel">The model containing the details of the download request, including connector ID and document ID.</param>
+        /// <param name="transformToPdf">A flag indicating whether to transform the document to PDF format. Default is true.</param>
+        /// <returns>A task that represents the asynchronous operation. The task result contains the document content as a string.</returns>
+        Task<string> GetDocumentContentAsStringAsync(DocumentDownloadRequestModel downloadRequestModel, bool transformToPdf = true);
     }
 
     /// <summary>
@@ -40,18 +51,19 @@ namespace Zurich.Connector.App.Services
         IDataExtractionService dataExtractionService,
         IMapper mapper) : IDocumentDownloadService
     {
-        private readonly IDataMapping _dataMapping;
-
-        public async Task<string> GetDocumentContentAsync(string connectorId, string docId, bool transformToPDF = true)
+        /// <inheritdoc/>
+        public async Task<Stream> GetDocumentContentAsync(DocumentDownloadRequestModel downloadRequestModel)
         {
-            (string dataBaseId, string documentId) = ParseDocumentId(connectorId, docId);
+            (string dataBaseId, string documentId) = ParseDocumentId(downloadRequestModel.ConnectorId, downloadRequestModel.DocId);
 
-            //string document = await redisRepository.GetAsync<string>(documentId);
-            string document = string.Empty;
+            Stream data = await redisRepository.GetAsync($"{dataBaseId}_{documentId}_stream");
 
-            //if (string.IsNullOrEmpty(document))
-            //{
-            ConnectorModel connectorModel = await GetConnectorModelAsync(connectorId);
+            if (data is not null)
+            {
+                return data;
+            }
+
+            ConnectorModel connectorModel = await GetConnectorModelAsync(downloadRequestModel.ConnectorId);
             ConnectorModel downloadConnectorModel = await GetConnectorModelAsync(connectorModel.Info.DownloadConnector);
             ConnectorDocument connectorDocument = mapper.Map<ConnectorDocument>(downloadConnectorModel);
 
@@ -59,7 +71,6 @@ namespace Zurich.Connector.App.Services
             {
                 connectorModel = downloadConnectorModel;
             }
-
 
             IDataMapping service = dataMappingFactory.GetImplementation(connectorModel?.DataSource?.SecurityDefinition?.Type);
 
@@ -69,16 +80,39 @@ namespace Zurich.Connector.App.Services
                     { "docId", documentId }
                 }, null, connectorDocument);
 
-            var data = await service.GetAndMapResults<dynamic>(connectorDocument, null, null, headerParameters, null);
+            string result = await service.GetAndMapResults<dynamic>(connectorDocument, null, null, headerParameters, null);
 
-            if (data != null)
+            if (string.IsNullOrEmpty(result))
             {
-                document = await repository.HandleSuccessResponse(data, transformToPDF);
+                throw new ApplicationException("Document content is empty.");
             }
-            //await redisRepository.SetAsync(documentId, document);
-            //}
 
-            return document;
+            data = new MemoryStream(Convert.FromBase64String(result));
+
+            await redisRepository.SetAsync($"{dataBaseId}_{documentId}_stream", data);
+
+            return data;
+        }
+
+        /// <inheritdoc/>
+        public async Task<string> GetDocumentContentAsStringAsync(DocumentDownloadRequestModel downloadRequestModel, bool transformToPdf = true)
+        {
+            string format = transformToPdf ? "PDF" : "original";
+
+            (string dataBaseId, string documentId) = ParseDocumentId(downloadRequestModel.ConnectorId, downloadRequestModel.DocId);
+
+            string data = await redisRepository.GetAsStringAsync($"{dataBaseId}_{documentId}_{format}");
+
+            if (string.IsNullOrEmpty(data))
+            {
+                Stream documentStream = await GetDocumentContentAsync(downloadRequestModel);
+
+                data = await repository.HandleSuccessResponse(documentStream, transformToPdf);
+
+                await redisRepository.SetAsStringAsync($"{dataBaseId}_{documentId}_{format}", data);
+            }
+
+            return data;
         }
 
         private async Task<ConnectorModel> GetConnectorModelAsync(string connectorId)
@@ -108,50 +142,6 @@ namespace Zurich.Connector.App.Services
             }
 
             return (databaseId, documentId);
-        }
-
-        private async Task<DataSourceInformation> GetSelectedRegistrationAsync(string connectorId, string dataBaseId)
-        {
-            List<DataSourceInformation> availableRegistrations = await OAuthService.GetUserRegistrations();
-
-            return connectorId == "47"
-                ? availableRegistrations?.Find(x => x.AppCode == connectorId && x.Domain.Contains(dataBaseId))
-                : availableRegistrations?.Find(x => x.AppCode == connectorId);
-        }
-
-        private ApiInformation CreateApiInformation(ConnectorDocument connectorDocument, DataSourceInformation selectedRegistration, OAuthAPITokenResponse token, Dictionary<string, string> headerParameters)
-        {
-            ApiInformation apiInfo = new()
-            {
-                AppCode = connectorDocument.DataSource.appCode,
-                HostName = CleanUpHostName(connectorDocument.HostName, selectedRegistration.Domain, connectorDocument.DataSource.appCode),
-                UrlPath = connectorDocument.Request.EndpointPath,
-                AuthHeader = connectorDocument.DataSource.securityDefinition.defaultSecurityDefinition.authorizationHeader,
-                Token = token,
-                Method = connectorDocument.Request.Method,
-                Headers = headerParameters
-            };
-
-            return apiInfo;
-        }
-
-        private string CleanUpHostName(string hostName, string domain, string appCode)
-        {
-            if (string.IsNullOrEmpty(hostName))
-            {
-                if (oAuthOptions.Connections.TryGetValue(appCode, out OAuthConnection connection))
-                {
-                    return UrlUtils.FormattingUrl(connection.BaseUrl);
-                }
-                else
-                {
-                    return domain;
-                }
-            }
-            else
-            {
-                return UrlUtils.FormattingUrl(hostName);
-            }
         }
     }
 }

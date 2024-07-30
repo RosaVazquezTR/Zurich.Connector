@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Zurich.Connector.Data.Model;
 using System.Collections.Specialized;
+using System.IO;
 
 namespace Zurich.Connector.Data.Repositories
 {
@@ -8,7 +9,7 @@ namespace Zurich.Connector.Data.Repositories
     /// Very generic Repository that should be able to make all API calls
     /// </summary>
     public interface IRepository
-	{
+    {
         /// <summary>
         /// Makes a request to the outside party api
         /// </summary>
@@ -22,8 +23,8 @@ namespace Zurich.Connector.Data.Repositories
         /// Handles the success response for outside party api downloading document content
         /// </summary>
         /// <param name="data"></param>
-        /// <param name="transformToPDF"></param>
+        /// <param name="transformToPdf"></param>
         /// <returns>A string containing the content of the document divided by page and in base 64</returns>
-        Task<string> HandleSuccessResponse(string data, bool transformToPDF=true);
-	}
+        Task<string> HandleSuccessResponse(Stream documentStream, bool transformToPdf = true);
+    }
 }

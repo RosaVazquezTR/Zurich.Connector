@@ -36,14 +36,10 @@ namespace Zurich.Connector.Data.Repositories
             return response;
         }
 
-
-        public async Task<string> HandleSuccessResponse(string data, bool transformToPDF = true)
+        public async Task<string> HandleSuccessResponse(Stream documentStream, bool transformToPdf = true)
         {
-            HashSet<string> supportedFormats = new() { "PDF", "DOC", "DOCX", "RTF" };
+            HashSet<string> supportedFormats = ["PDF", "DOC", "DOCX", "RTF"];
             
-            byte[] byteArray = Convert.FromBase64String(data);
-            await using MemoryStream documentStream = new MemoryStream(byteArray);
-
             string fileExtension = FileFormatParser.FindDocumentTypeFromStream(documentStream);
 
             if (!supportedFormats.Contains(fileExtension.ToUpper()))
@@ -53,9 +49,9 @@ namespace Zurich.Connector.Data.Repositories
 
             try
             {
-                IAsposeService asposeInstance = AsposeServiceFactory.GetAsposeImplementation(FileFormatParser.GetFileFormat(fileExtension));
+                IDocumentConversionService documentConversionService = ConversionServiceFactory.GetConversionImplementation(FileFormatParser.GetFileFormat(fileExtension));
 
-                JObject document = asposeInstance.CreateDocumentJObject(documentStream, transformToPDF);
+                JObject document = await documentConversionService.ConvertDocumentToJObjectAsync(documentStream, transformToPdf);
 
                 return document.ToString();
             }

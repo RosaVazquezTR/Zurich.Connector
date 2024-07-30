@@ -379,7 +379,7 @@ namespace Zurich.Connector.Tests.ServiceTests
 
             Dictionary<string, string> cdmQueryParameters = new Dictionary<string, string>() { { "Offset", "0" }, { "ResultSize", "0" } };
             var connector = MockConnectorData.SetupConnectorModel().Where(t => t.Id == "5").FirstOrDefault();
-            var availableRegistrations = MockConnectorData.SetupAvailableUserRegistrations().ToList();
+            var availableRegistrations = MockConnectorData.SetupAvailableUserRegistrations();
             arrangePagination(connector.Pagination);
 
             var fakeConfigValues = new Dictionary<string, string>
@@ -410,7 +410,7 @@ namespace Zurich.Connector.Tests.ServiceTests
 
             Dictionary<string, string> cdmQueryParameters = new Dictionary<string, string>() { };
             var connector = MockConnectorData.SetupConnectorModel().Where(t => t.Id == "5").FirstOrDefault();
-            var availableRegistrations = MockConnectorData.SetupAvailableUserRegistrations().ToList();
+            var availableRegistrations = MockConnectorData.SetupAvailableUserRegistrations();
             arrangePagination(connector.Pagination);
             var mockDataMappingImpl = new Mock<IDataMapping>();
 
@@ -444,7 +444,6 @@ namespace Zurich.Connector.Tests.ServiceTests
 
             Dictionary<string, string> cdmQueryParameters = new Dictionary<string, string>() { };
             var connector = MockConnectorData.SetupConnectorModel().Where(t => t.Id == "5").FirstOrDefault();
-            List<DataSourceInformation> availableRegistrations = null;
             arrangePagination(connector.Pagination);
             var mockDataMappingImpl = new Mock<IDataMapping>();
 
@@ -460,7 +459,7 @@ namespace Zurich.Connector.Tests.ServiceTests
             ConnectorDataService service = CreateConnectorDataService();
 
             _mockdataMappingService.Setup(x => x.RetrieveProductInformationMap(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>())).Returns(Task.FromResult(connector));
-            _mockOAuthServices.Setup(x => x.GetUserRegistrations()).Returns(Task.FromResult(availableRegistrations));
+            _mockOAuthServices.Setup(x => x.GetUserRegistrations()).Returns(Task.FromResult(Enumerable.Empty<DataSourceInformation>()));
 
             // ACT
             var mappedResult = await service.GetConnectorData("14", null, null, cdmQueryParameters, false);
