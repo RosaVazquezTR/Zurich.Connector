@@ -1,12 +1,12 @@
 {
   "id": "89",
   "partitionkey": "ConnectorList",
-  "alias": "imanageOnPrem.search",
+  "alias": "imanageonprem.search",
   "info": {
-    "title": "Get Search details from iManage",
-    "description": "Get Search details from iManage",
+    "title": "Get Search details from iManage on Premise",
+    "description": "Get Search details from iManage on Premise",
     "entityType": "Search",
-    "dataSourceId": "10",
+    "dataSourceId": "11",
     "version": "2.0",
     "subType": "Parent",
     "downloadConnector": "81"

@@ -1,0 +1,36 @@
+{
+  "id": "11",
+  "partitionkey": "DataSourceList",
+  "name": "iManage On Premise",
+  "description": "Connects to the iManage On Premise APIS",
+  "appCode": "iManageOnPrem",
+  "infoURL": "",
+  "productType": "AdminCloud",
+  "extraRequestContext": "",
+  "registrationInfo": {
+    "registrationMode": "Manual",
+    "domainRequired": "true",
+    "clientAndSecretRequired": "false",
+    "connectionMessage": "Install the applicationin the iManage Control Center. Look for Thomson Reuters Legal home",
+    "registrationFileRequired": "false",
+    "domainSpecificInformation": {
+      "clientAndSecretRequired": "true",
+      "connectionMessage": "Download this linked package and upload the application in Imanage.",
+      "registrationFileRequired": "true"
+    }
+  },
+  "securityDefinition": {
+    "type": "oauth2",
+    "flow": "accessCode",
+    "defaultSecurityDefinition": {
+      "authorizationURL": "",
+      "authorizationPath": "/auth/oauth2/authorize",
+      "tokenURL": "",
+      "tokenPath": "/auth/oauth2/token",
+      "keyVaultClientId": "",
+      "keyVaultSecret": "",
+      "authorizationHeader": "X-Auth-Token"
+    },
+    "scopes": {}
+  }
+}
