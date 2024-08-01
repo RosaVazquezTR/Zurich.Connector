@@ -227,28 +227,24 @@ namespace Zurich.Connector.App.Services.DataSources
         }
 
         /// <summary>
-        /// Gets the user's customer id from iManage's user profile
+        /// Gets the user's customer id from iManage On Premise user profile
         /// </summary>
         /// <param name="appCode">The data source app code</param>
         /// <param name="hostName">The data source host name</param>
         private async Task<string> GetCustomerId(string appCode, string hostName)
         {
             ConnectorModel connectorModel = null;
-            if (appCode == KnownDataSources.iManageServiceApp)
+            if (appCode == KnownDataSources.iManageOnPrem)
             {
-                // 55 = iManageServiceApp user profile
-                connectorModel = await _cosmosService.GetConnector("55", true);
-            }
-            else
-            {
-                // 1 = iManage user profile
-                connectorModel = await _cosmosService.GetConnector("1", true);
+                // 46 = iManageOnPrem user profile
+                connectorModel = await _cosmosService.GetConnector("46", true);
             }
 
             ConnectorDocument connectorDocument = _mapper.Map<ConnectorDocument>(connectorModel);
             // Make api call to get the information for the url variable inside { }
             connectorDocument.HostName = hostName;
-            JToken userProfileResponse = await _dataMapping.GetAndMapResults<JToken>(connectorDocument, string.Empty, null, null, null);
+            JToken userInfoResponse = await _dataMapping.GetAndMapResults<JToken>(connectorDocument, string.Empty, null, null, null);
+            JToken userProfileResponse = userInfoResponse["user"];
             return userProfileResponse["customer_id"].Value<string>();
         }
     }

@@ -1,0 +1,63 @@
+{
+  "id": "46",
+  "partitionkey": "ConnectorList",
+  "alias": "imanageonprem.userprofile",
+  "info": {
+    "title": "Get user profile from iManage On Premise",
+    "description": "Get user profile from iManage On Premise",
+    "entityType": "UserProfile",
+    "dataSourceId": "11",
+    "version": "1.0"
+  },
+  "request": {
+    "endpointPath": "/api",
+    "method": "GET",
+    "parameters": [],
+    "sorting": {
+      "properties": []
+    }
+  },
+  "response": {
+    "schema": {
+      "properties": {}
+    },
+	"type": "JSON"
+  },
+  "resultLocation": "data",
+  "filters": [],
+  "cdmMapping": {
+    "structured": [
+      {
+        "name": "Name",
+        "type": "string",
+        "responseElement": "user.name",
+        "_comment": ""
+      },
+      {
+        "name": "Id",
+        "type": "string",
+        "responseElement": "user.customer_id",
+        "_comment": ""
+      },
+      {
+        "name": "UserName",
+        "type": "string",
+        "responseElement": "user.id",
+        "_comment": ""
+      },
+      {
+        "name": "Email",
+        "type": "string",
+        "responseElement": "user.email",
+        "_comment": ""
+      },
+      {
+        "name": "PreferredLibrary",
+        "type": "string",
+        "responseElement": "work.preferred_library",
+        "_comment": ""
+      }
+    ],
+    "unstructured": []
+  }
+}

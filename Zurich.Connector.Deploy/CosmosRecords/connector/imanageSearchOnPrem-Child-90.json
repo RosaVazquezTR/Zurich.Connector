@@ -2,8 +2,8 @@
   "id": "90",
   "partitionkey": "ConnectorList",
   "info": {
-    "title": "Get Search details from iManage",
-    "description": "Get Search details from iManage",
+    "title": "Get Search details from iManage on Premise",
+    "description": "Get Search details from iManage on Premise",
     "entityType": "Search",
     "dataSourceId": "10",
     "version": "2.0",

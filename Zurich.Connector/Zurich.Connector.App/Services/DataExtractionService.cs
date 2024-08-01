@@ -76,8 +76,8 @@ namespace Zurich.Connector.App.Services
         {
             string newProperty = property;
             // Find all areas that have { } in url. ie. /work/api/v2/customers/{UserInfo.customer_id}/documents
-            var regexMatch = Regex.Match(property, @"{([^}]*)}");
-            foreach (var capture in regexMatch.Captures)
+            var regexMatches = Regex.Matches(property, @"{([^}]*)}");
+            foreach (var capture in regexMatches)
             {
                 string stringFormat = capture.ToString();
                 string stringFormatTrimmed = stringFormat.Trim('{', '}');
