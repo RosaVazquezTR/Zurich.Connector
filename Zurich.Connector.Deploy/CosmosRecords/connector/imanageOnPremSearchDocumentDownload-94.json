@@ -1,0 +1,58 @@
+{
+  "id": "94",
+  "partitionkey": "ConnectorList",
+  "alias": "imanageonprem.download",
+  "info": {
+    "title": "Get Document from iManage on prem library",
+    "description": "Get Document from iManage on prem library",
+    "entityType": "download",
+    "dataSourceId": "11",
+    "version": "1.0",
+    "subType": "Parent"
+  },
+  "hostName": "imanage.westkm.com",
+  "request": {
+    "endpointPath": "/work/api/v2/customers/{46.user.customer_id}/libraries/{dataBaseId}/documents/{docId}/download",
+    "method": "GET",
+    "parameters": [
+      {
+        "cdmName": "dataBaseId",
+        "name": "dataBaseId",
+        "inClause": "Path",
+        "required": true,
+        "type": "string",
+        "defaultValue": "",
+        "tags": []
+      },
+      {
+        "cdmName": "docId",
+        "name": "docId",
+        "inClause": "Path",
+        "required": true,
+        "type": "string",
+        "defaultValue": "",
+        "tags": []
+      }
+    ],
+    "sorting": {
+      "properties": []
+    }
+  },
+  "response": {
+    "schema": {
+      "properties": {}
+    },
+    "type": "json"
+  },
+  "pagination": {
+    "available": false,
+    "paginationType": "",
+    "isZeroBasedOffset": true
+  },
+  "resultLocation": "",
+  "filters": [],
+  "CDMmapping": {
+    "structured": [],
+    "unstructured": []
+  }
+}

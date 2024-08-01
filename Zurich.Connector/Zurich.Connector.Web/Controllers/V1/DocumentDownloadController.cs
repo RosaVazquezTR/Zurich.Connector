@@ -1,15 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Threading.Tasks;
-using static System.Net.Mime.MediaTypeNames;
-using Microsoft.AspNetCore.Cors;
-using System.Net;
+﻿using Asp.Versioning;
 using Microsoft.AspNetCore.Http;
-using Zurich.Connector.App.Services;
+using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
-using Asp.Versioning;
+using System.Net;
+using System.Threading.Tasks;
 using Zurich.Connector.App.Model;
-using System.IO;
+using Zurich.Connector.App.Services;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Zurich.Connector.Web.Controllers.V1
 {
@@ -21,8 +19,8 @@ namespace Zurich.Connector.Web.Controllers.V1
     [ApiVersion("1.0")]
     public class DocumentDownloadController(IDocumentDownloadService documentDownloadService) : ControllerBase
     {
-        private readonly List<string> SUPPORTED_CONNECTORS = ["44", "14", "80", "47", "12"];
-        
+        private readonly List<string> SUPPORTED_CONNECTORS = ["44", "14", "80", "47", "12", "89"];
+
         /// <summary>
         /// Downloads a document for a specific connector.
         /// </summary>
