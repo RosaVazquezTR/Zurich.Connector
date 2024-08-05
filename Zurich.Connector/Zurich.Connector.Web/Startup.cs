@@ -91,11 +91,12 @@ namespace Zurich.Connector.Web
             services.AddScoped<IRedisRepository, RedisRepository>();
             services.AddScoped<IConnectorDataSourceOperations, IManageConnectorOperations>();
             services.AddScoped<IConnectorDataSourceOperations, IManageOnPremConnectorOperations>();
-            services.AddScoped<IConnectorDataSourceOperations, PracticalLawConnectorOperation>();
             services.AddScoped<IConnectorDataSourceOperations, MsGraphConnectorOperation>();
-            services.AddScoped<IConnectorDataSourceOperations, WestLawUKConnectorOperation>();
+            services.AddScoped<IConnectorDataSourceOperations, NetDocsConnectorOperation>();
+            services.AddScoped<IConnectorDataSourceOperations, PracticalLawConnectorOperation>();
             services.AddScoped<IConnectorDataSourceOperations, ThoughtTraceOntologiesConnectorOperation>();
             services.AddScoped<IConnectorDataSourceOperations, WestLawIEConnectorOperation>();
+            services.AddScoped<IConnectorDataSourceOperations, WestLawUKConnectorOperation>();
             services.AddScoped<IConnectorDataSourceOperationsFactory, ConnectorDataSourceOperationsFactory>();
             services.AddScoped<IHttpBodyFactory, HttpBodyFactory>();
             services.AddScoped<HttpGetBodyService>();

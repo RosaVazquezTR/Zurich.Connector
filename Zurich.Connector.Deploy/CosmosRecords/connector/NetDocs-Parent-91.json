@@ -21,8 +21,8 @@
                 "inClause": "Path",
                 "required": true,
                 "type": "string",
-                "defaultValue": "NG-37T9BLJ3",
-                "tags": []
+                "defaultValue": "",
+                "_comment": "This is not needed now, but it is left here for future use"
             },
             {
                 "cdmName": "Query",
@@ -33,22 +33,174 @@
                 "defaultValue": ""
             },
             {
+                "cdmName": "ResultSize",
+                "name": "top",
+                "inClause": "Query",
+                "required": false,
+                "type": "int",
+                "defaultValue": "50"
+            },
+            {
+                "cdmName": "Offset",
+                "name": "skip",
+                "inClause": "Query",
+                "required": false,
+                "type": "int",
+                "defaultValue": "0"
+            },
+            {
                 "cdmName": "DocAttributes",
                 "name": "select",
                 "inClause": "Query",
                 "required": false,
                 "type": "string",
-                "defaultValue": "StandardAttributes,Locations"
+                "defaultValue": "StandardAttributes,Locations,CustomAttributes"
+            },
+            {
+                "cdmName": "Type.filter",
+                "name": "filter",
+                "inClause": "Query",
+                "required": false,
+                "type": "string",
+                "defaultValue": ""
+            },
+            {
+                "cdmName": "CustomAttributesAuthor.InQueryFilter",
+                "name": "1004",
+                "inClause": "Query",
+                "required": false,
+                "type": "string",
+                "defaultValue": ""
+            },
+            {
+                "cdmName": "CreatedBy.InQueryFilter",
+                "name": "6",
+                "inClause": "Query",
+                "required": false,
+                "type": "string",
+                "defaultValue": ""
+            },
+            {
+                "cdmName": "CustomAttributesDocType.InQueryFilter",
+                "name": "1003",
+                "inClause": "Query",
+                "required": false,
+                "type": "string",
+                "defaultValue": ""
             }
         ],
         "sorting": {
-            "properties": []
+            "properties": [
+                {
+                    "name": "Date",
+                    "type": "date",
+                    "element": "$orderby",
+                    "elementValue": "7|desc"
+                }
+            ]
         }
     },
     "response": {
         "type": "JSON"
     },
-    "filters": [],
+    "filters": [
+        {
+            "name": "Author",
+            "description": "Specifies the name of the document's author.",
+            "isMultiselect": "false",
+            "requestParameter": "CustomAttributesAuthor.InQueryFilter"
+        },
+        {
+            "name": "CreatedBy",
+            "description": "Specifies the tenant user that created the document",
+            "isMultiselect": "false",
+            "requestParameter": "CreatedBy.InQueryFilter"
+        },
+        {
+            "name": "Type",
+            "description": "Specifies the file type of the document. Values can be merge, example: Word,PDFL. Default retrieves all types.",
+            "isMultiselect": "true",
+            "requestParameter": "Type.filter",
+            "filterlist": [
+                {
+                    "name": "Word",
+                    "id": "docx,doc"
+                },
+                {
+                    "name": "PDF",
+                    "id": "pdf"
+                },
+                {
+                    "name": "PowerPoint",
+                    "id": "pps,ppt,pptx"
+                },
+                {
+                    "name": "Excel",
+                    "id": "xlr,xls,xlsx"
+                },
+                {
+                    "name": "Text",
+                    "id": "odt,pages,rtf,tex,txt,wpd,wps"
+                },
+                {
+                    "name": "Folder",
+                    "id": "ndfld"
+                }
+            ]
+        },
+        {
+            "name": "DocumentType",
+            "description": "Specifies the type of document. Values can be: court, aggr, admin, mail, etc.",
+            "isMultiselect": "false",
+            "requestParameter": "CustomAttributesDocType.InQueryFilter",
+            "filterlist": [
+                {
+                    "name": "Papers filed with the Court",
+                    "id": "court"
+                },
+                {
+                    "name": "Agreement, Assignment, Authorization, Consent, Contract, et",
+                    "id": "agr"
+                },
+                {
+                    "name": "Miscellaneous",
+                    "id": "misc"
+                },
+                {
+                    "name": "Administration and Management",
+                    "id": "admin"
+                },
+                {
+                    "name": "Chart, Index, Inventory, List, Outline, Presentation, Timel",
+                    "id": "charts"
+                },
+                {
+                    "name": "E-Mail Message",
+                    "id": "mail"
+                },
+                {
+                    "name": "Appellate documents (after appeal)",
+                    "id": "appeal"
+                },
+                {
+                    "name": "Bills",
+                    "id": "bills"
+                },
+                {
+                    "name": "Client papers (received from client or outside source)",
+                    "id": "client"
+                },
+                {
+                    "name": "Exhibits, Attachments and Schedules",
+                    "id": "exhibits"
+                },
+                {
+                    "name": "Summaries and Analyses",
+                    "id": "summ"
+                }
+            ]
+        }
+    ],
     "resultLocation": "",
     "cdmMapping": {
         "structured": [

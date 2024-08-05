@@ -34,7 +34,7 @@ namespace Zurich.Connector.App.Services.DataSources
 
         public bool IsCompatible(string appCode)
         {
-            return appCode.StartsWith(KnownDataSources.netDocs);
+            return appCode == KnownDataSources.netDocs;
         }
 
         public async Task<dynamic> SetItemLink(ConnectorEntityType entityType, dynamic item, string appCode, string hostName)
@@ -44,10 +44,8 @@ namespace Zurich.Connector.App.Services.DataSources
                 switch (entityType)
                 {
                     case ConnectorEntityType.Search:
-                        if (item is string)
-                        {
-                            item = await GetCabinetId(appCode, hostName);
-                        }
+                            if (item is Dictionary<string, string>)
+                                item = AddFiltersToQuery(item);
                         break;
                 }
             }
@@ -60,11 +58,43 @@ namespace Zurich.Connector.App.Services.DataSources
 
         public async Task<Dictionary<string, string>> SetParametersSpecialCases(ConnectorModel connector, Dictionary<string, string> allParameters)
         {
+            // Map the filters inQuery
+            if (allParameters["q"].Contains("InQueryFilter"))
+            {
+                string updatedQuery = allParameters["q"];
+                IEnumerable<ConnectorRequestParameterModel> inQueryFilters = connector.Request?.Parameters
+                    .Where(p => p.CdmName.Contains("InQueryFilter"));
+                foreach (ConnectorRequestParameterModel filterParam in inQueryFilters)
+                {
+                    updatedQuery = updatedQuery.Replace(filterParam.CdmName, filterParam.Name);
+                    allParameters.Remove(filterParam.Name);
+                }
+                allParameters["q"] = updatedQuery;
+            }
             return allParameters;
         }
+
         public async Task<dynamic> AddAditionalInformation(ConnectorModel connector, dynamic item)
         {
             return item;
+        }
+
+        /// <summary>
+        /// Function that adds the InQueryFilters to the query string
+        /// </summary>
+        /// <param name="queryParameters">The query string parameters of the request</param>
+        /// <returns>THe updated query with the InQueryFilters</returns>
+        private Dictionary<string, string> AddFiltersToQuery(Dictionary<string, string> queryParameters)
+        {
+            //Dictionary<string, string> newQueryParameters = queryParameters;
+
+            foreach (string key in queryParameters.Keys)
+            {
+                if (key.Contains("InQueryFilter"))
+                    queryParameters["Query"] += $" ={key}({queryParameters[key]})";
+            }
+            
+            return queryParameters;
         }
 
         /// <summary>

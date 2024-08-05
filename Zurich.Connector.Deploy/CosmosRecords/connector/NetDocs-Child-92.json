@@ -54,7 +54,7 @@
         "_comment": ""
       },
       {
-        "name": "authorName",
+        "name": "createdBy",
         "type": "string",
         "responseElement": "Attributes.CreatedBy",
         "_comment": ""
@@ -69,6 +69,12 @@
         "name": "cabinetId",
         "type": "string",
         "responseElement": "Locations.Cabinets",
+        "_comment": ""
+      },
+      {
+        "name": "customAttributes",
+        "type": "string",
+        "responseElement": "CustomAttributes",
         "_comment": ""
       }
     ]

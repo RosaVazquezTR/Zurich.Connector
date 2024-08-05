@@ -37,7 +37,7 @@ namespace Zurich.Connector.Data.Services
         /// <param name="connectorIdentifier">The id or alias of the connector</param>
         /// <param name="hostname">The domain of the api being called</param>
         /// <param name="transferToken">The transfer token to pass with the api call, if needed</param>
-        /// <param name="queryParameters">The query string parameters of request</param>
+        /// <param name="queryParameters">The query string parameters of the request</param>
         /// <param name="domain">The domain of the api</param>
         /// <returns>Mapped data for the connector</returns>
         Task<dynamic> GetConnectorData(string connectorIdentifier, string hostname, string transferToken, Dictionary<string, string> queryParameters, bool retrievefilters);
@@ -190,9 +190,9 @@ namespace Zurich.Connector.Data.Services
                         queryParameters["resultSize"] = CalculateOffset(queryParameters).ToString();
                     }
 
-                    // Validate if the connector is OneDrive to obtain user's url
-                    if (connectorDocument.Id == "80")
-                        queryParameters["Query"] = await GetAdditionalConnectorData(connectorModel, queryParameters["Query"]);
+                    // Validate if the connector is OneDrive or NetDocs to obtain additional info for the Query parameters
+                    if (connectorDocument.DataSource.appCode == KnownDataSources.oneDrive || connectorDocument.DataSource.appCode == KnownDataSources.netDocs)
+                        queryParameters = await GetAdditionalConnectorData(connectorModel, queryParameters);
 
                     NameValueCollection mappedQueryParameters = MapQueryParametersFromDB(queryParameters, connectorModel);
                     Dictionary<string, string> headerParameters = await _dataExtractionService.ExtractDataSource(mappedQueryParameters, queryParameters, hostname, connectorDocument);
@@ -675,24 +675,33 @@ namespace Zurich.Connector.Data.Services
         }
 
         /// <summary>
-        /// At this point, it will only add the user's OneDrive path to the query
+        /// Retrieves and adds additional information to the queryParameters of OneDrive and NetDocs
         /// </summary>
         /// <param name="connector">The data connector</param>
-        /// <param name="query">The search query</param>
-        /// <returns>The search query with the user's OneDrive path</returns>
-        private async Task<string> GetAdditionalConnectorData(ConnectorModel connector, string query)
+        /// <param name="queryParameters">The search queryParameters</param>
+        /// <returns>The search queryParameters with the additional info</returns>
+        private async Task<Dictionary<string, string>> GetAdditionalConnectorData(ConnectorModel connector, Dictionary<string,string> queryParameters)
         {
             var dataSourceOperationsService = _dataSourceOperationsFactory.GetDataSourceOperationsService(connector?.DataSource?.AppCode);
-            string urlPath = "";
             if (dataSourceOperationsService != null)
-                urlPath = await dataSourceOperationsService.SetItemLink(connector.Info.EntityType, query, connector?.DataSource?.AppCode, connector.HostName);
+            {
+                if (connector.DataSource.AppCode == KnownDataSources.oneDrive)
+                {
+                    string urlPath = await dataSourceOperationsService.SetItemLink(connector.Info.EntityType, queryParameters["Query"], connector?.DataSource?.AppCode, connector.HostName);
+                    if (!string.IsNullOrWhiteSpace(urlPath))
+                        queryParameters["Query"] += $" (path:{urlPath})";
+                }
+                else if (connector.DataSource.AppCode == KnownDataSources.netDocs)
+                {
+                    Dictionary<string, string> updatedQueryParams = await dataSourceOperationsService.SetItemLink(connector.Info.EntityType, queryParameters, connector?.DataSource?.AppCode, connector.HostName);
+                    if (updatedQueryParams != null)
+                        queryParameters = updatedQueryParams;
+                }
+            }
             else
                 _logger.LogInformation("No data source operations service found for {appCode}", connector?.DataSource?.AppCode ?? "");
-            if (!string.IsNullOrWhiteSpace(urlPath))
-            {
-                query += $" (path:{urlPath})";
-            }
-            return query;
+
+            return queryParameters;
         }
     }
 }
