@@ -194,11 +194,13 @@ namespace Zurich.Connector.Data.Services
                     if (connectorDocument.Id == "80")
                         queryParameters["Query"] = await GetAdditionalConnectorData(connectorModel, queryParameters["Query"]);
 
-                    if (connectorDocument.Id == "Replace here")
+                    // 44xx connectors - OnPrem connectors
+                    if (connectorDocument.DataSource.appCode.StartsWith("iManageOnPrem"))
                     {
                         var instanceModel = await _cosmosService.GetOnPremInstanceDetailsAsync(connectorDocument.Id);
-                        connectorDocument.DataSource.appCode = "actual Imanage appcode";
                         connectorDocument.HostName = instanceModel.BaseUrl;
+                        // IManageOnPrem
+                        connectorDocument.Id = "89";
 
                         instanceModel.CreatedUserId = _sessionAccessor.UserId.ToString();
                         instanceModel.LastModifiedUserId = _sessionAccessor.UserId.ToString();

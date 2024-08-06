@@ -246,8 +246,12 @@ namespace Zurich.Connector.App.Services.DataSources
             }
 
             ConnectorDocument connectorDocument = _mapper.Map<ConnectorDocument>(connectorModel);
+
+            var connectorId = appCode.Split('x')[1];
+            var instanceModel = await _cosmosService.GetOnPremInstanceDetailsAsync(connectorId);
+            connectorDocument.HostName = instanceModel.BaseUrl;
+
             // Make api call to get the information for the url variable inside { }
-            connectorDocument.HostName = hostName;
             JToken userProfileResponse = await _dataMapping.GetAndMapResults<JToken>(connectorDocument, string.Empty, null, null, null);
             return userProfileResponse["customer_id"].Value<string>();
         }

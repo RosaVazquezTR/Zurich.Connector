@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using Zurich.Connector.App.Model;
 using Zurich.Connector.Data.Repositories.CosmosDocuments;
 using Zurich.Connector.Data.Services;
+using Zurich.Connector.App.Model.ConnectorModels;
 
 namespace Zurich.Connector.App.Services
 {
@@ -223,5 +224,14 @@ namespace Zurich.Connector.App.Services
             await _cosmosContext.DeleteDocument<ConnectorRegistrationDocument>(CosmosConstants.ConnectorRegistrationContainerId, connectorId, userId);
         }
 
+        public Task<OnPremInstanceModel> GetOnPremInstanceDetailsAsync(string connectorId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task StoreOnPremInstace(OnPremInstanceModel model)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

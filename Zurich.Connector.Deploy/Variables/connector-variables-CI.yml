@@ -8,7 +8,7 @@ variables:
   - name: connectorServiceFQND
     value: 'connectorswebapici.azurewebsites.net'
   - name: connectorsCosmosContainerInformation
-    value: '[{"name": "connector", "throughput": 400, "maxThroughput": 400, "shouldAutoScale": false, "ttl": 0, "partitionPath": "/partitionkey", "partitionKind": "Hash"},{"name": "datasource", "throughput": 400, "maxThroughput": 400, "shouldAutoScale": false, "ttl": 0, "partitionPath": "/partitionkey", "partitionKind": "Hash"},{"name": "connectorRegistration", "throughput": 400, "maxThroughput": 400, "shouldAutoScale": false, "ttl": 0, "partitionPath": "/partitionkey", "partitionKind": "Hash"},{"name": "transform", "throughput": 400, "maxThroughput": 400, "shouldAutoScale": false, "ttl": 0, "partitionPath": "/partitionkey", "partitionKind": "Hash"}]'
+    value: '[{"name": "connector", "throughput": 400, "maxThroughput": 400, "shouldAutoScale": false, "ttl": 0, "partitionPath": "/partitionkey", "partitionKind": "Hash"},{"name": "datasource", "throughput": 400, "maxThroughput": 400, "shouldAutoScale": false, "ttl": 0, "partitionPath": "/partitionkey", "partitionKind": "Hash"},{"name": "connectorRegistration", "throughput": 400, "maxThroughput": 400, "shouldAutoScale": false, "ttl": 0, "partitionPath": "/partitionkey", "partitionKind": "Hash"},{"name": "iManageOnPremData", "throughput": 400, "maxThroughput": 400, "shouldAutoScale": false, "ttl": 0, "partitionPath": "/partitionkey", "partitionKind": "Hash"},{"name": "transform", "throughput": 400, "maxThroughput": 400, "shouldAutoScale": false, "ttl": 0, "partitionPath": "/partitionkey", "partitionKind": "Hash"}]'
   - name: defaultCapacity
     value: '1'
   - name: functionAppServicePlanSku
