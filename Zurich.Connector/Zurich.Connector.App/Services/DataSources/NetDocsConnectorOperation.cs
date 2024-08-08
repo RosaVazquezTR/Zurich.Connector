@@ -5,6 +5,7 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Zurich.Connector.App.Model;
 using Zurich.Connector.Data;
@@ -61,15 +62,15 @@ namespace Zurich.Connector.App.Services.DataSources
             // Map the filters inQuery
             if (allParameters["q"].Contains("InQueryFilter"))
             {
-                string updatedQuery = allParameters["q"];
+                StringBuilder updatedQuery = new StringBuilder(allParameters["q"]);
                 IEnumerable<ConnectorRequestParameterModel> inQueryFilters = connector.Request?.Parameters
                     .Where(p => p.CdmName.Contains("InQueryFilter"));
                 foreach (ConnectorRequestParameterModel filterParam in inQueryFilters)
                 {
-                    updatedQuery = updatedQuery.Replace(filterParam.CdmName, filterParam.Name);
+                    updatedQuery.Replace(filterParam.CdmName, filterParam.Name);
                     allParameters.Remove(filterParam.Name);
                 }
-                allParameters["q"] = updatedQuery;
+                allParameters["q"] = updatedQuery.ToString();
             }
             return allParameters;
         }
@@ -86,14 +87,16 @@ namespace Zurich.Connector.App.Services.DataSources
         /// <returns>THe updated query with the InQueryFilters</returns>
         private Dictionary<string, string> AddFiltersToQuery(Dictionary<string, string> queryParameters)
         {
-            //Dictionary<string, string> newQueryParameters = queryParameters;
-
-            foreach (string key in queryParameters.Keys)
+            StringBuilder updatedQuery = new StringBuilder(queryParameters["Query"]);
+            foreach (string key in queryParameters.Keys.Where(k => k.Contains("InQueryFilter")))
             {
-                if (key.Contains("InQueryFilter"))
-                    queryParameters["Query"] += $" ={key}({queryParameters[key]})";
+                string[] filterValues = queryParameters[key].Split(",");
+                string filters = string.Join(" OR", filterValues.Select(value => $" ={key}({value})"));
+                updatedQuery.Append(filters);
             }
-            
+
+            queryParameters["Query"] = updatedQuery.ToString();
+
             return queryParameters;
         }
 

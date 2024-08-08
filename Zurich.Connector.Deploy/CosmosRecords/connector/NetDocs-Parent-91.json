@@ -135,13 +135,13 @@
         {
             "name": "Author",
             "description": "Specifies the name of the document's author.",
-            "isMultiselect": "false",
+            "isMultiselect": "true",
             "requestParameter": "CustomAttributesAuthor.InQueryFilter"
         },
         {
             "name": "CreatedBy",
             "description": "Specifies the tenant user that created the document",
-            "isMultiselect": "false",
+            "isMultiselect": "true",
             "requestParameter": "CreatedBy.InQueryFilter"
         },
         {
@@ -179,7 +179,7 @@
         {
             "name": "DocumentType",
             "description": "Specifies the type of document. Values can be: court, aggr, admin, mail, etc.",
-            "isMultiselect": "false",
+            "isMultiselect": "true",
             "requestParameter": "CustomAttributesDocType.InQueryFilter",
             "filterlist": [
                 {
