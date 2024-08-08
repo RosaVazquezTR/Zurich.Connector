@@ -19,7 +19,7 @@
                 "cdmName": "cabinet",
                 "name": "cabinet",
                 "inClause": "Path",
-                "required": true,
+                "required": false,
                 "type": "string",
                 "defaultValue": "",
                 "_comment": "This is not needed now, but it is left here for future use"
@@ -87,6 +87,22 @@
                 "required": false,
                 "type": "string",
                 "defaultValue": ""
+            },
+            {
+                "cdmName": "Container.filter",
+                "name": "container",
+                "inClause": "Query",
+                "required": false,
+                "type": "string",
+                "defaultValue": ""
+            },
+            {
+                "cdmName": "Subcontainers.filter",
+                "name": "subcontainers",
+                "inClause": "Query",
+                "required": false,
+                "type": "string",
+                "defaultValue": ""
             }
         ],
         "sorting": {
@@ -104,6 +120,18 @@
         "type": "JSON"
     },
     "filters": [
+        {
+            "name": "Container",
+            "description": "Targets a single container as primary container to run a search. If not provided primary container is the whole cabinet",
+            "isMultiselect": "false",
+            "requestParameter": "Container.filter"
+        },
+        {
+            "name": "Subcontainers",
+            "description": "Comma-separated list of multiple containers in which the search is executed ALONG with the primary container",
+            "isMultiselect": "true",
+            "requestParameter": "Subcontainers.filter"
+        },
         {
             "name": "Author",
             "description": "Specifies the name of the document's author.",
