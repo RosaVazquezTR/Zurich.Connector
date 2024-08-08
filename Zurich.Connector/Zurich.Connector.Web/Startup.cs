@@ -91,6 +91,7 @@ namespace Zurich.Connector.Web
             services.AddScoped<IRedisRepository, RedisRepository>();
             services.AddScoped<IConnectorDataSourceOperations, IManageConnectorOperations>();
             services.AddScoped<IConnectorDataSourceOperations, IManageOnPremConnectorOperations>();
+            services.AddScoped<IConnectorDataSourceOperations, LexisNexisUKConnectorOperation>();
             services.AddScoped<IConnectorDataSourceOperations, MsGraphConnectorOperation>();
             services.AddScoped<IConnectorDataSourceOperations, NetDocsConnectorOperation>();
             services.AddScoped<IConnectorDataSourceOperations, PracticalLawConnectorOperation>();

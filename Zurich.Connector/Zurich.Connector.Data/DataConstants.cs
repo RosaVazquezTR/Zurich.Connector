@@ -56,12 +56,14 @@
         public const string thoughtTraceDMS = "TTTenantApp";
         public const string westLawIE = "WLIE";
         public const string netDocs = "NetDocs";
+        public const string lexisNexisUK = "LexisNexisUK";
     }
     public static class DataConstants
     {
         public const string LegalHomeScope = "legalhome.full";
         public const string OAuthUrl = "oauth";
         public static readonly string[] IntegrationHubScopes = { "connectors.full", "email", "extended_profile", "integrationhub.documents.read", "openid", "profile", "search.full" };
+        public const string lexisDocumentsBaseUrl = "https://plus.lexis.com/uk/document";
     }
 
     public static class DataTypes

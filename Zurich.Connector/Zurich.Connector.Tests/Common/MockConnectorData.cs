@@ -771,5 +771,35 @@ namespace Zurich.Connector.Tests.Common
             };
         }
 
+        internal static IEnumerable<dynamic> SetupLexisDocumentsModel()
+        {
+            dynamic result;
+
+            result = JObject.Parse(@"{
+                ""Count"": 2,
+                ""Documents"": [{
+                        ""Snippet"": ""NEGLIGENCE - DUTY TO TAKE CARE – CERTIFICATE OF QUALITY FOR CARGO OF GASOLINE – CERTIFIER USING WRONG TEST – CERTIFIER SUBSEQUENTLY RETESTING SAMPLES USING CORRECT TEST – WHETHER CERTIFIER UNDER DUTY TO REVEAL FACT OF AND RESULTS OF RETEST TO PURCHASER OF CARGO – LIMITATION ACT 1980, S 32TORT - DECEIT – CERTIFICATE OF QUALITY FOR CARGO OF GASOLINE – CERTIFIER USING WRONG TEST – CERTIFIER ..."",
+                        ""WebUrl"": ""Documents(DocumentId='%2fshared%2fdocument%2fcases-uk%2furn%3acontentItem%3a4MFT-X600-TWW4-20TB-00000-00',DocumentIdType='DocFullPath')/$value?ind=n"",
+                        ""Title"": ""AIC Ltd v ITS Testing Services (UK) Ltd; The Kriti Palm"",
+                        ""CreationDate"": ""2006-11-28T00:00:00Z"",
+                        ""AdditionalProperties"": {
+                            ""id"": ""urn:contentItem:63NK-V2N3-CH00-N28J-00000-00""
+                        }
+                    },
+                    {
+                        ""Snippet"": null,
+                        ""webUrl"": ""Documents(DocumentId='%2fshared%2fdocument%2flegislation-uk%2furn%3acontentItem%3a66FV-42R3-GXF6-8112-00000-00',DocumentIdType='DocFullPath')/$value?ind=n"",
+                        ""Title"": ""ANNEX"",
+                        ""CreationDate"": null,
+                        ""AdditionalProperties"": {
+                            ""id"": ""urn:contentItem:66FV-42R3-GXF6-8112-00000-00""
+                        }
+                   
+                    }
+                ]
+            }");
+            return result;
+        }
+
     }
 }
