@@ -40,6 +40,14 @@
         "defaultValue": "true"
       },
       {
+        "cdmName": "Libraries.filter",
+        "name": "libraries",
+        "inClause": "Query",
+        "required": false,
+        "type": "string",
+        "defaultValue": ""
+      },
+      {
         "cdmName": "Name.filter",
         "name": "name",
         "inClause": "Query",
@@ -413,6 +421,12 @@
       "description": "Text to be searched anywhere in the document profile or contents.",
       "isMultiselect": "false",
       "requestParameter": "Query"
+    },
+    {
+      "name": "Libraries",
+      "description": "Must match with a database in IManage",
+      "isMultiselect": "false",
+      "requestParameter": "Libraries.filter"
     },
     {
       "name": "Title",
