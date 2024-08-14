@@ -23,6 +23,7 @@ using Zurich.Connector.App.Exceptions;
 using Zurich.Common.Repositories;
 using AppCodes = Zurich.Connector.Data.Constants.AppCodes;
 using Newtonsoft.Json;
+using Zurich.Connector.Web.Models;
 
 namespace Zurich.Connector.Data.Services
 {
@@ -191,8 +192,14 @@ namespace Zurich.Connector.Data.Services
                     }
 
                     // Validate if the connector is OneDrive or NetDocs to obtain additional info for the Query parameters
-                    if (connectorDocument.DataSource.appCode == KnownDataSources.oneDrive || connectorDocument.DataSource.appCode == KnownDataSources.netDocs)
+                    if (connectorDocument.DataSource.appCode == KnownDataSources.oneDrive)
                         queryParameters = await GetAdditionalConnectorData(connectorModel, queryParameters);
+                    else if(connectorDocument.DataSource.appCode == KnownDataSources.netDocs)
+                    {
+                        queryParameters = await GetAdditionalConnectorData(connectorModel, queryParameters);
+                        // Populate available cabinets to the filters of the connector
+                        connectorDocument.Filters[0].FilterList = await GetDynamicFilters(connectorModel);
+                    }
 
                     NameValueCollection mappedQueryParameters = MapQueryParametersFromDB(queryParameters, connectorModel);
                     Dictionary<string, string> headerParameters = await _dataExtractionService.ExtractDataSource(mappedQueryParameters, queryParameters, hostname, connectorDocument);
@@ -702,6 +709,20 @@ namespace Zurich.Connector.Data.Services
                 _logger.LogInformation("No data source operations service found for {appCode}", connector?.DataSource?.AppCode ?? "");
 
             return queryParameters;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="connector"></param>
+        /// <returns></returns>
+        private async Task<List<FilterList>> GetDynamicFilters(ConnectorModel connector)
+        {
+            var dataSourceOperationsService = _dataSourceOperationsFactory.GetDataSourceOperationsService(connector?.DataSource?.AppCode);
+
+            List<FilterList> filterList = await dataSourceOperationsService.SetItemLink(connector.Info.EntityType, connector.Filters, connector.DataSource.AppCode, null);
+
+            return filterList;
         }
     }
 }

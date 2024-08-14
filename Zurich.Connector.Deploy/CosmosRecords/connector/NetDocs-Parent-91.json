@@ -16,13 +16,12 @@
         "method": "GET",
         "parameters": [
             {
-                "cdmName": "cabinet",
-                "name": "cabinet",
+                "cdmName": "Cabinets.filter",
+                "name": "cabinets",
                 "inClause": "Path",
                 "required": false,
                 "type": "string",
-                "defaultValue": "",
-                "_comment": "This is not needed now, but it is left here for future use"
+                "defaultValue": ""
             },
             {
                 "cdmName": "Query",
@@ -73,14 +72,6 @@
                 "defaultValue": ""
             },
             {
-                "cdmName": "CreatedBy.InQueryFilter",
-                "name": "6",
-                "inClause": "Query",
-                "required": false,
-                "type": "string",
-                "defaultValue": ""
-            },
-            {
                 "cdmName": "CustomAttributesDocType.InQueryFilter",
                 "name": "1003",
                 "inClause": "Query",
@@ -121,6 +112,13 @@
     },
     "filters": [
         {
+            "name": "Cabinets",
+            "description": "Targets one or more cabinets to run the search. If not provided only results from primary cabinet are returned",
+            "isMultiselect": "true",
+            "requestParameter": "Cabinets.filter",
+            "filterlist": []
+        },
+        {
             "name": "Container",
             "description": "Targets a single container as primary container to run a search. If not provided primary container is the whole cabinet",
             "isMultiselect": "false",
@@ -137,12 +135,6 @@
             "description": "Specifies the name of the document's author.",
             "isMultiselect": "true",
             "requestParameter": "CustomAttributesAuthor.InQueryFilter"
-        },
-        {
-            "name": "CreatedBy",
-            "description": "Specifies the tenant user that created the document",
-            "isMultiselect": "true",
-            "requestParameter": "CreatedBy.InQueryFilter"
         },
         {
             "name": "Type",

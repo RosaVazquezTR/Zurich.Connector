@@ -45,8 +45,21 @@ namespace Zurich.Connector.App.Services.DataSources
                 switch (entityType)
                 {
                     case ConnectorEntityType.Search:
-                            if (item is Dictionary<string, string>)
-                                item = AddFiltersToQuery(item);
+                        if (item is Dictionary<string, string>)
+                            item = AddFiltersToQuery(item);
+                        else if (item is List <ConnectorsFiltersModel>)
+                        {
+                            JArray availableCabinets = await GetAvailableCabinets(appCode);
+                            List<FilterList> filtersList = availableCabinets
+                                .Select(cabinet => new FilterList
+                                {
+                                    Name = cabinet["cabinetName"].ToString(),
+                                    Id = cabinet["cabinetId"].ToString()
+                                })
+                                .ToList();
+
+                            item = filtersList;
+                        }
                         break;
                 }
             }
@@ -84,7 +97,7 @@ namespace Zurich.Connector.App.Services.DataSources
         /// Function that adds the InQueryFilters to the query string
         /// </summary>
         /// <param name="queryParameters">The query string parameters of the request</param>
-        /// <returns>THe updated query with the InQueryFilters</returns>
+        /// <returns>The updated query with the InQueryFilters</returns>
         private Dictionary<string, string> AddFiltersToQuery(Dictionary<string, string> queryParameters)
         {
             StringBuilder updatedQuery = new StringBuilder(queryParameters["Query"]);
@@ -108,17 +121,36 @@ namespace Zurich.Connector.App.Services.DataSources
         private async Task<string> GetCabinetId(string appCode, string hostName)
         {
             ConnectorModel connectorModel = null;
-            if (appCode == KnownDataSources.oneDrive)
+            if (appCode == KnownDataSources.netDocs)
             {
                 // 93 = NetDocs user info
                 connectorModel = await _cosmosService.GetConnector("93", true);
             }
             
             ConnectorDocument connectorDocument = _mapper.Map<ConnectorDocument>(connectorModel);
-            // Make api call to get the information for the webUrl variable
+            // Make api call to get the cabinet id from NetDocuments user information
             connectorDocument.HostName = hostName;
             JToken userProfileResponse = await _dataMapping.GetAndMapResults<JToken>(connectorDocument, string.Empty, null, null, null);
             return userProfileResponse["primaryCabinetId"].Value<string>();
+        }
+
+        /// <summary>
+        /// Gets the available cabinets for the NetDocuments user
+        /// </summary>
+        /// <param name="appCode">The data source app code</param>
+        private async Task<JArray> GetAvailableCabinets(string appCode)
+        {
+            ConnectorModel connectorModel = null;
+            if (appCode == KnownDataSources.netDocs)
+            {
+                // 95 = NetDocs cabinets
+                connectorModel = await _cosmosService.GetConnector("95", true);
+            }
+
+            ConnectorDocument connectorDocument = _mapper.Map<ConnectorDocument>(connectorModel);
+            // Make api call to get the list of available cabinets from NetDocuments
+            JArray userCabinetsResponse = await _dataMapping.GetAndMapResults<JArray>(connectorDocument, string.Empty, null, null, null);
+            return userCabinetsResponse;
         }
     }
 }

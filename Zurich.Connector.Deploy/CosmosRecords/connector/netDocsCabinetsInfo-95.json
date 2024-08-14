@@ -1,0 +1,57 @@
+{
+    "id": "95",
+    "partitionkey": "ConnectorList",
+	"alias": "netdocs.container",
+    "info": {
+        "title": "NetDocuments cabinets information",
+        "description": "Gets the NetDocuments cabinets available for the user",
+        "entityType": "Container",
+        "dataSourceId": "57",
+        "version": "1.0"
+    },
+    "request": {
+        "endpointPath": "/v1/User/cabinets",
+        "method": "GET",
+        "parameters": [],
+        "sorting": {
+            "properties": []
+        }
+    },
+    "response": {
+        "schema": {
+            "properties": {}
+        },
+		"type": "JSON"
+    },
+    "resultLocation": "[]",
+    "filters": [],
+    "cdmMapping": {
+        "structured": [
+            {
+                "name": "cabinetName",
+                "type": "string",
+                "responseElement": "name",
+                "_comment": ""
+            },
+            {
+                "name": "cabinetId",
+                "type": "string",
+                "responseElement": "id",
+                "_comment": ""
+            },
+            {
+                "name": "repositoryId",
+                "type": "string",
+                "responseElement": "repositoryId",
+                "_comment": ""
+            },
+            {
+                "name": "repositoryName",
+                "type": "string",
+                "responseElement": "repositoryName",
+                "_comment": ""
+            }
+        ],
+        "unstructured": []
+    }
+}
