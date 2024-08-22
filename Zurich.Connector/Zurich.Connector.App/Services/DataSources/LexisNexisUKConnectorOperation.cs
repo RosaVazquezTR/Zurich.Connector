@@ -2,6 +2,8 @@
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Zurich.Connector.App.Model;
@@ -67,7 +69,27 @@ namespace Zurich.Connector.App.Services.DataSources
 
         public async Task<Dictionary<string, string>> SetParametersSpecialCases(ConnectorModel connector, Dictionary<string, string> allParameters)
         {
-            return allParameters;
+            // Configure all the filters to be sent in a single query parameter ($filter)
+            StringBuilder updatedFilters = new();
+            Dictionary<string, string> updatedParams = new(allParameters);
+            bool hasFilters = false;
+
+            foreach (string key in allParameters.Keys.Where(k => k.Contains("$filter")))
+            {
+                if (hasFilters)
+                    updatedFilters.Append(" and ");
+                updatedFilters.Append("(");
+                string[] filterValues = allParameters[key].Split(",");
+                string filters = string.Join(" or ", filterValues.Select(value => $"{key.Replace("$filter.", "")} eq '{value}'"));
+                updatedFilters.Append($"{filters})");
+                updatedParams.Remove(key);
+                hasFilters = true;
+            }
+
+            if (hasFilters)
+                updatedParams.Add("$filter", updatedFilters.ToString());
+
+            return updatedParams;
         }
 
         public async Task<dynamic> AddAditionalInformation(ConnectorModel connector, dynamic item)

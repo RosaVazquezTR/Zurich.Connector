@@ -37,6 +37,33 @@
                 "required": false,
                 "type": "string",
                 "defaultValue": "0"
+            },
+            {
+                "cdmName": "ContentType.filter",
+                "name": "$filter.ContentType",
+                "inClause": "Query",
+                "required": false,
+                "type": "string",
+                "defaultValue": "",
+                "_comment": "All of these filters are sent in the same query parameter ($filter)"
+            },
+            {
+                "cdmName": "Source.filter",
+                "name": "$filter.Source/Id",
+                "inClause": "Query",
+                "required": false,
+                "type": "string",
+                "defaultValue": "",
+                "_comment": "All of these filters are sent in the same query parameter ($filter)"
+            },
+            {
+                "cdmName": "PracticeArea.filter",
+                "name": "$filter.PracticeArea/Id",
+                "inClause": "Query",
+                "required": false,
+                "type": "string",
+                "defaultValue": "",
+                "_comment": "All of these filters are sent in the same query parameter ($filter)"
             }
         ],
         "sorting": {
@@ -59,7 +86,420 @@
     "response": {
         "type": "json"
     },
-    "filters": [],
+    "filters": [
+        {
+            "name": "ContentType",
+            "description": "Specifies the type of content.",
+            "isMultiselect": "true",
+            "requestParameter": "ContentType.filter",
+            "filterlist": [
+                {
+                    "name": "Acts",
+                    "id": "dXJuOnBjdDoyNjE"
+                },
+                {
+                    "name": "Case Citator",
+                    "id": "dXJuOnBjdDoyNDU"
+                },
+                {
+                    "name": "Case reports",
+                    "id": "dXJuOnBjdDoyODU"
+                },
+                {
+                    "name": "Case Summaries",
+                    "id": "dXJuOnBjdDoyNDY"
+                },
+                {
+                    "name": "Case transcripts",
+                    "id": "dXJuOnBjdDoyODY"
+                },
+                {
+                    "name": "Cases News",
+                    "id": "dXJuOnBjdDo1NDg"
+                },
+                {
+                    "name": "Clauses",
+                    "id": "dXJuOnBjdDoyODg"
+                },
+                {
+                    "name": "CLE Course of Study Materials",
+                    "id": "dXJuOnBjdDoyMzg"
+                },
+                {
+                    "name": "Commentaries",
+                    "id": "dXJuOnBjdDoyMzc"
+                },
+                {
+                    "name": "Dockets",
+                    "id": "dXJuOnBjdDo1ODY"
+                },
+                {
+                    "name": "EU Legislation",
+                    "id": "dXJuOnBjdDozMDM"
+                },
+                {
+                    "name": "Government News",
+                    "id": "dXJuOnBjdDo1NDc"
+                },
+                {
+                    "name": "HMRC Manuals",
+                    "id": "dXJuOnBjdDo1NDQ"
+                },
+                {
+                    "name": "Halsbury's Laws of England",
+                    "id": "dXJuOnBjdDo1NDU"
+                },
+                {
+                    "name": "Journals",
+                    "id": "dXJuOnBjdDoyNDE"
+                },
+                {
+                    "name": "Journals Summaries",
+                    "id": "dXJuOnBjdDoyNDI"
+                },
+                {
+                    "name": "Legal analysis",
+                    "id": "dXJuOnBjdDozMTE"
+                },
+                {
+                    "name": "Legal News",
+                    "id": "dXJuOnBjdDoyNTc"
+                },
+                {
+                    "name": "Legal process checklists",
+                    "id": "dXJuOnBjdDoyOTU"
+                },
+                {
+                    "name": "Legislation Citator",
+                    "id": "dXJuOnBjdDoyNjU"
+                },
+                {
+                    "name": "Legislation News",
+                    "id": "dXJuOnBjdDo1NDk"
+                },
+                {
+                    "name": "Overviews",
+                    "id": "dXJuOnBjdDoyODM"
+                },
+                {
+                    "name": "Practice directions",
+                    "id": "dXJuOnBjdDoyODQ"
+                },
+                {
+                    "name": "Practice Notes",
+                    "id": "dXJuOnBjdDoyNDQ"
+                },
+                {
+                    "name": "Precedent",
+                    "id": "dXJuOnBjdDoyNTU"
+                },
+                {
+                    "name": "Q&As",
+                    "id": "dXJuOnBjdDo0MDM"
+                },
+                {
+                    "name": "Regulatory Guidance",
+                    "id": "dXJuOnBjdDozMDI"
+                },
+                {
+                    "name": "Retained EU Legislation",
+                    "id": "dXJuOnBjdDo1NDM"
+                },
+                {
+                    "name": "Stair Memorial Encyclopaedia",
+                    "id": "dXJuOnBjdDo1NDY"
+                },
+                {
+                    "name": "Statutory Instruments",
+                    "id": "dXJuOnBjdDoyNjI"
+                },
+                {
+                    "name": "Tools",
+                    "id": "dXJuOnBjdDo0MDc"
+                }
+            ]
+        },
+        {
+            "name": "Source/Id",
+            "description": "Specifies the source of the content.",
+            "isMultiselect": "true",
+            "requestParameter": "Source.filter",
+            "filterlist": [
+                {
+                    "name": "EU Cases",
+                    "id": "MTA4NzIwNg"
+                },
+                {
+                    "name": "EU Legislation: Decisions",
+                    "id": "MTA4NzIwNw"
+                },
+                {
+                    "name": "EU Legislation: Historical Versions",
+                    "id": "MTA5MjQyNw"
+                },
+                {
+                    "name": "EU Legislation: Regulations",
+                    "id": "MTA5MjQzMA"
+                },
+                {
+                    "name": "Family Law (journal)",
+                    "id": "MTA5MDc4Mw"
+                },
+                {
+                    "name": "General Case Digest",
+                    "id": "MTA5Nzk4NQ"
+                },
+                {
+                    "name": "Irish Judgments",
+                    "id": "MTA4ODI4NA"
+                },
+                {
+                    "name": "JIBFL Commentary source",
+                    "id": "MTA5ODEyOQ"
+                },
+                {
+                    "name": "Journals Index *PLUS*",
+                    "id": "MTA4NzIzNg"
+                },
+                {
+                    "name": "Journals Index",
+                    "id": "MTA5OTExMA"
+                },
+                {
+                    "name": "Judgments",
+                    "id": "MTA4NzIzNw"
+                },
+                {
+                    "name": "LexisPSL Competition News Analysis",
+                    "id": "MTA5NzM0Mw"
+                },
+                {
+                    "name": "LexisPSL News Analysis",
+                    "id": "MTA4ODY2MQ"
+                },
+                {
+                    "name": "Specialist Tax Regulatory Materials",
+                    "id": "MTA4NzI2Mw"
+                },
+                {
+                    "name": "Tax Journal",
+                    "id": "MTA4ODMwOA"
+                },
+                {
+                    "name": "Taxation Magazine",
+                    "id": "MTA4ODMxMg"
+                },
+                {
+                    "name": "The New Law Journal",
+                    "id": "MTA4NzI1Nw"
+                },
+                {
+                    "name": "UK Parliament SIs 2010-present",
+                    "id": "MTA4NzI3Nw"
+                },
+                {
+                    "name": "UK Regulatory Materials Summaries",
+                    "id": "MTA5Nzk4OA"
+                },
+                {
+                    "name": "UK SI Summaries",
+                    "id": "MTA4NzI3OA"
+                }
+            ]
+        },
+        {
+            "name": "PracticeArea/Id",
+            "description": "Specifies the Practice Areas.",
+            "isMultiselect": "true",
+            "requestParameter": "PracticeArea.filter",
+            "filterlist": [
+                {
+                    "name": "Accounting",
+                    "id": "Z3VpZD11cm46dG9waWM6OUFGM0Q4M0M0NTdENDRDQjk3NUM5Mjg3RUQwN0ZERUM7cGFyZW50Z3VpZD0"
+                },
+                {
+                    "name": "Administrative law and judicial review",
+                    "id": "Z3VpZD11cm46dG9waWM6NjMxMjc0MUIzQjkzNEM4MEI4NkZGQjVCREJCRDk4OUM7cGFyZW50Z3VpZD0"
+                },
+                {
+                    "name": "Arbitration",
+                    "id": "Z3VpZD11cm46dG9waWM6MDY1Qjc4RjU5RjRFNDlDRTgzMzU0ODQ0MUI2RDZEMEM7cGFyZW50Z3VpZD0"
+                },
+                {
+                    "name": "Banking and finance",
+                    "id": "Z3VpZD11cm46dG9waWM6QjQyMUFCOUJBNURBNEFDREE3MTNCNDk5QkQ4NUM3RjI7cGFyZW50Z3VpZD0"
+                },
+                {
+                    "name": "Charities",
+                    "id": "Z3VpZD11cm46dG9waWM6OTE5N0JFNDFGNzE5NEI4NEIzODJGQjZEQzhGRDQ1OTA7cGFyZW50Z3VpZD0"
+                },
+                {
+                    "name": "Commercial law",
+                    "id": "Z3VpZD11cm46dG9waWM6NEQwNDhFOTIzN0ZFNENDRkEwMTc5OTE4NDlGOEQzQTI7cGFyZW50Z3VpZD0"
+                },
+                {
+                    "name": "Competition",
+                    "id": "Z3VpZD11cm46dG9waWM6RTgwMDQyMDk5MzlCNDNEMEIzNDk5QzJCQkZFQTA2RjM7cGFyZW50Z3VpZD0"
+                },
+                {
+                    "name": "Conflict of laws",
+                    "id": "Z3VpZD11cm46dG9waWM6RjE0QUE5MzAwMEQwNDRGNDhGMkVFMUFCRjdGQUQwOTI7cGFyZW50Z3VpZD0"
+                },
+                {
+                    "name": "Construction",
+                    "id": "Z3VpZD11cm46dG9waWM6QjdCOTA2RjU5MzlBNEMyQkJCMDg3RTZCMkRFNTIzRjE7cGFyZW50Z3VpZD0"
+                },
+                {
+                    "name": "Consumer law",
+                    "id": "Z3VpZD11cm46dG9waWM6QzY2OEVEMUFFNzk2NEEwQzlGRkEyM0FBRERGNTNCRTI7cGFyZW50Z3VpZD0"
+                },
+                {
+                    "name": "Contract law",
+                    "id": "Z3VpZD11cm46dG9waWM6QzY0RTZFMzE0RjkwNDdFQUI5M0U5N0ZFMjYyREMyQzU7cGFyZW50Z3VpZD0"
+                },
+                {
+                    "name": "Corporate",
+                    "id": "Z3VpZD11cm46dG9waWM6QjlGMUQyRUY4MDRBNDQxMkJGQzg4MjA4QjlFRTVGN0U7cGFyZW50Z3VpZD0"
+                },
+                {
+                    "name": "Corporate crime",
+                    "id": "Z3VpZD11cm46dG9waWM6NDA2NDA1OEEzNEFENDNEM0EwNzE3MkQ2NERBOUY3Njk7cGFyZW50Z3VpZD0"
+                },
+                {
+                    "name": "Crime",
+                    "id": "Z3VpZD11cm46dG9waWM6NEU0RkE1OUQwNUQwNDgxODhEODZCMjkzOTg3NThBNzk7cGFyZW50Z3VpZD0"
+                },
+                {
+                    "name": "Dispute resolution",
+                    "id": "Z3VpZD11cm46dG9waWM6QkVCQzE5NDkxN0QzNEREQTg5MEUzRUQ4NEU2QzdCOUM7cGFyZW50Z3VpZD0"
+                },
+                {
+                    "name": "Employment",
+                    "id": "Z3VpZD11cm46dG9waWM6MTE3QUQwOTA0MUYzNDlCMEFFMjUwRUNDM0RDRkM5QzM7cGFyZW50Z3VpZD0"
+                },
+                {
+                    "name": "Energy",
+                    "id": "Z3VpZD11cm46dG9waWM6NTdFRTlGMTM4QTFBNDcyOEIzQkQ5QjVCQjI1OTVFRTI7cGFyZW50Z3VpZD0"
+                },
+                {
+                    "name": "Environment",
+                    "id": "Z3VpZD11cm46dG9waWM6NzFDRDYyNkI2QjhBNDg3NTkyRjRDRkZEQjlCRkRBQzM7cGFyZW50Z3VpZD0"
+                },
+                {
+                    "name": "Equity and trusts",
+                    "id": "Z3VpZD11cm46dG9waWM6Rjc4MjcxOUU2OEM4NDM3NDg3RjQ0QjAxODUxQjc1OTU7cGFyZW50Z3VpZD0"
+                },
+                {
+                    "name": "EU Law",
+                    "id": "Z3VpZD11cm46dG9waWM6QUY3NkZFNzM2MkNCNDA2MjkxNDVFRkNCRUNDMkNDMDc7cGFyZW50Z3VpZD0"
+                },
+                {
+                    "name": "Family",
+                    "id": "Z3VpZD11cm46dG9waWM6NEI4M0U5Qzg3RTk0NDdBRUJGNDRGNkZEQkU3RDdFNDU7cGFyZW50Z3VpZD0"
+                },
+                {
+                    "name": "Financial services",
+                    "id": "Z3VpZD11cm46dG9waWM6QTE1MDMyOTYyNENCNEEyMDk3Njk2NzU0QUYyOTNGMUU7cGFyZW50Z3VpZD0"
+                },
+                {
+                    "name": "Health and safety",
+                    "id": "Z3VpZD11cm46dG9waWM6MjIyQzM0MzQ5QjFCNDAzNzhEQTQ5MURGQzY3MTBBNEE7cGFyZW50Z3VpZD0"
+                },
+                {
+                    "name": "Health law",
+                    "id": "Z3VpZD11cm46dG9waWM6OUM2REU0RUVFRTk2NEZENTgwQkNDRDc0QzBDQjE4NDY7cGFyZW50Z3VpZD0"
+                },
+                {
+                    "name": "Human rights and civil liberties",
+                    "id": "Z3VpZD11cm46dG9waWM6NURDOUM5MEJFQUZGNEFBMDgzMkM0RTgwODdDNTMxREM7cGFyZW50Z3VpZD0"
+                },
+                {
+                    "name": "Immigration",
+                    "id": "Z3VpZD11cm46dG9waWM6QUI4OEMwN0ExMjQ4NDFBQjkyQTU0NzQzNkM0QUZGRTk7cGFyZW50Z3VpZD0"
+                },
+                {
+                    "name": "Information law",
+                    "id": "Z3VpZD11cm46dG9waWM6RUJCMENFRDc3NjMwNDQ0NkEyMjM3NzEwOEIzMzhCQzE7cGFyZW50Z3VpZD0"
+                },
+                {
+                    "name": "Insurance",
+                    "id": "Z3VpZD11cm46dG9waWM6OEM3NkQ0QkY4ODUzNDEzNThFNTU0NTUwNDlGOTJBRUE7cGFyZW50Z3VpZD0"
+                },
+                {
+                    "name": "International law",
+                    "id": "Z3VpZD11cm46dG9waWM6QUJBMkUzQ0QwN0E0NEM4RDgzMjM1QTREMkU3RDdBODQ7cGFyZW50Z3VpZD0"
+                },
+                {
+                    "name": "IP",
+                    "id": "Z3VpZD11cm46dG9waWM6MjIzQTg3MzZDMjQ1NEM1QUIxMjRDNTBBMUUwOERFNEY7cGFyZW50Z3VpZD0"
+                },
+                {
+                    "name": "Local government",
+                    "id": "Z3VpZD11cm46dG9waWM6NkQ1QUM4QzZBNzFDNDQxN0ExQUM2OUU0QTBDNEI4ODM7cGFyZW50Z3VpZD0"
+                },
+                {
+                    "name": "Pensions",
+                    "id": "Z3VpZD11cm46dG9waWM6NDY1QkE0OTc3OUY5NEQ1ODk5RkUwRjAzOEQ4QTRDQTU7cGFyZW50Z3VpZD0"
+                },
+                {
+                    "name": "Personal injury and clinical negligence",
+                    "id": "Z3VpZD11cm46dG9waWM6MTIzRkEzRjc3ODM5NDU5Qjk4NkMwOTNERjJFRTdENDU7cGFyZW50Z3VpZD0"
+                },
+                {
+                    "name": "Planning",
+                    "id": "Z3VpZD11cm46dG9waWM6NjcyQTdEMEUxODYyNDY0OThFQTg1NUNGMjFBMTkxQ0M7cGFyZW50Z3VpZD0"
+                },
+                {
+                    "name": "Private client",
+                    "id": "Z3VpZD11cm46dG9waWM6NEYyQ0RCQkNCNDdFNEU1RkEyNDVGMDM1N0UzN0M0RDk7cGFyZW50Z3VpZD0"
+                },
+                {
+                    "name": "Professions and ethics",
+                    "id": "Z3VpZD11cm46dG9waWM6MDU0N0I2RUEyREEyNEIyRDlGMUQzOTQ2QTIzMUIzNDk7cGFyZW50Z3VpZD0"
+                },
+                {
+                    "name": "Property",
+                    "id": "Z3VpZD11cm46dG9waWM6QUUyRTcxRURBNEY2NEE2MDk3QzBCNzRDOEY0NTZDQzk7cGFyZW50Z3VpZD0"
+                },
+                {
+                    "name": "Property disputes",
+                    "id": "Z3VpZD11cm46dG9waWM6ODhBNEY2MDYwMzhDNDI3NThBNzI0REUzQjAwODk2Q0U7cGFyZW50Z3VpZD0"
+                },
+                {
+                    "name": "Public Law",
+                    "id": "Z3VpZD11cm46dG9waWM6QkVEMEJDRkY3NDFGNDc0QUI3MjE4MUYyRDNCOUI2MEQ7cGFyZW50Z3VpZD0"
+                },
+                {
+                    "name": "Restructuring and insolvency",
+                    "id": "Z3VpZD11cm46dG9waWM6RDJGRTFGMTM4NkMwNDhEMEE5NUU0QUZCN0QyMjlEREY7cGFyZW50Z3VpZD0"
+                },
+                {
+                    "name": "Securities",
+                    "id": "Z3VpZD11cm46dG9waWM6RDlCMjBFRURDRDYwNDg2MThCMDNEMjVBQTJFMzE5QjY7cGFyZW50Z3VpZD0"
+                },
+                {
+                    "name": "Share incentives",
+                    "id": "Z3VpZD11cm46dG9waWM6QkM0QUQ5NTE3RTY4NDIwQTg3RDExOUFDODk1Q0FCREM7cGFyZW50Z3VpZD0"
+                },
+                {
+                    "name": "Tax",
+                    "id": "Z3VpZD11cm46dG9waWM6OTNEM0E2OEE0RkQyNEY1MDhBQzdGMkQ4ODI4QTJDODE7cGFyZW50Z3VpZD0"
+                },
+                {
+                    "name": "TMT",
+                    "id": "Z3VpZD11cm46dG9waWM6NzAyQTI2NUYxNkIyNDY5MEI1QTdDMjVENDkyMjI0OTM7cGFyZW50Z3VpZD0"
+                },
+                {
+                    "name": "Tort",
+                    "id": "Z3VpZD11cm46dG9waWM6MDAwOEM2NTEzQkVDNEI4NzlGMEZERUEyRjQwODM4Njg7cGFyZW50Z3VpZD0"
+                },
+                {
+                    "name": "Welfare, housing and social security law",
+                    "id": "Z3VpZD11cm46dG9waWM6NDQ5NTJDRDUwOUQ1NENEQUJDOTJEQUIxMkM1QjBGNkM7cGFyZW50Z3VpZD0"
+                }
+            ]
+        }
+    ],
     "resultLocation": "",
     "cdmMapping": {
         "structured": [

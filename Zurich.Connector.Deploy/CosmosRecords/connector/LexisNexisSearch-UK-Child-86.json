@@ -35,13 +35,6 @@
         "_comment": ""
       },
       {
-        "name": "Type",
-        "type": "string",
-        "responseElement": "DocumentContent@odata.mediaContentType",
-        "isInner": false,
-        "_comment": ""
-      },
-      {
         "name": "CreationDate",
         "type": "DateTime",
         "responseElement": "Date",
@@ -53,6 +46,13 @@
         "name": "id",
         "type": "string",
         "responseElement": "ResultId",
+        "_comment": ""
+      },
+      {
+        "name": "contentType",
+        "type": "string",
+        "responseElement": "ContentType",
+        "isInner": false,
         "_comment": ""
       }
     ]
