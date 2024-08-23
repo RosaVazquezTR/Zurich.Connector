@@ -44,6 +44,7 @@ namespace Zurich.Connector.Web
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.EntityType, opt => opt.MapFrom(src => src.Info.EntityType))
                 .ForMember(dest => dest.DataSource, opt => opt.MapFrom(src => src.DataSource))
+                .ForMember(dest => dest.Filters, opt => opt.MapFrom(src => src.Filters))
                 .ForMember(dest => dest.RegistrationStatus, opt => opt.MapFrom(src => src.RegistrationStatus))
                 .ForMember(dest => dest.Alias, opt => opt.MapFrom(src => src.Alias))
                 .ForMember(dest => dest.Sort, opt => opt.MapFrom(src => src.Request.Sorting.Properties.Select(x => SortType.Parse(typeof(SortType), x.Name, true))));

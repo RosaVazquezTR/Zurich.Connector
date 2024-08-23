@@ -255,7 +255,7 @@ namespace Zurich.Connector.Tests.ServiceTests
             var cosmostService = new CosmosService(_mockCosmosClientStore.Object, _mapper, config);
 
             //Act
-            var connectors = (await cosmostService.GetConnectors(false, condition)).ToList();
+            var connectors = (await cosmostService.GetConnectors(false, false, condition)).ToList();
 
             //Assert
             _mockCosmosClientStore.Verify(x => x.GetDocuments(CosmosConstants.ConnectorContainerId, CosmosConstants.ConnectorPartitionKey, condition), Times.Once());
@@ -409,7 +409,7 @@ namespace Zurich.Connector.Tests.ServiceTests
             var cosmostService = new CosmosService(_mockCosmosClientStore.Object, _mapper, config);
 
             //Act
-            var connectors = (await cosmostService.GetConnectors(false, condition)).ToList();
+            var connectors = (await cosmostService.GetConnectors(false, false, condition)).ToList();
 
             //Assert
             _mockCosmosClientStore.Verify(x => x.GetDocuments(CosmosConstants.ConnectorContainerId, CosmosConstants.ConnectorPartitionKey, condition), Times.Once());

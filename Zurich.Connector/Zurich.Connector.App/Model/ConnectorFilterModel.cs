@@ -30,5 +30,9 @@ namespace Zurich.Connector.Web.Models
         /// DataSource is optional parameter to filter by specific data source.
         /// </summary>
         public List<string> DataSources { get; set; }
+        /// <summary>
+        /// If true - Return the filter values in the response
+        /// </summary>
+        public bool RetrieveFilters { get; set; }
     }
 }

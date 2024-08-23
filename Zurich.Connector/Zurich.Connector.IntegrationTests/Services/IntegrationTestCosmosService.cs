@@ -87,7 +87,7 @@ namespace Zurich.Connector.App.Services
         /// Fetch all connectors from Cosmos
         /// </summary>
         /// <returns>Connector document list.</returns> 
-        public async Task<IEnumerable<ConnectorModel>> GetConnectors(bool includeDataSource = false, Expression<Func<ConnectorDocument, bool>> condition = null)
+        public async Task<IEnumerable<ConnectorModel>> GetConnectors(bool includeDataSource = false, bool retrieveFilters=false, Expression<Func<ConnectorDocument, bool>> condition = null)
         {
             // TODO: fix Hack around undefined.  At the moment only 10 works for this.
             if (condition.ToString().Contains("blnShowPreReleaseConnectors"))

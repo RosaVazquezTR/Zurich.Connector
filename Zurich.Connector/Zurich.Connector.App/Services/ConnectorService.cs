@@ -106,7 +106,7 @@ namespace Zurich.Connector.Data.Services
                                  && (isDataSourceFilter == false || dataSourceFilter.Contains(connector.Info.DataSourceId));
                 }
 
-                var connectors = await _cosmosService.GetConnectors(true, condition);
+                var connectors = await _cosmosService.GetConnectors(true, filters.RetrieveFilters, condition);
 
                 if (filters.RegistrationMode != null && filters.RegistrationMode.Any())
                 {

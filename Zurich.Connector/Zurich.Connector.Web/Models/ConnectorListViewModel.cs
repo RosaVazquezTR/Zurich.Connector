@@ -34,6 +34,11 @@ namespace Zurich.Connector.Web.Models
         public DataSourceViewModel DataSource { get; set; }
 
         /// <summary>
+        /// Filter details
+        /// </summary>
+        public IEnumerable<FilterViewModel> Filters { get; set; }
+
+        /// <summary>
         /// Time of creation
         /// </summary>
         public DateTime? CreatedTime { get; set; }

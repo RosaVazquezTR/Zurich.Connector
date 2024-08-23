@@ -67,7 +67,7 @@ namespace Zurich.Connector.App.Services
         /// Fetch all connectors from Cosmos
         /// </summary>
         /// <returns>Connector document list.</returns> 
-        public async Task<IEnumerable<ConnectorModel>> GetConnectors(bool includeDataSource = false, Expression<Func<ConnectorDocument, bool>> condition = null)
+        public async Task<IEnumerable<ConnectorModel>> GetConnectors(bool includeDataSource = false, bool retrieveFilters = false,  Expression<Func<ConnectorDocument, bool>> condition = null)
         {
             var connectorDocuments = _cosmosContext.GetDocuments(CosmosConstants.ConnectorContainerId, CosmosConstants.ConnectorPartitionKey, condition);
             var connectors = _mapper.Map<IEnumerable<ConnectorModel>>(connectorDocuments);
@@ -80,6 +80,10 @@ namespace Zurich.Connector.App.Services
                 foreach (var connector in connectors)
                 {
                     connector.DataSource = dataSourceResult.FirstOrDefault(d => d.Id == connector.Info.DataSourceId);
+                    if(!retrieveFilters)
+                    {
+                        connector.Filters = null;
+                    }
                 }
             }
 

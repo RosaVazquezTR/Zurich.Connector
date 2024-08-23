@@ -44,7 +44,7 @@ namespace Zurich.Connector.App.Model
         /// <summary>
         /// Filter details
         /// </summary>
-        public List<ConnectorsFiltersModel> Filters { get; set; }
+        public IEnumerable<ConnectorsFiltersModel> Filters { get; set; }
         /// <summary>
         /// Pagination properties.
         /// </summary>
