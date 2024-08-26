@@ -97,7 +97,8 @@ namespace Zurich.Connector.App.Services
             DataSourceRegistration response = new DataSourceRegistration();
 
             // if a user already registered just return true
-            List<DataSourceInformation> currentUserRegistrations = (await _OAuthService.GetUserRegistrations()).ToList();
+            IEnumerable<DataSourceInformation> currentUserRegistrations = await _OAuthService.GetUserRegistrations();
+
             if (currentUserRegistrations != null && currentUserRegistrations.Any(x => x.AppCode.Equals(applicationCode, StringComparison.OrdinalIgnoreCase)))
             {
                 response.Registered = true;
