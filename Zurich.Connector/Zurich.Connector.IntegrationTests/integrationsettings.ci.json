@@ -12,7 +12,7 @@
     "Host": "https://localhost:44328"
   },
   "onePassUsername": {
-    "RecentOptedInUser": "manualuser1.us",
+    "RecentOptedInUser": "automationuser2.us",
     "RecentOptedOutUser": "manualuser2.us"
   },
   "IdentityServer": {
