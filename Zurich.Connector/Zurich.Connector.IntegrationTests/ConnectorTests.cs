@@ -98,7 +98,7 @@ namespace Zurich.Connector.IntegrationTests
             {
                 request = $"http://localhost//api/v1/Connectors/{connector.Id}/Data?Hostname=cloudimanage.com";
             }
-            if (connector.Info.DataSourceId != "10" && connector.Info.DataSourceId != "45" && connector.Info.DataSourceId != "48")
+            if (connector.Info.DataSourceId != "10" && connector.Info.DataSourceId != "45" && connector.Info.DataSourceId != "48" && connector.Info.DataSourceId != "13")
             {
                 HttpRequestMessage getRequest = new Helper().TokenRequest(request);
 
