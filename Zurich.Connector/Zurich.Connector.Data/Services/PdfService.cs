@@ -1,18 +1,13 @@
-﻿using GroupDocs.Parser;
-using GroupDocs.Parser.Options;
-using iText.Kernel.Pdf;
+﻿using iText.Kernel.Pdf;
 using iText.Kernel.Pdf.Canvas.Parser;
-using iText.Layout;
-using Microsoft.Rest.Azure;
 using Newtonsoft.Json.Linq;
-using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Zurich.Connector.Data.Interfaces;
+using Zurich.Connector.Data.Utils;
 
 namespace Zurich.Connector.Data.Services
 {
@@ -24,13 +19,11 @@ namespace Zurich.Connector.Data.Services
 
             using (PdfDocument document = new(new PdfReader(documentStream)))
             {
-                JObject pageObjects = GetDocumentPages(document);
-                documentObject.Add("documentContent", pageObjects);
+                documentObject.Add("documentContent", GetDocumentPages(document));
 
                 if (transformToPdf)
                 {
-                    byte[] fileBytes = ConvertDocumentToPdf(documentStream);
-                    documentObject.Add("documentBase64", Convert.ToBase64String(fileBytes));
+                    documentObject.Add("documentBase64", Base64Utils.EncodeStreamToBase64(documentStream));
                 }
             }
 
@@ -64,14 +57,6 @@ namespace Zurich.Connector.Data.Services
         {
             PdfPage page = pdfDocument.GetPage(pageNumber);
             return PdfTextExtractor.GetTextFromPage(page);
-        }
-
-        private static byte[] ConvertDocumentToPdf(Stream documentStream)
-        {
-            long fileLenght = documentStream.Length;
-            byte[] bytes = new byte[fileLenght];
-            documentStream.Read(bytes, 0, (int)fileLenght);
-            return bytes;
         }
     }
 }

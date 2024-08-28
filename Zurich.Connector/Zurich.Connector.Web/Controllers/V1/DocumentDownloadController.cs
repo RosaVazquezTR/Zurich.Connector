@@ -19,7 +19,7 @@ namespace Zurich.Connector.Web.Controllers.V1
     [ApiVersion("1.0")]
     public class DocumentDownloadController(IDocumentDownloadService documentDownloadService) : ControllerBase
     {
-        private readonly List<string> SUPPORTED_CONNECTORS = ["44", "14", "80", "47", "12", "89"];
+        private readonly List<string> SUPPORTED_CONNECTORS = ["44", "14", "80", "47", "12", "89", "91"];
 
         /// <summary>
         /// Downloads a document for a specific connector.

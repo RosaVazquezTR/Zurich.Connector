@@ -1,6 +1,4 @@
 ﻿using AutoMapper;
-using Microsoft.Extensions.DependencyInjection;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -9,8 +7,6 @@ using Zurich.Common.Models.OAuth;
 using Zurich.Connector.App.Model;
 using Zurich.Connector.Data.DataMap;
 using Zurich.Connector.Data.Factories;
-using Zurich.Connector.Data.Interfaces;
-using Zurich.Connector.Data.Model;
 using Zurich.Connector.Data.Repositories;
 using Zurich.Connector.Data.Repositories.CosmosDocuments;
 using Zurich.Connector.Data.Utils;
@@ -87,7 +83,7 @@ namespace Zurich.Connector.App.Services
                 throw new ApplicationException("Document content is empty.");
             }
 
-            data = new MemoryStream(Convert.FromBase64String(result));
+            data = Base64Utils.DecodeToStream(result);
 
             await redisRepository.SetAsync($"{dataBaseId}_{documentId}_stream", data);
 

@@ -1,0 +1,49 @@
+{
+    "id": "98",
+    "partitionkey": "ConnectorList",
+    "alias": "netdocsus.download",
+    "info": {
+      "title": "Get Document from Net documents US",
+      "description": "Get Document from Net documents US",
+      "entityType": "download",
+      "dataSourceId": "57",
+      "version": "1.0",
+      "subType": "Parent"
+    },
+    "hostName": "preview-us.netdocuments.com",
+    "request": {
+      "endpointPath": "/api/v2/document/{docId}/version/1/pdf",
+      "method": "GET",
+      "parameters": [
+        {
+          "cdmName": "docId",
+          "name": "docId",
+          "inClause": "Path",
+          "required": true,
+          "type": "string",
+          "defaultValue": "",
+          "tags": []
+        }
+      ],
+      "sorting": {
+        "properties": []
+      }
+    },
+    "response": {
+      "schema": {
+        "properties": {}
+      },
+      "type": "json"
+    },
+    "pagination": {
+      "available": false,
+      "paginationType": "",
+      "isZeroBasedOffset": true
+    },
+    "resultLocation": "",
+    "filters": [],
+    "CDMmapping": {
+      "structured": [],
+      "unstructured": []
+    }
+  }

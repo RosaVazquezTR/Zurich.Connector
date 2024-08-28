@@ -1,13 +1,13 @@
 ﻿using Asp.Versioning;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net;
 using System.Threading.Tasks;
-using System;
-using Zurich.Connector.App.Services;
 using Zurich.Connector.App.Model;
-using System.IO;
+using Zurich.Connector.App.Services;
 
 namespace Zurich.Connector.Web.Controllers.V2
 {
@@ -16,7 +16,7 @@ namespace Zurich.Connector.Web.Controllers.V2
     [ApiVersion("2.0")]
     public class DocumentDownloadController(IDocumentDownloadService documentDownloadService) : ControllerBase
     {
-        private readonly List<string> SUPPORTED_CONNECTORS = ["44", "14", "80", "47", "12"];
+        private readonly List<string> SUPPORTED_CONNECTORS = ["44", "14", "80", "47", "12", "89", "91"];
 
         /// <summary>
         /// This temporal endpoint acts as a proxy for calling the iManage Document Download Enpoint for the FS UI POC.

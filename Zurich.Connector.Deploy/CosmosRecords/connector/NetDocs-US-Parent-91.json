@@ -8,7 +8,8 @@
         "entityType": "Search",
         "dataSourceId": "57",
         "version": "1.0",
-        "subType": "Parent"
+        "subType": "Parent",
+        "downloadConnector": "98"
     },
     "request": {
         "endpointPath": "/v2/Search/{93.primaryCabinet}",
