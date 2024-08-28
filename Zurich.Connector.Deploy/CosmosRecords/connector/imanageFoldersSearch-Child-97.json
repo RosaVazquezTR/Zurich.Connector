@@ -1,0 +1,41 @@
+{
+    "id": "97",
+    "partitionkey": "ConnectorList",
+    "info": {
+        "title": "Search folders from iManage - Child connector for 96",
+        "description": "Search folders from iManage - Child connector for 96",
+        "entityType": "Folder",
+        "dataSourceId": "10",
+        "version": "1.0",
+        "subType": "Child"
+    },
+    "preRelease": true,
+    "request": {},
+    "response": {},
+    "filters": [],
+    "resultLocation": "data",
+    "cdmMapping": {
+        "structured": [
+            {
+                "name": "Title",
+                "type": "string",
+                "responseElement": "name",
+                "_comment": "Folder name"
+            }
+        ],
+        "unstructured": [
+            {
+                "name": "id",
+                "type": "string",
+                "responseElement": "id",
+                "_comment": "Folder id"
+            },
+            {
+                "name": "owner",
+                "type": "string",
+                "responseElement": "owner",
+                "_comment": "Folder's owner"
+            }
+        ]
+    }
+}

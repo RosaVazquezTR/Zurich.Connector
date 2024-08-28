@@ -1,0 +1,69 @@
+{
+    "id": "96",
+    "partitionkey": "ConnectorList",
+    "alias": "imanage.folders",
+    "info": {
+        "title": "Search folders from iManage",
+        "description": "Search folders from iManage",
+        "entityType": "Folder",
+        "dataSourceId": "10",
+        "version": "1.0",
+        "subType": "Parent"
+    },
+    "preRelease": true,
+    "hostName": "cloudimanage.com",
+    "request": {
+        "endpointPath": "/work/api/v2/customers/{55.customer_id}/folders",
+        "method": "GET",
+        "parameters": [
+            {
+                "cdmName": "ResultSize",
+                "name": "limit",
+                "inClause": "Query",
+                "required": false,
+                "type": "int",
+                "defaultValue": "100"
+            },
+            {
+                "cdmName": "Offset",
+                "name": "offset",
+                "inClause": "Query",
+                "required": false,
+                "type": "int",
+                "defaultValue": "0"
+            },
+            {
+                "cdmName": "TotalCount",
+                "name": "total",
+                "inClause": "Query",
+                "required": false,
+                "type": "boolean",
+                "defaultValue": "true"
+            }
+        ],
+        "sorting": {
+            "properties": []
+        }
+    },
+    "response": {
+        "type": "JSON"
+    },
+    "filters": [],
+    "cdmMapping": {
+        "structured": [
+            {
+                "name": "Count",
+                "type": "short",
+                "responseElement": "total_count",
+                "_comment": "Total count of found folders."
+            },
+            {
+                "name": "Folders",
+                "type": "object",
+                "responseElement": "{97}",
+                "_comment": ""
+            }
+        ],
+        "unstructured": []
+    }
+}
