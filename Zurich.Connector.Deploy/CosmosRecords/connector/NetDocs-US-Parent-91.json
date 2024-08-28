@@ -10,7 +10,6 @@
         "version": "1.0",
         "subType": "Parent"
     },
-    "preRelease": true,
     "request": {
         "endpointPath": "/v2/Search/{93.primaryCabinet}",
         "method": "GET",
