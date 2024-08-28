@@ -1,16 +1,12 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json.Linq;
 using System;
-using System.Globalization;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
-using System.Text.RegularExpressions;
+using System.Text;
 using System.Threading.Tasks;
-using System.Web;
 using Zurich.Common.Models.OAuth;
 using Zurich.Common.Repositories;
 using Zurich.Common.Services.Security;
@@ -19,9 +15,6 @@ using Zurich.Connector.Data.Model;
 using Zurich.Connector.Data.Repositories;
 using Zurich.Connector.Data.Repositories.CosmosDocuments;
 using Zurich.Connector.Data.Services;
-using Zurich.ProductData.Models;
-using OAuthAPITokenResponse = Zurich.Common.Models.OAuth.OAuthAPITokenResponse;
-using System.Text;
 using Zurich.TenantData;
 
 namespace Zurich.Connector.Data.DataMap
@@ -44,14 +37,14 @@ namespace Zurich.Connector.Data.DataMap
             this._cosmosContext = cosmosContext;
             this._sessionAccessor = sessionAccessor;
         }
-        public async override Task<T> GetAndMapResults<T>(ConnectorDocument connector, string transferToken, NameValueCollection query, Dictionary<string, string> headers, Dictionary<string, string> requestParameters, string domain = null)
+        public override async Task<T> GetAndMapResults<T>(ConnectorDocument connector, string transferToken, NameValueCollection query, Dictionary<string, string> headers, Dictionary<string, string> requestParameters, string domain = null)
         {
             var appinfoDetails = _oAuthOptions.Connections.SingleOrDefault(x => x.Key.Equals(connector.DataSource.appCode, StringComparison.OrdinalIgnoreCase));
             string svcCredentials = Convert.ToBase64String(Encoding.UTF8.GetBytes(appinfoDetails.Value.Id + ":" + appinfoDetails.Value.Secret));
             connector.DataSource.securityDefinition.defaultSecurityDefinition.authorizationHeader = "Basic " + svcCredentials;
             headers.Add("Authorization", connector.DataSource.securityDefinition.defaultSecurityDefinition.authorizationHeader);
 
-            ApiInformation apiInfo = new ApiInformation()
+            ApiInformation apiInfo = new()
             {
                 AppCode = connector.DataSource.appCode,
                 HostName = string.IsNullOrEmpty(connector.HostName) ? connector.DataSource.domain : connector.HostName,
@@ -72,12 +65,6 @@ namespace Zurich.Connector.Data.DataMap
                 _logger.LogError(e.Message);
                 throw;
             }
-
-            return default(T);
         }
-
     }
-
-
-
 }

@@ -1,7 +1,7 @@
 {
     "id": "95",
     "partitionkey": "ConnectorList",
-	"alias": "netdocs.container",
+	"alias": "netdocsus.container",
     "info": {
         "title": "NetDocuments cabinets information",
         "description": "Gets the NetDocuments cabinets available for the user",

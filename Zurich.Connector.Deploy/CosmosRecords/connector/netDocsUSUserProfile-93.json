@@ -1,7 +1,7 @@
 {
     "id": "93",
     "partitionkey": "ConnectorList",
-	"alias": "netdocs.userprofile",
+	"alias": "netdocsus.userprofile",
     "info": {
         "title": "NetDocuments user information",
         "description": "Gets the NetDocuments user information",

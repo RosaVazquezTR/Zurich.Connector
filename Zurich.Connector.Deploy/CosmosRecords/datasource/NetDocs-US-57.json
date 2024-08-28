@@ -1,9 +1,9 @@
 {
   "id": "57",
   "partitionkey": "DataSourceList",
-  "name": "NetDocuments",
+  "name": "NetDocuments US",
   "description": "Connects to the NetDocuments API",
-  "appCode": "NetDocs",
+  "appCode": "NetDocsUS",
   "infoURL": "",
   "extraRequestContext": "",
   "registrationInfo": {

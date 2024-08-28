@@ -35,7 +35,7 @@ namespace Zurich.Connector.App.Services.DataSources
 
         public bool IsCompatible(string appCode)
         {
-            return appCode == KnownDataSources.netDocs;
+            return appCode == KnownDataSources.netDocsUS;
         }
 
         public async Task<dynamic> SetItemLink(ConnectorEntityType entityType, dynamic item, string appCode, string hostName)
@@ -47,7 +47,7 @@ namespace Zurich.Connector.App.Services.DataSources
                     case ConnectorEntityType.Search:
                         if (item is Dictionary<string, string>)
                             item = AddFiltersToQuery(item);
-                        else if (item is List <ConnectorsFiltersModel>)
+                        else if (item is List<ConnectorsFiltersModel>)
                         {
                             JArray availableCabinets = await GetAvailableCabinets(appCode);
                             List<FilterList> filtersList = availableCabinets
@@ -75,7 +75,7 @@ namespace Zurich.Connector.App.Services.DataSources
             // Map the filters inQuery
             if (allParameters["q"].Contains("InQueryFilter"))
             {
-                StringBuilder updatedQuery = new StringBuilder(allParameters["q"]);
+                StringBuilder updatedQuery = new(allParameters["q"]);
                 IEnumerable<ConnectorRequestParameterModel> inQueryFilters = connector.Request?.Parameters
                     .Where(p => p.CdmName.Contains("InQueryFilter"));
                 foreach (ConnectorRequestParameterModel filterParam in inQueryFilters)
@@ -100,7 +100,7 @@ namespace Zurich.Connector.App.Services.DataSources
         /// <returns>The updated query with the InQueryFilters</returns>
         private Dictionary<string, string> AddFiltersToQuery(Dictionary<string, string> queryParameters)
         {
-            StringBuilder updatedQuery = new StringBuilder(queryParameters["Query"]);
+            StringBuilder updatedQuery = new(queryParameters["Query"]);
             foreach (string key in queryParameters.Keys.Where(k => k.Contains("InQueryFilter")))
             {
                 string[] filterValues = queryParameters[key].Split(",");
@@ -121,12 +121,12 @@ namespace Zurich.Connector.App.Services.DataSources
         private async Task<string> GetCabinetId(string appCode, string hostName)
         {
             ConnectorModel connectorModel = null;
-            if (appCode == KnownDataSources.netDocs)
+            if (appCode == KnownDataSources.netDocsUS)
             {
                 // 93 = NetDocs user info
                 connectorModel = await _cosmosService.GetConnector("93", true);
             }
-            
+
             ConnectorDocument connectorDocument = _mapper.Map<ConnectorDocument>(connectorModel);
             // Make api call to get the cabinet id from NetDocuments user information
             connectorDocument.HostName = hostName;
@@ -141,7 +141,7 @@ namespace Zurich.Connector.App.Services.DataSources
         private async Task<JArray> GetAvailableCabinets(string appCode)
         {
             ConnectorModel connectorModel = null;
-            if (appCode == KnownDataSources.netDocs)
+            if (appCode == KnownDataSources.netDocsUS)
             {
                 // 95 = NetDocs cabinets
                 connectorModel = await _cosmosService.GetConnector("95", true);

@@ -1,29 +1,28 @@
 ﻿using AutoMapper;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Threading.Tasks;
+using Zurich.Common.Repositories;
 using Zurich.Connector.App;
+using Zurich.Connector.App.Exceptions;
 using Zurich.Connector.App.Model;
 using Zurich.Connector.App.Services;
 using Zurich.Connector.App.Services.DataSources;
 using Zurich.Connector.App.Utils;
 using Zurich.Connector.Data.DataMap;
 using Zurich.Connector.Data.Factories;
+using Zurich.Connector.Data.Model;
 using Zurich.Connector.Data.Repositories;
 using Zurich.Connector.Data.Repositories.CosmosDocuments;
-using CommonServices = Zurich.Common.Services;
 using Zurich.TenantData;
-using Zurich.Connector.Data.Model;
-using Microsoft.Extensions.Configuration;
-using Zurich.Connector.App.Exceptions;
-using Zurich.Common.Repositories;
 using AppCodes = Zurich.Connector.Data.Constants.AppCodes;
-using Newtonsoft.Json;
-using Zurich.Connector.Web.Models;
+using CommonServices = Zurich.Common.Services;
 
 namespace Zurich.Connector.Data.Services
 {
@@ -194,7 +193,7 @@ namespace Zurich.Connector.Data.Services
                     // Validate if the connector is OneDrive or NetDocs to obtain additional info for the Query parameters
                     if (connectorDocument.DataSource.appCode == KnownDataSources.oneDrive)
                         queryParameters = await GetAdditionalConnectorData(connectorModel, queryParameters);
-                    else if(connectorDocument.DataSource.appCode == KnownDataSources.netDocs)
+                    else if (connectorDocument.DataSource.appCode == KnownDataSources.netDocsUS)
                     {
                         queryParameters = await GetAdditionalConnectorData(connectorModel, queryParameters);
                         // Populate available cabinets to the filters of the connector
@@ -205,7 +204,7 @@ namespace Zurich.Connector.Data.Services
                     Dictionary<string, string> headerParameters = await _dataExtractionService.ExtractDataSource(mappedQueryParameters, queryParameters, hostname, connectorDocument);
 
                     // As parameters are removed when making a request, we need a copy of them to addtitional requests if needed
-                    NameValueCollection mappedQueryParametersCopy = new NameValueCollection(mappedQueryParameters);
+                    NameValueCollection mappedQueryParametersCopy = new(mappedQueryParameters);
 
                     // Thinking about using the instance domain instead of its name
                     queryParameters.Add("IHClauseBankCapabilityId", _configuration.GetValue<string>(AppSettings.IHClauseBankCapabilityId));
@@ -257,7 +256,7 @@ namespace Zurich.Connector.Data.Services
             {
                 try
                 {
-                    JObject logObjectTTRequest = new JObject();
+                    JObject logObjectTTRequest = new();
                     logObjectTTRequest.Add("message", "TT Request started with following parameters:");
 
                     var requestJsonObject = JsonConvert.DeserializeObject<List<JObject>>(queryParameters["Filters"]);
@@ -342,7 +341,7 @@ namespace Zurich.Connector.Data.Services
 
         public NameValueCollection MapQueryParametersFromDB(Dictionary<string, string> cdmQueryParameters, ConnectorModel connectorModel)
         {
-            NameValueCollection modifiedQueryParameters = new NameValueCollection();
+            NameValueCollection modifiedQueryParameters = new();
             var queryParameters = new Dictionary<string, string>();
             var sortParameters = new Dictionary<string, string>();
 
@@ -488,14 +487,14 @@ namespace Zurich.Connector.Data.Services
 
         private bool RequiredParametersCheck(ConnectorRequestParameterModel request, Dictionary<string, string> queryParameters)
         {
-            return String.IsNullOrWhiteSpace(request.DefaultValue)
+            return string.IsNullOrWhiteSpace(request.DefaultValue)
                 && request.Required
                 && !queryParameters.ContainsKey(request.Name);
         }
 
         private bool DefaultParametersCheck(ConnectorRequestParameterModel request, Dictionary<string, string> queryParameters)
         {
-            return !String.IsNullOrWhiteSpace(request.DefaultValue)
+            return !string.IsNullOrWhiteSpace(request.DefaultValue)
                 && !queryParameters.ContainsKey(request.Name)
                 && request.InClause != ODataConstants.OData
                 && request.InClause != InClauseConstants.Headers
@@ -572,7 +571,7 @@ namespace Zurich.Connector.Data.Services
 
         private static dynamic ManualOffset(dynamic data, Dictionary<string, string> queryParameters)
         {
-            JArray offsetDocuments = new JArray();
+            JArray offsetDocuments = new();
             var documents = data.Documents;
             int resultSize = Convert.ToInt32(queryParameters["resultSize"]);
             int offset = Convert.ToInt32(queryParameters["offset"]);
@@ -647,7 +646,7 @@ namespace Zurich.Connector.Data.Services
 
         private static JArray PaginationResponseDocuments(JArray documents, int from, int to)
         {
-            JArray aux = new JArray();
+            JArray aux = new();
             for (int i = from - 1; i < to; i++)
             {
                 documents[i]["AdditionalProperties"]["position"] = i + 1;
@@ -672,7 +671,7 @@ namespace Zurich.Connector.Data.Services
                 var keyWord = JToken.Parse(queryParameters["filters"])
                         ?.Where(filter => filter["key"].Value<string>() == "keyword").FirstOrDefault()?["value"];
 
-                if (!String.IsNullOrEmpty(keyWord?.Value<string>()))
+                if (!string.IsNullOrEmpty(keyWord?.Value<string>()))
                     documents = new(documents.OrderByDescending(obj => (float)obj["AdditionalProperties"]["score"]).ThenBy(obj => obj["AdditionalProperties"]["fieldId"]));
                 else
                     documents = new JArray(documents.OrderByDescending(obj => (float)obj["AdditionalProperties"]["confidence"]).ThenByDescending(obj => obj["AdditionalProperties"]["lastModifiedOn"]));
@@ -687,7 +686,7 @@ namespace Zurich.Connector.Data.Services
         /// <param name="connector">The data connector</param>
         /// <param name="queryParameters">The search queryParameters</param>
         /// <returns>The search queryParameters with the additional info</returns>
-        private async Task<Dictionary<string, string>> GetAdditionalConnectorData(ConnectorModel connector, Dictionary<string,string> queryParameters)
+        private async Task<Dictionary<string, string>> GetAdditionalConnectorData(ConnectorModel connector, Dictionary<string, string> queryParameters)
         {
             var dataSourceOperationsService = _dataSourceOperationsFactory.GetDataSourceOperationsService(connector?.DataSource?.AppCode);
             if (dataSourceOperationsService != null)
@@ -698,7 +697,7 @@ namespace Zurich.Connector.Data.Services
                     if (!string.IsNullOrWhiteSpace(urlPath))
                         queryParameters["Query"] += $" (path:{urlPath})";
                 }
-                else if (connector.DataSource.AppCode == KnownDataSources.netDocs)
+                else if (connector.DataSource.AppCode == KnownDataSources.netDocsUS)
                 {
                     Dictionary<string, string> updatedQueryParams = await dataSourceOperationsService.SetItemLink(connector.Info.EntityType, queryParameters, connector?.DataSource?.AppCode, connector.HostName);
                     if (updatedQueryParams != null)

@@ -1,7 +1,7 @@
 {
     "id": "91",
     "partitionkey": "ConnectorList",
-    "alias": "netdocs.search",
+    "alias": "netdocsus.search",
     "info": {
         "title": "Get search",
         "description": "Get Search Results from dafault cabinet in NetDocuments",
