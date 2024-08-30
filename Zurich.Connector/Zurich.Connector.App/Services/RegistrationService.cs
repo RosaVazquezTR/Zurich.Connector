@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Microsoft.ApplicationInsights;
+using Microsoft.ApplicationInsights.DataContracts;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +12,7 @@ using Zurich.Connector.Data;
 using Zurich.Connector.Data.Model;
 using Zurich.Connector.Data.Repositories.CosmosDocuments;
 using Zurich.TenantData;
+using static Zurich.Connector.Data.Constants;
 using AppModel = Zurich.Connector.App.Model;
 using CommonModel = Zurich.Common.Models.Connectors;
 using CommonServices = Zurich.Common.Services;
@@ -60,8 +63,9 @@ namespace Zurich.Connector.App.Services
         private readonly CommonServices.ITenantService _tenantService;
         private readonly ILegalHomeAccessCheck _legalHomeAccess;
         private readonly OAuthOptions _oAuthOptions;
+        private readonly TelemetryClient _telemetry;
 
-        public RegistrationService(ICosmosService cosmosService, ISessionAccessor sessionAccessor, IOAuthServices OAuthService, IOAuthApiRepository OAuthApiRepository, IConfiguration configuration, CommonServices.ITenantService tenantService, ILegalHomeAccessCheck legalHomeAccess, OAuthOptions oauthOptions)
+        public RegistrationService(ICosmosService cosmosService, ISessionAccessor sessionAccessor, IOAuthServices OAuthService, IOAuthApiRepository OAuthApiRepository, IConfiguration configuration, CommonServices.ITenantService tenantService, ILegalHomeAccessCheck legalHomeAccess, OAuthOptions oauthOptions, TelemetryClient telemetryClient)
         {
             _cosmosService = cosmosService;
             _sessionAccessor = sessionAccessor;
@@ -71,6 +75,7 @@ namespace Zurich.Connector.App.Services
             _tenantService = tenantService;
             _legalHomeAccess = legalHomeAccess;
             _oAuthOptions = oauthOptions;
+            _telemetry = telemetryClient; 
         }
 
         public async Task<DataSourceRegistration> RegisterConnector(string connectorId, string domain = null)
@@ -119,6 +124,17 @@ namespace Zurich.Connector.App.Services
                 var appinfoDetails = _oAuthOptions.Connections.SingleOrDefault(x => x.Key.Equals(applicationCode, StringComparison.OrdinalIgnoreCase));
                 domain = appinfoDetails.Value.BaseUrl;
             }
+
+            if (string.Equals(applicationCode, AppCodes.TTTenantApp))
+            {
+                var appTenantDetails = await _OAuthService.GetDatasourceTenantInfo(applicationCode);
+                if (String.IsNullOrWhiteSpace(appTenantDetails.AppTenantId))
+                {
+                    _telemetry.TrackTrace($"Unable to register connector. DI Tenat not registered for LPAS TenantId {appTenantDetails.TenantId}", SeverityLevel.Warning);
+                    throw new InvalidOperationException($"Unable to register connector. DI Tenat not registered for user TenantId");
+                }
+            }
+
             // if datasource not exists or domain is required and not provided 
             if (dataSource == null || (dataSource.RegistrationInfo.DomainRequired && string.IsNullOrEmpty(domain)))
             {

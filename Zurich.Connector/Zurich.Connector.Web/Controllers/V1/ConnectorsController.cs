@@ -52,7 +52,7 @@ namespace Zurich.Connector.Web.Controllers
                     .ToDictionary(k => k, v => HttpContext?.Request.Query[v].ToString(), StringComparer.OrdinalIgnoreCase);
 
                 var selectedConnector = _connectorService.GetConnector(id);
-
+                
                 if (selectedConnector.Result.Info.AcceptsSearchWildCard.HasValue)
                 {
                     if (!(bool)selectedConnector.Result.Info.AcceptsSearchWildCard && parameters["Query"] == "*")
@@ -253,21 +253,28 @@ namespace Zurich.Connector.Web.Controllers
                 return BadRequest("Connector Id must be defined");
             }
 
-            var registrationResult = await _registrationService.RegisterConnector(registrationModel.ConnectorId, registrationModel.Domain);
-            if (registrationResult == null)
+            try
             {
-                return BadRequest();
-            }
+                var registrationResult = await _registrationService.RegisterConnector(registrationModel.ConnectorId, registrationModel.Domain);
+                if (registrationResult == null)
+                {
+                    return BadRequest();
+                }
 
-            var result = _mapper.Map<DataSourceRegistrationResponseViewModel>(registrationResult);
+                var result = _mapper.Map<DataSourceRegistrationResponseViewModel>(registrationResult);
 
-            if (result.Registered || !string.IsNullOrEmpty(result.AuthorizeUrl))
-            {
-                return Ok(result);
+                if (result.Registered || !string.IsNullOrEmpty(result.AuthorizeUrl))
+                {
+                    return Ok(result);
+                }
+                else
+                {
+                    return BadRequest();
+                }
             }
-            else
+            catch (InvalidOperationException ex)
             {
-                return BadRequest();
+                return BadRequest(ex.Message);
             }
         }
 

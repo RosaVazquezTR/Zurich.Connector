@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using Microsoft.ApplicationInsights;
+using Microsoft.ApplicationInsights.DataContracts;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -60,6 +62,7 @@ namespace Zurich.Connector.Data.Services
         private readonly IConfiguration _configuration;
         private readonly IOAuthApiRepository _OAuthApiRepository;
         private readonly ISessionAccessor _sessionAccessor;
+        private readonly TelemetryClient _telemetry;
 
         public ConnectorDataService(
             IDataMappingFactory dataMappingFactory,
@@ -74,7 +77,8 @@ namespace Zurich.Connector.Data.Services
             CommonServices.ITenantService tenantService,
             IOAuthServices OAuthService,
             IConfiguration configuration,
-            ISessionAccessor sessionAccessor)
+            ISessionAccessor sessionAccessor,
+            TelemetryClient telemetryClient)
         {
             _dataMappingFactory = dataMappingFactory;
             _dataMappingRepo = dataMappingRepo;
@@ -90,6 +94,7 @@ namespace Zurich.Connector.Data.Services
             _OAuthService = OAuthService;
             _configuration = configuration;
             _sessionAccessor = sessionAccessor;
+            _telemetry = telemetryClient;
         }
 
         /// <summary>
@@ -119,6 +124,14 @@ namespace Zurich.Connector.Data.Services
             }
 
             availableRegistrations = availableRegistrations?.FindAll(x => x.AppCode == connectorModel.DataSource.AppCode).Take(instanceLimit).ToList<DataSourceInformation>();
+
+            bool hasValidDITenant = await ValidateDITenantInfo(connectorModel.DataSource.AppCode);
+
+            if (!hasValidDITenant)
+            {
+                _telemetry.TrackTrace($"Unable to run a search. DI Tenat not registered for user's TenantId.", SeverityLevel.Warning);
+                throw new InvalidOperationException($"Unable to run a search. DI Tenat not registered for user's TenantId. Please contact support.");
+            }
 
             ValidateResultSize(queryParameters, connectorModel);
             ValidateQueryParams(queryParameters, connectorModel);
@@ -292,7 +305,22 @@ namespace Zurich.Connector.Data.Services
             }
         }
 
-
+        /// <summary>
+        /// Valls OAuth service to validate if the user has a valid DI tenant
+        /// </summary>
+        /// <param name="appcode">The connector appcode</param>
+        /// <returns>False if appcode is TTTenantApp and no DI tenant is registered. True otherwise.</returns>
+        private async Task<bool> ValidateDITenantInfo (string appCode)
+        {
+            bool isvalid = true; 
+            if (string.Equals(appCode, AppCodes.TTTenantApp))
+            {
+                var tenantInfo = await _OAuthService.GetDatasourceTenantInfo(appCode);
+                if (string.IsNullOrWhiteSpace(tenantInfo.AppTenantId))
+                    isvalid = false;
+            }
+            return isvalid; 
+        }
         private void ValidateResultSize(Dictionary<string, string> queryParameters, ConnectorModel connectorModel)
         {
             if (queryParameters.ContainsKey(QueryParameters.ResultSize))

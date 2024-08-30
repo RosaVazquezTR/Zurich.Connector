@@ -23,6 +23,13 @@ namespace Zurich.Connector.App.Services
         Task<List<DataSourceInformation>> GetAvailableRegistrations();
 
         /// <summary>
+        /// Returns the tenant info for the given appCode
+        /// </summary>
+        /// <returns>Returns the tenant info, as AppTenantId, TenantId</returns>
+        /// <param name="applicationCode">The application to get the Tenet Info</param>
+        Task<DataSourceTenantInformation> GetDatasourceTenantInfo(string applicationCode);
+
+        /// <summary>
         /// Gets a users current dataSource registrations
         /// </summary>
         /// <returns>returns the information around the domain, appcode and base url for user registrations</returns>
@@ -58,6 +65,11 @@ namespace Zurich.Connector.App.Services
         {
             return await _OAuthRespository.GetAvailableRegistrations();
         }
+        public async Task <DataSourceTenantInformation> GetDatasourceTenantInfo(string applicationCode)
+        {
+            return await _OAuthRespository.GetDatasourceTenantInfo(applicationCode);
+        }
+
         public async Task<IEnumerable<DataSourceInformation>> GetUserRegistrations()
         {
             return await _OAuthRespository.GetUserRegistrations();

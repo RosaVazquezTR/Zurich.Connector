@@ -19,6 +19,11 @@
             /// Lexis Nexis UK code
             /// </summary>
             public const string LexisNexisUK = "LexisNexisUK";
+
+            /// <summary>
+            /// TTTenantApp code
+            /// </summary>
+            public const string TTTenantApp = "TTTenantApp";
         }
 
         /// <summary>

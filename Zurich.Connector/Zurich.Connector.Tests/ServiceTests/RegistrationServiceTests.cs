@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Microsoft.ApplicationInsights;
+using Microsoft.Extensions.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
@@ -35,7 +36,7 @@ namespace Zurich.Connector.Tests.ServiceTests
         private Mock<ITenantService> _mockTenantService;
         private Mock<ILegalHomeAccessCheck> _mockLegalHomeAccess;
         private Mock<OAuthOptions> _mockOAuthOptions;
-
+        private TelemetryClient _telemetryClientMock;
         #region Data Model
         List<ConnectorRegistration> registrations = new List<ConnectorRegistration>()
         {
@@ -84,13 +85,14 @@ namespace Zurich.Connector.Tests.ServiceTests
             _mockTenantService = new Mock<ITenantService>();
             _mockLegalHomeAccess = new Mock<ILegalHomeAccessCheck>();
             _mockOAuthOptions = new Mock<OAuthOptions>();
+            _telemetryClientMock = new TelemetryClient();
         }
 
         private RegistrationService CreateService(IConfiguration config = null)
         {
             if (config == null)
                 config = _mockConfiguration.Object;
-            return new RegistrationService(_mockCosmosService.Object, _mockSessionAccessor.Object, _mockOAuthService.Object, _mockOAuthApiRepository.Object, config, _mockTenantService.Object, _mockLegalHomeAccess.Object, _mockOAuthOptions.Object);
+            return new RegistrationService(_mockCosmosService.Object, _mockSessionAccessor.Object, _mockOAuthService.Object, _mockOAuthApiRepository.Object, config, _mockTenantService.Object, _mockLegalHomeAccess.Object, _mockOAuthOptions.Object, _telemetryClientMock);
         }
 
         [TestMethod]

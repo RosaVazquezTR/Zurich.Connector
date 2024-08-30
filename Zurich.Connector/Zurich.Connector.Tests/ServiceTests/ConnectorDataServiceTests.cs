@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.ApplicationInsights;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -48,7 +49,7 @@ namespace Zurich.Connector.Tests.ServiceTests
         private Mock<ILogger<Data.Services.ConnectorService>> _mockLogger;
         private Mock<IConfiguration> _mockConfiguration;
         private Mock<ISessionAccessor> _mockSessionAccessor;
-
+        private TelemetryClient _telemetryClientMock;
         [TestInitialize]
         public void TestInitialize()
         {
@@ -73,6 +74,7 @@ namespace Zurich.Connector.Tests.ServiceTests
             _mockLogger = new Mock<ILogger<Data.Services.ConnectorService>>();
             _mockConfiguration = new Mock<IConfiguration>();
             _mockSessionAccessor = new Mock<ISessionAccessor>();
+            _telemetryClientMock = new TelemetryClient();
         }
 
         private IConfiguration CreateFakeConfiguration()
@@ -92,7 +94,7 @@ namespace Zurich.Connector.Tests.ServiceTests
 
             return new ConnectorDataService(_mockDataMappingFactory.Object, _mockDataMappingRepo.Object, _mockLogger.Object, _mapper, _mockCosmosService.Object, _mockdataMappingService.Object,
                 _mockDataSourceOperationsFactory.Object, _mockRegistrationService.Object, _mockDataExtractionService.Object, _mockLegalHomeAccess.Object, _mockTenantService.Object,
-                _mockOAuthServices.Object, fakeConfig, _mockSessionAccessor.Object);
+                _mockOAuthServices.Object, fakeConfig, _mockSessionAccessor.Object, _telemetryClientMock);
 
         }
 

@@ -48,6 +48,12 @@ namespace Zurich.Connector.Data.Repositories
         /// <param name="applicationCode">The application code of the connector</param>
         /// <returns>Revoking of Tenanat application success or failure status</returns>
         Task<bool> RevokeTenantApplication(string applicationCode);
+        /// <summary>
+        /// Calls OAuth to Get the current tenant registration for a given AppCode
+        /// </summary>
+        /// <param name="applicationCode">The application code of the connector</param>
+        /// <returns>Datasource tenant information</returns>
+        Task<DataSourceTenantInformation> GetDatasourceTenantInfo(string appCode);
     }
 
 
@@ -92,6 +98,20 @@ namespace Zurich.Connector.Data.Repositories
                 var httpContent = await MakeRequest(requestMessage);
 
                 result = JsonConvert.DeserializeObject<List<DataSourceInformation>>(httpContent);
+            }
+
+            return result;
+        }
+
+        public async Task<DataSourceTenantInformation> GetDatasourceTenantInfo(string applicationCode)
+        {
+            DataSourceTenantInformation result;
+            string path = $"api/v1/datasources/{applicationCode}";
+            using (var requestMessage = new HttpRequestMessage(HttpMethod.Get, path))
+            {
+                var httpContent = await MakeRequest(requestMessage);
+
+                result = JsonConvert.DeserializeObject<DataSourceTenantInformation>(httpContent);
             }
 
             return result;
