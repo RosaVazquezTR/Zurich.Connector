@@ -1,0 +1,41 @@
+{
+    "id": "101",
+    "partitionkey": "ConnectorList",
+    "info": {
+        "title": "Get the top level folders of a cabinet from NetDocUS - Child of 100",
+        "description": "Get the top level folders of a cabinet from NetDocUS - Child of 100",
+        "entityType": "Folder",
+        "dataSourceId": "57",
+        "version": "1.0",
+        "subType": "Child"
+    },
+    "preRelease": true,
+    "request": {},
+    "response": {},
+    "filters": [],
+    "resultLocation": "Results",
+    "cdmMapping": {
+        "structured": [
+            {
+                "name": "Title",
+                "type": "string",
+                "responseElement": "Attributes.Name",
+                "_comment": "Folder name"
+            }
+        ],
+        "unstructured": [
+            {
+                "name": "id",
+                "type": "string",
+                "responseElement": "EnvId",
+                "_comment": "Folder id"
+            },
+            {
+                "name": "owner",
+                "type": "string",
+                "responseElement": "Attributes.CreatedBy",
+                "_comment": "Folder's owner"
+            }
+        ]
+    }
+}

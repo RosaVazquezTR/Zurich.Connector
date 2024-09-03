@@ -113,7 +113,6 @@ namespace Zurich.Connector.Data.Services
             int instanceLimit = _configuration.GetValue<int>(AppSettings.InstanceLimit, 10);
 
             ConnectorModel connectorModel = await _dataMappingService.RetrieveProductInformationMap(connectionIdentifier, hostname, retrieveFilters);
-
             List<DataSourceInformation> availableRegistrations;
 
             if (_sessionAccessor.TenantId != Guid.Empty && _sessionAccessor.UserId == Guid.Empty)
@@ -126,7 +125,6 @@ namespace Zurich.Connector.Data.Services
             }
 
             availableRegistrations = availableRegistrations?.FindAll(x => x.AppCode == connectorModel.DataSource.AppCode).Take(instanceLimit).ToList<DataSourceInformation>();
-
             bool hasValidDITenant = await ValidateDITenantInfo(connectorModel.DataSource.AppCode);
 
             if (!hasValidDITenant)
@@ -208,7 +206,7 @@ namespace Zurich.Connector.Data.Services
                     // Validate if the connector is OneDrive or NetDocs to obtain additional info for the Query parameters
                     if (connectorDocument.DataSource.appCode == KnownDataSources.oneDrive)
                         queryParameters = await GetAdditionalConnectorData(connectorModel, queryParameters);
-                    else if (connectorDocument.DataSource.appCode == KnownDataSources.netDocsUS)
+                    else if (connectorDocument.DataSource.appCode == KnownDataSources.netDocsUS && connectorDocument.Info.EntityType != ConnectorEntityType.Folder)
                     {
                         queryParameters = await GetAdditionalConnectorData(connectorModel, queryParameters);
                         // Populate available cabinets to the filters of the connector
@@ -858,16 +856,14 @@ namespace Zurich.Connector.Data.Services
         }
 
         /// <summary>
-        /// 
+        /// Get dynamic filters
         /// </summary>
-        /// <param name="connector"></param>
-        /// <returns></returns>
+        /// <param name="connector">Connector model</param>
+        /// <returns>List with dynamic filters</returns>
         private async Task<List<FilterList>> GetDynamicFilters(ConnectorModel connector)
         {
             var dataSourceOperationsService = _dataSourceOperationsFactory.GetDataSourceOperationsService(connector?.DataSource?.AppCode);
-
             List<FilterList> filterList = await dataSourceOperationsService.SetItemLink(connector.Info.EntityType, connector.Filters, connector.DataSource.AppCode, null);
-
             return filterList;
         }
     }

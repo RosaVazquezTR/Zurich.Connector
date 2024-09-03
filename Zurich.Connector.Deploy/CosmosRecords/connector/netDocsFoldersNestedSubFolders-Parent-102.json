@@ -1,0 +1,79 @@
+{
+    "id": "102",
+    "partitionkey": "ConnectorList",
+    "alias": "netdocsus.foldernestedsubfolders",
+    "info": {
+        "title": "Gets the nested folders of the given folder from NetDocUS",
+        "description": "Gets the nested folders of the given folder from NetDocUS",
+        "entityType": "Folder",
+        "dataSourceId": "57",
+        "version": "1.0",
+        "subType": "Parent"
+    },
+    "preRelease": true,
+    "request": {
+        "endpointPath": "/v2/container/{id}/sub",
+        "method": "GET",
+        "parameters": [
+            {
+                "cdmName": "ContainerId",
+                "name": "id",
+                "inClause": "Path",
+                "required": true,
+                "type": "string",
+                "defaultValue": ""
+            },
+            {
+                "cdmName": "Recursive",
+                "name": "recursive",
+                "inClause": "Query",
+                "required": false,
+                "type": "bool",
+                "defaultValue": "true"
+            },
+            {
+                "cdmName": "Properties",
+                "name": "select",
+                "inClause": "Query",
+                "required": false,
+                "type": "string",
+                "defaultValue": "StandardAttributes,Containers"
+            },
+            {
+                "cdmName": "Flags",
+                "name": "listFlags",
+                "inClause": "Query",
+                "required": false,
+                "type": "string",
+                "defaultValue": "131072"
+            }
+        ],
+        "sorting": {
+            "properties": []
+        }
+    },
+    "response": {
+        "schema": {
+            "properties": {}
+        },
+        "type": "JSON"
+    },
+    "pagination": {
+        "available": false,
+        "paginationType": "",
+        "isZeroBasedOffset": true
+    },
+    "resultLocation": "",
+    "filters": [],
+    "cdmMapping": {
+        "structured": [
+            {
+                "name": "Folders",
+                "type": "object",
+                "responseElement": "{103}",
+                "_comment": ""
+            }
+        ],
+        "unstructured": []
+    }
+}

@@ -1,0 +1,77 @@
+{
+    "id": "100",
+    "partitionkey": "ConnectorList",
+    "alias": "netdocsus.folders",
+    "info": {
+        "title": "Get the top level folders of a cabinet from NetDocUS",
+        "description": "Get the top level folders of a cabinet from NetDocUS",
+        "entityType": "Folder",
+        "dataSourceId": "57",
+        "version": "1.0",
+        "subType": "Parent"
+    },
+    "preRelease": true,
+    "request": {
+        "endpointPath": "/v2/cabinet/{93.primaryCabinet}/folders",
+        "method": "GET",
+        "parameters": [
+            {
+                "cdmName": "Properties",
+                "name": "select",
+                "inClause": "Query",
+                "required": false,
+                "type": "string",
+                "defaultValue": "StandardAttributes"
+            },
+            {
+                "cdmName": "Flags",
+                "name": "listFlags",
+                "inClause": "Query",
+                "required": false,
+                "type": "string",
+                "defaultValue": "131072"
+            },
+            {
+                "cdmName": "ResultSize",
+                "name": "top",
+                "inClause": "Query",
+                "required": false,
+                "type": "int",
+                "defaultValue": "500"
+            }
+        ],
+        "sorting": {
+            "properties": []
+        }
+    },
+    "response": {
+        "schema": {
+            "properties": {}
+        },
+        "type": "JSON"
+    },
+    "pagination": {
+        "available": false,
+        "paginationType": "",
+        "isZeroBasedOffset": true
+    },
+    "resultLocation": "",
+    "filters": [],
+    "cdmMapping": {
+        "structured": [
+            {
+                "name": "Count",
+                "type": "short",
+                "responseElement": "TotalFound",
+                "_comment": "Total count of found top level folders"
+            },
+            {
+                "name": "Folders",
+                "type": "object",
+                "responseElement": "{101}",
+                "_comment": ""
+            }
+        ],
+        "unstructured": []
+    }
+}

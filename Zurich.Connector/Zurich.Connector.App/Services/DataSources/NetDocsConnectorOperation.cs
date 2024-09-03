@@ -73,7 +73,7 @@ namespace Zurich.Connector.App.Services.DataSources
         public async Task<Dictionary<string, string>> SetParametersSpecialCases(ConnectorModel connector, Dictionary<string, string> allParameters)
         {
             // Map the filters inQuery
-            if (allParameters["q"].Contains("InQueryFilter"))
+            if (allParameters.ContainsKey("q") && allParameters["q"].Contains("InQueryFilter"))
             {
                 StringBuilder updatedQuery = new(allParameters["q"]);
                 IEnumerable<ConnectorRequestParameterModel> inQueryFilters = connector.Request?.Parameters
@@ -90,6 +90,18 @@ namespace Zurich.Connector.App.Services.DataSources
 
         public async Task<dynamic> AddAditionalInformation(ConnectorModel connector, dynamic item)
         {
+            if (item is JObject searchResult && searchResult.ContainsKey("Folders") && searchResult["Folders"].HasValues)
+            {
+                foreach (var folder in searchResult["Folders"])
+                {
+                    if (folder["AdditionalProperties"] is JObject additionalProperties &&
+                        additionalProperties.ContainsKey("parentId") &&
+                        additionalProperties["parentId"] is JArray { Count: > 0 } parentIds)
+                    {
+                        additionalProperties["parentId"] = parentIds[0]["Id"].ToString().Replace("/", ":");
+                    }
+                }
+            }
             return item;
         }
 

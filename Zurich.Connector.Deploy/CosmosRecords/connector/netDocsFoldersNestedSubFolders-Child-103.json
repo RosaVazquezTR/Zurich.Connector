@@ -1,0 +1,47 @@
+{
+    "id": "103",
+    "partitionkey": "ConnectorList",
+    "info": {
+        "title": "Gets the nested folders of the given folder from NetDocUS - Child of 102",
+        "description": "Gets the nested folders of the given folder from NetDocUS - Child of 102",
+        "entityType": "Folder",
+        "dataSourceId": "57",
+        "version": "1.0",
+        "subType": "Child"
+    },
+    "preRelease": true,
+    "request": {},
+    "response": {},
+    "filters": [],
+    "resultLocation": "Results",
+    "cdmMapping": {
+        "structured": [
+            {
+                "name": "Title",
+                "type": "string",
+                "responseElement": "Attributes.Name",
+                "_comment": "Subfolder name"
+            }
+        ],
+        "unstructured": [
+            {
+                "name": "id",
+                "type": "string",
+                "responseElement": "EnvId",
+                "_comment": "Subfolder id"
+            },
+            {
+                "name": "owner",
+                "type": "string",
+                "responseElement": "Attributes.CreatedBy",
+                "_comment": "Subfolder's owner"
+            },
+            {
+                "name": "parentId",
+                "type": "array",
+                "responseElement": "Locations.Containers",
+                "_comment": "Parent folder id"
+            }
+        ]
+    }
+}

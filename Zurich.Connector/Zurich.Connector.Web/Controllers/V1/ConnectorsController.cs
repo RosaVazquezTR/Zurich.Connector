@@ -98,7 +98,7 @@ namespace Zurich.Connector.Web.Controllers
 
                 var jsonSettings = new JsonSerializerSettings
                 {
-                    ContractResolver = new Newtonsoft.Json.Serialization.CamelCasePropertyNamesContractResolver()
+                    ContractResolver = new CamelCasePropertyNamesContractResolver()
                 };
 
                 // Making dynamic object properties camel cased requires a workaround of converting a JToken to ExpandoObject and then serializing
