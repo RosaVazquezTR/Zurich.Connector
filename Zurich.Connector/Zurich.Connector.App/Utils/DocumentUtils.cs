@@ -42,12 +42,12 @@ namespace Zurich.Connector.App.Utils
         /// <param name="query">The query to highlight.</param>
         private static void HighlightSnippetsInDocument(dynamic document, string query)
         {
-            if (document.Snippet is not null)
+            if (document.Snippet != null)
             {
                 document.Snippet = HighlightQueryInSingleSnippet(document.Snippet.ToString(), query);
             }
 
-            if (document.Snippets is not null)
+            if (document.Snippets != null)
             {
                 document.Snippets = HighlightQueryInMultipleSnippets(document.Snippets, query);
             }
@@ -89,11 +89,6 @@ namespace Zurich.Connector.App.Utils
         /// <exception cref="ArgumentNullException">Thrown when the summary or query is null or empty.</exception>
         private static string HighlightQueryInText(string text, string query)
         {
-            if (string.IsNullOrEmpty(text) || string.IsNullOrEmpty(query))
-            {
-                throw new ArgumentNullException("The summary text or query cannot be null or empty.");
-            }
-
             string[] queryWords = query.Split(' ');
 
             foreach (string word in queryWords)
