@@ -13,7 +13,7 @@
     "preRelease": true,
     "hostName": "cloudimanage.com",
     "request": {
-        "endpointPath": "/work/api/v2/customers/{55.customer_id}/folders",
+        "endpointPath": "/work/api/v2/customers/{1.customer_id}/folders",
         "method": "GET",
         "parameters": [
             {

@@ -39,7 +39,7 @@ namespace Zurich.Connector.Data.Repositories
         public async Task<string> HandleSuccessResponse(Stream documentStream, bool transformToPdf = true)
         {
             HashSet<string> supportedFormats = ["PDF", "DOC", "DOCX", "RTF"];
-            
+
             string fileExtension = FileFormatParser.FindDocumentTypeFromStream(documentStream);
 
             if (!supportedFormats.Contains(fileExtension.ToUpper()))
@@ -64,18 +64,18 @@ namespace Zurich.Connector.Data.Repositories
         public string HandleErrorResponse(HttpResponseMessage result, ApiInformation apiInformation, string uri)
         {
             var requestContent = result.Content.ReadAsStringAsync();
+            string message = $"Non Successful response from {apiInformation.AppCode} Satuts Code: {(int)result.StatusCode} {result.StatusCode} URL:{uri} Message: {requestContent.Result}";
+            logger.LogError("{message}", message);
+
             switch (result.StatusCode)
             {
                 case HttpStatusCode.NotFound:
                     {
-                        string message = $"{result.StatusCode} - Unable to find specified document from {apiInformation.AppCode}: {uri}";
-                        logger.LogError("{message}", message);
                         throw new KeyNotFoundException(message);
                     }
                 default:
                     {
-                        string message = $"Non Successful response from {apiInformation.AppCode}\nSatuts Code: {(int)result.StatusCode} {result.StatusCode}\nURL:{uri}\nMessage: {requestContent.Result.ToString()}";
-                        logger.LogError("{message}", message);
+
                         throw new ApplicationException(message);
                     }
             }
@@ -232,9 +232,9 @@ namespace Zurich.Connector.Data.Repositories
                 var requestContent = string.Empty;
                 var contentType = result.Content.Headers.ContentType.MediaType;
 
-                if (contentType == Constants.ContentTypes.ApplicationJson  || contentType == Constants.ContentTypes.TextXml)
+                if (contentType == Constants.ContentTypes.ApplicationJson || contentType == Constants.ContentTypes.TextXml)
                 {
-                   requestContent = await result.Content.ReadAsStringAsync();
+                    requestContent = await result.Content.ReadAsStringAsync();
                 }
                 else
                 {
