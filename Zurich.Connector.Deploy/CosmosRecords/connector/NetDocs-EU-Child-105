@@ -1,0 +1,82 @@
+{
+  "id": "105",
+  "partitionkey": "ConnectorList",
+  "info": {
+    "title": "Get Search",
+    "description": "Get Search Results from dafault cabinet in NetDocuments Europe",
+    "entityType": "Search",
+    "dataSourceId": "58",
+    "version": "1.0",
+    "subType": "Child"
+  },
+  "request": {},
+  "response": {},
+  "filters": [],
+  "resultLocation": "Results",
+  "cdmMapping": {
+    "structured": [
+      {
+        "name": "Title",
+        "type": "string",
+        "responseElement": "Attributes.Name",
+        "_comment": ""
+      },
+      {
+        "name": "Type",
+        "type": "string",
+        "responseElement": "Attributes.Ext",
+        "_comment": ""
+      },
+      {
+        "name": "WebUrl",
+        "type": "string",
+        "responseElement": "Locations.Url",
+        "_comment": ""
+      },
+      {
+        "name": "CreationDate",
+        "type": "DateTime",
+        "responseElement": "Attributes.Created",
+        "_comment": ""
+      }
+    ],
+    "unstructured": [
+      {
+        "name": "lastModifiedDateTime",
+        "type": "string",
+        "responseElement": "Attributes.Modified",
+        "_comment": ""
+      },
+      {
+        "name": "lastModifiedUser",
+        "type": "string",
+        "responseElement": "Attributes.ModifiedBy",
+        "_comment": ""
+      },
+      {
+        "name": "createdBy",
+        "type": "string",
+        "responseElement": "Attributes.CreatedBy",
+        "_comment": ""
+      },
+      {
+        "name": "documentId",
+        "type": "string",
+        "responseElement": "DocId",
+        "_comment": ""
+      },
+      {
+        "name": "cabinetId",
+        "type": "string",
+        "responseElement": "Locations.Cabinets",
+        "_comment": ""
+      },
+      {
+        "name": "customAttributes",
+        "type": "string",
+        "responseElement": "CustomAttributes",
+        "_comment": ""
+      }
+    ]
+  }
+}

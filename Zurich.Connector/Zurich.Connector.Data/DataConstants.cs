@@ -56,6 +56,7 @@
         public const string thoughtTraceDMS = "TTTenantApp";
         public const string westLawIE = "WLIE";
         public const string netDocsUS = "NetDocsUS";
+        public const string netDocsEU = "NetDocsEU";
         public const string lexisNexisUK = "LexisNexisUK";
     }
     public static class DataConstants

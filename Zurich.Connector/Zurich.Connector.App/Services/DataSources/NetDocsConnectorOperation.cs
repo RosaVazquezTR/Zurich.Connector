@@ -35,7 +35,7 @@ namespace Zurich.Connector.App.Services.DataSources
 
         public bool IsCompatible(string appCode)
         {
-            return appCode == KnownDataSources.netDocsUS;
+            return appCode == KnownDataSources.netDocsUS || appCode == KnownDataSources.netDocsEU;
         }
 
         public async Task<dynamic> SetItemLink(ConnectorEntityType entityType, dynamic item, string appCode, string hostName)
@@ -85,6 +85,11 @@ namespace Zurich.Connector.App.Services.DataSources
                 }
                 allParameters["q"] = updatedQuery.ToString();
             }
+            if(string.Equals(connector.DataSource.AppCode,KnownDataSources.netDocsEU))
+            {
+                string defaultCabinetId = await GetCabinetId(connector.DataSource.AppCode, connector.HostName);
+                allParameters.Add("cabinets", defaultCabinetId);
+            }
             return allParameters;
         }
 
@@ -133,17 +138,21 @@ namespace Zurich.Connector.App.Services.DataSources
         private async Task<string> GetCabinetId(string appCode, string hostName)
         {
             ConnectorModel connectorModel = null;
-            if (appCode == KnownDataSources.netDocsUS)
+            switch (appCode)
             {
-                // 93 = NetDocs user info
-                connectorModel = await _cosmosService.GetConnector("93", true);
+                case KnownDataSources.netDocsUS:
+                    connectorModel = await _cosmosService.GetConnector("93", true);
+                    break;
+                case KnownDataSources.netDocsEU:
+                    connectorModel = await _cosmosService.GetConnector("106", true);
+                    break;
             }
 
             ConnectorDocument connectorDocument = _mapper.Map<ConnectorDocument>(connectorModel);
             // Make api call to get the cabinet id from NetDocuments user information
             connectorDocument.HostName = hostName;
             JToken userProfileResponse = await _dataMapping.GetAndMapResults<JToken>(connectorDocument, string.Empty, null, null, null);
-            return userProfileResponse["primaryCabinetId"].Value<string>();
+            return userProfileResponse.Value<string>("primaryCabinet");
         }
 
         /// <summary>

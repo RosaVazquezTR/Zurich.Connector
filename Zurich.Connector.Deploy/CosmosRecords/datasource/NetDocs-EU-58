@@ -1,0 +1,29 @@
+{
+  "id": "58",
+  "partitionkey": "DataSourceList",
+  "name": "NetDocuments EU",
+  "description": "Connects to the NetDocuments Europe API",
+  "appCode": "NetDocsEU",
+  "infoURL": "",
+  "extraRequestContext": "",
+  "registrationInfo": {
+    "registrationMode": "Manual",
+    "domainRequired": "false",
+    "clientAndSecretRequired": "false",
+    "connectionMessage": "",
+    "registrationFileRequired": "false"
+  },
+  "securityDefinition": {
+    "type": "oauth2",
+    "flow": "accessCode",
+    "defaultSecurityDefinition": {
+      "authorizationURL": "https://eu.netdocuments.com/neWeb2/OAuth.aspx",
+      "authorizationPath": "/neWeb2/OAuth.aspx",
+      "tokenURL": "https://api.eu.netdocuments.com/v1/OAuth",
+      "tokenPath": "/v1/OAuth",
+      "keyVaultClientId": "",
+      "keyVaultSecret": ""
+    },
+    "scopes": {}
+  }
+}

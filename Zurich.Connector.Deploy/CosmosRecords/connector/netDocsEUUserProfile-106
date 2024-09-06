@@ -1,0 +1,57 @@
+{
+    "id": "106",
+    "partitionkey": "ConnectorList",
+	"alias": "netdocseu.userprofile",
+    "info": {
+        "title": "NetDocuments Europe user information",
+        "description": "Gets the NetDocuments Europe user information",
+        "entityType": "UserProfile",
+        "dataSourceId": "58",
+        "version": "1.0"
+    },
+    "request": {
+        "endpointPath": "/v1/User/info",
+        "method": "GET",
+        "parameters": [],
+        "sorting": {
+            "properties": []
+        }
+    },
+    "response": {
+        "schema": {
+            "properties": {}
+        },
+		"type": "JSON"
+    },
+    "resultLocation": "",
+    "filters": [],
+    "cdmMapping": {
+        "structured": [
+            {
+                "name": "displayName",
+                "type": "string",
+                "responseElement": "displayName",
+                "_comment": ""
+            },
+            {
+                "name": "email",
+                "type": "string",
+                "responseElement": "email",
+                "_comment": ""
+            },
+            {
+                "name": "id",
+                "type": "string",
+                "responseElement": "id",
+                "_comment": ""
+            },
+            {
+                "name": "primaryCabinet",
+                "type": "string",
+                "responseElement": "primaryCabinet",
+                "_comment": ""
+            }
+        ],
+        "unstructured": []
+    }
+}
