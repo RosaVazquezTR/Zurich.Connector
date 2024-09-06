@@ -11,7 +11,6 @@
     "subType": "Parent",
     "downloadConnector": "94"
   },
-  "preRelease": true,
   "hostName": "imanage.westkm.com",
   "request": {
     "endpointPath": "/work/api/v2/customers/{46.user.customer_id}/libraries/{46.work.preferred_library}/documents",
