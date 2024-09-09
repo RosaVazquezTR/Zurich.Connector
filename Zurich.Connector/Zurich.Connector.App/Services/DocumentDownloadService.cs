@@ -76,7 +76,9 @@ namespace Zurich.Connector.App.Services
                     { "docId", documentId }
                 }, null, connectorDocument);
 
-            string result = await service.GetAndMapResults<dynamic>(connectorDocument, null, null, headerParameters, null);
+            // database Id usage here is a workaround, as we don't have domain in connectorModel
+            // and aquiring it in a proper way for every request is too slow.
+            string result = await service.GetAndMapResults<dynamic>(connectorDocument, null, null, headerParameters, null, dataBaseId);
 
             if (string.IsNullOrEmpty(result))
             {
