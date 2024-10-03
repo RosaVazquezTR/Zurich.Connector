@@ -5,6 +5,6 @@
   <ItemGroup>
 	</ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Zurich.Connector.Data\Zurich.Connector.Data.csproj"/>
+    <ProjectReference Include="..\Zurich.Connector.Data\Zurich.Connector.Data.csproj" />
   </ItemGroup>
 </Project>
